@@ -32,6 +32,20 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+group :development, :test do
+  gem 'pry-rails'
+
+  gem 'rspec-rails'
+  gem 'shoulda-matchers'
+
+  # Guard
+  gem 'guard-rspec'
+  gem 'spork-rails', git: 'https://github.com/sporkrb/spork-rails.git'
+  gem 'guard-spork'
+  gem 'libnotify'
+end
+
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
