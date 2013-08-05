@@ -36,6 +36,19 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+group :development do
+  gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
+  gem 'quiet_assets'
+  gem "letter_opener"
+  gem 'rack-mini-profiler'
+
+  # Better error page
+  gem 'better_errors'
+  gem 'binding_of_caller'
+
+  gem 'rails_best_practices'
+end
+
 group :development, :test do
   gem 'pry-rails'
 
