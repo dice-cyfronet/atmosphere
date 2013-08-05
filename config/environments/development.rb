@@ -27,6 +27,11 @@ Air::Application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+  # For having correct urls in mails
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  # Open sent mails in browser
+  config.action_mailer.delivery_method = :letter_opener
+
   ActiveSupport::Dependencies.autoload_paths << File::join( Rails.root, 'lib')
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::API'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'APIHelpers'
