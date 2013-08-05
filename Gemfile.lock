@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/thomas-mcdonald/bootstrap-sass.git
+  revision: 6be8be2ee47d2cd0ba5732eec708d996a48a3654
+  branch: 3
+  specs:
+    bootstrap-sass (3.0.0.0)
+      sass (~> 3.2)
+
+GIT
   remote: https://github.com/ctran/annotate_models.git
   revision: 18a4e2eb77c8f3ef695b563e4a7ca45dfede819b
   specs:
@@ -77,6 +85,8 @@ GEM
     execjs (1.4.0)
       multi_json (~> 1.0)
     ffi (1.9.0)
+    font-awesome-rails (3.2.1.2)
+      railties (>= 3.2, < 5.0)
     formatador (0.2.4)
     guard (1.8.1)
       formatador (>= 0.2.4)
@@ -233,9 +243,11 @@ DEPENDENCIES
   annotate!
   better_errors
   binding_of_caller
+  bootstrap-sass!
   cancan
   coffee-rails (~> 4.0.0)
   devise (~> 3.0.0)
+  font-awesome-rails
   guard-rspec
   guard-spork
   haml-rails

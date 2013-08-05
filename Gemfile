@@ -29,9 +29,11 @@ gem 'jbuilder', '~> 1.2'
 
 # Security
 gem 'devise', '~>3.0.0'
-gem "cancan"
+gem 'cancan'
 
-gem "haml-rails"
+gem 'haml-rails'
+gem 'bootstrap-sass', :git => 'git://github.com/thomas-mcdonald/bootstrap-sass.git', :branch => '3'
+gem 'font-awesome-rails'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -41,7 +43,7 @@ end
 group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
   gem 'quiet_assets'
-  gem "letter_opener"
+  gem 'letter_opener'
   gem 'rack-mini-profiler'
 
   # Better error page
