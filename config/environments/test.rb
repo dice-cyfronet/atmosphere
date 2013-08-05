@@ -33,4 +33,9 @@ Air::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  ActiveSupport::Dependencies.autoload_paths << File::join( Rails.root, 'lib')
+  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::API'
+  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'APIHelpers'
+  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::Workflows'
 end

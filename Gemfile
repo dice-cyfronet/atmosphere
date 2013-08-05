@@ -24,9 +24,6 @@ gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 1.2'
-
 # Security
 gem 'devise', '~>3.0.0'
 gem 'cancan'
@@ -34,6 +31,10 @@ gem 'cancan'
 gem 'haml-rails'
 gem 'bootstrap-sass', :git => 'git://github.com/thomas-mcdonald/bootstrap-sass.git', :branch => '3'
 gem 'font-awesome-rails'
+
+# API
+gem 'grape'
+gem 'grape-entity'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -64,6 +65,10 @@ group :development, :test do
   gem 'spork-rails', git: 'https://github.com/sporkrb/spork-rails.git'
   gem 'guard-spork'
   gem 'libnotify'
+
+  gem 'factory_girl'
+  gem 'ffaker'
+  gem 'database_cleaner'
 end
 
 
