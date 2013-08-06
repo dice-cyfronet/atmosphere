@@ -26,6 +26,8 @@ class User < ActiveRecord::Base
          :rememberable, :trackable, :recoverable,
          :validatable, :token_authenticatable
 
+  validates :login, uniqueness: { case_sensitive: false }
+
   # Devise method overridden to allow sing in with email or login
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
