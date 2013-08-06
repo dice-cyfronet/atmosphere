@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 20130805152629) do
 
   create_table "users", force: true do |t|
     t.string   "login",                default: "", null: false
-    t.string   "email",                default: "", null: false
     t.string   "encrypted_password",   default: "", null: false
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",        default: 0
@@ -24,6 +23,8 @@ ActiveRecord::Schema.define(version: 20130805152629) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
+    t.string   "email",                default: "", null: false
+    t.string   "full_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
