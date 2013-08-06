@@ -5,3 +5,10 @@
   -o-border-radius: $radius;
   border-radius: $radius;
 }
+
+/** FLASH message **/
+.flash-container {
+  .alert {
+    text-align: center;
+  }
+}
