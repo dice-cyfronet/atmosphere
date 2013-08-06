@@ -6,6 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
+/.secret
 
 # Ignore database config.
 /config/database.yml
