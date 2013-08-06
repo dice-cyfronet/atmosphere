@@ -3,9 +3,9 @@
   = devise_error_messages!
   = f.hidden_field :reset_password_token
 
-  = f.password_field :password, placeholder: "Password", autofocus: true, class: "form-control"
-  = f.password_field :password_confirmation, placeholder: "Password confirmation", class: "form-control"
+  = f.password_field :password, placeholder: t('devise.password'), autofocus: true, class: "form-control"
+  = f.password_field :password_confirmation, placeholder: t('devise.password_confirmation'), class: "form-control"
 
   %div.login-buttons
-    = f.submit "Change my password", class: "btn btn-success"
+    = f.submit t('devise.change_password'), class: "btn btn-success"
     .pull-right= link_to t('devise.login'), new_session_path(resource), :class => "btn btn-default"

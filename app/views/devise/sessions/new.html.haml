@@ -1,7 +1,7 @@
 = form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-signin' }) do |f|
   %h2.form-signin-heading= t('code_name')
-  = f.text_field :login, autofocus: true, placeholder: t('login'), class: 'form-control'
-  = f.password_field :password, placeholder: t('password'), class: 'form-control'
+  = f.text_field :login, autofocus: true, placeholder: t('devise.login_or_email'), class: 'form-control'
+  = f.password_field :password, placeholder: t('devise.password'), class: 'form-control'
   - if devise_mapping.rememberable?
     .clearfix.remember
       %label.checkbox.remember_me
