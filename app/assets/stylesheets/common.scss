@@ -6,6 +6,11 @@
   border-radius: $radius;
 }
 
+/** BODY globals **/
+body {
+  padding-top: 60px;  // accommodating for the fixed top navbar; advised by Bootstrap 3.0 docs
+}
+
 /** FLASH message **/
 .flash-container {
   .alert {

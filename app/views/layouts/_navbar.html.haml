@@ -1,0 +1,8 @@
+.navbar.navbar-fixed-top
+
+  = link_to t('code_name'), root_path, class: 'navbar-brand'
+
+  %ul.nav.navbar-nav
+    - [ApplianceSet].each do |model|
+      %li.active
+        = link_to model.model_name.human, [:admin, model]
