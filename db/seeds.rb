@@ -8,4 +8,4 @@
 
 admin = User.create(login: 'admin', full_name: 'Root Admiński z Superuserów', email: 'admin@localhost.pl', password: 'airtraffic123', password_confirmation: 'airtraffic123')
 
-Workflow.create(name: 'My dev workflow', context_id: '1')
+ApplianceSet.create(name: 'My dev appl set', context_id: '1')

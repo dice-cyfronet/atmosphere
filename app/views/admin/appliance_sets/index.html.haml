@@ -1,0 +1,17 @@
+%h1 Listing appliance sets
+
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - @appliance_sets.each do |appliance_set|
+    %tr
+      %td= link_to 'Show', [:admin, appliance_set]
+      %td= link_to 'Edit', edit_admin_appliance_set_path(appliance_set)
+      %td= link_to 'Destroy', [:admin, appliance_set], :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+-#= link_to 'New ApplianceSet', new_admin_appliance_set_path

@@ -1,21 +1,21 @@
 require 'spec_helper'
 
-describe API::Workflows do
+describe API::ApplianceSets do
   include ApiHelpers
 
   let(:user) { create(:user) }
 
-  describe 'GET /workflows' do
+  describe 'GET /appliance_sets' do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        get api('/workflows')
+        get api('/appliance_sets')
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as user' do
       it 'returns 200 Success' do
-        get api('/workflows', user)
+        get api('/appliance_sets', user)
         expect(response.status).to eq 200
       end
     end

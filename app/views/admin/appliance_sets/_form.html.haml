@@ -1,0 +1,10 @@
+= form_for [:admin, @appliance_set] do |f|
+  - if @appliance_set.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@appliance_set.errors.count, "error")} prohibited this appliance set from being saved:"
+      %ul
+        - @appliance_set.errors.full_messages.each do |msg|
+          %li= msg
+
+  .actions
+    = f.submit 'Save'

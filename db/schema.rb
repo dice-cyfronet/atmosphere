@@ -13,6 +13,17 @@
 
 ActiveRecord::Schema.define(version: 20130806144744) do
 
+  create_table "appliance_sets", force: true do |t|
+    t.string   "name"
+    t.string   "context_id",                                 null: false
+    t.integer  "priority",           default: 50,            null: false
+    t.string   "appliance_set_type", default: "development", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "appliance_sets", ["context_id"], name: "index_appliance_sets_on_context_id", unique: true, using: :btree
+
   create_table "users", force: true do |t|
     t.string   "login",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -34,16 +45,5 @@ ActiveRecord::Schema.define(version: 20130806144744) do
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
-
-  create_table "workflows", force: true do |t|
-    t.string   "name"
-    t.string   "context_id",                            null: false
-    t.integer  "priority",      default: 50,            null: false
-    t.string   "workflow_type", default: "development", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "workflows", ["context_id"], name: "index_workflows_on_context_id", unique: true, using: :btree
 
 end

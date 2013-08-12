@@ -1,15 +1,18 @@
 # == Schema Information
 #
-# Table name: workflows
+# Table name: appliance_sets
 #
 #  id            :integer          not null, primary key
 #  name          :string(255)
 #  context_id    :string(255)      not null
 #  priority      :integer          default(50), not null
-#  workflow_type :string(255)      default("development"), not null
+#  appliance_set_type :string(255)      default("development"), not null
 #  created_at    :datetime
 #  updated_at    :datetime
 #
 
-class Workflow < ActiveRecord::Base
+require 'spec_helper'
+
+describe ApplianceSet do
+  pending "add some examples to (or delete) #{__FILE__}"
 end

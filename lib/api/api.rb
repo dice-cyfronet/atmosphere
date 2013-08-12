@@ -23,6 +23,6 @@ module API
     format :json
     helpers APIHelpers
 
-    mount Workflows
+    mount ApplianceSets
   end
 end

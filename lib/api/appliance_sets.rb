@@ -1,8 +1,8 @@
 module API
-  class Workflows < Grape::API
+  class ApplianceSets < Grape::API
     before { authenticate! }
 
-    resource :workflows do
+    resource :appliance_sets do
       get do
         {msg: 'TODO: implemt this action'}
       end
