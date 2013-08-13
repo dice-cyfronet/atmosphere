@@ -22,4 +22,12 @@ require 'spec_helper'
 
 describe User do
 
+  subject { FactoryGirl.create(:user) }
+
+  it { should be_valid }
+
+  it { should have_many :appliance_sets }
+
+  pending 'add better specs here'
+
 end

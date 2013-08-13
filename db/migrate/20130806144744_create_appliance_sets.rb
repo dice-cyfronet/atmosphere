@@ -6,7 +6,7 @@ class CreateApplianceSets < ActiveRecord::Migration
       t.integer :priority,               null: false, default: 50
       t.string  :appliance_set_type,     null: false, default: 'development'
 
-      t.references :user, index: true,   null: false
+      t.references :user,                null: false, index: true
 
       t.timestamps
     end

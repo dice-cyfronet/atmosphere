@@ -36,6 +36,7 @@ describe ApplianceSet do
   it { should have_readonly_attribute :context_id }
 
   it { should have_db_index(:context_id).unique(true) }
+  it { should have_db_index :user_id }
 
   it 'should set proper default values' do
     subject.priority.should == 50
@@ -47,7 +48,7 @@ describe ApplianceSet do
 
 
   pending 'should allow for many VirtualMachines'
-  #  should have_many :virtual_machines
+  #  it { should have_many :virtual_machines }
 
   pending 'should be at most 1 development appliance set in the scope of specific User'
   #  .scoped_to(:user_id) should help here
