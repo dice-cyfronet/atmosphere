@@ -20,7 +20,7 @@ describe ApplianceSet do
 
   it { should be_valid }
 
-  it { should validate_presence_of :name }
+  #it { should validate_presence_of :name }
   it { should validate_presence_of :context_id }
   it { should validate_presence_of :priority }
   it { should validate_presence_of :appliance_set_type }
@@ -45,7 +45,8 @@ describe ApplianceSet do
   pending 'should allow for many VirtualMachines'
   #  should have_many :virtual_machines
   pending 'should belong to exactly one User'
-  #  should have_one / belong_to ? :user
+  #  should belong_to ? :user
   pending 'should be at most 1 development appliance set in the scope of specific User'
+  #  .scoped_to(:user_id) should help here
 
 end

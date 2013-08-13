@@ -8,7 +8,7 @@ FactoryGirl.define do
   end
 
   factory :appliance_set do
-    name 'AS'
+    #name 'AS'
     context_id 'ctx'
   end
 
