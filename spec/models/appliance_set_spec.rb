@@ -14,5 +14,9 @@
 require 'spec_helper'
 
 describe ApplianceSet do
-  pending "add some examples to (or delete) #{__FILE__}"
+  pending 'should not allow for null name,context_id,priority,appliance_set_type'
+  pending 'should guarantee context_id uniqueness'
+  pending 'should assign proper defaults: 50 and development'
+  pending 'should not allow for other types than development, portal, workflow'
+  pending 'should not allow for change of context_id and type'
 end
