@@ -15,7 +15,7 @@ require 'spec_helper'
 
 describe ApplianceSet do
 
-  subject { ApplianceSet.create(name:'N', context_id: 'C') }  # This DOES work
+  subject { ApplianceSet.create(context_id: 'C') }  # This DOES work
   #subject { FactoryGirl.build(:appliance_set) }  # This DOESN'T work and hell if I know why
 
   it { should be_valid }
@@ -45,7 +45,9 @@ describe ApplianceSet do
   pending 'should allow for many VirtualMachines'
   #  should have_many :virtual_machines
   pending 'should belong to exactly one User'
+  it { should belong_to :user }
   #  should belong_to ? :user
+
   pending 'should be at most 1 development appliance set in the scope of specific User'
   #  .scoped_to(:user_id) should help here
 
