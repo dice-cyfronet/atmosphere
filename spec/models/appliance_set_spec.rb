@@ -15,8 +15,7 @@ require 'spec_helper'
 
 describe ApplianceSet do
 
-  subject { ApplianceSet.create(context_id: 'C') }  # This DOES work
-  #subject { FactoryGirl.build(:appliance_set) }  # This DOESN'T work and hell if I know why
+  subject { FactoryGirl.create(:appliance_set) }
 
   it { should be_valid }
 
@@ -24,6 +23,7 @@ describe ApplianceSet do
   it { should validate_presence_of :context_id }
   it { should validate_presence_of :priority }
   it { should validate_presence_of :appliance_set_type }
+  it { should validate_presence_of :user_id }
 
   it { should validate_uniqueness_of :context_id }
 
@@ -42,11 +42,12 @@ describe ApplianceSet do
     subject.appliance_set_type.should eql 'development'
   end
 
+  it { should belong_to :user }
+  it { should validate_presence_of :user }
+
+
   pending 'should allow for many VirtualMachines'
   #  should have_many :virtual_machines
-  pending 'should belong to exactly one User'
-  it { should belong_to :user }
-  #  should belong_to ? :user
 
   pending 'should be at most 1 development appliance set in the scope of specific User'
   #  .scoped_to(:user_id) should help here

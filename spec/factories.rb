@@ -7,9 +7,13 @@ FactoryGirl.define do
     authentication_token 'secret'
   end
 
-  factory :appliance_set do
+  factory :appliance_set do |f|
     #name 'AS'
-    context_id 'ctx'
+    f.context_id 'ctx'
+    f.association :user
+    #after_create do
+    #  user Factory(:user)
+    #end
   end
 
 end

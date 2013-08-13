@@ -6,12 +6,11 @@ class CreateApplianceSets < ActiveRecord::Migration
       t.integer :priority,               null: false, default: 50
       t.string  :appliance_set_type,     null: false, default: 'development'
 
-      t.references :user, index: true
+      t.references :user, index: true,   null: false
 
       t.timestamps
     end
 
     add_index :appliance_sets, :context_id, unique: true
-    #add_foreign_key :appliance_sets, :user
   end
 end

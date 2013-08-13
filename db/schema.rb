@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 20130806144744) do
     t.string   "context_id",                                 null: false
     t.integer  "priority",           default: 50,            null: false
     t.string   "appliance_set_type", default: "development", null: false
-    t.integer  "user_id"
+    t.integer  "user_id",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
