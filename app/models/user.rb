@@ -19,6 +19,7 @@
 #
 
 class User < ActiveRecord::Base
+
   # Include default devise modules. Others available are:
   # :confirmable,
   # :registerable, :lockable, :timeoutable and :omniauthable
@@ -28,4 +29,8 @@ class User < ActiveRecord::Base
 
   validates :login, uniqueness: { case_sensitive: false }
   include LoginAndEmail
+  include Nondeletable
+
+  has_many :appliance_sets
+
 end
