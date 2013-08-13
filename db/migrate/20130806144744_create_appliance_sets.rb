@@ -1,10 +1,10 @@
 class CreateApplianceSets < ActiveRecord::Migration
   def change
     create_table :appliance_sets do |t|
-      t.string  :name,                   :null => false
-      t.string  :context_id,             :null => false
-      t.integer :priority,               :null => false, :default => 50
-      t.string  :appliance_set_type,     :null => false, :default => 'development'
+      t.string  :name,                   null: false
+      t.string  :context_id,             null: false
+      t.integer :priority,               null: false, default: 50
+      t.string  :appliance_set_type,     null: false, default: 'development'
 
       t.timestamps
     end

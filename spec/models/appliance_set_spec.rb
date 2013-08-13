@@ -14,9 +14,38 @@
 require 'spec_helper'
 
 describe ApplianceSet do
-  pending 'should not allow for null name,context_id,priority,appliance_set_type'
-  pending 'should guarantee context_id uniqueness'
-  pending 'should assign proper defaults: 50 and development'
-  pending 'should not allow for other types than development, portal, workflow'
-  pending 'should not allow for change of context_id and type'
+
+  subject { ApplianceSet.create(name:'N', context_id: 'C') }  # This DOES work
+  #subject { FactoryGirl.build(:appliance_set) }  # This DOESN'T work and hell if I know why
+
+  it { should be_valid }
+
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :context_id }
+  it { should validate_presence_of :priority }
+  it { should validate_presence_of :appliance_set_type }
+
+  it { should validate_uniqueness_of :context_id }
+
+  it { should validate_numericality_of :priority }
+  it { should ensure_inclusion_of(:priority).in_range(1..100) }
+
+  it { should ensure_inclusion_of(:appliance_set_type).in_array(%w(development workflow portal)) }
+
+  it { should have_readonly_attribute :appliance_set_type }
+  it { should have_readonly_attribute :context_id }
+
+  it { should have_db_index(:context_id).unique(true) }
+
+  it 'should set proper default values' do
+    subject.priority.should == 50
+    subject.appliance_set_type.should eql 'development'
+  end
+
+  pending 'should allow for many VirtualMachines'
+  #  should have_many :virtual_machines
+  pending 'should belong to exactly one User'
+  #  should have_one / belong_to ? :user
+  pending 'should be at most 1 development appliance set in the scope of specific User'
+
 end
