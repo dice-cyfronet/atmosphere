@@ -11,9 +11,6 @@ FactoryGirl.define do
     #name 'AS'
     f.context_id 'ctx'
     f.association :user
-    #after_create do
-    #  user Factory(:user)
-    #end
   end
 
 end
