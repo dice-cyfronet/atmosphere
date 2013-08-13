@@ -51,6 +51,6 @@ describe ApplianceSet do
   #  it { should have_many :virtual_machines }
 
   pending 'should be at most 1 development appliance set in the scope of specific User'
-  #  .scoped_to(:user_id) should help here
+  #  ??? it { should validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
 
 end

@@ -20,6 +20,7 @@ class ApplianceSet < ActiveRecord::Base
   validates :priority, numericality: { only_integer: true }, inclusion: 1..100
 
   validates :appliance_set_type, inclusion: %w(portal development workflow)
+  validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development"'
 
   attr_readonly :context_id, :appliance_set_type
 
