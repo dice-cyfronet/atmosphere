@@ -14,7 +14,6 @@
 ActiveRecord::Schema.define(version: 20130806144744) do
 
   create_table "appliance_sets", force: true do |t|
-    t.string   "name",                                       null: false
     t.string   "context_id",                                 null: false
     t.integer  "priority",           default: 50,            null: false
     t.string   "appliance_set_type", default: "development", null: false
