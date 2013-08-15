@@ -1,0 +1,12 @@
+#Please keep air.yml.example up to date
+defaults: &defaults
+  #TODO
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
