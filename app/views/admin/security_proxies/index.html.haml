@@ -8,7 +8,7 @@
 
   - @security_proxies.each do |security_proxy|
     %tr
-      %td= link_to 'Show', [:admin, security_proxy]
+      %td= security_proxy.name
       %td= link_to 'Edit', edit_admin_security_proxy_path(security_proxy)
       %td= link_to 'Destroy', [:admin, security_proxy], :method => :delete, :data => { :confirm => 'Are you sure?' }
 

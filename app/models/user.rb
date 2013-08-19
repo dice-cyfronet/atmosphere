@@ -35,4 +35,8 @@ class User < ActiveRecord::Base
 
   has_many :appliance_sets
   has_and_belongs_to_many :security_proxies
+
+  def to_s
+    "#{login} <#{email}>"
+  end
 end

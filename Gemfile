@@ -27,6 +27,9 @@ gem 'turbolinks'
 # Air settings
 gem 'settingslogic'
 
+# Rendering forms
+gem 'simple_form'
+
 # Security
 gem 'devise', '~>3.0.0'
 gem 'cancan'
