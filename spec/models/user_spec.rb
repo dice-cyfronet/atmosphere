@@ -26,9 +26,9 @@ describe User do
 
   subject { FactoryGirl.create(:user) }
 
-  it { should be_valid }
+  expect_it { to be_valid }
 
-  it { should have_many :appliance_sets }
+  expect_it { to have_many :appliance_sets }
 
   pending 'add better specs here'
 

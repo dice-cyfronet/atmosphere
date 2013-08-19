@@ -35,10 +35,22 @@ Spork.prefork do
     #     --seed 1234
     config.order = "random"
 
+    # Disable the old-style object.should syntax.
+    config.expect_with :rspec do |c|
+      c.syntax = :expect
+    end
+
+    config.alias_example_to :expect_it
+
     config.include FactoryGirl::Syntax::Methods
   end
 
   FactoryGirl.find_definitions
+end
+
+RSpec::Core::MemoizedHelpers.module_eval do
+  alias to should
+  alias to_not should_not
 end
 
 Spork.each_run do
