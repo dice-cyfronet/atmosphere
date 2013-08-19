@@ -1,0 +1,11 @@
+= form_for [:admin, @security_proxy] do |f|
+  - if @security_proxy.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@security_proxy.errors.count, "error")} prohibited this appliance set from being saved:"
+      %ul
+        - @security_proxy.errors.full_messages.each do |msg|
+          %li= msg
+
+  .actions
+    = f.submit t('save'), class: 'btn btn-success'
+    = link_to t('back'), admin_security_proxies_path, class: 'btn btn-default'

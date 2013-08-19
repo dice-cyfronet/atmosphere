@@ -3,6 +3,6 @@
   = link_to t('code_name'), root_path, class: 'navbar-brand'
 
   %ul.nav.navbar-nav
-    - [ApplianceSet].each do |model|
-      %li.active
+    - [ApplianceSet, SecurityProxy].each do |model|
+      = nav_link controller: model.name.tableize.to_sym do
         = link_to model.model_name.human, [:admin, model]
