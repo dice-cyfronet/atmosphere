@@ -24,5 +24,6 @@ module API
     helpers APIHelpers
 
     mount ApplianceSets
+    mount SecurityProxies
   end
 end

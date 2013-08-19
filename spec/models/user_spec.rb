@@ -29,6 +29,7 @@ describe User do
   expect_it { to be_valid }
 
   expect_it { to have_many :appliance_sets }
+  expect_it { to have_and_belong_to_many :security_proxies }
 
   pending 'add better specs here'
 
