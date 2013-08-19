@@ -8,6 +8,8 @@ class CreateApplianceSets < ActiveRecord::Migration
 
       t.references :user,                null: false, index: true
 
+      # TODO we need reference to VirtualMachines here
+
       t.timestamps
     end
 
