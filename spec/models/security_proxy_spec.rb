@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: security_proxies
+#
+#  id         :integer          not null, primary key
+#  name       :string(255)
+#  payload    :text
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 require 'spec_helper'
 
 describe SecurityProxy do

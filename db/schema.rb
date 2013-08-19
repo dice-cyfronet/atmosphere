@@ -32,6 +32,8 @@ ActiveRecord::Schema.define(version: 20130819064429) do
     t.datetime "updated_at"
   end
 
+  add_index "security_proxies", ["name"], name: "index_security_proxies_on_name", unique: true, using: :btree
+
   create_table "security_proxies_users", force: true do |t|
     t.integer "user_id"
     t.integer "security_proxy_id"

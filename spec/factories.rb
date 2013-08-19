@@ -5,7 +5,7 @@ FactoryGirl.define do
     login { Faker::Internet.user_name }
     password '12345678'
     password_confirmation { password }
-    authentication_token { Faker::Lorem.words(1).first }
+    authentication_token { login }
   end
 
   factory :appliance_set do |f|
