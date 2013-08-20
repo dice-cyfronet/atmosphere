@@ -1,0 +1,17 @@
+%h1 Security proxies
+
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - @security_policies.each do |security_policy|
+    %tr
+      %td= security_policy.name
+      %td= link_to 'Edit', edit_admin_security_policy_path(security_policy)
+      %td= link_to 'Destroy', [:admin, security_policy], :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Security Policy', new_admin_security_policy_path
