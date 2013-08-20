@@ -13,7 +13,6 @@
 
 class ApplianceSet < ActiveRecord::Base
 
-  validates_presence_of :name
   validates_presence_of :context_id, :priority, :appliance_set_type, :user_id
   validates_uniqueness_of :context_id
 
