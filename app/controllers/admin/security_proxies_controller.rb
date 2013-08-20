@@ -32,6 +32,11 @@ class Admin::SecurityProxiesController < ApplicationController
     end
   end
 
+  def destroy
+    @security_proxy.destroy
+    redirect_to admin_security_proxies_path
+  end
+
   def security_proxy_params
     params.require(:security_proxy).permit(:name, :payload, :user_ids)
   end
