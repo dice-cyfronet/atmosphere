@@ -30,6 +30,7 @@ describe User do
 
   expect_it { to have_many :appliance_sets }
   expect_it { to have_and_belong_to_many :security_proxies }
+  expect_it { to have_and_belong_to_many :security_policies }
 
   pending 'add better specs here'
 

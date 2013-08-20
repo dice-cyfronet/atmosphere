@@ -36,13 +36,13 @@ module API
         present SecurityProxy.all, with: Entities::SecurityProxy
       end
 
-      get ':name/payload', requirements: { name: /#{SecurityProxy.name_regex}/ } do
+      get ':name/payload', requirements: { name: /#{OwnedPayloable.name_regex}/ } do
         env['api.format'] = :text
         content_type "text/plain"
         proxy!.payload
       end
 
-      get ':name', requirements: { name: /#{SecurityProxy.name_regex}\z/ } do
+      get ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
         present proxy!, with: Entities::SecurityProxy
       end
 
@@ -61,7 +61,7 @@ module API
         end
       end
 
-      put ':name', requirements: { name: /#{SecurityProxy.name_regex}\z/ } do
+      put ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
         authenticate!
         user_proxy!.payload = params[:payload] if params[:payload]
         user_proxy!.users = owners if params[:owners]
@@ -69,7 +69,7 @@ module API
         present user_proxy!, with: Entities::SecurityProxy
       end
 
-      delete ':name', requirements: { name: /#{SecurityProxy.name_regex}\z/ } do
+      delete ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
         authenticate!
         user_proxy!.destroy
       end

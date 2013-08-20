@@ -10,14 +10,5 @@
 #
 
 class SecurityProxy < ActiveRecord::Base
-  has_and_belongs_to_many :users
-
-
-  validates_presence_of :payload
-
-  def self.name_regex
-    '[\w-]+(\/{0,1}[\w-]+)+'
-  end
-
-  validates :name, presence: true, uniqueness: true, :format => { :with => /\A#{SecurityProxy.name_regex}\z/ }
+  include OwnedPayloable
 end
