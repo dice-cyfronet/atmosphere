@@ -1,4 +1,4 @@
-RSpec::Matchers.define :proxy_eq do |expected|
+RSpec::Matchers.define :owned_payload_eq do |expected|
   match do |actual|
     actual['name'] == expected.name
     actual['payload'] == expected.payload

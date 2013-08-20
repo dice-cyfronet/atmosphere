@@ -14,13 +14,17 @@ FactoryGirl.define do
     f.association :user
   end
 
+  factory :appliance_type do
+    name 'AT'
+  end
+
   factory :security_proxy do |f|
     name 'security/proxy'
     payload { Faker::Lorem.words(10).join(' ') }
   end
 
-  factory :appliance_type do
-    name 'AT'
+  factory :security_policy do |f|
+    name 'security/policy'
+    payload { Faker::Lorem.words(10).join(' ') }
   end
-
 end

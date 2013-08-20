@@ -28,3 +28,8 @@ en:
     create_error: "Unable to create security proxy"
     updated: "Security proxy updated"
     update_error: "Unable to update security proxy"
+  security_policy:
+    created: "Security policy created"
+    create_error: "Unable to create security policy"
+    updated: "Security policy updated"
+    update_error: "Unable to update security policy"

@@ -41,6 +41,20 @@ ActiveRecord::Schema.define(version: 20130820144329) do
 
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
 
+  create_table "security_policies", force: true do |t|
+    t.string   "name"
+    t.text     "payload"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "security_policies", ["name"], name: "index_security_policies_on_name", unique: true, using: :btree
+
+  create_table "security_policies_users", force: true do |t|
+    t.integer "user_id"
+    t.integer "security_policy_id"
+  end
+
   create_table "security_proxies", force: true do |t|
     t.string   "name"
     t.text     "payload"
