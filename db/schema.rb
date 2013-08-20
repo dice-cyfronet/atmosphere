@@ -29,8 +29,8 @@ ActiveRecord::Schema.define(version: 20130820144329) do
   create_table "appliance_types", force: true do |t|
     t.string   "name",                                            null: false
     t.text     "description"
-    t.boolean  "shared",            default: false
-    t.boolean  "scalable",          default: false
+    t.boolean  "shared",            default: false,               null: false
+    t.boolean  "scalable",          default: false,               null: false
     t.string   "visibility",        default: "under_development", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"

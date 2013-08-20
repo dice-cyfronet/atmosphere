@@ -21,6 +21,12 @@ describe ApplianceType do
 
   expect_it { to have_db_index(:name).unique(true) }
 
+  [:preference_memory, :preference_disk, :preference_cpu].each do |attribute|
+    expect_it { to validate_numericality_of attribute }
+    expect_it { should_not allow_value(-1).for(attribute) }
+  end
+
+
   it 'should set proper default values' do
     expect(subject.visibility).to eql 'under_development'
     expect(subject.shared).to eql false
