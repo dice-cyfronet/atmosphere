@@ -21,3 +21,10 @@
 
 en:
   code_name: AIR
+  save: Save
+  back: Back
+  security_proxy:
+    created: "Security proxy created"
+    create_error: "Unable to create security proxy"
+    updated: "Security proxy updated"
+    update_error: "Unable to update security proxy"

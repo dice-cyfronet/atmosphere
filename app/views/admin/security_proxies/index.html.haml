@@ -1,0 +1,17 @@
+%h1 Security proxies
+
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - @security_proxies.each do |security_proxy|
+    %tr
+      %td= security_proxy.name
+      %td= link_to 'Edit', edit_admin_security_proxy_path(security_proxy)
+      %td= link_to 'Destroy', [:admin, security_proxy], :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Security Proxy', new_admin_security_proxy_path

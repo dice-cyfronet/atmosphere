@@ -13,7 +13,35 @@ module API
     end
 
     def render_api_error!(message, status)
-      error!({'message' => message}, status)
+      error!({message: message}, status)
+    end
+
+    def not_found!(resource = nil)
+      message = ["404"]
+      message << resource if resource
+      message << "Not Found"
+      render_api_error!(message.join(' '), 404)
+    end
+
+    def required_attributes!(keys)
+      keys.each do |key|
+        bad_request!(key) unless params[key].present?
+      end
+    end
+
+    def bad_request!(attribute, msg_postfix = nil)
+      msg_postfix = "not given" if msg_postfix.blank?
+      message = ["400 (Bad request)"]
+      message << "\"" + attribute.to_s + "\" " + msg_postfix
+      render_api_error!(message.join(' '), 400)
+    end
+
+    def attributes_for_keys(keys)
+      attrs = {}
+      keys.each do |key|
+        attrs[key] = params[key] if params[key].present?
+      end
+      attrs
     end
   end
 end
