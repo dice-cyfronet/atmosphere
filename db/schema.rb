@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20130820053720) do
 
   create_table "security_policies_users", force: true do |t|
     t.integer "user_id"
-    t.integer "security_proxy_id"
+    t.integer "security_policy_id"
   end
 
   create_table "security_proxies", force: true do |t|

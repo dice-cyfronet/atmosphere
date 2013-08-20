@@ -18,4 +18,9 @@ FactoryGirl.define do
     name 'security/proxy'
     payload { Faker::Lorem.words(10).join(' ') }
   end
+
+  factory :security_policy do |f|
+    name 'security/policy'
+    payload { Faker::Lorem.words(10).join(' ') }
+  end
 end

@@ -25,5 +25,6 @@ module API
 
     mount ApplianceSets
     mount SecurityProxies
+    mount SecurityPolicies
   end
 end
