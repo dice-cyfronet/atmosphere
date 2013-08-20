@@ -1,6 +1,6 @@
 module API
   class SecurityPolicies < Grape::API
-    include API::Concerns::OwnedPayloadsHelpers
+    include ::API::Concerns::OwnedPayloadsHelpers
 
     helpers do
       def owned_payload(name)
@@ -17,7 +17,7 @@ module API
     end
 
     resource :security_policies do
-      include API::Concerns::OwnedPayloads
+      include ::API::Concerns::OwnedPayloads
     end
   end
 end

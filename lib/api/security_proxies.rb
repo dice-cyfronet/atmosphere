@@ -1,6 +1,6 @@
 module API
   class SecurityProxies < Grape::API
-    include API::Concerns::OwnedPayloadsHelpers
+    include ::API::Concerns::OwnedPayloadsHelpers
 
     helpers do
       def owned_payload(name)
@@ -17,7 +17,7 @@ module API
     end
 
     resource :security_proxies do
-      include API::Concerns::OwnedPayloads
+      include ::API::Concerns::OwnedPayloads
     end
   end
 end
