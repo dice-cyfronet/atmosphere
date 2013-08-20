@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130820144329) do
+ActiveRecord::Schema.define(version: 20130820204024) do
 
   create_table "appliance_sets", force: true do |t|
-    t.string   "name",                                       null: false
+    t.string   "name"
     t.string   "context_id",                                 null: false
     t.integer  "priority",           default: 50,            null: false
     t.string   "appliance_set_type", default: "development", null: false
@@ -43,6 +43,13 @@ ActiveRecord::Schema.define(version: 20130820144329) do
 
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
   add_index "appliance_types", ["user_id"], name: "appliance_types_user_id_fk", using: :btree
+
+  create_table "appliances", force: true do |t|
+    t.integer  "appliance_set_id"
+    t.integer  "appliance_type_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "security_policies", force: true do |t|
     t.string   "name"
