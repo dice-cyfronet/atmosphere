@@ -18,4 +18,9 @@ FactoryGirl.define do
     name 'security/proxy'
     payload { Faker::Lorem.words(10).join(' ') }
   end
+
+  factory :appliance_type do
+    name 'AT'
+  end
+
 end

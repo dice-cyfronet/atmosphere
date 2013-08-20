@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130819064429) do
+ActiveRecord::Schema.define(version: 20130820144329) do
 
   create_table "appliance_sets", force: true do |t|
     t.string   "name",                                       null: false
@@ -25,6 +25,21 @@ ActiveRecord::Schema.define(version: 20130819064429) do
 
   add_index "appliance_sets", ["context_id"], name: "index_appliance_sets_on_context_id", unique: true, using: :btree
   add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
+
+  create_table "appliance_types", force: true do |t|
+    t.string   "name",                                            null: false
+    t.text     "description"
+    t.boolean  "shared",            default: false
+    t.boolean  "scalable",          default: false
+    t.string   "visibility",        default: "under_development", null: false
+    t.float    "preference_cpu"
+    t.integer  "preference_memory"
+    t.integer  "preference_disk"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
 
   create_table "security_proxies", force: true do |t|
     t.string   "name"
