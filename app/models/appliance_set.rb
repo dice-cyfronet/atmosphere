@@ -13,7 +13,7 @@
 
 class ApplianceSet < ActiveRecord::Base
 
-  #validates_presence_of :name
+  validates_presence_of :name
   validates_presence_of :context_id, :priority, :appliance_set_type, :user_id
   validates_uniqueness_of :context_id
 
@@ -26,6 +26,6 @@ class ApplianceSet < ActiveRecord::Base
 
 
   belongs_to :user
-  validates :user, :presence=>true  # This should also make sure the User exists
+  validates :user, presence: true  # This should also make sure the User exists
 
 end

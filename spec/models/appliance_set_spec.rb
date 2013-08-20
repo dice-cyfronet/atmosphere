@@ -19,7 +19,7 @@ describe ApplianceSet do
 
   expect_it { to be_valid }
 
-  #expect_it { to validate_presence_of :name }
+  expect_it { to validate_presence_of :name }
   expect_it { to validate_presence_of :context_id }
   expect_it { to validate_presence_of :priority }
   expect_it { to validate_presence_of :appliance_set_type }
@@ -47,8 +47,8 @@ describe ApplianceSet do
   expect_it { to validate_presence_of :user }
 
 
-  pending 'should allow for many VirtualMachines'
-  #  expect_it { to have_many :virtual_machines }
+  pending 'should allow for many Appliances'
+  #  expect_it { to have_many :appliances }
 
   pending 'to be at most 1 development appliance set in the scope of specific User'
   #  ??? expect_it { to validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }

@@ -9,7 +9,7 @@ FactoryGirl.define do
   end
 
   factory :appliance_set do |f|
-    #name 'AS'
+    name 'AS'
     f.context_id 'ctx'
     f.association :user
   end
