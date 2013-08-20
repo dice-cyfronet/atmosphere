@@ -11,4 +11,6 @@
 
 class SecurityProxy < ActiveRecord::Base
   include OwnedPayloable
+
+  has_many :appliance_types
 end

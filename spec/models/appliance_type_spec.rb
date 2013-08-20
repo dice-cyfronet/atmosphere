@@ -6,6 +6,8 @@ describe ApplianceType do
 
   expect_it { to be_valid }
 
+  expect_it { to belong_to :security_proxy }
+
   expect_it { to validate_presence_of :name }
   expect_it { to validate_presence_of :visibility }
 

@@ -13,6 +13,8 @@ class CreateApplianceTypes < ActiveRecord::Migration
       t.integer :preference_memory
       t.integer :preference_disk
 
+      t.references :security_proxy, null: true
+
       t.timestamps
     end
 

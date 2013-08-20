@@ -1,5 +1,7 @@
 class ApplianceType < ActiveRecord::Base
 
+  belongs_to :security_proxy
+
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name
 

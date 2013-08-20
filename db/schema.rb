@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20130820144329) do
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
+    t.integer  "security_proxy_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
