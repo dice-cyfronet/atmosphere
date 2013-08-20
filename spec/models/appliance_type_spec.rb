@@ -33,4 +33,11 @@ describe ApplianceType do
     expect(subject.scalable).to eql false
   end
 
+  pending 'should allow single SecurityProxy'
+  pending 'should allow single User as Author'
+  pending 'should allow many PortMappingTemplates'
+  pending 'should allow many Appliances'
+  pending 'should allow many ApplianceConfigurationTemplates'
+  pending 'should allow many VirtualMachineTemplates'
+
 end
