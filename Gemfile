@@ -5,6 +5,8 @@ gem 'rails', '4.0.0'
 
 # Use mysql as the database for Active Record
 gem 'mysql2'
+# and provide means for referential integrity
+gem 'foreigner'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'

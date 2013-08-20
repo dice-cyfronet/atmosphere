@@ -14,5 +14,6 @@ class CreateApplianceSets < ActiveRecord::Migration
     end
 
     add_index :appliance_sets, :context_id, unique: true
+    add_foreign_key :appliance_sets, :users
   end
 end

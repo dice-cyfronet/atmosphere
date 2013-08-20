@@ -1,6 +1,7 @@
 class ApplianceType < ActiveRecord::Base
 
   belongs_to :security_proxy
+  belongs_to :author, :class_name => 'User', :foreign_key => 'user_id'
 
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name

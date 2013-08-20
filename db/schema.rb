@@ -36,11 +36,13 @@ ActiveRecord::Schema.define(version: 20130820144329) do
     t.integer  "preference_memory"
     t.integer  "preference_disk"
     t.integer  "security_proxy_id"
+    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
+  add_index "appliance_types", ["user_id"], name: "appliance_types_user_id_fk", using: :btree
 
   create_table "security_policies", force: true do |t|
     t.string   "name"
@@ -91,5 +93,9 @@ ActiveRecord::Schema.define(version: 20130820144329) do
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
+
+  add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
+
+  add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
 
 end
