@@ -3,10 +3,12 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.0'
 
-# Use mysql as the database for Active Record
+# Use mysql as the database for Active Record ...
 gem 'mysql2'
-# and provide means for referential integrity
+# ... and provide means for referential integrity ...
 gem 'foreigner'
+# ... with some sugar over string enumerables
+gem 'enumerize'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.0'

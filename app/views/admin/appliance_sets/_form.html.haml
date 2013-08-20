@@ -6,5 +6,7 @@
         - @appliance_set.errors.full_messages.each do |msg|
           %li= msg
 
+  =# f.select :appliance_set_type, ApplianceSet.appliance_set_type.options
+
   .actions
     = f.submit 'Save'

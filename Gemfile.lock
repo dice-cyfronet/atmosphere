@@ -84,6 +84,8 @@ GEM
       railties (>= 3.2.6, < 5)
       warden (~> 1.2.3)
     diff-lcs (1.2.4)
+    enumerize (0.6.1)
+      activesupport (>= 3.2)
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
@@ -277,6 +279,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   database_cleaner
   devise (~> 3.0.0)
+  enumerize
   factory_girl
   ffaker
   font-awesome-rails

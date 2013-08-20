@@ -38,6 +38,6 @@ class Admin::ApplianceSetsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def appliance_set_params
-      params[:appliance_set]
+      params[:appliance_set].permit(:appliance_set_type)
     end
 end
