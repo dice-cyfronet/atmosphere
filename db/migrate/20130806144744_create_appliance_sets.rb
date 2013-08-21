@@ -8,8 +8,6 @@ class CreateApplianceSets < ActiveRecord::Migration
 
       t.references :user,                null: false, index: true
 
-      # TODO we need reference to new Appliances model here
-
       t.timestamps
     end
 

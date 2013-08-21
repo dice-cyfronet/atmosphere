@@ -44,10 +44,7 @@ describe ApplianceSet do
 
   expect_it { to belong_to :user }
   expect_it { to validate_presence_of :user }
-
-
-  pending 'should allow many Appliances'
-  #  expect_it { to have_many :appliances }
+  expect_it { to have_many :appliances }
 
   pending 'to be at most 1 development appliance set in the scope of specific User'
   #  ??? expect_it { to validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
