@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: appliance_types
+#
+#  id                :integer          not null, primary key
+#  name              :string(255)      not null
+#  description       :text
+#  shared            :boolean          default(FALSE), not null
+#  scalable          :boolean          default(FALSE), not null
+#  visibility        :string(255)      default("under_development"), not null
+#  preference_cpu    :float
+#  preference_memory :integer
+#  preference_disk   :integer
+#  security_proxy_id :integer
+#  user_id           :integer
+#  created_at        :datetime
+#  updated_at        :datetime
+#
+
 class ApplianceType < ActiveRecord::Base
   extend Enumerize
 
