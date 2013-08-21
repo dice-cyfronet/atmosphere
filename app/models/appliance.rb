@@ -20,4 +20,6 @@ class Appliance < ActiveRecord::Base
 
   has_many :http_mappings, dependent: :destroy
 
+  has_and_belongs_to_many :virtual_machines
+
 end

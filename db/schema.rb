@@ -162,6 +162,11 @@ ActiveRecord::Schema.define(version: 20130821152426) do
   add_index "virtual_machines", ["compute_site_id"], name: "virtual_machines_compute_site_id_fk", using: :btree
   add_index "virtual_machines", ["virtual_machine_template_id"], name: "index_virtual_machines_on_virtual_machine_template_id", using: :btree
 
+  create_table "virtual_machines_appliances", force: true do |t|
+    t.integer "virtual_machine_id"
+    t.integer "appliance_id"
+  end
+
   add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 
   add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
