@@ -20,12 +20,9 @@ describe ApplianceSet do
 
   expect_it { to be_valid }
 
-  expect_it { to validate_presence_of :context_id }
   expect_it { to validate_presence_of :priority }
   expect_it { to validate_presence_of :appliance_set_type }
   expect_it { to validate_presence_of :user_id }
-
-  expect_it { to validate_uniqueness_of :context_id }
 
   expect_it { to validate_numericality_of :priority }
   expect_it { to ensure_inclusion_of(:priority).in_range(1..100) }
@@ -35,12 +32,11 @@ describe ApplianceSet do
   expect_it { to have_readonly_attribute :appliance_set_type }
   expect_it { to have_readonly_attribute :context_id }
 
-  expect_it { to have_db_index(:context_id).unique(true) }
   expect_it { to have_db_index :user_id }
 
   it 'should set proper default values' do
     expect(subject.priority).to eq 50
-    expect(subject.appliance_set_type).to eql 'development'
+    expect(subject.appliance_set_type).to eql 'workflow'
   end
 
   expect_it { to belong_to :user }
@@ -49,5 +45,4 @@ describe ApplianceSet do
 
   pending 'to be at most 1 development appliance set in the scope of specific User'
   #  ??? expect_it { to validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
-
 end

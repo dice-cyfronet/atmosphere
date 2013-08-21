@@ -15,14 +15,13 @@
 class ApplianceSet < ActiveRecord::Base
   extend Enumerize
 
-  validates_presence_of :context_id, :priority, :appliance_set_type, :user_id
-  validates_uniqueness_of :context_id
+  validates_presence_of :priority, :appliance_set_type, :user_id
 
   validates :priority, numericality: { only_integer: true }, inclusion: 1..100
 
   enumerize :appliance_set_type, in: [:portal, :development, :workflow]
   validates :appliance_set_type, inclusion: %w(portal development workflow)
-  validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development"'
+  validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
   attr_readonly :context_id, :appliance_set_type
 
@@ -32,5 +31,4 @@ class ApplianceSet < ActiveRecord::Base
   validates :user, presence: true
 
   has_many :appliances, dependent: :destroy
-
 end
