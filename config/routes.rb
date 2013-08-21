@@ -11,4 +11,7 @@ Air::Application.routes.draw do
   root to: 'home#index'
 
   mount API::API => '/api'
+
+  get 'help' => 'help#index'
+  get 'help/api' => 'help#api'
 end

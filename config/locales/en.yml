@@ -21,8 +21,12 @@
 
 en:
   code_name: AIR
+  logout: Logout
+  help: Help
   save: Save
   back: Back
+  loading: Loading...
+
   security_proxy:
     created: "Security proxy created"
     create_error: "Unable to create security proxy"
