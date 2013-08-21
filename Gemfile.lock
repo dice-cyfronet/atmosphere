@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/thomas-mcdonald/bootstrap-sass.git
-  revision: 91d8dc386fa12713f80a655484fbbf43438be95d
+  revision: cc5495eaa665a0e919768231c93c6e83c909d837
   branch: 3
   specs:
     bootstrap-sass (3.0.0.0)
@@ -84,7 +84,7 @@ GEM
       railties (>= 3.2.6, < 5)
       warden (~> 1.2.3)
     diff-lcs (1.2.4)
-    enumerize (0.6.1)
+    enumerize (0.7.0)
       activesupport (>= 3.2)
     erubis (2.7.0)
     execjs (2.0.0)
