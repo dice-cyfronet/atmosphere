@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Id at site:
+  = @virtual_machine_template.id_at_site
+%p
+  %b Name:
+  = @virtual_machine_template.name
+%p
+  %b State:
+  = @virtual_machine_template.state
+
+= link_to 'Edit', edit_virtual_machine_template_path(@virtual_machine_template)
+\|
+= link_to 'Back', virtual_machine_templates_path

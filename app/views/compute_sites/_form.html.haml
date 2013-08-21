@@ -1,0 +1,11 @@
+= simple_form_for(@compute_site) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :site_id
+    = f.input :name
+    = f.input :location
+    = f.input :site_type
+
+  .actions
+    = f.button :submit

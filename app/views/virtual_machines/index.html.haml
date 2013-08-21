@@ -1,0 +1,25 @@
+%h1 Listing virtual_machines
+
+%table
+  %tr
+    %th Id at site
+    %th Name
+    %th State
+    %th Ip
+    %th
+    %th
+    %th
+
+  - @virtual_machines.each do |virtual_machine|
+    %tr
+      %td= virtual_machine.id_at_site
+      %td= virtual_machine.name
+      %td= virtual_machine.state
+      %td= virtual_machine.ip
+      %td= link_to 'Show', virtual_machine
+      %td= link_to 'Edit', edit_virtual_machine_path(virtual_machine)
+      %td= link_to 'Destroy', virtual_machine, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Virtual machine', new_virtual_machine_path
