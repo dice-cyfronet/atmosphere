@@ -8,5 +8,12 @@ module API
         end
       end
     end
+
+    class ApplianceSet < Grape::Entity
+      expose :name, :priority, :id
+      expose :type do |appliance_set, options|
+        appliance_set.appliance_set_type
+      end
+    end
   end
 end
