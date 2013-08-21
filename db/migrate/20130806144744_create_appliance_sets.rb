@@ -4,7 +4,7 @@ class CreateApplianceSets < ActiveRecord::Migration
       t.string  :name,                   null: true
       t.string  :context_id,             null: false
       t.integer :priority,               null: false, default: 50
-      t.string  :appliance_set_type,     null: false, default: 'development'
+      t.string  :appliance_set_type,     null: false, default: :development
 
       t.references :user,                null: false, index: true
 

@@ -24,6 +24,7 @@ class ApplianceType < ActiveRecord::Base
   belongs_to :author, :class_name => 'User', :foreign_key => 'user_id'
 
   has_many :appliances
+  has_many :port_mapping_templates, dependent: :destroy
 
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name
