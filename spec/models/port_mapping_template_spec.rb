@@ -18,11 +18,10 @@ describe PortMappingTemplate do
   end
 
   expect_it { to belong_to :appliance_type }
+  expect_it { to have_many :http_mappings }
 
   pending 'should allow many Endpoints'
   pending 'should allow many PortMappings'
-  pending 'should allow many HttpMappings'
-  pending 'should allow one Appliance'
   pending 'should allow many PortMappingProperties'
 
 end

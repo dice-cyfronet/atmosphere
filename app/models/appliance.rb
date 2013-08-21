@@ -18,4 +18,6 @@ class Appliance < ActiveRecord::Base
   belongs_to :appliance_type
   validates :appliance_type, presence: true
 
+  has_many :http_mappings
+
 end

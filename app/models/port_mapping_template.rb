@@ -12,4 +12,5 @@ class PortMappingTemplate < ActiveRecord::Base
   validates_inclusion_of :application_protocol, in: %w(http https http_https), if: 'transport_protocol == "tcp"'
   validates_inclusion_of :application_protocol, in: %w(none), if: 'transport_protocol == "udp"'
 
+  has_many :http_mappings
 end
