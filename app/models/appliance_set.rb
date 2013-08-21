@@ -30,6 +30,6 @@ class ApplianceSet < ActiveRecord::Base
   # This should also make sure the referenced entity exists; but we still should make a foreign key constraint in DB
   validates :user, presence: true
 
-  has_many :appliances
+  has_many :appliances, dependent: :destroy
 
 end
