@@ -1,0 +1,25 @@
+%h1 Listing compute_sites
+
+%table
+  %tr
+    %th Site
+    %th Name
+    %th Location
+    %th Site type
+    %th
+    %th
+    %th
+
+  - @compute_sites.each do |compute_site|
+    %tr
+      %td= compute_site.site_id
+      %td= compute_site.name
+      %td= compute_site.location
+      %td= compute_site.site_type
+      %td= link_to 'Show', compute_site
+      %td= link_to 'Edit', edit_compute_site_path(compute_site)
+      %td= link_to 'Destroy', compute_site, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Compute site', new_compute_site_path

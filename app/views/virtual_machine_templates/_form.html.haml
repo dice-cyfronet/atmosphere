@@ -1,0 +1,10 @@
+= simple_form_for(@virtual_machine_template) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :id_at_site
+    = f.input :name
+    = f.input :state
+
+  .actions
+    = f.button :submit

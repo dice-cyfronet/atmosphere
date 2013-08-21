@@ -1,0 +1,23 @@
+%h1 Listing virtual_machine_templates
+
+%table
+  %tr
+    %th Id at site
+    %th Name
+    %th State
+    %th
+    %th
+    %th
+
+  - @virtual_machine_templates.each do |virtual_machine_template|
+    %tr
+      %td= virtual_machine_template.id_at_site
+      %td= virtual_machine_template.name
+      %td= virtual_machine_template.state
+      %td= link_to 'Show', virtual_machine_template
+      %td= link_to 'Edit', edit_virtual_machine_template_path(virtual_machine_template)
+      %td= link_to 'Destroy', virtual_machine_template, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Virtual machine template', new_virtual_machine_template_path

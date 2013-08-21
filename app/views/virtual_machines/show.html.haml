@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Id at site:
+  = @virtual_machine.id_at_site
+%p
+  %b Name:
+  = @virtual_machine.name
+%p
+  %b State:
+  = @virtual_machine.state
+%p
+  %b Ip:
+  = @virtual_machine.ip
+
+= link_to 'Edit', edit_virtual_machine_path(@virtual_machine)
+\|
+= link_to 'Back', virtual_machines_path

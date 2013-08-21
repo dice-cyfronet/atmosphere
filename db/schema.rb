@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130821092133) do
+ActiveRecord::Schema.define(version: 20130821101540) do
 
   create_table "appliance_sets", force: true do |t|
     t.string   "name"
@@ -53,6 +53,15 @@ ActiveRecord::Schema.define(version: 20130821092133) do
 
   add_index "appliances", ["appliance_set_id"], name: "appliances_appliance_set_id_fk", using: :btree
   add_index "appliances", ["appliance_type_id"], name: "appliances_appliance_type_id_fk", using: :btree
+
+  create_table "compute_sites", force: true do |t|
+    t.string   "site_id"
+    t.string   "name"
+    t.string   "location"
+    t.string   "site_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "http_mappings", force: true do |t|
     t.string   "application_protocol",     default: "http", null: false
@@ -128,6 +137,33 @@ ActiveRecord::Schema.define(version: 20130821092133) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
 
+  create_table "virtual_machine_templates", force: true do |t|
+    t.string   "id_at_site",         null: false
+    t.string   "name",               null: false
+    t.string   "state",              null: false
+    t.integer  "compute_site_id",    null: false
+    t.integer  "virtual_machine_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "virtual_machine_templates", ["compute_site_id"], name: "virtual_machine_templates_compute_site_id_fk", using: :btree
+  add_index "virtual_machine_templates", ["virtual_machine_id"], name: "virtual_machine_templates_virtual_machine_id_fk", using: :btree
+
+  create_table "virtual_machines", force: true do |t|
+    t.string   "id_at_site",      null: false
+    t.string   "name",            null: false
+    t.string   "state",           null: false
+    t.string   "ip"
+    t.integer  "compute_site_id", null: false
+    t.integer  "appliance_id",    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "virtual_machines", ["appliance_id"], name: "virtual_machines_appliance_id_fk", using: :btree
+  add_index "virtual_machines", ["compute_site_id"], name: "virtual_machines_compute_site_id_fk", using: :btree
+
   add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 
   add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
@@ -139,5 +175,11 @@ ActiveRecord::Schema.define(version: 20130821092133) do
   add_foreign_key "http_mappings", "port_mapping_templates", :name => "http_mappings_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
+
+  add_foreign_key "virtual_machine_templates", "compute_sites", :name => "virtual_machine_templates_compute_site_id_fk"
+  add_foreign_key "virtual_machine_templates", "virtual_machines", :name => "virtual_machine_templates_virtual_machine_id_fk"
+
+  add_foreign_key "virtual_machines", "appliances", :name => "virtual_machines_appliance_id_fk"
+  add_foreign_key "virtual_machines", "compute_sites", :name => "virtual_machines_compute_site_id_fk"
 
 end

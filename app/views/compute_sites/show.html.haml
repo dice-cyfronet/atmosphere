@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Site:
+  = @compute_site.site_id
+%p
+  %b Name:
+  = @compute_site.name
+%p
+  %b Location:
+  = @compute_site.location
+%p
+  %b Site type:
+  = @compute_site.site_type
+
+= link_to 'Edit', edit_compute_site_path(@compute_site)
+\|
+= link_to 'Back', compute_sites_path
