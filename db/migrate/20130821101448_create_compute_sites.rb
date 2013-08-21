@@ -1,7 +1,7 @@
 class CreateComputeSites < ActiveRecord::Migration
   def change
     create_table :compute_sites do |t|
-      t.string :site_id
+      t.string :site_id, unique: true
       t.string :name
       t.string :location
       t.string :site_type
