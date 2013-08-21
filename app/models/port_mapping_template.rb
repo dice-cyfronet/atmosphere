@@ -8,4 +8,8 @@ class PortMappingTemplate < ActiveRecord::Base
   enumerize :application_protocol, in: [:http, :https, :http_https, :none]
   enumerize :transport_protocol, in: [:tcp, :udp]
 
+  validates_inclusion_of :transport_protocol, in: %w(tcp udp)
+  validates_inclusion_of :application_protocol, in: %w(http https http_https), if: 'transport_protocol == "tcp"'
+  validates_inclusion_of :application_protocol, in: %w(none), if: 'transport_protocol == "udp"'
+
 end

@@ -34,6 +34,7 @@ describe ApplianceType do
   expect_it { to validate_uniqueness_of :name }
 
   expect_it { to ensure_inclusion_of(:visibility).in_array(%w(under_development unpublished published)) }
+
   # TODO this cannot be used due to https://github.com/thoughtbot/shoulda-matchers/issues/291
   # Uncomment when available
   #expect_it { to ensure_inclusion_of(:shared).in_array([true, false]) }
