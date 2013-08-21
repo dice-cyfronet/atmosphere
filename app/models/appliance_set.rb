@@ -3,6 +3,7 @@
 # Table name: appliance_sets
 #
 #  id                 :integer          not null, primary key
+#  name               :string(255)
 #  context_id         :string(255)      not null
 #  priority           :integer          default(50), not null
 #  appliance_set_type :string(255)      default("development"), not null
@@ -30,6 +31,6 @@ class ApplianceSet < ActiveRecord::Base
   # This should also make sure the referenced entity exists; but we still should make a foreign key constraint in DB
   validates :user, presence: true
 
-  has_many :appliances
+  has_many :appliances, dependent: :destroy
 
 end

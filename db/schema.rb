@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130820204024) do
+ActiveRecord::Schema.define(version: 20130821082650) do
 
   create_table "appliance_sets", force: true do |t|
     t.string   "name"
@@ -46,12 +46,25 @@ ActiveRecord::Schema.define(version: 20130820204024) do
 
   create_table "appliances", force: true do |t|
     t.integer  "appliance_set_id",  null: false
-    t.integer  "appliance_type_id"
+    t.integer  "appliance_type_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "appliances", ["appliance_set_id"], name: "appliances_appliance_set_id_fk", using: :btree
+  add_index "appliances", ["appliance_type_id"], name: "appliances_appliance_type_id_fk", using: :btree
+
+  create_table "port_mapping_templates", force: true do |t|
+    t.string   "transport_protocol",   default: "tcp",        null: false
+    t.string   "application_protocol", default: "http_https", null: false
+    t.string   "service_name",                                null: false
+    t.integer  "target_port",                                 null: false
+    t.integer  "appliance_type_id",                           null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "port_mapping_templates", ["appliance_type_id"], name: "port_mapping_templates_appliance_type_id_fk", using: :btree
 
   create_table "security_policies", force: true do |t|
     t.string   "name"
@@ -108,5 +121,8 @@ ActiveRecord::Schema.define(version: 20130820204024) do
   add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
 
   add_foreign_key "appliances", "appliance_sets", :name => "appliances_appliance_set_id_fk"
+  add_foreign_key "appliances", "appliance_types", :name => "appliances_appliance_type_id_fk"
+
+  add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
 
 end

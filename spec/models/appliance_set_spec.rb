@@ -3,6 +3,7 @@
 # Table name: appliance_sets
 #
 #  id                 :integer          not null, primary key
+#  name               :string(255)
 #  context_id         :string(255)      not null
 #  priority           :integer          default(50), not null
 #  appliance_set_type :string(255)      default("development"), not null
@@ -44,7 +45,7 @@ describe ApplianceSet do
 
   expect_it { to belong_to :user }
   expect_it { to validate_presence_of :user }
-  expect_it { to have_many :appliances }
+  expect_it { to have_many(:appliances).dependent(:destroy) }
 
   pending 'to be at most 1 development appliance set in the scope of specific User'
   #  ??? expect_it { to validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }

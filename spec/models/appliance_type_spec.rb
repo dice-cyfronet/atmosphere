@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: appliance_types
+#
+#  id                :integer          not null, primary key
+#  name              :string(255)      not null
+#  description       :text
+#  shared            :boolean          default(FALSE), not null
+#  scalable          :boolean          default(FALSE), not null
+#  visibility        :string(255)      default("under_development"), not null
+#  preference_cpu    :float
+#  preference_memory :integer
+#  preference_disk   :integer
+#  security_proxy_id :integer
+#  user_id           :integer
+#  created_at        :datetime
+#  updated_at        :datetime
+#
+
 require 'spec_helper'
 
 describe ApplianceType do
@@ -15,6 +34,7 @@ describe ApplianceType do
   expect_it { to validate_uniqueness_of :name }
 
   expect_it { to ensure_inclusion_of(:visibility).in_array(%w(under_development unpublished published)) }
+
   # TODO this cannot be used due to https://github.com/thoughtbot/shoulda-matchers/issues/291
   # Uncomment when available
   #expect_it { to ensure_inclusion_of(:shared).in_array([true, false]) }
@@ -35,8 +55,8 @@ describe ApplianceType do
   end
 
   expect_it { to have_many :appliances }
+  expect_it { to have_many(:port_mapping_templates).dependent(:destroy) }
 
-  pending 'should allow many PortMappingTemplates'
   pending 'should allow many ApplianceConfigurationTemplates'
   pending 'should allow many VirtualMachineTemplates'
 
