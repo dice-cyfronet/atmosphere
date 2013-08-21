@@ -11,17 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130821101540) do
+ActiveRecord::Schema.define(version: 20130821152426) do
 
   create_table "appliance_sets", force: true do |t|
     t.string   "name"
-    t.integer  "priority",           default: 50,         null: false
-    t.string   "appliance_set_type", default: "workflow", null: false
-    t.integer  "user_id",                                 null: false
+    t.string   "context_id",                                 null: false
+    t.integer  "priority",           default: 50,            null: false
+    t.string   "appliance_set_type", default: "development", null: false
+    t.integer  "user_id",                                    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "appliance_sets", ["context_id"], name: "index_appliance_sets_on_context_id", unique: true, using: :btree
   add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
 
   create_table "appliance_types", force: true do |t|
@@ -149,18 +151,22 @@ ActiveRecord::Schema.define(version: 20130821101540) do
   add_index "virtual_machine_templates", ["virtual_machine_id"], name: "virtual_machine_templates_virtual_machine_id_fk", using: :btree
 
   create_table "virtual_machines", force: true do |t|
-    t.string   "id_at_site",      null: false
-    t.string   "name",            null: false
-    t.string   "state",           null: false
+    t.string   "id_at_site",                  null: false
+    t.string   "name",                        null: false
+    t.string   "state",                       null: false
     t.string   "ip"
-    t.integer  "compute_site_id", null: false
-    t.integer  "appliance_id",    null: false
+    t.integer  "compute_site_id",             null: false
+    t.integer  "appliance_id",                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "source_template_id"
+    t.integer  "virtual_machine_template_id"
   end
 
   add_index "virtual_machines", ["appliance_id"], name: "virtual_machines_appliance_id_fk", using: :btree
   add_index "virtual_machines", ["compute_site_id"], name: "virtual_machines_compute_site_id_fk", using: :btree
+  add_index "virtual_machines", ["source_template_id"], name: "index_virtual_machines_on_source_template_id", using: :btree
+  add_index "virtual_machines", ["virtual_machine_template_id"], name: "index_virtual_machines_on_virtual_machine_template_id", using: :btree
 
   add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 
@@ -179,5 +185,6 @@ ActiveRecord::Schema.define(version: 20130821101540) do
 
   add_foreign_key "virtual_machines", "appliances", :name => "virtual_machines_appliance_id_fk"
   add_foreign_key "virtual_machines", "compute_sites", :name => "virtual_machines_compute_site_id_fk"
+  add_foreign_key "virtual_machines", "virtual_machine_templates", :name => "virtual_machines_virtual_machine_template_id_fk"
 
 end
