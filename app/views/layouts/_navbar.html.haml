@@ -1,22 +1,22 @@
-.navbar.navbar-fixed-top
+%header.navbar.navbar-fixed-top.navbar-default
+  .container
+    = link_to t('code_name'), root_path, class: 'navbar-brand'
 
-  = link_to t('code_name'), root_path, class: 'navbar-brand'
+    %ul.nav.navbar-nav
+      - [ApplianceSet, SecurityProxy, SecurityPolicy].each do |model|
+        = nav_link controller: model.name.tableize.to_sym do
+          = link_to model.model_name.human, [:admin, model]
 
-  %ul.nav.navbar-nav
-    - [ApplianceSet, SecurityProxy, SecurityPolicy].each do |model|
-      = nav_link controller: model.name.tableize.to_sym do
-        = link_to model.model_name.human, [:admin, model]
-
-  %ul.nav.navbar-nav.pull-right
-    %li
-      %a
-        %div.hide.turbolink-spinner
-          %i.icon-refresh.icon-spin
-          = t 'loading'
-    - if user_signed_in?
+    %ul.nav.navbar-nav.pull-right
       %li
-        = link_to help_path, class: "has_bottom_tooltip", title: t('help') do
-          %i.icon-question
-      %li
-        = link_to destroy_user_session_path, class: "has_bottom_tooltip", title: t('logout'), method: :delete do
-          %i.icon-signout
+        %a
+          %div.hide.turbolink-spinner
+            %i.icon-refresh.icon-spin
+            = t 'loading'
+      - if user_signed_in?
+        %li
+          = link_to help_path, class: "has_bottom_tooltip", title: t('help.title') do
+            %i.icon-question
+        %li
+          = link_to destroy_user_session_path, class: "has_bottom_tooltip", title: t('logout'), method: :delete do
+            %i.icon-signout

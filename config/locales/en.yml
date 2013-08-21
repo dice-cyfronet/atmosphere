@@ -22,7 +22,6 @@
 en:
   code_name: AIR
   logout: Logout
-  help: Help
   save: Save
   back: Back
   loading: Loading...
@@ -37,3 +36,6 @@ en:
     create_error: "Unable to create security policy"
     updated: "Security policy updated"
     update_error: "Unable to update security policy"
+  help:
+    title: Help
+    back: "Back to help"
