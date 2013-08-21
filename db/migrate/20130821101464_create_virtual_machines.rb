@@ -7,7 +7,7 @@ class CreateVirtualMachines < ActiveRecord::Migration
       t.string :ip
 
       t.references :compute_site,         null:false
-      t.references :appliance,            null:false
+      t.references :appliance
 
       t.timestamps
     end
