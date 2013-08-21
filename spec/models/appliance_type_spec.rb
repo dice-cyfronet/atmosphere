@@ -34,8 +34,9 @@ describe ApplianceType do
     expect(subject.scalable).to eql false
   end
 
+  expect_it { to have_many :appliances }
+
   pending 'should allow many PortMappingTemplates'
-  pending 'should allow many Appliances'
   pending 'should allow many ApplianceConfigurationTemplates'
   pending 'should allow many VirtualMachineTemplates'
 

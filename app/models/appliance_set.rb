@@ -27,6 +27,9 @@ class ApplianceSet < ActiveRecord::Base
 
 
   belongs_to :user
-  validates :user, presence: true  # This should also make sure the User exists
+  # This should also make sure the referenced entity exists; but we still should make a foreign key constraint in DB
+  validates :user, presence: true
+
+  has_many :appliances
 
 end
