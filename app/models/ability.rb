@@ -3,7 +3,16 @@ class Ability
 
   def initialize(user)
 
-    user ||= User.new # guest user (not logged in)
-    can :manage, :all
+    if user
+      if user.has_role? :developer
+        can :create, ApplianceSet, appliance_set_type: 'development'
+      end
+
+      can :create, ApplianceSet, appliance_set_type: 'portal'
+      can :create, ApplianceSet, appliance_set_type: 'workflow'
+      can [:index, :show, :update, :destroy], ApplianceSet, user_id: user.id
+
+      can :manage, :all if user.has_role? :admin
+    end
   end
 end

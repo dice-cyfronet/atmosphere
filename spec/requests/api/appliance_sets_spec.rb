@@ -3,7 +3,7 @@ require 'spec_helper'
 describe API::ApplianceSets do
   include ApiHelpers
 
-  let(:user) { create(:user) }
+  let(:user) { create(:developer) }
   let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
   let!(:workflow1_set) { create(:appliance_set, user: user, appliance_set_type: :workflow)}
 
@@ -46,7 +46,9 @@ describe API::ApplianceSets do
     end
 
     context 'when authenticated as user' do
+      let(:non_developer) { create(:user) }
       let(:new_appliance_set) { {name: 'my name', type: :workflow} }
+
       it 'returns 201 Created on success' do
         post api('/appliance_sets', user), new_appliance_set
         expect(response.status).to eq 201
@@ -75,6 +77,11 @@ describe API::ApplianceSets do
           post api('/appliance_sets', user), {name: 'second portal', type: :development}
           expect(response.status).to eq 400
         }.to change { ApplianceSet.count }.by(0)
+      end
+
+      it 'does not allow create development appliance set for non developer' do
+        post api('/appliance_sets', non_developer), {name: 'devel', type: :development}
+        expect(response.status).to eq 403
       end
     end
   end
