@@ -38,6 +38,19 @@ module API
       get ':id' do
         present appliance_set, with: Entities::ApplianceSet
       end
+
+      put ':id' do
+        attrs = attributes_for_keys [:name, :priority]
+        if appliance_set!.update(attrs)
+          present appliance_set!, with: Entities::ApplianceSet
+        else
+          bad_request!(:priority, new_set.errors[:priority].first)
+        end
+      end
+
+      delete ':id' do
+        appliance_set!.destroy
+      end
     end
   end
 end
