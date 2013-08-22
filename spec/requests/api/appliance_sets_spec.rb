@@ -97,7 +97,10 @@ describe API::ApplianceSets do
       end
     end
 
-    pending 'PUT /appliance_sets/{id}'
+    describe 'PUT /appliance_sets/{id}' do
+
+    end
+
     pending 'DELETE /appliance_sets/{id}'
     pending 'POST /appliance_sets/{id}/appliances'
   end

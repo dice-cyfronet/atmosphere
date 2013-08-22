@@ -1,9 +1,8 @@
 class VirtualMachinesController < ApplicationController
-  before_action :set_virtual_machine, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource :virtual_machine
 
   # GET /virtual_machines
   def index
-    @virtual_machines = VirtualMachine.all
   end
 
   # GET /virtual_machines/1
@@ -12,7 +11,6 @@ class VirtualMachinesController < ApplicationController
 
   # GET /virtual_machines/new
   def new
-    @virtual_machine = VirtualMachine.new
   end
 
   # GET /virtual_machines/1/edit
@@ -21,8 +19,6 @@ class VirtualMachinesController < ApplicationController
 
   # POST /virtual_machines
   def create
-    @virtual_machine = VirtualMachine.new(virtual_machine_params)
-
     if @virtual_machine.save
       redirect_to @virtual_machine, notice: 'Virtual machine was successfully created.'
     else
@@ -46,11 +42,6 @@ class VirtualMachinesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_virtual_machine
-      @virtual_machine = VirtualMachine.find(params[:id])
-    end
-
     # Only allow a trusted parameter "white list" through.
     def virtual_machine_params
       params.require(:virtual_machine).permit(:id_at_site, :name, :state, :ip)
