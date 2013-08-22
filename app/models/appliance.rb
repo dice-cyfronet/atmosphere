@@ -18,6 +18,9 @@ class Appliance < ActiveRecord::Base
   belongs_to :appliance_type
   validates :appliance_type, presence: true
 
+  belongs_to :appliance_configuration_instance
+  validates :appliance_configuration_instance, presence: true
+
   has_many :http_mappings, dependent: :destroy
 
   has_and_belongs_to_many :virtual_machines

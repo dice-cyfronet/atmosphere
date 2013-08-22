@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130822104747) do
+ActiveRecord::Schema.define(version: 20130822113955) do
+
+  create_table "appliance_configuration_instances", force: true do |t|
+    t.text     "payload"
+    t.integer  "appliance_configuration_template_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "appliance_configuration_instances", ["appliance_configuration_template_id"], name: "index_ac_instance_on_ac_template_id", using: :btree
 
   create_table "appliance_configuration_templates", force: true do |t|
     t.string   "name",              null: false
@@ -53,12 +62,14 @@ ActiveRecord::Schema.define(version: 20130822104747) do
   add_index "appliance_types", ["user_id"], name: "appliance_types_user_id_fk", using: :btree
 
   create_table "appliances", force: true do |t|
-    t.integer  "appliance_set_id",  null: false
-    t.integer  "appliance_type_id", null: false
+    t.integer  "appliance_set_id",                    null: false
+    t.integer  "appliance_type_id",                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "appliance_configuration_instance_id", null: false
   end
 
+  add_index "appliances", ["appliance_configuration_instance_id"], name: "index_appliances_on_appliance_configuration_instance_id", using: :btree
   add_index "appliances", ["appliance_set_id"], name: "appliances_appliance_set_id_fk", using: :btree
   add_index "appliances", ["appliance_type_id"], name: "appliances_appliance_type_id_fk", using: :btree
 
@@ -178,12 +189,15 @@ ActiveRecord::Schema.define(version: 20130822104747) do
     t.integer "appliance_id"
   end
 
+  add_foreign_key "appliance_configuration_instances", "appliance_configuration_templates", :name => "ac_instances_ac_template_id_fk"
+
   add_foreign_key "appliance_configuration_templates", "appliance_types", :name => "appliance_configuration_templates_appliance_type_id_fk"
 
   add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 
   add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
 
+  add_foreign_key "appliances", "appliance_configuration_instances", :name => "appliances_appliance_configuration_instance_id_fk"
   add_foreign_key "appliances", "appliance_sets", :name => "appliances_appliance_set_id_fk"
   add_foreign_key "appliances", "appliance_types", :name => "appliances_appliance_type_id_fk"
 

@@ -19,9 +19,11 @@ describe Appliance do
   expect_it { to belong_to :appliance_type }
   expect_it { to validate_presence_of :appliance_type }
 
+  expect_it { to belong_to :appliance_configuration_instance }
+  expect_it { to validate_presence_of :appliance_configuration_instance }
+
   expect_it { to have_many(:http_mappings).dependent(:destroy) }
 
   pending 'should support development mode relations'
   pending 'should require one or many VirtualMachines'
-  pending 'should require ApplianceConfigurationInstance'
 end
