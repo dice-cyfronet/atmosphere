@@ -1,7 +1,16 @@
-%h1 API
-
 .row
-  .col-md-3
-    = link_to help_path, class: 'btn btn-default btn-xs' do
-      %i.icon-angle-left
-      = t 'help.back'
+  .col-md-2
+    %h2
+      = link_to help_path, class: 'btn btn-default btn-xs' do
+        %i.icon-angle-left
+        = t 'help.back'
+      %span.pull-right API
+    %hr
+
+    #ul.nav.nav-pils.mav-stacked
+      - %w(README appliance_sets security_proxies security_policies).each do |file|
+        = nav_tab :category, file do
+          = link_to file.titleize, help_api_file_path(file)
+  .col-md-10
+    = preserve do
+      = markdown File.read(Rails.root.join("doc", "api", "#{@category}.md"))

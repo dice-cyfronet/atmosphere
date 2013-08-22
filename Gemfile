@@ -47,6 +47,11 @@ gem 'font-awesome-rails'
 gem 'grape'
 gem 'grape-entity'
 
+# rendering documentation
+gem 'redcarpet'
+gem 'github-markup', require: 'github/markup'
+
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false

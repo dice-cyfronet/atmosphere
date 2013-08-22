@@ -97,6 +97,7 @@ GEM
     foreigner (1.4.2)
       activerecord (>= 3.0.0)
     formatador (0.2.4)
+    github-markup (0.7.5)
     grape (0.5.0)
       activesupport
       builder
@@ -206,6 +207,7 @@ GEM
       ffi (>= 0.5.0)
     rdoc (3.12.2)
       json (~> 1.4)
+    redcarpet (3.0.0)
     require_all (1.2.1)
     role_model (0.8.1)
     rspec (2.14.1)
@@ -286,6 +288,7 @@ DEPENDENCIES
   ffaker
   font-awesome-rails
   foreigner
+  github-markup
   grape
   grape-entity
   guard-rspec
@@ -300,6 +303,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (= 4.0.0)
   rails_best_practices
+  redcarpet
   role_model
   rspec-rails
   sass-rails (~> 4.0.0)

@@ -14,7 +14,7 @@
             %i.icon-refresh.icon-spin
             = t 'loading'
       - if user_signed_in?
-        %li
+        = nav_link controller: :help do
           = link_to help_path, class: "has_bottom_tooltip", title: t('help.title') do
             %i.icon-question
         %li
