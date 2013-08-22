@@ -4,7 +4,6 @@
 #
 #  id                 :integer          not null, primary key
 #  name               :string(255)
-#  context_id         :string(255)      not null
 #  priority           :integer          default(50), not null
 #  appliance_set_type :string(255)      default("development"), not null
 #  user_id            :integer          not null
@@ -23,7 +22,7 @@ class ApplianceSet < ActiveRecord::Base
   validates :appliance_set_type, inclusion: %w(portal development workflow)
   validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
-  attr_readonly :context_id, :appliance_set_type
+  attr_readonly :appliance_set_type
 
 
   belongs_to :user

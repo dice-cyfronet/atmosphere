@@ -4,7 +4,6 @@
 #
 #  id                 :integer          not null, primary key
 #  name               :string(255)
-#  context_id         :string(255)      not null
 #  priority           :integer          default(50), not null
 #  appliance_set_type :string(255)      default("development"), not null
 #  user_id            :integer          not null
@@ -30,7 +29,6 @@ describe ApplianceSet do
   expect_it { to ensure_inclusion_of(:appliance_set_type).in_array(%w(development workflow portal)) }
 
   expect_it { to have_readonly_attribute :appliance_set_type }
-  expect_it { to have_readonly_attribute :context_id }
 
   expect_it { to have_db_index :user_id }
 
