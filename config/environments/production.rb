@@ -77,4 +77,12 @@ Air::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  #cors
+  config.middleware.use Rack::Cors do
+    allow do
+      origins '*.vph-share.eu'
+      resource '/api/v1/*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
+    end
+  end
 end

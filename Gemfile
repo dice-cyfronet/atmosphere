@@ -47,6 +47,9 @@ gem 'font-awesome-rails'
 gem 'grape'
 gem 'grape-entity'
 
+# Cross-Origin Resource Scharing for external UIs
+gem 'rack-cors', :require => 'rack/cors'
+
 # rendering documentation
 gem 'redcarpet'
 gem 'github-markup', require: 'github/markup'

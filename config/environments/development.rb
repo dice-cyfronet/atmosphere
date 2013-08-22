@@ -40,4 +40,12 @@ Air::Application.configure do
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::SecurityPolicies'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::Concerns::OwnedPayloads'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::Concerns::OwnedPayloadsHelpers'
+
+  #cors
+  config.middleware.use Rack::Cors do
+    allow do
+      origins '*'
+      resource '/api/v1/*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
+    end
+  end
 end
