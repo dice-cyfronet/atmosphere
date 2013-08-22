@@ -20,7 +20,7 @@ FactoryGirl.define do
   end
 
   factory :appliance_type do
-    name 'AT'
+    name { Faker::Lorem.words(10).join(' ') }
   end
 
   factory :security_proxy do |f|
@@ -31,5 +31,10 @@ FactoryGirl.define do
   factory :security_policy do |f|
     name 'security/policy'
     payload { Faker::Lorem.words(10).join(' ') }
+  end
+
+  factory :appliance_configuration_template do |f|
+    name { Faker::Lorem.words(10).join(' ') }
+    appliance_type
   end
 end

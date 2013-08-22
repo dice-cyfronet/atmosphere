@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130821152426) do
+ActiveRecord::Schema.define(version: 20130822104747) do
+
+  create_table "appliance_configuration_templates", force: true do |t|
+    t.string   "name",              null: false
+    t.text     "payload"
+    t.integer  "appliance_type_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "appliance_configuration_templates", ["appliance_type_id"], name: "index_appliance_configuration_templates_on_appliance_type_id", using: :btree
 
   create_table "appliance_sets", force: true do |t|
     t.string   "name"
@@ -167,6 +177,8 @@ ActiveRecord::Schema.define(version: 20130821152426) do
     t.integer "virtual_machine_id"
     t.integer "appliance_id"
   end
+
+  add_foreign_key "appliance_configuration_templates", "appliance_types", :name => "appliance_configuration_templates_appliance_type_id_fk"
 
   add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 

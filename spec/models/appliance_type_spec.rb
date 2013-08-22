@@ -56,8 +56,8 @@ describe ApplianceType do
 
   expect_it { to have_many :appliances }
   expect_it { to have_many(:port_mapping_templates).dependent(:destroy) }
+  expect_it { to have_many(:appliance_configuration_templates).dependent(:destroy) }
 
-  pending 'should allow many ApplianceConfigurationTemplates'
   pending 'should allow many VirtualMachineTemplates'
 
 end
