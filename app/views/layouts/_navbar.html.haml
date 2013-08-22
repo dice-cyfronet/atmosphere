@@ -3,9 +3,10 @@
     = link_to t('code_name'), root_path, class: 'navbar-brand'
 
     %ul.nav.navbar-nav
-      - [ApplianceSet, SecurityProxy, SecurityPolicy].each do |model|
-        = nav_link controller: model.name.tableize.to_sym do
-          = link_to model.model_name.human, [:admin, model]
+      - if current_user.has_role? :admin
+        - [ApplianceSet, SecurityProxy, SecurityPolicy].each do |model|
+          = nav_link controller: model.name.tableize.to_sym do
+            = link_to model.model_name.human, [:admin, model]
 
     %ul.nav.navbar-nav.pull-right
       %li
