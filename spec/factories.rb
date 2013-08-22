@@ -6,6 +6,12 @@ FactoryGirl.define do
     password '12345678'
     password_confirmation { password }
     authentication_token { login }
+
+    trait :developer do
+      roles [:developer]
+    end
+
+    factory :developer, traits: [:developer]
   end
 
   factory :appliance_set do |f|

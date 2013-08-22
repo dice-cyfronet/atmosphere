@@ -207,6 +207,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     require_all (1.2.1)
+    role_model (0.8.1)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -299,6 +300,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (= 4.0.0)
   rails_best_practices
+  role_model
   rspec-rails
   sass-rails (~> 4.0.0)
   sdoc

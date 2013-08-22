@@ -38,6 +38,10 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :security_proxies
   has_and_belongs_to_many :security_policies
 
+    #roles
+  include RoleModel
+  roles :admin, :developer
+
   def to_s
     "#{login} <#{email}>"
   end

@@ -37,6 +37,7 @@ gem 'simple_form', '~>3.0.0.rc'
 # Security
 gem 'devise', '~>3.0.0'
 gem 'cancan'
+gem 'role_model'
 
 gem 'haml-rails'
 gem 'bootstrap-sass', :git => 'git://github.com/thomas-mcdonald/bootstrap-sass.git', :branch => '3'

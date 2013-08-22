@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 20130821152426) do
     t.string   "authentication_token"
     t.string   "email",                  default: "", null: false
     t.string   "full_name"
+    t.integer  "roles_mask"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

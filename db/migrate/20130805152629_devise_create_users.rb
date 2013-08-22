@@ -38,6 +38,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string :email,              null: false, default: ''
       t.string :full_name
 
+      t.integer :roles_mask
 
       t.timestamps
     end
