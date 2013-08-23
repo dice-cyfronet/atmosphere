@@ -13,7 +13,7 @@ module API
 
       def appliance_set!(action)
         not_found! ApplianceSet unless appliance_set
-        render_api_error! "You are not allowed to #{action} this appliance set", 403 unless can? action, appliance_set
+        render_api_error! I18n.t('api.e403', action: action, type: 'appliance set'), 403 unless can? action, appliance_set
         appliance_set
       end
     end

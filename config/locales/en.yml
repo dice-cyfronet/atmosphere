@@ -39,3 +39,6 @@ en:
   help:
     title: Help
     back: "Back to help"
+
+  api:
+    e403: "You are not allowed to %{action} this %{type}"
