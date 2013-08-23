@@ -35,10 +35,13 @@ module API
 
         put ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
           authenticate!
-          user_owned_payload!.payload = params[:payload] if params[:payload]
-          user_owned_payload!.users = owners if params[:owners]
+          owned_payload = user_owned_payload!
+          owned_payload.payload = params[:payload] if params[:payload]
+          owned_payload.users = owners if params[:owners]
 
-          present user_owned_payload!, with: Entities::OwnedPayload
+          if owned_payload.save
+            present user_owned_payload!, with: Entities::OwnedPayload
+          end
         end
 
         delete ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do

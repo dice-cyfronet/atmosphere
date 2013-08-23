@@ -123,6 +123,8 @@ module OwnedPayloadTests
         it 'updates owned payload payload' do
           new_payload = 'new payload'
           put api("/#{owned_payload_path}/#{owned_payload1.name}", owner1), {payload: new_payload}
+          updated_owned_payload = owned_payload_class.find(owned_payload1.id)
+          expect(updated_owned_payload.payload).to eq new_payload
           expect(json_response['payload']).to eq new_payload
         end
 
