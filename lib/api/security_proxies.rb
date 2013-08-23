@@ -3,16 +3,8 @@ module API
     include ::API::Concerns::OwnedPayloadsHelpers
 
     helpers do
-      def owned_payload(name)
-        @proxy ||= SecurityProxy.where(name: name).first
-      end
-
-      def new_owned_payload(attrs)
-        SecurityProxy.new attrs
-      end
-
-      def all
-        SecurityProxy.all
+      def owned_payload_class
+        SecurityProxy
       end
     end
 
