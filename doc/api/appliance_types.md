@@ -53,8 +53,8 @@ Parameters:
 + `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scalled up or down.
 + `visiblity` (optional) - `unpublished` - appliance type can be used only in appliance sets started in development mode / `published` - appliance type is production ready.
 + `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type.
-+ `preference_memory` (optional) - hint for optimalized to determine memory required by the application installed on appliance type.
-+ `preference_disk` (optional) - hint for optimalized to determine disk space required by the application installed on appliance type.
++ `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type.
++ `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type.
 
 ## Delete appliance type
 
