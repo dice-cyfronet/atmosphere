@@ -149,6 +149,11 @@ describe API::ApplianceSets do
           delete api("/appliance_sets/#{portal_set.id}", user)
         }.to change { ApplianceSet.count }.by(-1)
       end
+
+      it 'returns 200 even when appliance set not exist' do
+        delete api("/appliance_sets/non_existing", user)
+        expect(response.status).to eq 200
+      end
     end
   end
 

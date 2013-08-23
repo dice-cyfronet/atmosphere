@@ -8,13 +8,16 @@ module API
       end
 
       def appliance_set
-        @appliance_set ||= ApplianceSet.find(params[:id])
+        @appliance_set ||= ApplianceSet.where(id: params[:id]).first
       end
 
-      def appliance_set!(action)
-        not_found! ApplianceSet unless appliance_set
-        render_api_error! I18n.t('api.e403', action: action, type: 'appliance set'), 403 unless can? action, appliance_set
-        appliance_set
+      def appliance_set!(action, check_not_found=true)
+        if appliance_set
+          render_api_error! I18n.t('api.e403', action: action, type: 'appliance set'), 403 unless can? action, appliance_set
+          appliance_set
+        else
+          not_found! ApplianceType if check_not_found
+        end
       end
     end
 
@@ -54,7 +57,8 @@ module API
       end
 
       delete ':id' do
-        appliance_set!(:destroy).destroy
+        appliance_set = appliance_set!(:destroy, false)
+        appliance_set.destroy if appliance_set
       end
     end
   end
