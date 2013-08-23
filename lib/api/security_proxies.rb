@@ -4,7 +4,7 @@ module API
 
     helpers do
       def owned_payload(name)
-        @proxy ||= SecurityProxy.find_by(name: name)
+        @proxy ||= SecurityProxy.where(name: name).first
       end
 
       def new_owned_payload(attrs)

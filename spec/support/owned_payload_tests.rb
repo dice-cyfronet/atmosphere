@@ -161,6 +161,11 @@ module OwnedPayloadTests
             expect(response.status).to eq 200
           end
 
+          it 'return 200 even when owned payload is not found' do
+            delete api("/#{owned_payload_path}/non_existing", owner1)
+            expect(response.status).to eq 200
+          end
+
           it 'returns 403 Forbidden when user is not owned payload owner' do
             delete api("/#{owned_payload_path}/#{owned_payload2.name}", owner2)
             expect(response.status).to eq 403

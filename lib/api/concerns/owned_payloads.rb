@@ -47,7 +47,8 @@ module API
 
         delete ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
           authenticate!
-          user_owned_payload!.destroy
+          owned_payload = user_owned_payload!(false)
+          owned_payload.destroy if owned_payload
         end
       end
     end
