@@ -30,6 +30,7 @@ curl --header "PRIVATE-TOKEN: FSGa2df2gSdfg" "http://example.com/api/v1/applianc
 
 ## Contents
 
++ [Appliance Types](appliance_types)
 + [Appliance Sets](appliance_sets)
 + [Security Proxies](security_proxies)
 + [Security Policies](security_policies)
