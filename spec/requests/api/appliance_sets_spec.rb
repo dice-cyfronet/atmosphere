@@ -105,53 +105,53 @@ describe API::ApplianceSets do
         expect(json_response).to appliance_set_eq portal_set
       end
     end
-
-    describe 'PUT /appliance_sets/{id}' do
-      context 'when unauthenticated' do
-        it 'returns 401 Unauthorized error' do
-          put api("/appliance_sets/#{portal_set.id}")
-          expect(response.status).to eq 401
-        end
-      end
-
-      context 'when authenticated as user' do
-        it 'returns 200 on success' do
-          put api("/appliance_sets/#{portal_set.id}", user), {name: 'updated', priority: 99}
-          expect(response.status).to eq 200
-        end
-
-        it 'changes name and priority' do
-          put api("/appliance_sets/#{portal_set.id}", user), {name: 'updated', priority: 99}
-          set = ApplianceSet.find(portal_set.id)
-          expect(set.name).to eq 'updated'
-          expect(set.priority).to eq 99
-        end
-      end
-    end
-
-    describe 'DELETE /appliance_sets/{id}' do
-      context 'when unauthenticated' do
-        it 'returns 401 Unauthorized error' do
-          delete api("/appliance_sets/#{portal_set.id}")
-          expect(response.status).to eq 401
-        end
-      end
-
-      context 'when authenticated as user' do
-        it 'returns 200 on success' do
-          delete api("/appliance_sets/#{portal_set.id}", user)
-          expect(response.status).to eq 200
-        end
-
-        it 'deletes appliance set' do
-          expect {
-            delete api("/appliance_sets/#{portal_set.id}", user)
-          }.to change { ApplianceSet.count }.by(-1)
-        end
-      end
-    end
-
-
-    pending 'POST /appliance_sets/{id}/appliances'
   end
+
+  describe 'PUT /appliance_sets/{id}' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        put api("/appliance_sets/#{portal_set.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 on success' do
+        put api("/appliance_sets/#{portal_set.id}", user), {name: 'updated', priority: 99}
+        expect(response.status).to eq 200
+      end
+
+      it 'changes name and priority' do
+        put api("/appliance_sets/#{portal_set.id}", user), {name: 'updated', priority: 99}
+        set = ApplianceSet.find(portal_set.id)
+        expect(set.name).to eq 'updated'
+        expect(set.priority).to eq 99
+      end
+    end
+  end
+
+  describe 'DELETE /appliance_sets/{id}' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        delete api("/appliance_sets/#{portal_set.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 on success' do
+        delete api("/appliance_sets/#{portal_set.id}", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'deletes appliance set' do
+        expect {
+          delete api("/appliance_sets/#{portal_set.id}", user)
+        }.to change { ApplianceSet.count }.by(-1)
+      end
+    end
+  end
+
+
+  pending 'POST /appliance_sets/{id}/appliances'
 end
