@@ -28,8 +28,7 @@ module API
           if new_owned_payload.save
             present new_owned_payload, with: Entities::OwnedPayload
           else
-            bad_request!(:name, new_owned_payload.errors[:name].first) if new_owned_payload.errors[:name]
-            bad_request!(:payload, new_owned_payload.errors[:payload].first) if new_owned_payload.errors[:payload]
+            entity_error! new_owned_payload
           end
         end
 
@@ -41,6 +40,8 @@ module API
 
           if owned_payload.save
             present user_owned_payload!, with: Entities::OwnedPayload
+          else
+            entity_error! new_owned_payload
           end
         end
 
