@@ -23,12 +23,12 @@ guard :rspec do
 end
 
 
-guard 'spinach' do
-  watch(%r|^features/(.*)\.feature|)
-  watch(%r|^features/steps/(.*)([^/]+)\.rb|) do |m|
-    "features/#{m[1]}#{m[2]}.feature"
-  end
-end
+#guard 'spinach' do
+#  watch(%r|^features/(.*)\.feature|)
+#  watch(%r|^features/steps/(.*)([^/]+)\.rb|) do |m|
+#    "features/#{m[1]}#{m[2]}.feature"
+#  end
+#end
 
 guard 'spork', :cucumber_env => { 'RAILS_ENV' => 'test' }, :rspec_env => { 'RAILS_ENV' => 'test' } do
   watch('config/application.rb')
