@@ -11,7 +11,12 @@ FactoryGirl.define do
       roles [:developer]
     end
 
+    trait :admin do
+      roles [:admin]
+    end
+
     factory :developer, traits: [:developer]
+    factory :admin, traits: [:admin]
   end
 
   factory :appliance_set do |f|

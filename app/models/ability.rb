@@ -15,6 +15,7 @@ class Ability
 
       ## Appliance types
       can [:index, :show], ApplianceType
+      can [:update], ApplianceType, user_id: user.id
 
       can :manage, :all if user.has_role? :admin
     end

@@ -47,3 +47,17 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
     end
   end
 end
+
+RSpec::Matchers.define :to_be_updated_by do |expected|
+  match do |actual|
+    actual.name == expected[:name] if expected[:name]
+    actual.description == expected[:description] if expected[:description]
+    actual.shared == expected[:shared] if expected[:shared]
+    actual.scalable == expected[:scalable] if expected[:scalable]
+    actual.visibility == expected[:visibility] if expected[:visibility]
+    actual.preference_cpu == expected[:preference_cpu] if expected[:preference_cpu]
+    actual.preference_memory == expected[:preference_memory] if expected[:preference_memory]
+    actual.preference_disk == expected[:preference_disk] if expected[:preference_disk]
+    actual.security_proxy.name == expected[:security_proxy] if expected[:security_proxy]
+  end
+end

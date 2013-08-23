@@ -45,6 +45,10 @@ module API
       render_api_error!(message.join(' '), 400)
     end
 
+    def entity_errors!(entity)
+      error!(entity.errors, 400)
+    end
+
     def attributes_for_keys(keys)
       attrs = {}
       keys.each do |key|
