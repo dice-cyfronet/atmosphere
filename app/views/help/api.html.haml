@@ -7,7 +7,7 @@
       %span.pull-right API
     %hr
 
-    #ul.nav.nav-pils.mav-stacked
+    #ul.nav.nav-pills.nav-stacked
       - %w(README appliance_types appliance_sets security_proxies security_policies).each do |file|
         = nav_tab :category, file do
           = link_to file.titleize, help_api_file_path(file)
