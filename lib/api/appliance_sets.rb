@@ -33,7 +33,7 @@ module API
           if new_set.save
             present new_set, with: Entities::ApplianceSet
           else
-            bad_request!(:appliance_set_type, new_set.errors[:appliance_set_type].first) if new_set.errors[:appliance_set_type]
+            entity_errors!(new_set)
           end
         else
           render_api_error! 'You are not allowed to create this type of appliance set', 403
@@ -49,7 +49,7 @@ module API
         if appliance_set!(:update).update(attrs)
           present appliance_set!(:show), with: Entities::ApplianceSet
         else
-          bad_request!(:priority, new_set.errors[:priority].first)
+          entity_errors!(new_set)
         end
       end
 
