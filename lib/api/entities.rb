@@ -15,5 +15,16 @@ module API
         appliance_set.appliance_set_type
       end
     end
+
+    class ApplianceType < Grape::Entity
+      expose :id, :name, :description, :shared, :scalable, :visibility
+      expose :preference_cpu, :preference_memory, :preference_disk
+      expose :author do |appliance_type, options|
+        appliance_type.author.login if appliance_type.author
+      end
+      expose :security_proxy do |appliance_type, options|
+        appliance_type.security_proxy.name if appliance_type.security_proxy
+      end
+    end
   end
 end

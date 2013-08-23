@@ -38,6 +38,7 @@ Air::Application.configure do
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::API'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'APIHelpers'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::ApplianceSets'
+  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::ApplianceTypes'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::SecurityProxies'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::SecurityPolicies'
   ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::Concerns::OwnedPayloads'

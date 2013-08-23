@@ -20,3 +20,30 @@ RSpec::Matchers.define :appliance_set_eq do |expected|
     actual['type'] == expected.appliance_set_type.to_s
   end
 end
+
+RSpec::Matchers.define :appliance_type_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id
+    actual['name'] == expected.name
+    actual['description'] == expected.description
+    actual['shared'] == expected.shared
+    actual['scalable'] == expected.scalable
+    actual['visibility'] == expected.visibility
+
+    actual['preference_cpu'] == expected.preference_cpu
+    actual['preference_memory'] == expected.preference_memory
+    actual['preference_disk'] == expected.preference_disk
+
+    if expected.author
+      actual['author'] == expected.author.login
+    else
+      actual['author'] == nil
+    end
+
+    if expected.security_proxy
+      actual['security_proxy'] == expected.security_proxy.name
+    else
+      actual['security_proxy'] == nil
+    end
+  end
+end
