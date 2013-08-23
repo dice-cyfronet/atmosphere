@@ -164,8 +164,10 @@ describe API::ApplianceSets do
       end
 
       it 'returns 403 when deleting not owned appliance set' do
-        delete api("/appliance_sets/#{portal_set.id}", different_user)
-        expect(response.status).to eq 403
+        expect {
+          delete api("/appliance_sets/#{portal_set.id}", different_user)
+          expect(response.status).to eq 403
+        }.to change { ApplianceSet.count }.by(0)
       end
     end
   end
