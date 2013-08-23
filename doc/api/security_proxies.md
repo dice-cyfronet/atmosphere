@@ -10,8 +10,8 @@ GET /security_proxies
 [
     {
         "name": "foobar/security/proxy",
-        "payload": 'Security proxy payload',
-        "owners": ['marek', 'tomek', 'piotr']
+        "payload": "Security proxy payload",
+        "owners": ["marek", "tomek", "piotr"]
     }
 ]
 ```

@@ -10,8 +10,8 @@ GET /security_policies
 [
     {
         "name": "foobar/security/policy",
-        "payload": 'Security policy payload',
-        "owners": ['marek', 'tomek', 'piotr']
+        "payload": "Security policy payload",
+        "owners": ["marek", "tomek", "piotr"]
     }
 ]
 ```
