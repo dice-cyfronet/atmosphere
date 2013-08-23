@@ -3,12 +3,15 @@ require 'spec_helper'
 describe API::ApplianceSets do
   include ApiHelpers
 
-  let(:user) { create(:developer) }
-  let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
+  let(:user)           { create(:developer) }
+  let(:different_user) { create(:user) }
+  let(:admin)          { create(:admin) }
+
+  let!(:portal_set)    { create(:appliance_set, user: user, appliance_set_type: :portal)}
   let!(:workflow1_set) { create(:appliance_set, user: user, appliance_set_type: :workflow)}
 
   describe 'GET /appliance_sets' do
-    let!(:workflow2_set) { create(:appliance_set, user: user, appliance_set_type: :workflow)}
+    let!(:workflow2_set)   { create(:appliance_set, user: user, appliance_set_type: :workflow)}
     let!(:development_set) { create(:appliance_set, user: user, appliance_set_type: :development)}
 
     context 'when unauthenticated' do
@@ -153,6 +156,16 @@ describe API::ApplianceSets do
       it 'returns 200 even when appliance set not exist' do
         delete api("/appliance_sets/non_existing", user)
         expect(response.status).to eq 200
+      end
+
+      it 'admin deletes appliance set even when no set owner' do
+        delete api("/appliance_sets/non_existing", admin)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns 403 when deleting not owned appliance set' do
+        delete api("/appliance_sets/#{portal_set.id}", different_user)
+        expect(response.status).to eq 403
       end
     end
   end
