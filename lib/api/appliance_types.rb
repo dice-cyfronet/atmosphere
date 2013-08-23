@@ -8,13 +8,16 @@ module API
       end
 
       def appliance_type
-        @appliance_set ||= ApplianceType.find(params[:id])
+        @appliance_set ||= ApplianceType.where(id: params[:id]).first
       end
 
-      def appliance_type!(action)
-        not_found! ApplianceSet unless appliance_type
-        render_api_error! I18n.t('api.e403', action: action, type: 'appliance type'), 403 unless can? action, appliance_type
-        appliance_type
+      def appliance_type!(action, check_not_found=true)
+        if appliance_type
+          render_api_error! I18n.t('api.e403', action: action, type: 'appliance type'), 403 unless can? action, appliance_type
+          appliance_type
+        else
+          not_found! ApplianceSet if check_not_found
+        end
       end
 
       def security_proxy!
@@ -42,6 +45,11 @@ module API
         else
           entity_errors!(appliance_type)
         end
+      end
+
+      delete ':id' do
+        appliance_type = appliance_type!(:destroy, false)
+        appliance_type.destroy if appliance_type
       end
     end
   end

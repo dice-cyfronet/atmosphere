@@ -3,8 +3,12 @@ require 'spec_helper'
 describe API::ApplianceTypes do
   include ApiHelpers
 
-  let(:user) { create(:user) }
+  let(:user)           { create(:user) }
+  let(:different_user) { create(:user) }
+  let(:admin)          { create(:admin) }
+
   let(:security_proxy) { create(:security_proxy) }
+
   let!(:at1) { create(:appliance_type, author: user, security_proxy: security_proxy) }
   let!(:at2) { create(:appliance_type) }
 
@@ -64,8 +68,6 @@ describe API::ApplianceTypes do
 
   describe 'PUT /appliance_types/:id' do
     let(:different_security_proxy) { create(:security_proxy, name: 'different/one') }
-    let(:different_user) { create(:user) }
-    let(:admin) { create(:admin) }
 
     let(:update_json) do {
         name: 'new name',
@@ -122,5 +124,43 @@ describe API::ApplianceTypes do
     end
   end
 
-  pending 'DELETE /appliance_types/:id'
+  describe 'DELETE /appliance_types/:id' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        delete api("/appliance_types/#{at1.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 Success' do
+        delete api("/appliance_types/#{at1.id}", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'deletes appliance type' do
+        expect {
+          delete api("/appliance_types/#{at1.id}", user)
+        }.to change { ApplianceType.count }.by(-1)
+      end
+
+      it 'admin deletes appliance type even if no owner' do
+        expect {
+          delete api("/appliance_types/#{at1.id}", admin)
+        }.to change { ApplianceType.count }.by(-1)
+      end
+
+      it 'returns 200 even if appliance type non exist' do
+        delete api("/appliance_types/non_existing", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns 403 when user is not and appliance type owner' do
+        expect {
+          delete api("/appliance_types/#{at1.id}", different_user)
+          expect(response.status).to eq 403
+        }.to change { ApplianceType.count }.by(0)
+      end
+    end
+  end
 end
