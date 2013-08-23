@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: appliance_configuration_instances
+#
+#  id         :integer          not null, primary key
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 require 'spec_helper'
 
 describe ApplianceConfigurationInstance do

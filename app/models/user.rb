@@ -16,6 +16,7 @@
 #  authentication_token   :string(255)
 #  email                  :string(255)      default(""), not null
 #  full_name              :string(255)
+#  roles_mask             :integer
 #  created_at             :datetime
 #  updated_at             :datetime
 #

@@ -3,8 +3,8 @@
 # Table name: appliances
 #
 #  id                :integer          not null, primary key
-#  appliance_set_id  :integer
-#  appliance_type_id :integer
+#  appliance_set_id  :integer          not null
+#  appliance_type_id :integer          not null
 #  created_at        :datetime
 #  updated_at        :datetime
 #
