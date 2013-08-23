@@ -11,11 +11,11 @@ module API
         get ':name/payload', requirements: { name: /#{OwnedPayloable.name_regex}/ } do
           env['api.format'] = :text
           content_type "text/plain"
-          owned_payload!.payload
+          owned_payload!(:show).payload
         end
 
         get ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
-          present owned_payload!, with: Entities::OwnedPayload
+          present owned_payload!(:show), with: Entities::OwnedPayload
         end
 
         post do
@@ -34,12 +34,12 @@ module API
 
         put ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
           authenticate!
-          owned_payload = user_owned_payload!
+          owned_payload = owned_payload!(:update)
           owned_payload.payload = params[:payload] if params[:payload]
           owned_payload.users = owners if params[:owners]
 
           if owned_payload.save
-            present user_owned_payload!, with: Entities::OwnedPayload
+            present owned_payload!(:show), with: Entities::OwnedPayload
           else
             entity_error! new_owned_payload
           end
@@ -47,7 +47,7 @@ module API
 
         delete ':name', requirements: { name: /#{OwnedPayloable.name_regex}\z/ } do
           authenticate!
-          owned_payload = user_owned_payload!(false)
+          owned_payload = owned_payload!(:destroy, false)
           owned_payload.destroy if owned_payload
         end
       end

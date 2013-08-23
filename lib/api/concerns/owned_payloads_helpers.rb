@@ -14,6 +14,8 @@ module API
           end
 
           def all
+            render_api_error! I18n.t('api.e403', action: 'list', type: 'resource'), 403 unless can? :index, owned_payload_class
+
             owned_payload_class.all
           end
 
@@ -22,24 +24,18 @@ module API
           end
 
           def new_owned_payload(attrs)
+            render_api_error! I18n.t('api.e403', action: 'create', type: 'resource'), 403 unless can? :new, owned_payload_class
+
             owned_payload_class.new attrs
           end
 
-          def owned_payload!(check_not_found=true)
+          def owned_payload!(action, check_not_found=true)
             found_owned_payload = owned_payload(params[:name])
             if found_owned_payload
+              render_api_error! I18n.t('api.e403', action: action, type: 'resource'), 403 unless can? action, found_owned_payload
               found_owned_payload
             else
               not_found! if check_not_found
-            end
-          end
-
-          def user_owned_payload!(check_not_found=true)
-            owned_payload = owned_payload!(check_not_found)
-            if owned_payload.blank? or owned_payload.users.include? current_user
-              owned_payload
-            else
-              render_api_error!('You are not an owner of this policy', 403)
             end
           end
         end
