@@ -21,4 +21,6 @@ Air::Application.routes.draw do
   get 'help' => 'help#index'
   get 'help/api' => 'help#api'
   get 'help/api/:category'  => 'help#api', as: 'help_api_file'
+
+  get 'static' => 'static#index'
 end

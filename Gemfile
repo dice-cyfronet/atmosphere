@@ -47,6 +47,11 @@ gem 'font-awesome-rails'
 gem 'grape'
 gem 'grape-entity'
 
+gem 'ember-rails'
+gem 'ember-source', '1.0.0.rc7'
+gem 'handlebars-source', '~> 1.0.12'
+gem 'showdown-rails'
+
 # Cross-Origin Resource Scharing for external UIs
 gem 'rack-cors', :require => 'rack/cors'
 
