@@ -1,0 +1,14 @@
+%h1
+  = hb 'name'
+  %small.text-muted
+    by
+    = hb 'author'
+  = hb 'unless isEditing' do
+    .pull-right
+      %button.btn.btn-success{hb: "action 'edit'", title: 'Edit'}
+        %i.icon-edit
+      %button.btn.btn-danger{hb: "action 'delete'", title: "Delete"}
+        %i.icon-trash
+%hr
+.description
+  = hb 'markdown description'

@@ -50,6 +50,9 @@ gem 'grape-entity'
 gem 'ember-rails'
 gem 'ember-source', '1.0.0.rc7'
 gem 'handlebars-source', '~> 1.0.12'
+gem 'hamlbars', '~> 2.0'
+
+#markdown in js
 gem 'showdown-rails'
 
 # Cross-Origin Resource Scharing for external UIs

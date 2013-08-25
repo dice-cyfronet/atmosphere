@@ -1,0 +1,10 @@
+%form{role: "form"}
+  .form-group
+    %label{for: "name"} Name
+    =hb "view Ember.TextField valueBinding='name' class='form-control'"
+  .form-group
+    %label{for: "author"} Name
+    = hb "view Ember.TextField valueBinding='author' class='form-control'"
+  .form-group
+    %label{for: "description"} Name
+    =hb "view Ember.TextArea valueBinding='description' class='form-control' rows='4'"

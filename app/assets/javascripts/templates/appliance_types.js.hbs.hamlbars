@@ -1,0 +1,17 @@
+.appliance_types
+  .row
+    .col-md-3
+      %table.table
+        %thead
+          %tr
+            %th Appliance Types
+        = hb 'each model' do
+          %tr
+            %td
+              = hb 'linkTo "appliance_type" this' do
+                = hb 'name'
+                %small.text-muted
+                  by
+                  = hb 'author'
+    .col-md-9
+      = hb 'outlet'
