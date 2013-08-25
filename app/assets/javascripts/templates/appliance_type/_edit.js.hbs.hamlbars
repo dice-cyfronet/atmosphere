@@ -3,8 +3,8 @@
     %label{for: "name"} Name
     =hb "view Ember.TextField valueBinding='name' class='form-control'"
   .form-group
-    %label{for: "author"} Name
+    %label{for: "author"} Author
     = hb "view Ember.TextField valueBinding='author' class='form-control'"
   .form-group
-    %label{for: "description"} Name
+    %label{for: "description"} Description
     =hb "view Ember.TextArea valueBinding='description' class='form-control' rows='4'"
