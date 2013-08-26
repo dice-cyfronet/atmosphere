@@ -192,10 +192,12 @@ ActiveRecord::Schema.define(version: 20130826095045) do
     t.string   "state",              null: false
     t.integer  "compute_site_id",    null: false
     t.integer  "virtual_machine_id"
+    t.integer  "appliance_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "virtual_machine_templates", ["appliance_type_id"], name: "virtual_machine_templates_appliance_type_id_fk", using: :btree
   add_index "virtual_machine_templates", ["compute_site_id"], name: "virtual_machine_templates_compute_site_id_fk", using: :btree
   add_index "virtual_machine_templates", ["virtual_machine_id"], name: "virtual_machine_templates_virtual_machine_id_fk", using: :btree
 
@@ -240,6 +242,7 @@ ActiveRecord::Schema.define(version: 20130826095045) do
 
   add_foreign_key "user_keys", "users", :name => "user_keys_user_id_fk"
 
+  add_foreign_key "virtual_machine_templates", "appliance_types", :name => "virtual_machine_templates_appliance_type_id_fk"
   add_foreign_key "virtual_machine_templates", "compute_sites", :name => "virtual_machine_templates_compute_site_id_fk"
   add_foreign_key "virtual_machine_templates", "virtual_machines", :name => "virtual_machine_templates_virtual_machine_id_fk"
 

@@ -26,6 +26,7 @@ class ApplianceType < ActiveRecord::Base
   has_many :appliances
   has_many :port_mapping_templates, dependent: :destroy
   has_many :appliance_configuration_templates, dependent: :destroy
+  has_many :virtual_machine_templates
 
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name
