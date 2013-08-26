@@ -16,5 +16,8 @@
 require 'spec_helper'
 
 describe VirtualMachine do
+
+  expect_it { to have_many :port_mappings }
+
   pending "add some examples to (or delete) #{__FILE__}"
 end
