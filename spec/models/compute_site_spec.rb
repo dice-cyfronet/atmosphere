@@ -15,4 +15,7 @@ require 'spec_helper'
 
 describe ComputeSite do
   pending "add some examples to (or delete) #{__FILE__}"
+
+  expect_it { to have_many :port_mapping_properties }
+
 end

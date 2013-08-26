@@ -18,6 +18,8 @@ class ComputeSite < ActiveRecord::Base
   validates :site_type, inclusion: %w(public private)
   validates :auth_method, inclusion: %w(password key rax-kskey)
   validates :technology, inclusion: %w(openstack amazon)
+
   has_many :virtual_machines
   has_many :virtual_machine_templates
+  has_many :port_mapping_properties
 end
