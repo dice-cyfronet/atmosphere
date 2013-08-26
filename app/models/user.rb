@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
 
   has_many :appliance_sets
   has_many :appliance_types
+  has_many :user_keys
   has_and_belongs_to_many :security_proxies
   has_and_belongs_to_many :security_policies
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130822113955) do
+ActiveRecord::Schema.define(version: 20130826080612) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
@@ -140,6 +140,17 @@ ActiveRecord::Schema.define(version: 20130822113955) do
     t.integer "security_proxy_id"
   end
 
+  create_table "user_keys", force: true do |t|
+    t.string   "name"
+    t.string   "fingerprint"
+    t.text     "public_key"
+    t.integer  "user_id",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_keys", ["user_id"], name: "user_keys_user_id_fk", using: :btree
+
   create_table "users", force: true do |t|
     t.string   "login",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -211,6 +222,8 @@ ActiveRecord::Schema.define(version: 20130822113955) do
   add_foreign_key "http_mappings", "port_mapping_templates", :name => "http_mappings_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
+
+  add_foreign_key "user_keys", "users", :name => "user_keys_user_id_fk"
 
   add_foreign_key "virtual_machine_templates", "compute_sites", :name => "virtual_machine_templates_compute_site_id_fk"
   add_foreign_key "virtual_machine_templates", "virtual_machines", :name => "virtual_machine_templates_virtual_machine_id_fk"
