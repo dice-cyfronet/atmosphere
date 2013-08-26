@@ -32,11 +32,6 @@ describe ApplianceType do
 
   expect_it { to ensure_inclusion_of(:visibility).in_array(%w(under_development unpublished published)) }
 
-  # TODO this cannot be used due to https://github.com/thoughtbot/shoulda-matchers/issues/291
-  # Uncomment when available
-  #expect_it { to ensure_inclusion_of(:shared).in_array([true, false]) }
-  #expect_it { to ensure_inclusion_of(:scalable).in_array([true, false]) }
-
   expect_it { to have_db_index(:name).unique(true) }
 
   [:preference_memory, :preference_disk, :preference_cpu].each do |attribute|
