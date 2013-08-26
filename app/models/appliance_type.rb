@@ -21,7 +21,7 @@ class ApplianceType < ActiveRecord::Base
   extend Enumerize
 
   belongs_to :security_proxy
-  belongs_to :author, :class_name => 'User', :foreign_key => 'user_id'
+  belongs_to :author, class_name: 'User', foreign_key: 'user_id'
 
   has_many :appliances
   has_many :port_mapping_templates, dependent: :destroy
@@ -31,8 +31,6 @@ class ApplianceType < ActiveRecord::Base
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name
 
-  # TODO Perhaps explicit default here is not needed when we have it in migrations; test and remove
-  #enumerize :visibility, in: [:under_development, :unpublished, :published], default: :under_development
   enumerize :visibility, in: [:under_development, :unpublished, :published]
 
   validates :visibility, inclusion: %w(under_development unpublished published)
