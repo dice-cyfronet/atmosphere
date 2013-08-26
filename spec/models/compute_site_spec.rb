@@ -23,4 +23,15 @@ describe ComputeSite do
 
   expect_it { to have_many :port_mapping_properties }
   expect_it { to ensure_inclusion_of(:site_type).in_array(%w(public private))}
+
+  context 'if technology is present' do
+    before { subject.technology = 'openstack' }
+    expect_it { to ensure_inclusion_of(:technology).in_array(%w(openstack amazon))}
+    expect_it { to be_valid }
+  end
+
+  context 'if technology is invalid' do
+    before { subject.technology = 'INVALID_TECHNOLOGY' }
+    expect_it { to be_invalid }
+  end
 end
