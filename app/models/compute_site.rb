@@ -20,6 +20,7 @@ class ComputeSite < ActiveRecord::Base
 
   # openstack specific
   validates :auth_method, inclusion: %w(password key rax-kskey), :allow_nil => true
+  
   validates :technology, inclusion: %w(openstack amazon)
 
   has_many :virtual_machines
