@@ -25,9 +25,6 @@ describe ApplianceType do
 
   expect_it { to be_valid }
 
-  expect_it { to belong_to :security_proxy }
-  expect_it { to belong_to :author }
-
   expect_it { to validate_presence_of :name }
   expect_it { to validate_presence_of :visibility }
 
@@ -54,10 +51,11 @@ describe ApplianceType do
     expect(subject.scalable).to eql false
   end
 
+  expect_it { to belong_to :security_proxy }
+  expect_it { to belong_to :author }
   expect_it { to have_many :appliances }
   expect_it { to have_many(:port_mapping_templates).dependent(:destroy) }
   expect_it { to have_many(:appliance_configuration_templates).dependent(:destroy) }
-
-  pending 'should allow many VirtualMachineTemplates'
+  expect_it { to have_many :virtual_machine_templates }
 
 end
