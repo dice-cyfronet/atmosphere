@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130826162855) do
+ActiveRecord::Schema.define(version: 20130826172414) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
@@ -135,6 +135,18 @@ ActiveRecord::Schema.define(version: 20130826162855) do
 
   add_index "port_mapping_templates", ["appliance_type_id"], name: "port_mapping_templates_appliance_type_id_fk", using: :btree
 
+  create_table "port_mappings", force: true do |t|
+    t.string   "public_ip",                null: false
+    t.integer  "source_port",              null: false
+    t.integer  "port_mapping_template_id", null: false
+    t.integer  "virtual_machine_id",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "port_mappings", ["port_mapping_template_id"], name: "port_mappings_port_mapping_template_id_fk", using: :btree
+  add_index "port_mappings", ["virtual_machine_id"], name: "port_mappings_virtual_machine_id_fk", using: :btree
+
   create_table "security_policies", force: true do |t|
     t.string   "name"
     t.text     "payload"
@@ -252,6 +264,9 @@ ActiveRecord::Schema.define(version: 20130826162855) do
   add_foreign_key "port_mapping_properties", "port_mapping_templates", :name => "port_mapping_properties_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
+
+  add_foreign_key "port_mappings", "port_mapping_templates", :name => "port_mappings_port_mapping_template_id_fk"
+  add_foreign_key "port_mappings", "virtual_machines", :name => "port_mappings_virtual_machine_id_fk"
 
   add_foreign_key "user_keys", "users", :name => "user_keys_user_id_fk"
 
