@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130826095045) do
+ActiveRecord::Schema.define(version: 20130826162855) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
@@ -87,6 +87,17 @@ ActiveRecord::Schema.define(version: 20130826095045) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "endpoints", force: true do |t|
+    t.text     "description"
+    t.text     "descriptor",               limit: 16777215
+    t.string   "endpoint_type",                             default: "ws", null: false
+    t.integer  "port_mapping_template_id",                                 null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "endpoints", ["port_mapping_template_id"], name: "endpoints_port_mapping_template_id_fk", using: :btree
 
   create_table "http_mappings", force: true do |t|
     t.string   "application_protocol",     default: "http", null: false
@@ -231,6 +242,8 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   add_foreign_key "appliances", "appliance_configuration_instances", :name => "appliances_appliance_configuration_instance_id_fk"
   add_foreign_key "appliances", "appliance_sets", :name => "appliances_appliance_set_id_fk"
   add_foreign_key "appliances", "appliance_types", :name => "appliances_appliance_type_id_fk"
+
+  add_foreign_key "endpoints", "port_mapping_templates", :name => "endpoints_port_mapping_template_id_fk"
 
   add_foreign_key "http_mappings", "appliances", :name => "http_mappings_appliance_id_fk"
   add_foreign_key "http_mappings", "port_mapping_templates", :name => "http_mappings_port_mapping_template_id_fk"

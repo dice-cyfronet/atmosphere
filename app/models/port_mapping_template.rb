@@ -28,4 +28,5 @@ class PortMappingTemplate < ActiveRecord::Base
 
   has_many :http_mappings
   has_many :port_mapping_properties
+  has_many :endpoints
 end
