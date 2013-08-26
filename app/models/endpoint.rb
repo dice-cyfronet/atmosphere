@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: endpoints
+#
+#  id                       :integer          not null, primary key
+#  description              :text
+#  descriptor               :text(16777215)
+#  endpoint_type            :string(255)      default("ws"), not null
+#  port_mapping_template_id :integer          not null
+#  created_at               :datetime
+#  updated_at               :datetime
+#
+
 class Endpoint < ActiveRecord::Base
   extend Enumerize
 
