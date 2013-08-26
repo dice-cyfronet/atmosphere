@@ -60,6 +60,13 @@ module API
         appliance_set = appliance_set!(:destroy, false)
         appliance_set.destroy if appliance_set
       end
+
+      post ':id/appliances' do
+        required_attributes! [:configuration_tmpl_id]
+        attrs = attributes_for_keys [:name, :configuration_tmpl_id]
+
+        attrs = ActionController::Parameters.new(params).require(:configuration_tmpl_id).permit(:name)
+      end
     end
   end
 end
