@@ -42,8 +42,8 @@ describe PortMappingTemplate do
   expect_it { to belong_to :appliance_type }
   expect_it { to have_many :http_mappings }
   expect_it { to have_many :port_mappings }
-  expect_it { to have_many :port_mapping_properties }
-  expect_it { to have_many :endpoints }
+  expect_it { to have_many(:port_mapping_properties).dependent(:destroy) }
+  expect_it { to have_many(:endpoints).dependent(:destroy) }
 
   expect_it { to validate_numericality_of :target_port }
   expect_it { should_not allow_value(-1).for(:target_port) }
