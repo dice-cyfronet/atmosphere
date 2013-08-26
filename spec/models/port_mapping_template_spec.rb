@@ -36,6 +36,9 @@ describe PortMappingTemplate do
   expect_it { to have_many :port_mapping_properties }
   expect_it { to have_many :endpoints }
 
+  expect_it { to validate_numericality_of :target_port }
+  expect_it { should_not allow_value(-1).for(:target_port) }
+
   pending 'should allow many PortMappings'
 
 end
