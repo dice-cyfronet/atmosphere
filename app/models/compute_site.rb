@@ -15,7 +15,9 @@ class ComputeSite < ActiveRecord::Base
   extend Enumerize
 
   enumerize :site_type, in: [:public, :private], predicates: true
-  validates :site_type, inclusion: %w(public private) 
+  validates :site_type, inclusion: %w(public private)
+  validates :auth_method, inclusion: %(password key rax-kskey)
+  validates :technology, inclusion: %(openstack amazon)
   has_many :virtual_machines
   has_many :virtual_machine_templates
 end

@@ -78,6 +78,12 @@ ActiveRecord::Schema.define(version: 20130822113955) do
     t.string   "name"
     t.string   "location"
     t.string   "site_type"
+    t.string   "technology"
+    t.string   "username"
+    t.string   "api_key"
+    t.string   "auth_method"
+    t.string   "auth_url"
+    t.string   "authtenant_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

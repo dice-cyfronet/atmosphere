@@ -5,6 +5,14 @@ class CreateComputeSites < ActiveRecord::Migration
       t.string :name
       t.string :location
       t.string :site_type
+      t.string :technology
+
+      # openstack specific fields
+      t.string :username
+      t.string :api_key
+      t.string :auth_method
+      t.string :auth_url
+      t.string :authtenant_name
 
       t.timestamps
     end
