@@ -27,5 +27,5 @@ class ComputeSite < ActiveRecord::Base
 
   has_many :virtual_machines
   has_many :virtual_machine_templates
-  has_many :port_mapping_properties
+  has_many :port_mapping_properties, dependent: :destroy
 end
