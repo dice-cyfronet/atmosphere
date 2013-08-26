@@ -42,4 +42,11 @@ FactoryGirl.define do
     name { Faker::Lorem.words(10).join(' ') }
     appliance_type
   end
+
+  factory :compute_site do |f|
+    site_id 'factorized'
+    name 'Factoriez'
+    site_type 'private'
+    technology 'openstack'
+  end
 end
