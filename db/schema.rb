@@ -44,11 +44,11 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
 
   create_table "appliance_types", force: true do |t|
-    t.string   "name",                                            null: false
+    t.string   "name",                                      null: false
     t.text     "description"
-    t.boolean  "shared",            default: false,               null: false
-    t.boolean  "scalable",          default: false,               null: false
-    t.string   "visibility",        default: "under_development", null: false
+    t.boolean  "shared",            default: false,         null: false
+    t.boolean  "scalable",          default: false,         null: false
+    t.string   "visibility",        default: "unpublished", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"

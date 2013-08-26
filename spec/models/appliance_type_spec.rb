@@ -30,7 +30,7 @@ describe ApplianceType do
 
   expect_it { to validate_uniqueness_of :name }
 
-  expect_it { to ensure_inclusion_of(:visibility).in_array(%w(under_development unpublished published)) }
+  expect_it { to ensure_inclusion_of(:visibility).in_array(%w(unpublished published)) }
 
   expect_it { to have_db_index(:name).unique(true) }
 
@@ -41,7 +41,7 @@ describe ApplianceType do
 
 
   it 'should set proper default values' do
-    expect(subject.visibility).to eql 'under_development'
+    expect(subject.visibility).to eql 'unpublished'
     expect(subject.shared).to eql false
     expect(subject.scalable).to eql false
   end

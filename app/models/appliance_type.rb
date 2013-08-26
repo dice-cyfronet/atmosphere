@@ -33,7 +33,7 @@ class ApplianceType < ActiveRecord::Base
 
   enumerize :visibility, in: [:under_development, :unpublished, :published]
 
-  validates :visibility, inclusion: %w(under_development unpublished published)
+  validates :visibility, inclusion: %w(unpublished published)
   validates :shared, inclusion: [true, false]
   validates :scalable, inclusion: [true, false]
 
