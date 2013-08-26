@@ -16,5 +16,6 @@ class ComputeSite < ActiveRecord::Base
 
   enumerize :site_type, in: [:public, :private], predicates: true
   validates :site_type, inclusion: %w(public private) 
-
+  has_many :virtual_machines
+  has_many :virtual_machine_templates
 end
