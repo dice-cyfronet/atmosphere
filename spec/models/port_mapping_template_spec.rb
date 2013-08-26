@@ -21,9 +21,17 @@ describe PortMappingTemplate do
   expect_it { to validate_presence_of :application_protocol }
   expect_it { to validate_presence_of :transport_protocol }
 
-  # TODO make 'if' conditional validation test
-  #expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
   expect_it { to ensure_inclusion_of(:transport_protocol).in_array(%w(tcp udp)) }
+
+  context 'if transport_protocol is tcp' do
+    before { subject.stub(:transport_protocol) { 'tcp' } }
+    expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
+  end
+
+  context 'if transport_protocol is udp' do
+    before { subject.stub(:transport_protocol) { 'udp' } }
+    expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(none)) }
+  end
 
   it 'should set proper default values' do
     # It seems we should use strings, not symbols here - perhaps this makes some kind of round-trip to DB?
