@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130826080612) do
+ActiveRecord::Schema.define(version: 20130826095045) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
@@ -99,6 +99,18 @@ ActiveRecord::Schema.define(version: 20130826080612) do
 
   add_index "http_mappings", ["appliance_id"], name: "http_mappings_appliance_id_fk", using: :btree
   add_index "http_mappings", ["port_mapping_template_id"], name: "http_mappings_port_mapping_template_id_fk", using: :btree
+
+  create_table "port_mapping_properties", force: true do |t|
+    t.string   "key",                      null: false
+    t.string   "value",                    null: false
+    t.integer  "port_mapping_template_id"
+    t.integer  "compute_site_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "port_mapping_properties", ["compute_site_id"], name: "port_mapping_properties_compute_site_id_fk", using: :btree
+  add_index "port_mapping_properties", ["port_mapping_template_id"], name: "port_mapping_properties_port_mapping_template_id_fk", using: :btree
 
   create_table "port_mapping_templates", force: true do |t|
     t.string   "transport_protocol",   default: "tcp",        null: false
@@ -220,6 +232,9 @@ ActiveRecord::Schema.define(version: 20130826080612) do
 
   add_foreign_key "http_mappings", "appliances", :name => "http_mappings_appliance_id_fk"
   add_foreign_key "http_mappings", "port_mapping_templates", :name => "http_mappings_port_mapping_template_id_fk"
+
+  add_foreign_key "port_mapping_properties", "compute_sites", :name => "port_mapping_properties_compute_site_id_fk"
+  add_foreign_key "port_mapping_properties", "port_mapping_templates", :name => "port_mapping_properties_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
 
