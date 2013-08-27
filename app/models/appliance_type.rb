@@ -23,11 +23,6 @@ class ApplianceType < ActiveRecord::Base
   belongs_to :security_proxy
   belongs_to :author, class_name: 'User', foreign_key: 'user_id'
 
-  has_many :appliances, dependent: :destroy
-  has_many :port_mapping_templates, dependent: :destroy
-  has_many :appliance_configuration_templates, dependent: :destroy
-  has_many :virtual_machine_templates, dependent: :destroy
-
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name
 
@@ -40,6 +35,11 @@ class ApplianceType < ActiveRecord::Base
   validates :preference_memory, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
   validates :preference_disk, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
   validates :preference_cpu, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
+
+  has_many :appliances, dependent: :destroy
+  has_many :port_mapping_templates, dependent: :destroy
+  has_many :appliance_configuration_templates, dependent: :destroy
+  has_many :virtual_machine_templates, dependent: :destroy
 
 
   def destroy(force = false)
