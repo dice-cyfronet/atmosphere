@@ -31,7 +31,9 @@ describe ComputeSite do
   end
 
   context 'if technology is invalid' do
-    before { subject.technology = 'INVALID_TECHNOLOGY' }
-    expect_it { to be_invalid }
+    let(:invalid) { build(:compute_site, technology: 'INVALID_TECHNOLOGY') }
+    it 'is invalid' do
+      expect(invalid).to be_invalid
+    end
   end
 end
