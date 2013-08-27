@@ -1,10 +1,8 @@
 class Admin::ApplianceSetsController < ApplicationController
-  authorize_resource
-  before_action :set_appliance_set, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource :set_appliance_set
 
   # GET /admin/appliance_sets
   def index
-    @appliance_sets = ApplianceSet.all
   end
 
   # GET /admin/appliance_sets/1
@@ -31,10 +29,6 @@ class Admin::ApplianceSetsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_appliance_set
-      @appliance_set = ApplianceSet.find(params[:id])
-    end
 
     # Only allow a trusted parameter "white list" through.
     def appliance_set_params
