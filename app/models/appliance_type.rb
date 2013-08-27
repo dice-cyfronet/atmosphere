@@ -42,8 +42,16 @@ class ApplianceType < ActiveRecord::Base
   validates :preference_cpu, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
 
+  def destroy(force = false)
+    if !force and has_dependencies?
+      errors.add :base, "ApplianceType #{name} cannot be destroyed due to existing dependencies."
+      return false
+    end
+    super()  # Parentheses required NOT to pass 'force' as an argument (not needed in Base.destroy)
+  end
+
   def has_dependencies?
-    virtual_machine_templates.blank? and appliances.blank?
+    virtual_machine_templates.present? or appliances.present?
   end
 
 end
