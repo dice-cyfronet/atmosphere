@@ -16,7 +16,7 @@ describe ApplianceConfigurationTemplate do
   expect_it { to validate_presence_of :name }
   expect_it { to validate_presence_of :appliance_type }
   expect_it { to belong_to :appliance_type }
-  expect_it { to have_many :appliance_configuration_instances }
+  expect_it { to have_many(:appliance_configuration_instances).dependent(:nullify) }
 
   describe 'name uniques' do
     let(:appliance_type1) { create(:appliance_type) }
