@@ -14,7 +14,9 @@
 class ApplianceSet < ActiveRecord::Base
   extend Enumerize
 
-  validates_presence_of :priority, :appliance_set_type, :user_id
+  belongs_to :user
+
+  validates_presence_of :priority, :appliance_set_type, :user
 
   validates :priority, numericality: { only_integer: true }, inclusion: 1..100
 
@@ -24,10 +26,6 @@ class ApplianceSet < ActiveRecord::Base
 
   attr_readonly :appliance_set_type
 
-
-  belongs_to :user
-  # This should also make sure the referenced entity exists; but we still should make a foreign key constraint in DB
-  validates :user, presence: true
-
   has_many :appliances, dependent: :destroy
+
 end

@@ -21,7 +21,7 @@ describe ApplianceSet do
 
   expect_it { to validate_presence_of :priority }
   expect_it { to validate_presence_of :appliance_set_type }
-  expect_it { to validate_presence_of :user_id }
+  expect_it { to validate_presence_of :user }
 
   expect_it { to validate_numericality_of :priority }
   expect_it { to ensure_inclusion_of(:priority).in_range(1..100) }
