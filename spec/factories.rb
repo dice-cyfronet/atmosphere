@@ -42,4 +42,11 @@ FactoryGirl.define do
     name { Faker::Lorem.words(10).join(' ') }
     appliance_type
   end
+
+  factory :port_mapping_template do |f|
+    service_name { Faker::Lorem.word }
+    target_port { Random.rand(9999) }
+    appliance_type
+  end
+
 end

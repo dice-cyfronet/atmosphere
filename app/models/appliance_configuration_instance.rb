@@ -13,8 +13,6 @@ class ApplianceConfigurationInstance < ActiveRecord::Base
 
   belongs_to :appliance_configuration_template
 
-  validates :appliance_configuration_template, presence: true
-
-  has_many :appliances, dependent: :nullify
+  has_many :appliances
 
 end

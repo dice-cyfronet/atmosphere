@@ -17,6 +17,6 @@ class ApplianceConfigurationTemplate < ActiveRecord::Base
   validates_presence_of :name, :appliance_type
   validates_uniqueness_of :name, scope: :appliance_type
 
-  has_many :appliance_configuration_instances, dependent: :destroy
+  has_many :appliance_configuration_instances, dependent: :nullify
 
 end

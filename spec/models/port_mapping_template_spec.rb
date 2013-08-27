@@ -16,6 +16,10 @@ require 'spec_helper'
 
 describe PortMappingTemplate do
 
+  subject { FactoryGirl.create(:port_mapping_template) }
+
+  expect_it { to be_valid }
+
   expect_it { to validate_presence_of :service_name }
   expect_it { to validate_presence_of :target_port }
   expect_it { to validate_presence_of :application_protocol }
@@ -47,5 +51,8 @@ describe PortMappingTemplate do
 
   expect_it { to validate_numericality_of :target_port }
   expect_it { should_not allow_value(-1).for(:target_port) }
+
+  expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id) }
+  expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id) }
 
 end

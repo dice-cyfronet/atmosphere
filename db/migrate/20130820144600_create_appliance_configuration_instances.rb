@@ -3,7 +3,7 @@ class CreateApplianceConfigurationInstances < ActiveRecord::Migration
     create_table :appliance_configuration_instances do |t|
       t.text :payload
 
-      t.references :appliance_configuration_template, null: false
+      t.references :appliance_configuration_template
 
       t.timestamps
     end
