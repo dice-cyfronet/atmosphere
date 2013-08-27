@@ -28,8 +28,9 @@ class PortMappingTemplate < ActiveRecord::Base
 
   validates :target_port, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
-  has_many :http_mappings
-  has_many :port_mappings
+  has_many :http_mappings, dependent: :destroy
+  has_many :port_mappings, dependent: :destroy
   has_many :port_mapping_properties, dependent: :destroy
   has_many :endpoints, dependent: :destroy
+
 end
