@@ -21,4 +21,13 @@ class Appliance < ActiveRecord::Base
   has_many :http_mappings, dependent: :destroy
   has_and_belongs_to_many :virtual_machines
 
+  after_destroy :remove_appliance_configuration_instance_if_needed
+
+  private
+
+  def remove_appliance_configuration_instance_if_needed
+    if appliance_configuration_instance.appliances.blank?
+      appliance_configuration_instance.destroy
+    end
+  end
 end

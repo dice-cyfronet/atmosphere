@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
-    t.integer  "appliance_configuration_template_id", null: false
+    t.integer  "appliance_configuration_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

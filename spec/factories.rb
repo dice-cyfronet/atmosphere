@@ -49,4 +49,13 @@ FactoryGirl.define do
     appliance_type
   end
 
+  factory :appliance_configuration_instance do |f|
+    payload { Faker::Lorem.words(10).join(' ') }
+  end
+
+  factory :appliance do |f|
+    appliance_set
+    appliance_configuration_instance
+    appliance_type
+  end
 end
