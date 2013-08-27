@@ -10,7 +10,11 @@
 #
 
 class ApplianceConfigurationInstance < ActiveRecord::Base
-  has_many :appliances, dependent: :nullify
+
   belongs_to :appliance_configuration_template
+
   validates :appliance_configuration_template, presence: true
+
+  has_many :appliances, dependent: :nullify
+
 end
