@@ -17,5 +17,5 @@ class ApplianceConfigurationTemplate < ActiveRecord::Base
   belongs_to :appliance_type
   validates_presence_of :appliance_type
 
-  has_many :appliance_configuration_instances
+  has_many :appliance_configuration_instances, dependent: destroy
 end
