@@ -28,11 +28,11 @@ describe API::ApplianceTypes do
 
       it 'returns appliance types' do
         get api('/appliance_types', user)
-        expect(json_response).to be_an Array
-        expect(json_response.size).to eq 2
+        expect(at_response).to be_an Array
+        expect(at_response.size).to eq 2
 
-        expect(json_response[0]).to appliance_type_eq at1
-        expect(json_response[1]).to appliance_type_eq at2
+        expect(at_response[0]).to appliance_type_eq at1
+        expect(at_response[1]).to appliance_type_eq at2
       end
 
       pending 'search'
@@ -56,7 +56,9 @@ describe API::ApplianceTypes do
 
       it 'returns appliance types' do
         get api("/appliance_types/#{at1.id}", user)
-        expect(json_response).to appliance_type_eq at1
+        expect(at_response).to be_an Array
+        expect(at_response.size).to eq 1
+        expect(at_response[0]).to appliance_type_eq at1
       end
 
       it 'returns 404 Not Found when appliance type is not found' do
@@ -99,7 +101,10 @@ describe API::ApplianceTypes do
         put api("/appliance_types/#{at1.id}", user), update_json
         updated_at = ApplianceType.find(at1.id)
         expect(updated_at).to to_be_updated_by update_json
-        expect(json_response).to appliance_type_eq updated_at
+
+        expect(at_response).to be_an Array
+        expect(at_response.size).to eq 1
+        expect(at_response[0]).to appliance_type_eq updated_at
       end
 
       it 'admin updates appliance types event when no appliance type owner' do
@@ -162,5 +167,9 @@ describe API::ApplianceTypes do
         }.to change { ApplianceType.count }.by(0)
       end
     end
+  end
+
+  def at_response
+    json_response['appliance_types']
   end
 end

@@ -7,21 +7,25 @@ GET /appliance_types
 ```
 
 ```json
-[
+{
+  "appliance_types": [
     {
-        "id": 1,
-        "name": "Foobar Appliance Type",
-        "description": "Foobar Appliance Type description",
-        "shared": false,
-        "scalable": true,
-        "visibility": "published",
-        "preference_cpu": 1.0,
-        "preference_memory": 1024,
-        "preference_disk": 10240,
-        "author": "marek",
-        "security_proxy": "/security/proxy/name"
+      "id": 1,
+      "name": "Foobar Appliance Type",
+      "description": "Foobar Appliance Type description",
+      "shared": false,
+      "scalable": true,
+      "visibility": "published",
+      "preference_cpu": 1.0,
+      "preference_memory": 1024,
+      "preference_disk": 10240,
+      "author": "marek",
+      "security_proxy": "/security/proxy/name"
+    }, {
+      ...
     }
-]
+  ]
+}
 ```
 
 ## Details of an appliance type
@@ -35,6 +39,26 @@ GET /appliance_types/:id
 Parameters:
 
 + `id` (required) - The ID of an appliance type
+
+```json
+{
+  "appliance_types": [
+    {
+      "id": 1,
+      "name": "Foobar Appliance Type",
+      "description": "Foobar Appliance Type description",
+      "shared": false,
+      "scalable": true,
+      "visibility": "published",
+      "preference_cpu": 1.0,
+      "preference_memory": 1024,
+      "preference_disk": 10240,
+      "author": "marek",
+      "security_proxy": "/security/proxy/name"
+    }
+  ]
+}
+```
 
 ## Update appliance type
 

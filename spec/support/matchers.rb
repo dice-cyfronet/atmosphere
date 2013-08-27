@@ -34,17 +34,9 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
     actual['preference_memory'] == expected.preference_memory
     actual['preference_disk'] == expected.preference_disk
 
-    if expected.author
-      actual['author'] == expected.author.login
-    else
-      actual['author'] == nil
-    end
-
-    if expected.security_proxy
-      actual['security_proxy'] == expected.security_proxy.name
-    else
-      actual['security_proxy'] == nil
-    end
+    #links
+    actual['links']['author'] == expected.user_id
+    actual['links']['security_proxy'] == expected.security_proxy_id
   end
 end
 
