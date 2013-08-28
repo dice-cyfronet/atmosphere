@@ -58,4 +58,9 @@ FactoryGirl.define do
     appliance_configuration_instance
     appliance_type
   end
+
+  factory :dev_mode_property_set do |f|
+    name 'AS'
+    appliance
+  end
 end

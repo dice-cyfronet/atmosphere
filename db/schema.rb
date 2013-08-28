@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
+  add_index "appliance_types", ["security_proxy_id"], name: "appliance_types_security_proxy_id_fk", using: :btree
   add_index "appliance_types", ["user_id"], name: "appliance_types_user_id_fk", using: :btree
 
   create_table "appliances", force: true do |t|
@@ -92,6 +93,23 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "dev_mode_property_sets", force: true do |t|
+    t.string   "name",                              null: false
+    t.text     "description"
+    t.boolean  "shared",            default: false, null: false
+    t.boolean  "scalable",          default: false, null: false
+    t.float    "preference_cpu"
+    t.integer  "preference_memory"
+    t.integer  "preference_disk"
+    t.integer  "appliance_id",                      null: false
+    t.integer  "security_proxy_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "dev_mode_property_sets", ["appliance_id"], name: "dev_mode_property_sets_appliance_id_fk", using: :btree
+  add_index "dev_mode_property_sets", ["security_proxy_id"], name: "dev_mode_property_sets_security_proxy_id_fk", using: :btree
 
   create_table "endpoints", force: true do |t|
     t.text     "description"
@@ -129,16 +147,18 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "port_mapping_properties", ["port_mapping_template_id"], name: "port_mapping_properties_port_mapping_template_id_fk", using: :btree
 
   create_table "port_mapping_templates", force: true do |t|
-    t.string   "transport_protocol",   default: "tcp",        null: false
-    t.string   "application_protocol", default: "http_https", null: false
-    t.string   "service_name",                                null: false
-    t.integer  "target_port",                                 null: false
-    t.integer  "appliance_type_id",                           null: false
+    t.string   "transport_protocol",       default: "tcp",        null: false
+    t.string   "application_protocol",     default: "http_https", null: false
+    t.string   "service_name",                                    null: false
+    t.integer  "target_port",                                     null: false
+    t.integer  "appliance_type_id"
+    t.integer  "dev_mode_property_set_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "port_mapping_templates", ["appliance_type_id"], name: "port_mapping_templates_appliance_type_id_fk", using: :btree
+  add_index "port_mapping_templates", ["dev_mode_property_set_id"], name: "port_mapping_templates_dev_mode_property_set_id_fk", using: :btree
 
   create_table "port_mappings", force: true do |t|
     t.string   "public_ip",                null: false
@@ -249,11 +269,15 @@ ActiveRecord::Schema.define(version: 20130826172414) do
 
   add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 
+  add_foreign_key "appliance_types", "security_proxies", :name => "appliance_types_security_proxy_id_fk"
   add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
 
   add_foreign_key "appliances", "appliance_configuration_instances", :name => "appliances_appliance_configuration_instance_id_fk"
   add_foreign_key "appliances", "appliance_sets", :name => "appliances_appliance_set_id_fk"
   add_foreign_key "appliances", "appliance_types", :name => "appliances_appliance_type_id_fk"
+
+  add_foreign_key "dev_mode_property_sets", "appliances", :name => "dev_mode_property_sets_appliance_id_fk"
+  add_foreign_key "dev_mode_property_sets", "security_proxies", :name => "dev_mode_property_sets_security_proxy_id_fk"
 
   add_foreign_key "endpoints", "port_mapping_templates", :name => "endpoints_port_mapping_template_id_fk"
 
@@ -264,6 +288,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_foreign_key "port_mapping_properties", "port_mapping_templates", :name => "port_mapping_properties_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
+  add_foreign_key "port_mapping_templates", "dev_mode_property_sets", :name => "port_mapping_templates_dev_mode_property_set_id_fk"
 
   add_foreign_key "port_mappings", "port_mapping_templates", :name => "port_mappings_port_mapping_template_id_fk"
   add_foreign_key "port_mappings", "virtual_machines", :name => "port_mappings_virtual_machine_id_fk"

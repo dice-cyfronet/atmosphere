@@ -16,6 +16,12 @@ class PortMappingTemplate < ActiveRecord::Base
   extend Enumerize
 
   belongs_to :appliance_type
+  validates_presence_of :appliance_type, if: -> { dev_mode_property_set.blank? }
+
+  belongs_to :dev_mode_property_set
+  validates_presence_of :dev_mode_property_set, if: -> { appliance_type.blank? }
+
+  before_validation :check_only_one_belonging
 
   validates_presence_of :service_name, :target_port, :application_protocol, :transport_protocol
 
@@ -35,4 +41,12 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :endpoints, dependent: :destroy
 
+  private
+
+  def check_only_one_belonging
+    unless appliance_type.blank? or dev_mode_property_set.blank?
+      errors.add :base, "Port Mapping template cannot belong into both: Appliance Type and Dev Mode Property Set "
+      return false
+    end
+  end
 end
