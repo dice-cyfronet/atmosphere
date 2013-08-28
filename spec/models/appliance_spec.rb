@@ -26,10 +26,11 @@ describe Appliance do
   expect_it { to have_many(:http_mappings).dependent(:destroy) }
 
   expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
+  expect_it { to have_readonly_attribute :dev_mode_property_set }
 
   pending 'should require zero or many VirtualMachines'
 
-  describe 'appliance configuration instances management' do
+  context 'appliance configuration instances management' do
     let!(:appliance) { create(:appliance) }
 
     it 'removes appliance configuratoin instance when last Appliance using it' do
@@ -43,6 +44,41 @@ describe Appliance do
       expect {
         appliance.destroy
       }.to change { ApplianceConfigurationInstance.count }.by(0)
+    end
+  end
+
+  context 'development mode' do
+    let(:appliance_type) { create(:appliance_type) }
+    let(:dev_appliance_set) { create(:dev_appliance_set) }
+    let(:workflow_appliance_set) { create(:workflow_appliance_set) }
+    let(:portal_appliance_set) { create(:portal_appliance_set) }
+
+
+    before {
+      DevModePropertySet.stub(:create_from).and_return(DevModePropertySet.new)
+    }
+
+    it 'creates dev mode property set if development appliance set' do
+      appliance = create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+
+      expect(DevModePropertySet).to have_received(:create_from).with(appliance_type).once
+      expect(appliance.dev_mode_property_set).to_not be_nil
+    end
+
+    context 'does not create dev mode property set' do
+      it 'when workflow appliance set' do
+        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: workflow_appliance_set)
+
+        expect(DevModePropertySet).to_not have_received(:create_from)
+        expect(appliance.dev_mode_property_set).to be_nil
+      end
+
+      it 'when portal appliance set' do
+        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: portal_appliance_set)
+
+        expect(DevModePropertySet).to_not have_received(:create_from)
+        expect(appliance.dev_mode_property_set).to be_nil
+      end
     end
   end
 end

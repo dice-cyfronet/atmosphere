@@ -22,10 +22,20 @@ class Appliance < ActiveRecord::Base
   has_and_belongs_to_many :virtual_machines
 
   has_one :dev_mode_property_set, dependent: :destroy
+  attr_readonly :dev_mode_property_set
 
+  before_create :create_dev_mode_property_set, if: :development?
   after_destroy :remove_appliance_configuration_instance_if_needed
 
   private
+
+  def development?
+    appliance_set.appliance_set_type.development?
+  end
+
+  def create_dev_mode_property_set
+    self.dev_mode_property_set = DevModePropertySet.create_from(appliance_type)
+  end
 
   def remove_appliance_configuration_instance_if_needed
     if appliance_configuration_instance.appliances.blank?

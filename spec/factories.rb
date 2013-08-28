@@ -22,10 +22,38 @@ FactoryGirl.define do
   factory :appliance_set do |f|
     name 'AS'
     user
+
+    trait :development do
+      appliance_set_type :development
+    end
+
+    trait :workflow do
+      appliance_set_type :workflow
+    end
+
+    trait :portal do
+      appliance_set_type :portal
+    end
+
+    factory :dev_appliance_set, traits: [:development]
+    factory :workflow_appliance_set, traits: [:workflow]
+    factory :portal_appliance_set, traits: [:portal]
   end
 
   factory :appliance_type do
     name { Faker::Lorem.words(10).join(' ') }
+
+    trait :all_attributes_not_empty do
+      description { Faker::Lorem.words(10).join(' ') }
+      shared true
+      scalable true
+      preference_cpu 2
+      preference_memory 1024
+      preference_disk 10240
+      security_proxy
+    end
+
+    factory :filled_appliance_type, traits: [:all_attributes_not_empty]
   end
 
   factory :security_proxy do |f|
@@ -61,6 +89,23 @@ FactoryGirl.define do
     service_name { Faker::Lorem.word }
     target_port { Random.rand(9999) }
     appliance_type
+  end
+
+  factory :endpoint do |f|
+    port_mapping_template
+  end
+
+  factory :port_mapping_property do |f|
+    value { Faker::Lorem.words(10).join(' ') }
+    key 'key'
+    compute_site
+
+    trait :pmt_property do
+      compute_site nil
+      port_mapping_template
+    end
+
+    factory :pmt_property, traits: [:pmt_property]
   end
 
   factory :appliance_configuration_instance do |f|

@@ -57,7 +57,7 @@ describe PortMappingTemplate do
   expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id) }
   expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id) }
 
-  describe 'belongs_to appliance_type or dev_mode_property_set' do
+  context 'belongs_to appliance_type or dev_mode_property_set' do
     let(:appliance_type) { create(:appliance_type) }
     let(:dev_mode_property_set) { create(:dev_mode_property_set) }
     let(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil) }
