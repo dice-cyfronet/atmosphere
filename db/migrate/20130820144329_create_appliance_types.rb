@@ -21,5 +21,6 @@ class CreateApplianceTypes < ActiveRecord::Migration
 
     add_index :appliance_types, :name, unique: true
     add_foreign_key :appliance_types, :users
+    add_foreign_key :appliance_types, :security_proxies
   end
 end

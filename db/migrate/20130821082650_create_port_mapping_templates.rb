@@ -6,11 +6,13 @@ class CreatePortMappingTemplates < ActiveRecord::Migration
       t.string :service_name,                   null: false
       t.integer :target_port,                   null: false
 
-      t.references :appliance_type,             null: false
+      t.references :appliance_type,             null: true
+      t.references :dev_mode_property_set,      null: true
 
       t.timestamps
     end
 
     add_foreign_key :port_mapping_templates, :appliance_types
+    add_foreign_key :port_mapping_templates, :dev_mode_property_sets
   end
 end

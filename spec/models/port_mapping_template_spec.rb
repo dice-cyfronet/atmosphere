@@ -44,6 +44,8 @@ describe PortMappingTemplate do
   end
 
   expect_it { to belong_to :appliance_type }
+  expect_it { to belong_to :dev_mode_property_set }
+
   expect_it { to have_many :http_mappings }
   expect_it { to have_many :port_mappings }
   expect_it { to have_many(:port_mapping_properties).dependent(:destroy) }
@@ -55,4 +57,31 @@ describe PortMappingTemplate do
   expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id) }
   expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id) }
 
+  describe 'belongs_to appliance_type or dev_mode_property_set' do
+    let(:appliance_type) { create(:appliance_type) }
+    let(:dev_mode_property_set) { create(:dev_mode_property_set) }
+    let(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil) }
+    let(:dev_pmt) { create(:port_mapping_template, appliance_type: nil, dev_mode_property_set: dev_mode_property_set) }
+
+    it 'is valid if belongs only to appliance_type' do
+      expect(pmt).to be_valid
+    end
+
+    it 'is valid if belongs only to dev_mode_property_set' do
+      expect(dev_pmt).to be_valid
+    end
+
+    it 'is not valid if belongs to nothing' do
+      not_belonging = build(:port_mapping_template, appliance_type: nil, dev_mode_property_set: nil)
+      expect(not_belonging).to_not be_valid
+    end
+
+    it 'cannot belong int both' do
+      pmt.dev_mode_property_set = dev_mode_property_set
+      expect(pmt).to_not be_valid
+
+      dev_pmt.appliance_type = appliance_type
+      expect(dev_pmt).to_not be_valid
+    end
+  end
 end

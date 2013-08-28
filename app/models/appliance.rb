@@ -21,6 +21,8 @@ class Appliance < ActiveRecord::Base
   has_many :http_mappings, dependent: :destroy
   has_and_belongs_to_many :virtual_machines
 
+  has_one :dev_mode_property_set, dependent: :destroy
+
   after_destroy :remove_appliance_configuration_instance_if_needed
 
   private

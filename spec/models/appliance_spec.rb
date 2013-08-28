@@ -25,6 +25,8 @@ describe Appliance do
 
   expect_it { to have_many(:http_mappings).dependent(:destroy) }
 
+  expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
+
   describe 'appliance configuration instances management' do
     let!(:appliance) { create(:appliance) }
 
