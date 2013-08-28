@@ -209,7 +209,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.datetime "updated_at"
   end
 
-  add_index "user_keys", ["user_id"], name: "user_keys_user_id_fk", using: :btree
+  add_index "user_keys", ["user_id", "name"], name: "index_user_keys_on_user_id_and_name", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "login",                  default: "", null: false
