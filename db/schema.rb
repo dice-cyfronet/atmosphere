@@ -79,10 +79,10 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id"
+    t.string   "site_id",                             null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type"
+    t.string   "site_type",       default: "private"
     t.string   "technology"
     t.string   "username"
     t.string   "api_key"
