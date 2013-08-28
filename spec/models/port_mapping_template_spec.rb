@@ -43,9 +43,6 @@ describe PortMappingTemplate do
     expect(subject.transport_protocol).to eql 'tcp'
   end
 
-  expect_it { to belong_to :appliance_type }
-  expect_it { to belong_to :dev_mode_property_set }
-
   expect_it { to have_many :http_mappings }
   expect_it { to have_many :port_mappings }
   expect_it { to have_many(:port_mapping_properties).dependent(:destroy) }
@@ -56,6 +53,31 @@ describe PortMappingTemplate do
 
   expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id) }
   expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id) }
+
+  expect_it { to belong_to :appliance_type }
+  expect_it { to belong_to :dev_mode_property_set }
+
+  context 'if no appliance_type' do
+    before { subject.stub(:appliance_type) { nil } }
+    expect_it { to validate_presence_of(:dev_mode_property_set) }
+  end
+
+  context 'if no dev_mode_property_set' do
+    before { subject.stub(:dev_mode_property_set) { nil } }
+    expect_it { to validate_presence_of(:appliance_type) }
+  end
+
+  # Uncomment 2 bellow tests when this PR is acceptedhttps://github.com/thoughtbot/shoulda-matchers/pull/331 and than "belongs_to appliance_type or dev_mode_property_set" context can be removed
+
+  # context 'if appliance_type is present' do
+  #   before { subject.stub(:appliance_type_id) { 1 } }
+  #   expect_it { to validate_abesence_of(:dev_mode_property_set) }
+  # end
+
+  # context 'if dev_mode_property_set is present' do
+  #   before { subject.stub(:dev_mode_property_set_id) { 1 } }
+  #   expect_it { to validate_abesence_of(:appliance_type) }
+  # end
 
   context 'belongs_to appliance_type or dev_mode_property_set' do
     let(:appliance_type) { create(:appliance_type) }

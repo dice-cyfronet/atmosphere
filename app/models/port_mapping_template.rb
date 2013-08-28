@@ -16,10 +16,13 @@ class PortMappingTemplate < ActiveRecord::Base
   extend Enumerize
 
   belongs_to :appliance_type
-  validates_presence_of :appliance_type, if: -> { dev_mode_property_set.blank? }
-
   belongs_to :dev_mode_property_set
-  validates_presence_of :dev_mode_property_set, if: -> { appliance_type.blank? }
+
+  validates_presence_of :appliance_type, if: 'dev_mode_property_set == nil'
+  validates_presence_of :dev_mode_property_set, if: 'appliance_type == nil'
+
+  validates_absence_of :appliance_type, if: 'dev_mode_property_set != nil'
+  validates_absence_of :dev_mode_property_set, if: 'appliance_type != nil'
 
   before_validation :check_only_one_belonging
 
