@@ -23,7 +23,7 @@ class ComputeSite < ActiveRecord::Base
   
   validates :technology, inclusion: %w(openstack amazon)
 
-  has_many :virtual_machines
-  has_many :virtual_machine_templates
+  has_many :virtual_machines, :dependent => :destroy
+  has_many :virtual_machine_templates, :dependent => :destroy
   has_many :port_mapping_properties
 end

@@ -22,6 +22,9 @@ describe ComputeSite do
   expect_it { to validate_presence_of :site_type }
 
   expect_it { to have_many :port_mapping_properties }
+  expect_it { to have_many(:virtual_machine_templates).dependent(:destroy) }
+  expect_it { to have_many(:virtual_machines).dependent(:destroy) }
+
   expect_it { to ensure_inclusion_of(:site_type).in_array(%w(public private))}
 
   context 'if technology is present' do
