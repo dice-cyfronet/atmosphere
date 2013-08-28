@@ -2,7 +2,7 @@ class CreateUserKeys < ActiveRecord::Migration
   def change
     create_table :user_keys do |t|
       t.string :name
-      t.string :fingerprint
+      t.string :fingerprint,      null:false
       t.text :public_key
 
       t.references :user,         null:false

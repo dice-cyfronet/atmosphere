@@ -43,6 +43,20 @@ FactoryGirl.define do
     appliance_type
   end
 
+  factory :compute_site do |f|
+    site_id 'factorized'
+    name 'Factoriez'
+    site_type 'private'
+    technology 'openstack'
+  end
+
+  factory :user_key do |f|
+    name 'factorized'
+    public_key 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q== factorized@sting'
+    fingerprint 'rubbish! Real fingrprint is calculated in after_initialize method in model'
+    user
+  end
+
   factory :port_mapping_template do |f|
     service_name { Faker::Lorem.word }
     target_port { Random.rand(9999) }
@@ -59,8 +73,11 @@ FactoryGirl.define do
     appliance_type
   end
 
+<<<<<<< HEAD
   factory :dev_mode_property_set do |f|
     name 'AS'
     appliance
   end
+=======
+>>>>>>> origin/master
 end
