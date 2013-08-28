@@ -17,7 +17,7 @@ require 'spec_helper'
 
 describe VirtualMachine do
 
-  expect_it { to have_many :port_mappings }
+  expect_it { to have_many(:port_mappings).dependent(:destroy) }
 
   pending "add some examples to (or delete) #{__FILE__}"
 end
