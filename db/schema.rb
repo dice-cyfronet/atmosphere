@@ -182,7 +182,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
 
   create_table "user_keys", force: true do |t|
     t.string   "name"
-    t.string   "fingerprint"
+    t.string   "fingerprint", null: false
     t.text     "public_key"
     t.integer  "user_id",     null: false
     t.datetime "created_at"
