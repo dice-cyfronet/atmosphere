@@ -18,6 +18,7 @@ class UserKey < ActiveRecord::Base
   FINGER_PRINT_RE = /([\d\h]{2}:)+[\d\h]{2}/
 
   validates_presence_of :name, :public_key, :fingerprint
+  validates_uniqueness_of :name, :scope => :user_id
   attr_readonly :name, :public_key, :fingerprint
   before_create :generate_fingerprint
   belongs_to :user

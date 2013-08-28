@@ -1,10 +1,10 @@
 class CreateComputeSites < ActiveRecord::Migration
   def change
     create_table :compute_sites do |t|
-      t.string :site_id, unique: true
+      t.string :site_id, unique: true, null: false
       t.string :name
       t.string :location
-      t.string :site_type
+      t.string :site_type, default: 'private'
       t.string :technology
 
       # openstack specific fields

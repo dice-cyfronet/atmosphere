@@ -80,10 +80,10 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id"
+    t.string   "site_id",                             null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type"
+    t.string   "site_type",       default: "private"
     t.string   "technology"
     t.string   "username"
     t.string   "api_key"
@@ -201,15 +201,15 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "user_keys", force: true do |t|
-    t.string   "name"
+    t.string   "name",        null: false
     t.string   "fingerprint", null: false
-    t.text     "public_key"
+    t.text     "public_key",  null: false
     t.integer  "user_id",     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "user_keys", ["user_id"], name: "user_keys_user_id_fk", using: :btree
+  add_index "user_keys", ["user_id", "name"], name: "index_user_keys_on_user_id_and_name", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "login",                  default: "", null: false
