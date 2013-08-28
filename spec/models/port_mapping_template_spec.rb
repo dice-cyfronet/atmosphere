@@ -16,14 +16,26 @@ require 'spec_helper'
 
 describe PortMappingTemplate do
 
+  subject { FactoryGirl.create(:port_mapping_template) }
+
+  expect_it { to be_valid }
+
   expect_it { to validate_presence_of :service_name }
   expect_it { to validate_presence_of :target_port }
   expect_it { to validate_presence_of :application_protocol }
   expect_it { to validate_presence_of :transport_protocol }
 
-  # TODO make 'if' conditional validation test
-  #expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
   expect_it { to ensure_inclusion_of(:transport_protocol).in_array(%w(tcp udp)) }
+
+  context 'if transport_protocol is tcp' do
+    before { subject.stub(:transport_protocol) { 'tcp' } }
+    expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
+  end
+
+  context 'if transport_protocol is udp' do
+    before { subject.stub(:transport_protocol) { 'udp' } }
+    expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(none)) }
+  end
 
   it 'should set proper default values' do
     # It seems we should use strings, not symbols here - perhaps this makes some kind of round-trip to DB?
@@ -33,9 +45,14 @@ describe PortMappingTemplate do
 
   expect_it { to belong_to :appliance_type }
   expect_it { to have_many :http_mappings }
-  expect_it { to have_many :port_mapping_properties }
+  expect_it { to have_many :port_mappings }
+  expect_it { to have_many(:port_mapping_properties).dependent(:destroy) }
+  expect_it { to have_many(:endpoints).dependent(:destroy) }
 
-  pending 'should allow many Endpoints'
-  pending 'should allow many PortMappings'
+  expect_it { to validate_numericality_of :target_port }
+  expect_it { should_not allow_value(-1).for(:target_port) }
+
+  expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id) }
+  expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id) }
 
 end

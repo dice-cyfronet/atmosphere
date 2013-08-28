@@ -8,6 +8,7 @@
 #  state              :string(255)      not null
 #  compute_site_id    :integer          not null
 #  virtual_machine_id :integer
+#  appliance_type_id  :integer
 #  created_at         :datetime
 #  updated_at         :datetime
 #

@@ -11,11 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130826095045) do
+ActiveRecord::Schema.define(version: 20130826172414) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
-    t.integer  "appliance_configuration_template_id", null: false
+    t.integer  "appliance_configuration_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -44,11 +44,11 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
 
   create_table "appliance_types", force: true do |t|
-    t.string   "name",                                            null: false
+    t.string   "name",                                      null: false
     t.text     "description"
-    t.boolean  "shared",            default: false,               null: false
-    t.boolean  "scalable",          default: false,               null: false
-    t.string   "visibility",        default: "under_development", null: false
+    t.boolean  "shared",            default: false,         null: false
+    t.boolean  "scalable",          default: false,         null: false
+    t.string   "visibility",        default: "unpublished", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
@@ -64,14 +64,19 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   create_table "appliances", force: true do |t|
     t.integer  "appliance_set_id",                    null: false
     t.integer  "appliance_type_id",                   null: false
+    t.integer  "appliance_configuration_instance_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "appliance_configuration_instance_id", null: false
   end
 
-  add_index "appliances", ["appliance_configuration_instance_id"], name: "index_appliances_on_appliance_configuration_instance_id", using: :btree
+  add_index "appliances", ["appliance_configuration_instance_id"], name: "appliances_appliance_configuration_instance_id_fk", using: :btree
   add_index "appliances", ["appliance_set_id"], name: "appliances_appliance_set_id_fk", using: :btree
   add_index "appliances", ["appliance_type_id"], name: "appliances_appliance_type_id_fk", using: :btree
+
+  create_table "appliances_virtual_machines", force: true do |t|
+    t.integer "virtual_machine_id"
+    t.integer "appliance_id"
+  end
 
   create_table "compute_sites", force: true do |t|
     t.string   "site_id"
@@ -87,6 +92,17 @@ ActiveRecord::Schema.define(version: 20130826095045) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "endpoints", force: true do |t|
+    t.text     "description"
+    t.text     "descriptor",               limit: 16777215
+    t.string   "endpoint_type",                             default: "ws", null: false
+    t.integer  "port_mapping_template_id",                                 null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "endpoints", ["port_mapping_template_id"], name: "endpoints_port_mapping_template_id_fk", using: :btree
 
   create_table "http_mappings", force: true do |t|
     t.string   "application_protocol",     default: "http", null: false
@@ -123,6 +139,18 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   end
 
   add_index "port_mapping_templates", ["appliance_type_id"], name: "port_mapping_templates_appliance_type_id_fk", using: :btree
+
+  create_table "port_mappings", force: true do |t|
+    t.string   "public_ip",                null: false
+    t.integer  "source_port",              null: false
+    t.integer  "port_mapping_template_id", null: false
+    t.integer  "virtual_machine_id",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "port_mappings", ["port_mapping_template_id"], name: "port_mappings_port_mapping_template_id_fk", using: :btree
+  add_index "port_mappings", ["virtual_machine_id"], name: "port_mappings_virtual_machine_id_fk", using: :btree
 
   create_table "security_policies", force: true do |t|
     t.string   "name"
@@ -215,11 +243,6 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   add_index "virtual_machines", ["compute_site_id"], name: "virtual_machines_compute_site_id_fk", using: :btree
   add_index "virtual_machines", ["virtual_machine_template_id"], name: "index_virtual_machines_on_virtual_machine_template_id", using: :btree
 
-  create_table "virtual_machines_appliances", force: true do |t|
-    t.integer "virtual_machine_id"
-    t.integer "appliance_id"
-  end
-
   add_foreign_key "appliance_configuration_instances", "appliance_configuration_templates", :name => "ac_instances_ac_template_id_fk"
 
   add_foreign_key "appliance_configuration_templates", "appliance_types", :name => "appliance_configuration_templates_appliance_type_id_fk"
@@ -232,6 +255,8 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   add_foreign_key "appliances", "appliance_sets", :name => "appliances_appliance_set_id_fk"
   add_foreign_key "appliances", "appliance_types", :name => "appliances_appliance_type_id_fk"
 
+  add_foreign_key "endpoints", "port_mapping_templates", :name => "endpoints_port_mapping_template_id_fk"
+
   add_foreign_key "http_mappings", "appliances", :name => "http_mappings_appliance_id_fk"
   add_foreign_key "http_mappings", "port_mapping_templates", :name => "http_mappings_port_mapping_template_id_fk"
 
@@ -239,6 +264,9 @@ ActiveRecord::Schema.define(version: 20130826095045) do
   add_foreign_key "port_mapping_properties", "port_mapping_templates", :name => "port_mapping_properties_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
+
+  add_foreign_key "port_mappings", "port_mapping_templates", :name => "port_mappings_port_mapping_template_id_fk"
+  add_foreign_key "port_mappings", "virtual_machines", :name => "port_mappings_virtual_machine_id_fk"
 
   add_foreign_key "user_keys", "users", :name => "user_keys_user_id_fk"
 

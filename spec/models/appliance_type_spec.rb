@@ -25,20 +25,12 @@ describe ApplianceType do
 
   expect_it { to be_valid }
 
-  expect_it { to belong_to :security_proxy }
-  expect_it { to belong_to :author }
-
   expect_it { to validate_presence_of :name }
   expect_it { to validate_presence_of :visibility }
 
   expect_it { to validate_uniqueness_of :name }
 
-  expect_it { to ensure_inclusion_of(:visibility).in_array(%w(under_development unpublished published)) }
-
-  # TODO this cannot be used due to https://github.com/thoughtbot/shoulda-matchers/issues/291
-  # Uncomment when available
-  #expect_it { to ensure_inclusion_of(:shared).in_array([true, false]) }
-  #expect_it { to ensure_inclusion_of(:scalable).in_array([true, false]) }
+  expect_it { to ensure_inclusion_of(:visibility).in_array(%w(unpublished published)) }
 
   expect_it { to have_db_index(:name).unique(true) }
 
@@ -49,15 +41,16 @@ describe ApplianceType do
 
 
   it 'should set proper default values' do
-    expect(subject.visibility).to eql 'under_development'
+    expect(subject.visibility).to eql 'unpublished'
     expect(subject.shared).to eql false
     expect(subject.scalable).to eql false
   end
 
+  expect_it { to belong_to :security_proxy }
+  expect_it { to belong_to :author }
   expect_it { to have_many :appliances }
   expect_it { to have_many(:port_mapping_templates).dependent(:destroy) }
   expect_it { to have_many(:appliance_configuration_templates).dependent(:destroy) }
-
-  pending 'should allow many VirtualMachineTemplates'
+  expect_it { to have_many(:virtual_machine_templates).dependent(:destroy) }
 
 end

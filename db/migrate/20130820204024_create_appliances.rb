@@ -4,10 +4,13 @@ class CreateAppliances < ActiveRecord::Migration
       t.references :appliance_set,                null: false
       t.references :appliance_type,               null: false
 
+      t.references :appliance_configuration_instance, null: false
+
       t.timestamps
     end
 
     add_foreign_key :appliances, :appliance_sets
     add_foreign_key :appliances, :appliance_types
+    add_foreign_key :appliances, :appliance_configuration_instances
   end
 end

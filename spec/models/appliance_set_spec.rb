@@ -21,14 +21,20 @@ describe ApplianceSet do
 
   expect_it { to validate_presence_of :priority }
   expect_it { to validate_presence_of :appliance_set_type }
-  expect_it { to validate_presence_of :user_id }
+  expect_it { to validate_presence_of :user }
 
   expect_it { to validate_numericality_of :priority }
   expect_it { to ensure_inclusion_of(:priority).in_range(1..100) }
 
   expect_it { to ensure_inclusion_of(:appliance_set_type).in_array(%w(development workflow portal)) }
-
   expect_it { to have_readonly_attribute :appliance_set_type }
+
+  pending 'to be at most 1 development appliance set in the scope of specific User'
+  # TODO the below does not work as expected, something more is needed
+  #context 'if appliance_set_type is either development or portal' do
+  #  before { subject.stub(:appliance_set_type) { 'development' } }
+  #  expect_it { to validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
+  #end
 
   expect_it { to have_db_index :user_id }
 
@@ -41,6 +47,4 @@ describe ApplianceSet do
   expect_it { to validate_presence_of :user }
   expect_it { to have_many(:appliances).dependent(:destroy) }
 
-  pending 'to be at most 1 development appliance set in the scope of specific User'
-  #  ??? expect_it { to validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
 end

@@ -24,12 +24,8 @@
 require 'spec_helper'
 
 describe User do
-
-  subject { FactoryGirl.create(:user) }
-
-  expect_it { to be_valid }
-
-  expect_it { to have_many :appliance_sets }
+  expect_it { to have_many(:appliance_sets).dependent(:destroy) }
+  expect_it { to have_many(:user_keys).dependent(:destroy) }
   expect_it { to have_many :appliance_types }
   expect_it { to have_and_belong_to_many :security_proxies }
   expect_it { to have_and_belong_to_many :security_policies }

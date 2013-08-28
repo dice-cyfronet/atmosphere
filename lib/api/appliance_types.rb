@@ -33,7 +33,7 @@ module API
       end
 
       get ':id' do
-        present appliance_type!(:show), with: Entities::ApplianceType
+        present [appliance_type!(:show)], with: Entities::ApplianceType
       end
 
       put ':id' do
@@ -41,7 +41,7 @@ module API
         attrs[:security_proxy] = security_proxy! if params[:security_proxy]
 
         if appliance_type!(:update).update(attrs)
-          present appliance_type!(:show), with: Entities::ApplianceType
+          present [appliance_type!(:show)], with: Entities::ApplianceType
         else
           entity_errors!(appliance_type)
         end
