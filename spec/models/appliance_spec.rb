@@ -27,6 +27,8 @@ describe Appliance do
 
   expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
 
+  pending 'should require zero or many VirtualMachines'
+
   describe 'appliance configuration instances management' do
     let!(:appliance) { create(:appliance) }
 
@@ -43,7 +45,4 @@ describe Appliance do
       }.to change { ApplianceConfigurationInstance.count }.by(0)
     end
   end
-
-  pending 'should support development mode relations'
-  pending 'should require zero or many VirtualMachines'
 end
