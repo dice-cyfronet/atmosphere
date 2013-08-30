@@ -12,6 +12,6 @@
                 = hb 'name'
                 %small.text-muted
                   by
-                  = hb 'author.login'
+                  = hb 'author_name'
     .col-md-9
       = hb 'outlet'

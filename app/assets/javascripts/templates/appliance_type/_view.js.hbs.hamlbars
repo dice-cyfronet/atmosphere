@@ -2,13 +2,23 @@
   = hb 'name'
   %small.text-muted
     by
-    = hb 'author.login'
+    = hb 'author_name'
   = hb 'unless isEditing' do
     .pull-right
       %button.btn.btn-success{hb: "action 'edit'", title: 'Edit'}
         %i.icon-edit
       %button.btn.btn-danger{hb: "action 'delete'", title: "Delete"}
         %i.icon-trash
+%h6
+.tags
+  = hb 'if published' do
+    %span.label.label-success Published
+    = hb 'else'
+    %span.label.label-warning Unpublished
+  = hb 'if shared' do
+    %span.label.label-info Shared
+  = hb 'if scalable' do
+    %span.label.label-default Scalable
 %hr
 .description
   = hb 'markdown description'

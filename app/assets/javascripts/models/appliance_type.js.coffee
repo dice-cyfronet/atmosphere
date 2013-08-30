@@ -5,3 +5,14 @@ App.ApplianceType = DS.Model.extend
   scalable: DS.attr('boolean')
   visibility: DS.attr('string')
   author: DS.belongsTo('App.User')
+
+  published: (->
+    this.get('visibility') == 'published'
+  ).property 'visibility'
+
+  author_name: (->
+    if this.get('author') == null
+      'anonymous'
+    else
+      this.get('author.login')
+  ).property 'author.login'
