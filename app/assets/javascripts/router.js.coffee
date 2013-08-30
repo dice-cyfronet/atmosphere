@@ -6,12 +6,3 @@ App.Router.map ()->
     @resource "appliance_type",
       path: ":appliance_type_id"
     @route "new"
-
-App.ApplianceTypesRoute = Ember.Route.extend(
-  model: ->
-    App.ApplianceType.find()
-)
-
-App.IndexRoute = Ember.Route.extend(redirect: ->
-  @transitionTo "appliance_types"
-)
