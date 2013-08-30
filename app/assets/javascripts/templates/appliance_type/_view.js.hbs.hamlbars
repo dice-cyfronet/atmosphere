@@ -2,7 +2,7 @@
   = hb 'name'
   %small.text-muted
     by
-    = hb 'author'
+    = hb 'author.login'
   = hb 'unless isEditing' do
     .pull-right
       %button.btn.btn-success{hb: "action 'edit'", title: 'Edit'}

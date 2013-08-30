@@ -18,7 +18,13 @@ Air::Application.routes.draw do
   devise_for :users
   root to: 'home#index'
 
-  mount API::API => '/api'
+  # mount API::API => '/api'
+  namespace :api, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :appliance_types
+      resources :users
+    end
+  end
 
   get 'help' => 'help#index'
   get 'help/api' => 'help#api'

@@ -48,9 +48,10 @@ gem 'grape'
 gem 'grape-entity'
 
 gem 'ember-rails'
-gem 'ember-source', '1.0.0.rc7'
+gem 'ember-source', '1.0.0.rc8'
 gem 'handlebars-source', '~> 1.0.12'
 gem 'hamlbars', '~> 2.0'
+gem "active_model_serializers"
 
 #markdown in js
 gem 'showdown-rails'
@@ -72,7 +73,7 @@ group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
   gem 'quiet_assets'
   gem 'letter_opener'
-  gem 'rack-mini-profiler'
+  # gem 'rack-mini-profiler'
 
   # Better error page
   gem 'better_errors'

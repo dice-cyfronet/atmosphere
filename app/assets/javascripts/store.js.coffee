@@ -2,4 +2,9 @@
 
 App.Store = DS.Store.extend
   revision: 12
-  adapter: "DS.FixtureAdapter" #DS.RESTAdapter.create()
+  adapter: "DS.RESTAdapter" #.create()
+  #adapter: "DS.FixtureAdapter"
+
+DS.RESTAdapter.reopen(
+  namespace: 'api/v1'
+)
