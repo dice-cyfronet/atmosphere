@@ -34,16 +34,21 @@ class User < ActiveRecord::Base
   include LoginAndEmail
   include Nondeletable
 
-  has_many :appliance_sets
+  has_many :appliance_sets, dependent: :destroy
+  has_many :user_keys, dependent: :destroy
   has_many :appliance_types
+
   has_and_belongs_to_many :security_proxies
   has_and_belongs_to_many :security_policies
 
-    #roles
+
+  #roles
   include RoleModel
   roles :admin, :developer
+
 
   def to_s
     "#{login} <#{email}>"
   end
+
 end

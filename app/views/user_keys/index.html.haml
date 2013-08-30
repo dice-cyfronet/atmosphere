@@ -1,0 +1,21 @@
+%h1 Listing user_keys
+
+%table
+  %tr
+    %th Name
+    %th Fingerprint
+    %th
+    %th
+    %th
+
+  - @user_keys.each do |user_key|
+    %tr
+      %td= user_key.name
+      %td= user_key.fingerprint
+      %td= link_to 'Show', user_key
+      %td= link_to 'Edit', edit_user_key_path(user_key)
+      %td= link_to 'Destroy', user_key, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New User key', new_user_key_path

@@ -6,7 +6,7 @@ class CreateApplianceTypes < ActiveRecord::Migration
       t.text :description
       t.boolean :shared,                null: false, default: false
       t.boolean :scalable,              null: false, default: false
-      t.string :visibility,             null: false, default: 'under_development'
+      t.string :visibility,             null: false, default: 'unpublished'
 
       # Incorporated from the old AppliancePreferences model
       t.float :preference_cpu
@@ -21,5 +21,6 @@ class CreateApplianceTypes < ActiveRecord::Migration
 
     add_index :appliance_types, :name, unique: true
     add_foreign_key :appliance_types, :users
+    add_foreign_key :appliance_types, :security_proxies
   end
 end

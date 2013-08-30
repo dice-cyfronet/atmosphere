@@ -1,3 +1,5 @@
+<!--- This section is copied from: https://raw.github.com/gitlabhq/gitlabhq/master/doc/api/README.md -->
+
 # AIR API
 
 All API requests require authentication (if not stated different). You need to pass a `private_token` parameter by url or header. If passed as header, the header name must be "PRIVATE-TOKEN" (capital and with dash instead of underscore).
@@ -26,13 +28,11 @@ curl --header "PRIVATE-TOKEN: FSGa2df2gSdfg" "http://example.com/api/v1/applianc
 
 ## Status codes
 
-<!--- This section is copied from: https://raw.github.com/gitlabhq/gitlabhq/master/doc/api/README.md -->
-
 The API is designed to return different status codes according to context and action. In this way if a request results in an error the caller is able to get insight into what went wrong, e.g. status code `400 Bad Request` is returned if a required attribute is missing from the request. The following list gives an overview of how the API functions generally behave.
 
 API request types:
 
-* `GET` requests access one or more resources and return the result as JSON
+* `GET` requests access one or more resources and return the result as JSON. Objects array with root equals into plural resource name (e.g. `appliance_types`) is returned (even if there is one object inside)
 * `POST` requests return `201 Created` if the resource is successfully created and return the newly created resource as JSON
 * `GET`, `PUT` and `DELETE` return `200 Ok` if the resource is accessed, modified or deleted successfully, the (modified) result is returned as JSON
 * `DELETE` requests are designed to be idempotent, meaning a request a resource still returns `200 Ok` even it was deleted before or is not available. The reasoning behind it is the user is not really interested if the resource existed before or not.

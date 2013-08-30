@@ -1,6 +1,8 @@
 require 'api/api'
 
 Air::Application.routes.draw do
+  resources :user_keys
+
   resources :virtual_machine_templates
 
   resources :compute_sites

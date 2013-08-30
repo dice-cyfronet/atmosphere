@@ -13,7 +13,7 @@ class CreateVirtualMachines < ActiveRecord::Migration
 
     add_foreign_key :virtual_machines, :compute_sites
 
-    create_table :virtual_machines_appliances do |t|
+    create_table :appliances_virtual_machines do |t|
       t.belongs_to :virtual_machine
       t.belongs_to :appliance
     end

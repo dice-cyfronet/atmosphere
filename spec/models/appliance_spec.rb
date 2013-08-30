@@ -2,11 +2,12 @@
 #
 # Table name: appliances
 #
-#  id                :integer          not null, primary key
-#  appliance_set_id  :integer          not null
-#  appliance_type_id :integer          not null
-#  created_at        :datetime
-#  updated_at        :datetime
+#  id                                  :integer          not null, primary key
+#  appliance_set_id                    :integer          not null
+#  appliance_type_id                   :integer          not null
+#  created_at                          :datetime
+#  updated_at                          :datetime
+#  appliance_configuration_instance_id :integer          not null
 #
 
 require 'spec_helper'
@@ -24,6 +25,60 @@ describe Appliance do
 
   expect_it { to have_many(:http_mappings).dependent(:destroy) }
 
-  pending 'should support development mode relations'
-  pending 'should require one or many VirtualMachines'
+  expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
+  expect_it { to have_readonly_attribute :dev_mode_property_set }
+
+  pending 'should require zero or many VirtualMachines'
+
+  context 'appliance configuration instances management' do
+    let!(:appliance) { create(:appliance) }
+
+    it 'removes appliance configuratoin instance when last Appliance using it' do
+      expect {
+        appliance.destroy
+      }.to change { ApplianceConfigurationInstance.count }.by(-1)
+    end
+
+    it 'does not remove appliance configuration instance when other Appliance is using it' do
+      create(:appliance, appliance_configuration_instance: appliance.appliance_configuration_instance)
+      expect {
+        appliance.destroy
+      }.to change { ApplianceConfigurationInstance.count }.by(0)
+    end
+  end
+
+  context 'development mode' do
+    let(:appliance_type) { create(:appliance_type) }
+    let(:dev_appliance_set) { create(:dev_appliance_set) }
+    let(:workflow_appliance_set) { create(:workflow_appliance_set) }
+    let(:portal_appliance_set) { create(:portal_appliance_set) }
+
+
+    before {
+      DevModePropertySet.stub(:create_from).and_return(DevModePropertySet.new)
+    }
+
+    it 'creates dev mode property set if development appliance set' do
+      appliance = create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+
+      expect(DevModePropertySet).to have_received(:create_from).with(appliance_type).once
+      expect(appliance.dev_mode_property_set).to_not be_nil
+    end
+
+    context 'does not create dev mode property set' do
+      it 'when workflow appliance set' do
+        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: workflow_appliance_set)
+
+        expect(DevModePropertySet).to_not have_received(:create_from)
+        expect(appliance.dev_mode_property_set).to be_nil
+      end
+
+      it 'when portal appliance set' do
+        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: portal_appliance_set)
+
+        expect(DevModePropertySet).to_not have_received(:create_from)
+        expect(appliance.dev_mode_property_set).to be_nil
+      end
+    end
+  end
 end
