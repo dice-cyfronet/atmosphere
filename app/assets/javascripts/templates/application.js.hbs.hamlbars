@@ -1,0 +1,14 @@
+.navbar.navbar-default.navbar-fixed-top
+  .container
+    .navbar-header
+      %a.navbar-brand{href: "#"} AIR
+    .collapse.navbar-collapse.navbar-ex1-collapse
+      %ul.nav.navbar-nav
+        %li
+          = hb "linkTo 'appliance_types'" do
+            Appliance Types
+        %li
+          = hb "linkTo 'about'" do
+            About
+.container
+  = hb "outlet"
