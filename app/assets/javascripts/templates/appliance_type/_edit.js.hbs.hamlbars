@@ -12,3 +12,6 @@
     %label{for: "scalable"}
       =hb "view Ember.Checkbox checkedBinding='scalable'"
       Scalable
+  .form-group
+    %label{for: "description"} Author
+    =hb "view Ember.Select contentBinding='users' optionLabelPath='content.login' optionValuePath=' content.id' prompt='Pick an owner'"
