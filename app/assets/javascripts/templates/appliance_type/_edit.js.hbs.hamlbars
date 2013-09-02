@@ -6,7 +6,9 @@
     %label{for: "description"} Description
     =hb "view Ember.TextArea valueBinding='description' class='form-control' rows='4'"
   .form-group
-    =hb "view Ember.Checkbox checkedBinding='shared'"
-    %label{for: "shared"} Shared
-    =hb "view Ember.Checkbox checkedBinding='scalable'"
-    %label{for: "scalable"} Scalable
+    %label{for: "shared"}
+      =hb "view Ember.Checkbox checkedBinding='shared'"
+      Shared
+    %label{for: "scalable"}
+      =hb "view Ember.Checkbox checkedBinding='scalable'"
+      Scalable
