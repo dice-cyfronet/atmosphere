@@ -4,7 +4,7 @@ App.ApplianceType = DS.Model.extend
   shared: DS.attr('boolean')
   scalable: DS.attr('boolean')
   visibility: DS.attr('string')
-  author: DS.belongsTo('App.User')
+  author: DS.belongsTo('user')
 
   published: (->
     this.get('visibility') == 'published'

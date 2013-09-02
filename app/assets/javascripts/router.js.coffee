@@ -1,6 +1,6 @@
 # For more information see: http://emberjs.com/guides/routing/
 
-App.Router.map ()->
+App.Router.map ->
   @resource('about')
   @resource "appliance_types", ->
     @resource "appliance_type",

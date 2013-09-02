@@ -40,7 +40,7 @@ gem 'cancan'
 gem 'role_model'
 
 gem 'haml-rails'
-gem 'bootstrap-sass', :git => 'git://github.com/thomas-mcdonald/bootstrap-sass.git', :branch => '3'
+gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass', branch: '3'
 gem 'font-awesome-rails'
 
 # API
@@ -48,7 +48,8 @@ gem 'grape'
 gem 'grape-entity'
 
 gem 'ember-rails'
-gem 'ember-source', '1.0.0.rc8'
+gem 'ember-source', '~> 1.0.0'
+gem 'ember-data-source', '1.0.0.beta.1'
 gem 'handlebars-source', '~> 1.0.12'
 gem 'hamlbars', '~> 2.0'
 gem "active_model_serializers"

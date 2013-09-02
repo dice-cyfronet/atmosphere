@@ -1,8 +1,7 @@
-App.ApplianceTypesRoute = Ember.Route.extend(
+App.ApplianceTypesRoute = Ember.Route.extend
   model: ->
-    App.ApplianceType.find()
-)
+    this.store.find('appliance_type')
 
-App.IndexRoute = Ember.Route.extend(redirect: ->
-  @transitionTo "appliance_types"
-)
+App.IndexRoute = Ember.Route.extend
+  redirect: ->
+    @transitionTo "appliance_types"
