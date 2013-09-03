@@ -1,6 +1,5 @@
 App.ApplianceTypeController = Ember.ObjectController.extend(
   isEditing: false
-  users: [{id: 1, login: 'marek'}, {id: 2, login: 'admin'}]
 
   actions:
     edit: ->
