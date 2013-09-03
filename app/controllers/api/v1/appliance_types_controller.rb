@@ -14,7 +14,7 @@ module Api
 
       def create
         if @appliance_type.save
-          render json: @appliance_type, serializer: ApplianceTypeSerializer
+          render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         else
           render_error
         end
