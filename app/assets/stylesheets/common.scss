@@ -17,3 +17,11 @@ body {
     text-align: center;
   }
 }
+
+.edit {
+  padding: 5px;
+  margin: 40px 5px 5px 5px;
+
+  @include border-radius(5px);
+  border: 3px solid #e5e5e5;
+}

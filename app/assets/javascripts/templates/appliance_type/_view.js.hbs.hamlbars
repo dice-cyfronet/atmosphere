@@ -5,10 +5,12 @@
     = hb 'author_name'
   = hb 'unless isEditing' do
     .pull-right
-      %button.btn.btn-success{hb: "action 'edit'", title: 'Edit'}
+      %button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}
         %i.icon-edit
-      %button.btn.btn-danger{hb: "action 'delete'", title: "Delete"}
+        Edit
+      %button.btn.btn-danger.btn-xs{hb: "action 'delete'", title: "Delete"}
         %i.icon-trash
+        Delete
 %h6
 .tags
   = hb 'if published' do

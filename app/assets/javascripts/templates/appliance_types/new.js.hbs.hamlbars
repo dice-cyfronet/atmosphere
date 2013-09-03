@@ -1,7 +1,11 @@
-%h2
-  Create Appliance Type
-  .pull-right
-    %button.btn.btn-success{hb: 'action "save"', title: 'Create'} Create
-    %button.btn.btn-default{hb: 'action "cancel"', title: 'Cancel'} Cancel
-= hb 'partial "appliance_type/edit"'
 = hb 'partial "appliance_type/view"'
+.edit
+  %h4
+    Edit Appliance Type
+    .pull-right
+      %button.btn.btn-success.btn-xs{hb: 'action "save"', title: 'Create'}
+        %i.icon-save
+        Save
+      %button.btn.btn-default.btn-xs{hb: 'action "cancel"', title: 'Cancel'} Cancel
+  %hr
+  = hb "partial 'appliance_type/edit'"
