@@ -27,3 +27,7 @@ App.ApplianceTypesNewController = Ember.ObjectController.extend
     cancel: ->
       @get('content').deleteRecord()
       @transitionToRoute('appliance_types')
+
+App.ApplianceTypesController = Ember.ArrayController.extend
+  sortProperties: ['name']
+  sortAscending: true
