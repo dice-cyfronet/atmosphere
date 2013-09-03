@@ -4,7 +4,11 @@
       %table.table
         %thead
           %tr
-            %th Appliance Types
+            %th
+              Appliance Types
+              = hb 'linkTo "appliance_types.new" class="btn btn-success btn-xs" title="Add new Appliance Type"' do
+                %i.icon-plus
+                Add new
         = hb 'each model' do
           %tr
             %td

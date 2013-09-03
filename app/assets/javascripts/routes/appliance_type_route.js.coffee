@@ -13,3 +13,7 @@ App.ApplianceTypeRoute = Ember.Route.extend
     controller.set('model', model)
     this.store.find('user').then (users)->
       controller.set('users', users)
+
+App.ApplianceTypesNewRoute = Ember.Route.extend
+  model: ->
+    this.store.createRecord('appliance_type')

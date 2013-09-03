@@ -13,5 +13,7 @@
       =hb "view Ember.Checkbox checkedBinding='scalable'"
       Scalable
   .form-group
+    %label{for: "visibility"} Visibility
+    =hb "view Ember.Select contentBinding='visibilities' valueBinding='visibility'"
     %label{for: "description"} Author
-    =hb "view Ember.Select contentBinding='users' optionLabelPath='content.login' optionValuePath=' content.id' prompt='Pick an owner'"
+    =hb "view Ember.Select contentBinding='users' optionLabelPath='content.login' optionValuePath='content.id' prompt='Pick an owner'"
