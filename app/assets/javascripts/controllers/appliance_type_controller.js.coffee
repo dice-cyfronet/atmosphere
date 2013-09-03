@@ -10,6 +10,10 @@ App.ApplianceTypeController = Ember.ObjectController.extend
       @get('content').save().then (appliance_type) =>
         @set 'isEditing', false
 
+    cancelEditing: ->
+      @get('content').rollback()
+      @set 'isEditing', false
+
     delete: ->
       if (window.confirm('Are you sure you want to delete this post?'))
         @get('content').deleteRecord()

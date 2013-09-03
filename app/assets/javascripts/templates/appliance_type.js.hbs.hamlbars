@@ -8,7 +8,6 @@
         %button.btn.btn-success.btn-xs{hb: 'action "doneEditing"'}
           %i.icon-save
           Save
-        /TODO
-        /.btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
+        .btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
     %hr
     = hb "partial 'appliance_type/edit'"
