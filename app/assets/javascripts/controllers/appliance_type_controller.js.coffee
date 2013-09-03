@@ -7,7 +7,7 @@ App.ApplianceTypeController = Ember.ObjectController.extend
       @set 'isEditing', true
 
     doneEditing: ->
-      @get('content').save().then (appliance_type)=>
+      @get('content').save().then (appliance_type) =>
         @set 'isEditing', false
 
     delete: ->
@@ -21,7 +21,7 @@ App.ApplianceTypesNewController = Ember.ObjectController.extend
 
   actions:
     save: ->
-      @get('content').save().then (appliance_type)=>
+      @get('content').save().then (appliance_type) =>
         @transitionToRoute('appliance_type', appliance_type)
 
     cancel: ->
@@ -31,3 +31,8 @@ App.ApplianceTypesNewController = Ember.ObjectController.extend
 App.ApplianceTypesController = Ember.ArrayController.extend
   sortProperties: ['name']
   sortAscending: true
+
+  filteredContent: (->
+    @filter (item, index) ->
+      not (item.get("isNew"))
+  ).property("@each.isNew")

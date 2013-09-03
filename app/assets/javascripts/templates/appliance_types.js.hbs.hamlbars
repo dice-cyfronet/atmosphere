@@ -9,13 +9,13 @@
               = hb 'linkTo "appliance_types.new" class="btn btn-success btn-xs" title="Add new Appliance Type"' do
                 %i.icon-plus
                 Add new
-        = hb 'each model' do
+        = hb 'each appliance_type in filteredContent' do
           %tr
             %td
-              = hb 'linkTo "appliance_type" this' do
-                = hb 'name'
+              = hb 'linkTo "appliance_type" appliance_type' do
+                = hb 'appliance_type.name'
                 %small.text-muted
                   by
-                  = hb 'author_name'
+                  = hb 'appliance_type.author_name'
     .col-md-9
       = hb 'outlet'
