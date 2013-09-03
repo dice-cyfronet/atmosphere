@@ -5,7 +5,7 @@ App.ApplianceTypesRoute = Ember.Route.extend
 
 App.IndexRoute = Ember.Route.extend
   redirect: ->
-    @transitionTo "appliance_types"
+    @transitionTo 'appliance_types'
 
 App.ApplianceTypeRoute = Ember.Route.extend
   setupController: (controller, model)->

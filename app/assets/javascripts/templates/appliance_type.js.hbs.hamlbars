@@ -1,5 +1,5 @@
 = hb 'if isEditing' do
   = hb "partial 'appliance_type/edit'"
-  %button.btn{hb: "action 'doneEditing'"} Done
+  %button.btn{hb: "action 'doneEditing'"} Save
 
 =hb "partial 'appliance_type/view'"

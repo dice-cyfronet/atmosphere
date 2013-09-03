@@ -3,13 +3,13 @@ App.ApplianceTypeController = Ember.ObjectController.extend(
 
   actions:
     edit: ->
-      @set "isEditing", true
+      @set 'isEditing', true
 
     doneEditing: ->
-      @set "isEditing", false
+      @set 'isEditing', false
 
     delete: ->
-      if (window.confirm("Are you sure you want to delete this post?"))
+      if (window.confirm('Are you sure you want to delete this post?'))
         @get('content').deleteRecord()
         @transitionToRoute('appliance_types')
 )
