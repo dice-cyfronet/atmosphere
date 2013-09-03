@@ -4,11 +4,10 @@
       %a.navbar-brand{href: "#"} AIR
     .collapse.navbar-collapse.navbar-ex1-collapse
       %ul.nav.navbar-nav
-        %li
-          = hb "linkTo 'appliance_types'" do
-            Appliance Types
-        %li
-          = hb "linkTo 'about'" do
-            About
+        = hb 'linkTo "appliance_types" tagName="li"' do
+          %a{hb: 'bindAttr href="view.href"'} Appliance Types
+      %ul.nav.navbar-nav.pull-right
+        = hb 'linkTo "about" tagName="li"' do
+          %a{hb: 'bindAttr href="view.href"'} About
 .container
   = hb "outlet"
