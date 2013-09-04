@@ -1,0 +1,28 @@
+/**
+ * nav-pills
+ *
+ */
+.nav-pills {
+  .active a {
+    background: $primary_color;
+  }
+
+  > li > a {
+    @include border-radius(0);
+  }
+  &.nav-stacked {
+    > li > a {
+      border-left: 3px solid #EEE;
+      padding: 10px;
+    }
+    > .active > a {
+      border-color: #29B;
+      border-radius: 0;
+      background: #FFFFFF;
+      color: $style_color;
+      font-weight: bold;
+    }
+  }
+}
+
+.nav-pills > .active > a > i[class^="icon-"] { background: inherit; }
