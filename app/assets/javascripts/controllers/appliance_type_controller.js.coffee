@@ -10,6 +10,7 @@ App.ApplianceTypesController = Ember.ArrayController.extend
 
 App.ApplianceTypesNewController = Ember.ObjectController.extend
   visibilities: ['unpublished', 'published']
+  isEditing: true
 
   actions:
     save: ->
@@ -39,7 +40,7 @@ App.ApplianceTypeController = Ember.ObjectController.extend
       @set 'isEditing', false
 
     delete: ->
-      if (window.confirm('Are you sure you want to delete this post?'))
+      if (window.confirm('Are you sure you want to delete this appliance type?'))
         @get('content').deleteRecord()
         @get('content').save().then =>
           @transitionToRoute('appliance_types')
