@@ -21,7 +21,10 @@ module Api
       end
 
       def update
-        if @appliance_type.update_attributes(appliance_type_params)
+        update_params = appliance_type_params
+        update_params[:author] = User.find(update_params[:author]) if update_params[:author]
+
+        if @appliance_type.update_attributes(update_params)
           render json: @appliance_type, serializer: ApplianceTypeSerializer
         else
           render_error
@@ -43,7 +46,7 @@ module Api
       end
 
       def appliance_type_params
-        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visibility)
+        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visibility, :author)
       end
     end
   end
