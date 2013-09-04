@@ -6,6 +6,8 @@
       %ul.nav.navbar-nav
         = hb 'linkTo "appliance_types" tagName="li"' do
           %a{hb: 'bindAttr href="view.href"'} Appliance Types
+        = hb 'linkTo "users" tagName="li"' do
+          %a{hb: 'bindAttr href="view.href"'} Users
       %ul.nav.navbar-nav.pull-right
         = hb 'linkTo "about" tagName="li"' do
           %a{hb: 'bindAttr href="view.href"'} About

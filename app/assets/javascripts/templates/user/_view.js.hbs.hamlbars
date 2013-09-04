@@ -1,0 +1,11 @@
+%h1
+  = hb 'full_name'
+  = hb 'unless isEditing' do
+    .pull-right
+      %button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}
+        %i.icon-edit
+        Edit
+      %button.btn.btn-danger.btn-xs{hb: "action 'delete'", title: "Delete"}
+        %i.icon-trash
+        Delete
+%hr
