@@ -7,12 +7,12 @@ App.ApplianceType = DS.Model.extend
   author: DS.belongsTo('user')
 
   published: (->
-    this.get('visibility') == 'published'
+    @get('visibility') == 'published'
   ).property 'visibility'
 
   author_name: (->
-    if this.get('author') == null
+    if @get('author') == null
       'anonymous'
     else
-      this.get('author.login')
+      @get('author.login')
   ).property 'author.login'
