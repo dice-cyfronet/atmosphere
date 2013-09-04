@@ -1,3 +1,27 @@
+### Appliance types ###
+App.ApplianceTypesController = Ember.ArrayController.extend
+  sortProperties: ['name']
+  sortAscending: true
+
+  filteredContent: (->
+    @filter (item, index) ->
+      not (item.get("isNew"))
+  ).property("@each.isNew")
+
+App.ApplianceTypesNewController = Ember.ObjectController.extend
+  visibilities: ['unpublished', 'published']
+
+  actions:
+    save: ->
+      @get('content').save().then (appliance_type) =>
+        @transitionToRoute('appliance_type', appliance_type)
+
+    cancel: ->
+      @get('content').deleteRecord()
+      @transitionToRoute('appliance_types')
+
+
+### Appliance type ###
 App.ApplianceTypeController = Ember.ObjectController.extend
   isEditing: false
   visibilities: ['unpublished', 'published']
@@ -19,24 +43,3 @@ App.ApplianceTypeController = Ember.ObjectController.extend
         @get('content').deleteRecord()
         @get('content').save().then =>
           @transitionToRoute('appliance_types')
-
-App.ApplianceTypesNewController = Ember.ObjectController.extend
-  visibilities: ['unpublished', 'published']
-
-  actions:
-    save: ->
-      @get('content').save().then (appliance_type) =>
-        @transitionToRoute('appliance_type', appliance_type)
-
-    cancel: ->
-      @get('content').deleteRecord()
-      @transitionToRoute('appliance_types')
-
-App.ApplianceTypesController = Ember.ArrayController.extend
-  sortProperties: ['name']
-  sortAscending: true
-
-  filteredContent: (->
-    @filter (item, index) ->
-      not (item.get("isNew"))
-  ).property("@each.isNew")
