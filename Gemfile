@@ -49,7 +49,7 @@ gem 'grape-entity'
 
 gem 'ember-rails'
 gem 'ember-source', '~> 1.0.0'
-gem 'ember-data-source', '1.0.0.beta.1'
+gem 'ember-data-source', '1.0.0.beta.2'
 gem 'handlebars-source', '~> 1.0.12'
 gem 'hamlbars', '~> 2.0'
 gem "active_model_serializers"
