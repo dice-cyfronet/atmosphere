@@ -129,6 +129,7 @@ GEM
     grape-entity (0.3.0)
       activesupport
       multi_json (>= 1.3.2)
+    gravtastic (3.2.6)
     guard (1.8.2)
       formatador (>= 0.2.4)
       listen (>= 1.0.0)
@@ -322,6 +323,7 @@ DEPENDENCIES
   github-markup
   grape
   grape-entity
+  gravtastic
   guard-rspec
   guard-spork
   haml-rails

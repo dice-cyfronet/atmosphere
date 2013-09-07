@@ -4,12 +4,19 @@
       %a.navbar-brand{href: "#"} AIR
     .collapse.navbar-collapse.navbar-ex1-collapse
       %ul.nav.navbar-nav
-        = hb 'linkTo "appliance_types" tagName="li"' do
-          %a{hb: 'bindAttr href="view.href"'} Appliance Types
-        = hb 'linkTo "users" tagName="li"' do
-          %a{hb: 'bindAttr href="view.href"'} Users
+        = hb 'link-to "appliance_types" tagName="li"' do
+          %a{hb: 'bind-attr href="view.href"'} Appliance Types
+        = hb 'link-to "users" tagName="li"' do
+          %a{hb: 'bind-attr href="view.href"'} Users
       %ul.nav.navbar-nav.pull-right
-        = hb 'linkTo "about" tagName="li"' do
-          %a{hb: 'bindAttr href="view.href"'} About
+        = hb 'link-to "about" tagName="li"' do
+          %a{hb: 'bind-attr href="view.href"'} About
+        = hb 'if currentUser.isSignedIn' do
+          = hb 'link-to "profile" tagName="li"' do
+            %a{hb: 'bind-attr href="view.href"'}
+              %img{hb: 'bind-attr src="currentUser.gravatar_url"'}
+          %li
+            %a{hb: 'action "logout" target="currentUser"'}
+              %i.icon-signout
 .container
   = hb "outlet"

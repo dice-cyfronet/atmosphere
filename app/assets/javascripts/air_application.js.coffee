@@ -5,10 +5,12 @@
 #= require ember-data
 #= require bootstrap
 #= require showdown
+#= require gravtastic
 #= require ./air
 #= require ./store
 #= require_tree ./models
 #= require_tree ./controllers
+#= require_tree ./initializers
 #= require_tree ./views
 #= require_tree ./helpers
 #= require_tree ./templates

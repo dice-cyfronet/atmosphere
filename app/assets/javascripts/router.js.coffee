@@ -7,3 +7,4 @@ App.Router.map ->
   @resource 'users', ->
     @resource 'user', path: ':user_id'
     @route 'new'
+  @resource 'profile'
