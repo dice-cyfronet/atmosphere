@@ -25,7 +25,9 @@ module Api
         update_params[:author] = User.find(update_params[:author]) if update_params[:author]
 
         if @appliance_type.update_attributes(update_params)
-          render json: @appliance_type, serializer: ApplianceTypeSerializer
+          # http://stackoverflow.com/questions/18673993/ember-data-showing-field-from-belongsto-relation-after-save
+          # render json: @appliance_type, serializer: ApplianceTypeSerializer
+          render json: {}, status: 200
         else
           render_error
         end
