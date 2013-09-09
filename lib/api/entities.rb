@@ -26,23 +26,5 @@ module API
         appliance_type.appliance_configuration_templates.map(&:id)
       end
     end
-
-    class ApplianceType < Grape::Entity
-      root 'appliance_types', 'appliance_types'
-
-      expose :id, :name, :description, :shared, :scalable, :visibility
-      expose :preference_cpu, :preference_memory, :preference_disk
-
-      #links
-      expose :links do |at, options|
-        {
-          author: at.user_id,
-          security_proxy: at.security_proxy_id,
-          port_mapping_templates: at.port_mapping_templates.map(&:id),
-          appliance_configuration_templates: at.appliance_configuration_templates.map(&:id)
-          # XXX :appliances, :virtual_machine_templates for admin?
-        }
-      end
-    end
   end
 end

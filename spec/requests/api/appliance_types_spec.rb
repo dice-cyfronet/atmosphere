@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe API::ApplianceTypes do
+describe Api::V1::ApplianceTypesController do
   include ApiHelpers
 
   let(:user)           { create(:user) }
@@ -9,7 +9,7 @@ describe API::ApplianceTypes do
 
   let(:security_proxy) { create(:security_proxy) }
 
-  let!(:at1) { create(:appliance_type, author: user, security_proxy: security_proxy) }
+  let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy) }
   let!(:at2) { create(:appliance_type) }
 
   describe 'GET /appliance_types' do
@@ -28,11 +28,11 @@ describe API::ApplianceTypes do
 
       it 'returns appliance types' do
         get api('/appliance_types', user)
-        expect(at_response).to be_an Array
-        expect(at_response.size).to eq 2
+        expect(ats_response).to be_an Array
+        expect(ats_response.size).to eq 2
 
-        expect(at_response[0]).to appliance_type_eq at1
-        expect(at_response[1]).to appliance_type_eq at2
+        expect(ats_response[0]).to appliance_type_eq at1
+        expect(ats_response[1]).to appliance_type_eq at2
       end
 
       pending 'search'
@@ -56,9 +56,7 @@ describe API::ApplianceTypes do
 
       it 'returns appliance types' do
         get api("/appliance_types/#{at1.id}", user)
-        expect(at_response).to be_an Array
-        expect(at_response.size).to eq 1
-        expect(at_response[0]).to appliance_type_eq at1
+        expect(at_response).to appliance_type_eq at1
       end
 
       it 'returns 404 Not Found when appliance type is not found' do
@@ -71,7 +69,7 @@ describe API::ApplianceTypes do
   describe 'PUT /appliance_types/:id' do
     let(:different_security_proxy) { create(:security_proxy, name: 'different/one') }
 
-    let(:update_json) do {
+    let(:update_json) do {appliance_type: {
         name: 'new name',
         description: 'new description',
         shared: true,
@@ -80,9 +78,9 @@ describe API::ApplianceTypes do
         preference_cpu: 10.0,
         preference_memory: 1024,
         preference_disk: 10240,
-        security_proxy: different_security_proxy.name
-        # TODO migrating ownership?
-    } end
+        security_proxy: different_security_proxy.id,
+        author: different_user.id
+    }} end
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -100,11 +98,9 @@ describe API::ApplianceTypes do
       it 'updates appliance type' do
         put api("/appliance_types/#{at1.id}", user), update_json
         updated_at = ApplianceType.find(at1.id)
-        expect(updated_at).to to_be_updated_by update_json
 
-        expect(at_response).to be_an Array
-        expect(at_response.size).to eq 1
-        expect(at_response[0]).to appliance_type_eq updated_at
+        expect(updated_at).to be_updated_by update_json[:appliance_type]
+        expect(at_response).to appliance_type_eq updated_at
       end
 
       it 'admin updates appliance types event when no appliance type owner' do
@@ -113,8 +109,8 @@ describe API::ApplianceTypes do
       end
 
       it 'returns 400 when entity error' do
-        put api("/appliance_types/#{at1.id}", user), {preference_cpu: -2}
-        expect(response.status).to eq 400
+        put api("/appliance_types/#{at1.id}", user), { appliance_type: {preference_cpu: -2 }}
+        expect(response.status).to eq 422
       end
 
       it 'returns 403 when user is not an appliance type owner' do
@@ -155,11 +151,6 @@ describe API::ApplianceTypes do
         }.to change { ApplianceType.count }.by(-1)
       end
 
-      it 'returns 200 even if appliance type non exist' do
-        delete api("/appliance_types/non_existing", user)
-        expect(response.status).to eq 200
-      end
-
       it 'returns 403 when user is not and appliance type owner' do
         expect {
           delete api("/appliance_types/#{at1.id}", different_user)
@@ -169,7 +160,11 @@ describe API::ApplianceTypes do
     end
   end
 
-  def at_response
+  def ats_response
     json_response['appliance_types']
+  end
+
+  def at_response
+    json_response['appliance_type']
   end
 end

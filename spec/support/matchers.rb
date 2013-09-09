@@ -35,12 +35,12 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
     actual['preference_disk'] == expected.preference_disk
 
     #links
-    actual['links']['author'] == expected.user_id
-    actual['links']['security_proxy'] == expected.security_proxy_id
+    actual['author'] == expected.user_id
+    actual['security_proxy'] == expected.security_proxy_id
   end
 end
 
-RSpec::Matchers.define :to_be_updated_by do |expected|
+RSpec::Matchers.define :be_updated_by do |expected|
   match do |actual|
     actual.name == expected[:name] if expected[:name]
     actual.description == expected[:description] if expected[:description]
@@ -50,6 +50,7 @@ RSpec::Matchers.define :to_be_updated_by do |expected|
     actual.preference_cpu == expected[:preference_cpu] if expected[:preference_cpu]
     actual.preference_memory == expected[:preference_memory] if expected[:preference_memory]
     actual.preference_disk == expected[:preference_disk] if expected[:preference_disk]
-    actual.security_proxy.name == expected[:security_proxy] if expected[:security_proxy]
+    actual.security_proxy.id == expected[:security_proxy] if expected[:security_proxy]
+    actual.author.id == expected[:author] if expected[:author]
   end
 end

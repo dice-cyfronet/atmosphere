@@ -79,6 +79,8 @@ Parameters:
 + `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type.
 + `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type.
 + `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type.
++ `author` (optional) - appliance type author id.
++ `security_proxy` (optional) - security proxy configuration id used by this appliance type.
 
 Example:
 
