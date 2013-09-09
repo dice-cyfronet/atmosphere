@@ -23,7 +23,6 @@ module API
     format :json
     helpers APIHelpers
 
-    mount ApplianceSets
     mount SecurityProxies
     mount SecurityPolicies
   end

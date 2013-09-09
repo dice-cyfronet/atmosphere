@@ -9,13 +9,6 @@ module API
       end
     end
 
-    class ApplianceSet < Grape::Entity
-      expose :name, :priority, :id
-      expose :type do |appliance_set, options|
-        appliance_set.appliance_set_type
-      end
-    end
-
     class ApplianceTypeLinks < Grape::Entity
       expose :user_id, as: :admin
       expose :security_proxy_id, as: :security_proxy

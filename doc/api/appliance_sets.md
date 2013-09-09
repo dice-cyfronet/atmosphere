@@ -12,7 +12,7 @@ GET /appliance_sets
         "id": 1,
         "name": "Foobar Appliance Set",
         "priority": 50,
-        "type": "workflow"
+        "appliance_set_type": "workflow"
     }
 ]
 ```
@@ -41,7 +41,7 @@ Parameters:
 
 + `name` (optional) - The name of the appliance set
 + `priority` (optional) - Appliance set priority
-+ `type` (optional) - Appliance set type (`portal`, `workflow` or `development`). Default `workflow`
++ `appliance_set_type` (optional) - Appliance set type (`portal`, `workflow` or `development`). Default `workflow`
 
 ## Update appliance set
 

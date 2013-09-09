@@ -17,7 +17,7 @@ RSpec::Matchers.define :appliance_set_eq do |expected|
     actual['name'] == expected.name
     actual['id'] == expected.id
     actual['priority'] == expected.priority
-    actual['type'] == expected.appliance_set_type.to_s
+    actual['appliance_set_type'] == expected.appliance_set_type.to_s
   end
 end
 

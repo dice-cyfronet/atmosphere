@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe API::ApplianceSets do
+describe Api::V1::ApplianceSetsController do
   include ApiHelpers
 
   let(:user)           { create(:developer) }
@@ -9,6 +9,7 @@ describe API::ApplianceSets do
 
   let!(:portal_set)    { create(:appliance_set, user: user, appliance_set_type: :portal)}
   let!(:workflow1_set) { create(:appliance_set, user: user, appliance_set_type: :workflow)}
+  let!(:differnt_user_workflow) { create(:appliance_set, user: different_user) }
 
   describe 'GET /appliance_sets' do
     let!(:workflow2_set)   { create(:appliance_set, user: user, appliance_set_type: :workflow)}
@@ -29,13 +30,13 @@ describe API::ApplianceSets do
 
       it 'returns user appliance sets' do
         get api('/appliance_sets', user)
-        expect(json_response).to be_an Array
-        expect(json_response.size).to eq 4
+        expect(ases_response).to be_an Array
+        expect(ases_response.size).to eq 4
 
-        expect(json_response[0]).to appliance_set_eq portal_set
-        expect(json_response[1]).to appliance_set_eq workflow1_set
-        expect(json_response[2]).to appliance_set_eq workflow2_set
-        expect(json_response[3]).to appliance_set_eq development_set
+        expect(ases_response[0]).to appliance_set_eq portal_set
+        expect(ases_response[1]).to appliance_set_eq workflow1_set
+        expect(ases_response[2]).to appliance_set_eq workflow2_set
+        expect(ases_response[3]).to appliance_set_eq development_set
       end
     end
   end
@@ -50,7 +51,9 @@ describe API::ApplianceSets do
 
     context 'when authenticated as user' do
       let(:non_developer) { create(:user) }
-      let(:new_appliance_set) { {name: 'my name', type: :workflow} }
+      let(:new_appliance_set) do
+        { appliance_set: { name: 'my name', appliance_set_type: :workflow } }
+      end
 
       it 'returns 201 Created on success' do
         post api('/appliance_sets', user), new_appliance_set
@@ -60,30 +63,29 @@ describe API::ApplianceSets do
       it 'creates second workflow appliance set' do
         expect {
           post api('/appliance_sets', user), new_appliance_set
-          expect(json_response['id']).to_not be_nil
-          expect(json_response['name']).to eq new_appliance_set[:name]
-          expect(json_response['type']).to eq new_appliance_set[:type].to_s
-
+          expect(as_response['id']).to_not be_nil
+          expect(as_response['name']).to eq new_appliance_set[:appliance_set][:name]
+          expect(as_response['appliance_set_type']).to eq new_appliance_set[:appliance_set][:appliance_set_type].to_s
         }.to change { ApplianceSet.count }.by(1)
       end
 
       it 'does not allow to create second portal appliance set' do
         expect {
-          post api('/appliance_sets', user), {name: 'second portal', type: :portal}
-          expect(response.status).to eq 400
+          post api('/appliance_sets', user), {appliance_set: {name: 'second portal', appliance_set_type: :portal}}
+          expect(response.status).to eq 409
         }.to change { ApplianceSet.count }.by(0)
       end
 
       it 'does not allow to create second development appliance set' do
         create(:appliance_set, user: user, appliance_set_type: :development)
         expect {
-          post api('/appliance_sets', user), {name: 'second portal', type: :development}
-          expect(response.status).to eq 400
+          post api('/appliance_sets', user), {appliance_set: {name: 'second portal', appliance_set_type: :development}}
+          expect(response.status).to eq 409
         }.to change { ApplianceSet.count }.by(0)
       end
 
       it 'does not allow create development appliance set for non developer' do
-        post api('/appliance_sets', non_developer), {name: 'devel', type: :development}
+        post api('/appliance_sets', non_developer), {appliance_set: {name: 'devel', appliance_set_type: :development}}
         expect(response.status).to eq 403
       end
     end
@@ -105,7 +107,7 @@ describe API::ApplianceSets do
 
       it 'returns portal appliance set' do
         get api("/appliance_sets/#{portal_set.id}", user)
-        expect(json_response).to appliance_set_eq portal_set
+        expect(as_response).to appliance_set_eq portal_set
       end
     end
   end
@@ -119,16 +121,25 @@ describe API::ApplianceSets do
     end
 
     context 'when authenticated as user' do
+      let(:update_request) do
+        { appliance_set: { name: 'updated', priority: 99 } }
+      end
       it 'returns 200 on success' do
-        put api("/appliance_sets/#{portal_set.id}", user), {name: 'updated', priority: 99}
+        put api("/appliance_sets/#{portal_set.id}", user), update_request
         expect(response.status).to eq 200
       end
 
       it 'changes name and priority' do
-        put api("/appliance_sets/#{portal_set.id}", user), {name: 'updated', priority: 99}
+        put api("/appliance_sets/#{portal_set.id}", user), update_request
         set = ApplianceSet.find(portal_set.id)
         expect(set.name).to eq 'updated'
         expect(set.priority).to eq 99
+      end
+
+      it 'does not change appliance set type' do
+        put api("/appliance_sets/#{portal_set.id}", user), {appliance_set: {appliance_set_type: :workflow}}
+        set = ApplianceSet.find(portal_set.id)
+        expect(set.appliance_set_type).to eq 'portal'
       end
     end
   end
@@ -153,16 +164,6 @@ describe API::ApplianceSets do
         }.to change { ApplianceSet.count }.by(-1)
       end
 
-      it 'returns 200 even when appliance set not exist' do
-        delete api("/appliance_sets/non_existing", user)
-        expect(response.status).to eq 200
-      end
-
-      it 'admin deletes appliance set even when no set owner' do
-        delete api("/appliance_sets/non_existing", admin)
-        expect(response.status).to eq 200
-      end
-
       it 'returns 403 when deleting not owned appliance set' do
         expect {
           delete api("/appliance_sets/#{portal_set.id}", different_user)
@@ -170,8 +171,21 @@ describe API::ApplianceSets do
         }.to change { ApplianceSet.count }.by(0)
       end
     end
+
+    context 'when authenticated as admin' do
+      it 'deletes appliance set even when no set owner' do
+        delete api("/appliance_sets/#{portal_set.id}", admin)
+        expect(response.status).to eq 200
+      end
+    end
+  end
+  pending 'POST /appliance_sets/{id}/appliances'
+
+  def ases_response
+    json_response['appliance_sets']
   end
 
-
-  pending 'POST /appliance_sets/{id}/appliances'
+  def as_response
+    json_response['appliance_set']
+  end
 end
