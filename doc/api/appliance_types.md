@@ -19,8 +19,8 @@ GET /appliance_types
       "preference_cpu": 1.0,
       "preference_memory": 1024,
       "preference_disk": 10240,
-      "author": "marek",
-      "security_proxy": "/security/proxy/name"
+      "author": 1,
+      "security_proxy": 1
     }, {
       ...
     }
@@ -42,7 +42,7 @@ Parameters:
 
 ```json
 {
-  "appliance_types": [
+  "appliance_type": [
     {
       "id": 1,
       "name": "Foobar Appliance Type",
@@ -53,8 +53,8 @@ Parameters:
       "preference_cpu": 1.0,
       "preference_memory": 1024,
       "preference_disk": 10240,
-      "author": "marek",
-      "security_proxy": "/security/proxy/name"
+      "author": 1,
+      "security_proxy": 1
     }
   ]
 }
@@ -62,7 +62,7 @@ Parameters:
 
 ## Update appliance type
 
-Update appliance set properties. You need to be an appliance type owner (or admin) do edit this entity.
+Update appliance set properties. You need to be an appliance type owner (or admin) do edit this entity. The format of request is similar to the one responsible for getting Appliance Type information.
 
 ```
 PUT /appliance_types/:id
@@ -79,6 +79,28 @@ Parameters:
 + `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type.
 + `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type.
 + `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type.
+
+Example:
+
+```json
+{
+  "appliance_type": [
+    {
+      "id": 1,
+      "name": "New name",
+      "description": "New description",
+      "shared": false,
+      "scalable": true,
+      "visibility": "published",
+      "preference_cpu": 1.0,
+      "preference_memory": 1024,
+      "preference_disk": 10240,
+      "author": 2,
+      "security_proxy": 2
+    }
+  ]
+}
+```
 
 ## Delete appliance type
 
