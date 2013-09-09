@@ -29,7 +29,7 @@ API request types:
 * `GET` requests access one or more resources and return the result as JSON. Objects array with root equals into plural resource name (e.g. `appliance_types`) is returned (even if there is one object inside)
 * `POST` requests return `201 Created` if the resource is successfully created and return the newly created resource as JSON
 * `GET`, `PUT` and `DELETE` return `200 Ok` if the resource is accessed, modified or deleted successfully, the (modified) result is returned as JSON
-* `DELETE` requests are designed to be idempotent, meaning a request a resource still returns `200 Ok` even it was deleted before or is not available. The reasoning behind it is the user is not really interested if the resource existed before or not.
+* `DELETE` returns `200 Ok` on success, `404 Not Found` when resource is not found.
 
 
 The following list shows the possible return codes for API requests.
