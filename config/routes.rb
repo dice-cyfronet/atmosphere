@@ -1,4 +1,11 @@
-require 'api/api'
+def json_resources(name)
+  resources name, only: [:index, :show, :create, :update, :destroy]
+end
+
+def owned_payload_resources(name)
+  json_resources name
+  get "#{name}/:name/payload" => "#{name}#payload", as: "#{name}_payload", constraints: {name: /#{OwnedPayloable.name_regex}/}, defaults: {format: :text}
+end
 
 Air::Application.routes.draw do
   resources :user_keys
@@ -18,12 +25,14 @@ Air::Application.routes.draw do
   devise_for :users
   root to: 'home#index'
 
-  # mount API::API => '/api'
-  namespace :api, defaults: {format: 'json'} do
+  namespace :api, defaults: {format: :json} do
     namespace :v1 do
-      resources :appliance_types
-      resources :appliance_sets
-      resources :users
+      json_resources :appliance_types
+      json_resources :appliance_sets
+      json_resources :users
+
+      owned_payload_resources :security_proxies
+      owned_payload_resources :security_policies
     end
   end
 

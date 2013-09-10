@@ -19,7 +19,7 @@ class Ability
       can [:update, :destroy], ApplianceType, user_id: user.id
 
       ## Security proxies and policies
-      can :new, owned_payloads
+      can :create, owned_payloads
       can [:update, :destroy], owned_payloads do |item|
         item.users.include? user
       end
@@ -29,7 +29,7 @@ class Ability
 
     ### Anonymous user abilities
     user ||= User.new
-    can [:index, :show], owned_payloads
+    can [:index, :show, :payload], owned_payloads
   end
 
   private

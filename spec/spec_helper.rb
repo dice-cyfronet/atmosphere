@@ -43,6 +43,10 @@ Spork.prefork do
     config.alias_example_to :expect_it
 
     config.include FactoryGirl::Syntax::Methods
+
+    #http://stackoverflow.com/a/7853245/1535165
+    config.filter_run :focus => true
+    config.run_all_when_everything_filtered = true
   end
 
   FactoryGirl.find_definitions

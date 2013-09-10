@@ -32,16 +32,6 @@ Air::Application.configure do
   # Open sent mails in browser
   config.action_mailer.delivery_method = :letter_opener
 
-  ActiveSupport::Dependencies.autoload_paths << File::join( Rails.root, 'lib')
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::API'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'APIHelpers'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::ApplianceSets'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::ApplianceTypes'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::SecurityProxies'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::SecurityPolicies'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::Concerns::OwnedPayloads'
-  ActiveSupport::Dependencies.explicitly_unloadable_constants << 'API::Concerns::OwnedPayloadsHelpers'
-
   #cors
   config.middleware.use Rack::Cors do
     allow do

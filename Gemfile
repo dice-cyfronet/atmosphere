@@ -46,10 +46,6 @@ gem 'haml-rails'
 gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass', branch: '3'
 gem 'font-awesome-rails'
 
-# API
-gem 'grape'
-gem 'grape-entity'
-
 gem 'ember-rails'
 gem 'ember-source', '~> 1.0.0'
 gem 'ember-data-source', '1.0.0.beta.2'
