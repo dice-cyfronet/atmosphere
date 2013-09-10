@@ -108,7 +108,7 @@ describe Api::V1::ApplianceTypesController do
         expect(response.status).to eq 200
       end
 
-      it 'returns 400 when entity error' do
+      it 'returns 422 when entity error' do
         put api("/appliance_types/#{at1.id}", user), { appliance_type: {preference_cpu: -2 }}
         expect(response.status).to eq 422
       end
