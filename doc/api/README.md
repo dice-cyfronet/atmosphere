@@ -22,15 +22,14 @@ GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg
 
 ## Status codes
 
-The API is designed to return different status codes according to context and action. In this way if a request results in an error the caller is able to get insight into what went wrong, e.g. status code `400 Bad Request` is returned if a required attribute is missing from the request. The following list gives an overview of how the API functions generally behave.
+The API is designed to return different status codes according to context and action. In this way if a request results in an error the caller is able to get insight into what went wrong, e.g. status code `422 Unprocessable Entity` is returned if a required attribute is missing from the request. The following list gives an overview of how the API functions generally behave.
 
 API request types:
 
-* `GET` requests access one or more resources and return the result as JSON. Objects array with root equals into plural resource name (e.g. `appliance_types`) is returned (even if there is one object inside)
+* `GET` requests access one or more resources and return the result as JSON. Objects array with root equals into resource name (e.g. `appliance_types` for listing all appliance types and `appliance_type` for getting single appliance type) is returned
 * `POST` requests return `201 Created` if the resource is successfully created and return the newly created resource as JSON
+* `POST` and `PUT` request bodies format needs to the same format as for getting single resource response
 * `GET`, `PUT` and `DELETE` return `200 Ok` if the resource is accessed, modified or deleted successfully, the (modified) result is returned as JSON
-* `DELETE` returns `200 Ok` on success, `404 Not Found` when resource is not found.
-
 
 The following list shows the possible return codes for API requests.
 
@@ -38,12 +37,13 @@ Return values:
 
 * `200 Ok` - The `GET`, `PUT` or `DELETE` request was successful, the resource(s) itself is returned as JSON
 * `201 Created` - The `POST` request was successful and the resource is returned as JSON
-* `400 Bad Request` - A required attribute of the API request is missing, e.g. the name of an appliance type is not given
+* `400 Bad Request` - The request cannot be fulfilled due to bad syntax.
 * `401 Unauthorized` - The user is not authenticated, a valid user token is necessary, see above
 * `403 Forbidden` - The request is not allowed, e.g. the user is not allowed to delete an appliance type
 * `404 Not Found` - A resource could not be accessed, e.g. an ID for a resource could not be found
 * `405 Method Not Allowed` - The request is not supported
 * `409 Conflict` - A conflicting resource already exists, e.g. creating a appliance type with a name that already exists
+* `422 Unprocessable Entity` - A required attribute of the API request is missing or in wrong format, e.g. the name of an appliance type is not given
 * `500 Server Error` - While handling the request something went wrong on the server side
 
 ## Contents

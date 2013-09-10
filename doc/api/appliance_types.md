@@ -1,6 +1,6 @@
 ## List appliance types
 
-Get a list of appliance types
+Get a list of appliance types.
 
 ```
 GET /appliance_types
@@ -60,17 +60,16 @@ Parameters:
 }
 ```
 
-## Update appliance type
+## Create new appliance type
 
-Update appliance set properties. You need to be an appliance type owner (or admin) do edit this entity. The format of request is similar to the one responsible for getting Appliance Type information.
+Create new appliance type. Request format is the same as `GET` single Appliance Type response.
 
 ```
-PUT /appliance_types/:id
+POST /appliance_types
 ```
 
 Parameters:
 
-+ `id` (required) - The ID of an appliance type
 + `name` (optional) - New appliance type
 + `description` (optional) - New appliance type description
 + `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared amoung many users.
@@ -82,27 +81,18 @@ Parameters:
 + `author` (optional) - appliance type author id.
 + `security_proxy` (optional) - security proxy configuration id used by this appliance type.
 
-Example:
+## Update appliance type
 
-```json
-{
-  "appliance_type": [
-    {
-      "id": 1,
-      "name": "New name",
-      "description": "New description",
-      "shared": false,
-      "scalable": true,
-      "visibility": "published",
-      "preference_cpu": 1.0,
-      "preference_memory": 1024,
-      "preference_disk": 10240,
-      "author": 2,
-      "security_proxy": 2
-    }
-  ]
-}
+Update appliance set properties. You need to be an appliance type owner (or admin) do edit this entity. Request format is the same as `GET` single Appliance Type response.
+
 ```
+PUT /appliance_types/:id
+```
+
+Parameters:
+
++ `id` (required) - The ID of an appliance type
++ All other parameters are optional and are the same as for `POST` method
 
 ## Delete appliance type
 

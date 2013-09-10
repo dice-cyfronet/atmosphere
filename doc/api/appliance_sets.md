@@ -1,20 +1,24 @@
 ## List user appliance sets
 
-Get a list of user appliance sets
+Get a list of user appliance sets. For normal user only owned appliance sets are returned, for the user all users appliance sets.
 
 ```
 GET /appliance_sets
 ```
 
 ```json
-[
+{
+  "appliance_sets": [
     {
         "id": 1,
         "name": "Foobar Appliance Set",
         "priority": 50,
         "appliance_set_type": "workflow"
+    }, {
+      ...
     }
-]
+  ]
+}
 ```
 
 ## Details of an appliance set
@@ -29,9 +33,22 @@ Parameters:
 
 + `id` (required) - The ID of an appliance set
 
+```json
+{
+  "appliance_set": [
+    {
+        "id": 1,
+        "name": "Foobar Appliance Set",
+        "priority": 50,
+        "appliance_set_type": "workflow"
+    }
+  ]
+}
+```
+
 ## New appliance set
 
-Creates a new appliance set. Every user is able to create one portal appliance set and many workflow appliance sets. Additionaly developer is able to create one development appliance set.
+Creates a new appliance set. Every user is able to create one `portal` appliance set and many `workflow` appliance sets. Additionaly **developer** is able to create one `development` appliance set. Request format is the same as `GET` single Appliance Set response.
 
 ```
 POST /appliance_sets
@@ -45,7 +62,7 @@ Parameters:
 
 ## Update appliance set
 
-Update name and priority of user appliance set.
+Update name and priority of user appliance set. You need to be an appliance type owner (or admin) do edit this appliance set.
 
 ```
 PUT /appliance_sets/:id
@@ -59,7 +76,7 @@ Parameters:
 
 ## Delete appliance set
 
-Delete user appliance set
+Delete user appliance set. You need to be an appliance type owner (or admin) do delete this appliance set.
 
 ```
 DELETE /appliance_sets/:id

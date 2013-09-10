@@ -7,26 +7,46 @@ GET /security_policies
 ```
 
 ```json
-[
+{
+  "security_policies": [
     {
-        "name": "foobar/security/policy",
-        "payload": "Security policy payload",
-        "owners": ["marek", "tomek", "piotr"]
+      "name": "foobar/security/policy",
+      "payload": "Security policy payload",
+      "owners": [1, 2, 3]
+    }, {
+      ...
     }
-]
+  ]
+}
 ```
 
+## Details of an security policy
+
+Get all details of a security policy.
+
 ```
-GET /appliance_sets/:name
+GET /security_policies
 ```
 
 Parameters:
 
-+ `name` (required) - The name of an security policy (can include `/`)
++ `id` (required) - The ID of a security policy
+
+```json
+{
+  "security_policy": [
+    {
+      "name": "foobar/security/policy",
+      "payload": "Security policy payload",
+      "owners": [1, 2, 3]
+    }
+  ]
+}
+```
 
 ## New security policy
 
-Creates a new security policy.
+Creates a new security policy. Request format is the same as `GET` single security policy response.
 
 ```
 POST /security_policies
@@ -34,30 +54,41 @@ POST /security_policies
 
 Parameters:
 
-+ `name` (optional) - Security policy name (need to be globaly unique). It can be composed of letters, numbers, `-` and `_`
-+ `payload` (optional) - Security policy payload
-+ `owners` (optional) - List of security policy owners
++ `name` (required) - Security policy name (need to be globaly unique). It can be composed of letters, numbers, `/`, `-` and `_`
++ `payload` (required) - Security policy payload
++ `owners` (optional) - List of security policy owners. If this list is empty than current user is set as security policy owner.
 
 ## Update security policy
 
-Update payload and list of security policy owners.
+Update security policy. You need to be an appliance type owner (or admin) do edit this entity. Request format is the same as `GET` single security policy response.
 
 ```
-PUT /security_policies/:name
+PUT /security_policies/:id
 ```
 
 Parameters:
 
-+ `name` (required) - The name of an security policy (can include `/`)
-+ `payload` (optional) - New security policy payload
-+ `owners` (optional) - New list of security policy owners
++ `id` (required) - The ID of a security policy
++ All other parameters are optional and are the same as for `POST` method
 
 ## Delete security policy
 
 Delete security policy. User deleting security policy need to be its owner.
 
 ```
-DELETE /security_policies/:name
+DELETE /security_policies/:id
+```
+
+Parameters:
+
++ `id` (required) - The ID of a security policy
+
+## Get security policy payload
+
+Get security policy payload as plain text
+
+```
+GET /security_policies/:name/payload
 ```
 
 Parameters:
