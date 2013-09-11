@@ -3,3 +3,4 @@ App.User = DS.Model.extend
   email: DS.attr('string')
   full_name: DS.attr('string')
   appliance_types: DS.hasMany('appliance_type', { inverse: 'author' })
+  appliance_types: DS.hasMany('security_proxy', { inverse: 'owners' })

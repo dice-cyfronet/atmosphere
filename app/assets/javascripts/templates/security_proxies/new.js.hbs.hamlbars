@@ -1,0 +1,11 @@
+= hb 'partial "security_proxies/view"'
+.edit
+  %h4
+    Edit Appliance Type
+    .pull-right
+      %button.btn.btn-success.btn-xs{hb: 'action "save"', title: 'Create'}
+        %i.icon-save
+        Save
+      %button.btn.btn-default.btn-xs{hb: 'action "cancel"', title: 'Cancel'} Cancel
+  %hr
+  = hb "partial 'security_proxies/edit'"

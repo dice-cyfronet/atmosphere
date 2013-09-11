@@ -7,5 +7,7 @@ App.Router.map ->
   @resource 'users', ->
     @resource 'user', path: ':user_id'
     @route 'new'
-  @resource 'security_proxies'
+  @resource 'security_proxies', ->
+    @resource 'security_proxy', path: ':security_proxy_id'
+    @route 'new'
   @resource 'profile'
