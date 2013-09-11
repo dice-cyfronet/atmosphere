@@ -9,6 +9,5 @@ App.SecurityProxiesNewController = Ember.ObjectController.extend
 
 ### Security Proxy ###
 App.SecurityProxyController = App.EditDeleteContentController.extend
-  visibilities: ['unpublished', 'published']
   contentType: 'security_proxy'
   indexRoute: 'security_proxies'
