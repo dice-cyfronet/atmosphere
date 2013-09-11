@@ -1,7 +1,7 @@
 = hb 'partial "appliance_types/view"'
 .edit
   %h4
-    Edit Appliance Type
+    Create new Appliance Type
     .pull-right
       %button.btn.btn-success.btn-xs{hb: 'action "save"', title: 'Create'}
         %i.icon-save
