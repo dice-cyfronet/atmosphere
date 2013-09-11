@@ -3,7 +3,7 @@ App.SecurityProxiesController = App.FilteredContentController.extend
   sortProperties: ['name']
   sortAscending: true
 
-App.SecurityProxiesNewController = Ember.ObjectController.extend
+App.SecurityProxiesNewController = App.NewContentController.extend
   contentType: 'security_proxy'
   indexRoute: 'security_proxies'
 

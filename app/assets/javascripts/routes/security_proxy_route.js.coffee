@@ -8,3 +8,7 @@ App.SecurityProxiesNewRoute = Ember.Route.extend
     this.store.createRecord('security_proxy')
 
 ### Security proxy ###
+App.SecurityProxyRoute = Ember.Route.extend
+  setupController: (controller, model)->
+    controller.set('isEditing', false)
+    controller.set('model', model)
