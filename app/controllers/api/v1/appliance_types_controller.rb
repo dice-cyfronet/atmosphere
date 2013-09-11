@@ -26,9 +26,7 @@ module Api
         update_params[:security_proxy] = SecurityProxy.find(update_params[:security_proxy]) if update_params[:security_proxy]
 
         if @appliance_type.update_attributes(update_params)
-          # http://stackoverflow.com/questions/18673993/ember-data-showing-field-from-belongsto-relation-after-save
           render json: @appliance_type, serializer: ApplianceTypeSerializer
-          # render json: {}, status: 200
         else
           render_error
         end
