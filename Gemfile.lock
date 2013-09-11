@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/thomas-mcdonald/bootstrap-sass.git
-  revision: 82f1b343ffc0069bf99d2a3d4f0190bc87ba89ed
+  revision: 0e88056ac5d58fb0bbd23d3fe929eac01712d964
   branch: 3
   specs:
     bootstrap-sass (3.0.0.0)
