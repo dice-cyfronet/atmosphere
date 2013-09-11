@@ -1,4 +1,4 @@
-= hb 'partial "appliance_type/view"'
+= hb 'partial "appliance_types/view"'
 .edit
   %h4
     Edit Appliance Type
@@ -8,4 +8,4 @@
         Save
       %button.btn.btn-default.btn-xs{hb: 'action "cancel"', title: 'Cancel'} Cancel
   %hr
-  = hb "partial 'appliance_type/edit'"
+  = hb "partial 'appliance_types/edit'"

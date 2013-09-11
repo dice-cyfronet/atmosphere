@@ -1,4 +1,4 @@
-=hb "partial 'appliance_type/view'"
+=hb "partial 'appliance_types/view'"
 
 = hb 'if isEditing' do
   .edit
@@ -10,4 +10,4 @@
           Save
         .btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
     %hr
-    = hb "partial 'appliance_type/edit'"
+    = hb "partial 'appliance_types/edit'"
