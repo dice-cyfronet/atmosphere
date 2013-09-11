@@ -2,6 +2,7 @@ class ApplianceTypeSerializer < ActiveModel::Serializer
   embed :ids
 
   attributes :id, :name, :description, :shared, :scalable, :visibility
+  attributes :preference_cpu, :preference_memory, :preference_disk
 
   has_one :author, key: :author
   has_one :security_proxy, key: :security_proxy

@@ -11,16 +11,27 @@
       %button.btn.btn-danger.btn-xs{hb: "action 'delete'", title: "Delete"}
         %i.icon-trash
         Delete
-%h6
-.tags
-  = hb 'if published' do
-    %span.label.label-success Published
-    = hb 'else'
-    %span.label.label-warning Unpublished
-  = hb 'if shared' do
-    %span.label.label-info Shared
-  = hb 'if scalable' do
-    %span.label.label-default Scalable
+  %h5
+    = hb 'if published' do
+      %span.label.label-success Published
+      = hb 'else'
+      %span.label.label-warning Unpublished
+    = hb 'if shared' do
+      %span.label.label-info Shared
+    = hb 'if scalable' do
+      %span.label.label-info Scalable
+    = hb 'if preference_cpu' do
+      %span.label.label-primary.dynamic-label
+        CPU
+        = hb 'preference_cpu'
+    = hb 'if preference_memory' do
+      %span.label.label-primary.dynamic-label
+        Memory
+        = hb 'preference_memory'
+    = hb 'if preference_disk' do
+      %span.label.label-primary.dynamic-label
+        Data
+        = hb 'preference_disk'
 %hr
 .description
   = hb 'markdown description'

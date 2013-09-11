@@ -8,6 +8,8 @@
           %a{hb: 'bind-attr href="view.href"'} Appliance Types
         = hb 'link-to "users" tagName="li"' do
           %a{hb: 'bind-attr href="view.href"'} Users
+        = hb 'link-to "security_proxies" tagName="li"' do
+          %a{hb: 'bind-attr href="view.href"'} Security Proxies
       %ul.nav.navbar-nav.pull-right
         = hb 'link-to "about" tagName="li"' do
           %a{hb: 'bind-attr href="view.href"'} About

@@ -17,3 +17,17 @@
       %label{for: "scalable"}
         =hb "view Ember.Checkbox checkedBinding='scalable'"
         Scalable
+  .row
+    .col-lg-2
+      %label{for: "preference_cpu"} CPU
+      =hb "view Ember.TextField valueBinding='preference_cpu' class='form-control' placeholder='CPU'"
+    .col-lg-2
+      %label{for: "preference_cpu"} Memory
+      .input-group
+        =hb "view Ember.TextField valueBinding='preference_memory' class='form-control' placeholder='Memory'"
+        %span.input-group-addon MB
+    .col-lg-2
+      %label{for: "preference_cpu"} Disk
+      .input-group
+        =hb "view Ember.TextField valueBinding='preference_disk' class='form-control' placeholder='Disk'"
+        %span.input-group-addon MB
