@@ -1,0 +1,7 @@
+%form{role: "form"}
+  .form-group
+    %label{for: "name"} Name
+    =hb "view Ember.TextField valueBinding='name' class='form-control'"
+  .form-group
+    %label{for: "payload"} Payload
+    =hb "view Ember.TextArea valueBinding='payload' class='form-control' rows='4'"

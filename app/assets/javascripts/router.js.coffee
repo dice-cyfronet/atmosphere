@@ -10,4 +10,7 @@ App.Router.map ->
   @resource 'security_proxies', ->
     @resource 'security_proxy', path: ':security_proxy_id'
     @route 'new'
+  @resource 'security_policies', ->
+    @resource 'security_policy', path: ':security_policy_id'
+    @route 'new'
   @resource 'profile'

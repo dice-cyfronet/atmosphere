@@ -1,0 +1,13 @@
+=hb "partial 'security_policies/view'"
+
+= hb 'if isEditing' do
+  .edit
+    %h4
+      Edit Security Policy
+      .pull-right
+        %button.btn.btn-success.btn-xs{hb: 'action "doneEditing"'}
+          %i.icon-save
+          Save
+        .btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
+    %hr
+    = hb "partial 'security_policies/edit'"

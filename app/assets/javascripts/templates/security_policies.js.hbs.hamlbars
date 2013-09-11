@@ -1,0 +1,16 @@
+.appliance_types
+  .row
+    .col-md-3
+      %legend
+        Security Policies
+        .pull-right
+          = hb 'link-to "security_policies.new" class="btn btn-success btn-xs" title="Add new Security Proxy"' do
+            %i.icon-plus
+            Add new
+      %ul.nav.nav-pills.nav-stacked
+        = hb 'each security_policy in filteredContent' do
+          = hb 'link-to "security_policy" security_policy tagName="li"' do
+            %a{hb: 'bind-attr href="view.href"'}
+              = hb 'security_policy.name'
+    .col-md-9
+      = hb 'outlet'
