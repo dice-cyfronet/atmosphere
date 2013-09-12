@@ -1,17 +1,23 @@
-.navbar.navbar-default.navbar-fixed-top
+.navbar.navbar-default.navbar-fixed-top{role: "navigation"}
   .container
     .navbar-header
       %a.navbar-brand{href: "#"} AIR
     .collapse.navbar-collapse.navbar-ex1-collapse
       %ul.nav.navbar-nav
         = hb 'link-to "appliance_types" tagName="li"' do
-          %a{hb: 'bind-attr href="view.href"'} Appliance Types
+          %a{hb: 'bind-attr href="view.href"'} Types
+        %li.disabled
+          %a Sets
+        %li.disabled
+          %a Templates
+        %li.disabled
+          %a VMs
         = hb 'link-to "users" tagName="li"' do
           %a{hb: 'bind-attr href="view.href"'} Users
         = hb 'link-to "security_proxies" tagName="li"' do
-          %a{hb: 'bind-attr href="view.href"'} Security Proxies
+          %a{hb: 'bind-attr href="view.href"'} Proxies
         = hb 'link-to "security_policies" tagName="li"' do
-          %a{hb: 'bind-attr href="view.href"'} Security Policies
+          %a{hb: 'bind-attr href="view.href"'} Policies
       %ul.nav.navbar-nav.pull-right
         = hb 'link-to "about" tagName="li"' do
           %a{hb: 'bind-attr href="view.href"'} About
