@@ -8,6 +8,30 @@
         %button.btn.btn-success.btn-xs{hb: 'action "doneEditing"'}
           %i.icon-save
           Save
-        .btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
+        %button.btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
     %hr
     = hb "partial 'appliance_types/edit'"
+
+%ul.nav.nav-tabs#tabs
+  %li.active
+    %a{href: '#port-mappings-tab', 'data-toggle' => 'tab'} Port mappings
+  %li
+    %a{href: '#configurations-tab', 'data-toggle' => 'tab'} Configurations
+  %li
+    %a{href: '#templates-tab', 'data-toggle' => 'tab'} Templates
+  %li
+    %a{href: '#appliances-tab', 'data-toggle' => 'tab'} Appliances
+  %li.pull-right
+    %button.btn.btn-success.btn-xs
+      %i.icon-plus
+      Add
+.tab-content
+  #port-mappings-tab.tab-pane.active
+    = hb "partial 'appliance_types/port_mappings'"
+  #configurations-tab.tab-pane
+    = hb "partial 'appliance_types/configurations'"
+  #templates-tab.tab-pane
+    = hb "partial 'appliance_types/templates'"
+  #appliances-tab.tab-pane
+    = hb "partial 'appliance_types/appliances'"
+

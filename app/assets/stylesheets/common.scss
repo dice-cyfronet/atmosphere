@@ -20,7 +20,7 @@ body {
 
 .edit {
   padding: 5px;
-  margin: 40px 5px 5px 5px;
+  margin: 40px 5px 40px 5px;
 
   @include border-radius(5px);
   border: 3px solid #e5e5e5;
@@ -28,4 +28,11 @@ body {
 
 a {
   cursor: pointer
+}
+
+.description {
+  color: #456;
+  font-weight: 200;
+  line-height: 24px;
+  margin: 15px 10px 30px 10px;
 }

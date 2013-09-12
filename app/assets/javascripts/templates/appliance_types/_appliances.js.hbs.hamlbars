@@ -1,0 +1,26 @@
+%p.description
+  Currently started appliances from this appliance type
+
+%table.table.table-hover
+  %thead
+    %tr
+      %th Appliance Set Id
+      %th Author
+      %th Configuration
+      %th Actions
+  %tbody
+    %tr
+      %td 123
+      %td Marek
+      %td Static configuration
+      %td
+        %button.btn.btn-danger.btn-xs{title: "Delete"}
+          %i.icon-trash
+
+    %tr
+      %td 233
+      %td Tomek
+      %td Dynamic configuration
+      %td
+        %button.btn.btn-danger.btn-xs{title: "Delete"}
+          %i.icon-trash

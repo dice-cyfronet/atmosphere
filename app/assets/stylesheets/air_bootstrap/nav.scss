@@ -26,3 +26,37 @@
 }
 
 .nav-pills > .active > a > i[class^="icon-"] { background: inherit; }
+
+/**
+ * nav-tabs
+ *
+ */
+.nav-tabs > li > a { color: $style_color; }
+.nav.nav-tabs {
+  li {
+    > a {
+      margin-right: 7px;
+      line-height: 20px;
+      border-color: #EEE;
+      color: #888;
+      border-bottom: 1px solid #ddd;
+      .badge {
+        background-color: #eee;
+        color: #888;
+        text-shadow: 0 1px 1px #fff;
+      }
+      i[class^="icon-"] {
+        line-height: 14px;
+      }
+    }
+    &.active {
+      > a {
+        border-color: #CCC;
+        border-bottom: 1px solid #fff;
+        color: #333;
+      }
+    }
+  }
+
+  &.nav-small-tabs > li > a { padding: 6px 9px; }
+}
