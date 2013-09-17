@@ -17,15 +17,23 @@ class UserKey < ActiveRecord::Base
 
   FINGER_PRINT_RE = /([\d\h]{2}:)+[\d\h]{2}/
 
-  validates_presence_of :name, :public_key, :fingerprint
+  validates_presence_of :name, :public_key, :user
   validates_uniqueness_of :name, :scope => :user_id
   attr_readonly :name, :public_key, :fingerprint
   before_create :generate_fingerprint
   belongs_to :user
 
+  #def name=(name)
+    #raise 'Attribute :name has already been set and cannot be modified' unless name.blank?
+    #logger.info 'Setting name'
+    #write_attribute(:name, name)
+  #end
+
+
   private
   def generate_fingerprint
     logger.info "Generating fingerprint for #{public_key}"
+    return unless self.public_key    
     fprint = nil
     Tempfile.open('ssh_public_key', '/tmp') do |file|
       file.puts self.public_key
@@ -40,6 +48,6 @@ class UserKey < ActiveRecord::Base
       end
     end
     logger.info "Fingerprint #{fprint}"
-    self.fingerprint = fprint
+    write_attribute(:fingerprint, fprint)
   end
 end

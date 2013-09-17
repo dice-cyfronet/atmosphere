@@ -3,7 +3,7 @@ require 'spec_helper'
 describe UserKey do
   subject { create(:user_key) }
   expect_it { to be_valid }
-  [:name, :fingerprint, :public_key].each do |attr|
+  [:name, :public_key, :user].each do |attr|
     expect_it { to validate_presence_of attr}
   end
   expect_it { to validate_uniqueness_of(:name).scoped_to(:user_id) }
@@ -12,5 +12,4 @@ describe UserKey do
   end
   expect_it { to belong_to :user }
 
-  pending 'shoud check if key and fingerprint are readonly'
 end

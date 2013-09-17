@@ -53,6 +53,6 @@ class UserKeysController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def user_key_params
-      params.require(:user_key).permit(:name, :fingerprint)
+      params.require(:user_key).permit(:name)
     end
 end
