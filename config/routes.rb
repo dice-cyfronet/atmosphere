@@ -8,7 +8,6 @@ def owned_payload_resources(name)
 end
 
 Air::Application.routes.draw do
-  resources :user_keys
 
   resources :virtual_machine_templates
 
@@ -20,6 +19,7 @@ Air::Application.routes.draw do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :security_proxies
     resources :security_policies
+    resources :user_keys
   end
 
   devise_for :users
@@ -30,6 +30,7 @@ Air::Application.routes.draw do
       json_resources :appliance_types
       json_resources :appliance_sets
       json_resources :users
+      resources :user_keys, only: [:index, :show, :create, :destroy]
 
       owned_payload_resources :security_proxies
       owned_payload_resources :security_policies
