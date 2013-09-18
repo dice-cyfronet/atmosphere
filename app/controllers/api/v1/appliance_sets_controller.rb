@@ -21,7 +21,7 @@ module Api
           if @appliance_set.save
             render json: @appliance_set, serializer: ApplianceSetSerializer, status: :created
           else
-            render_error
+            render_error @appliance_set
           end
         end
       end
@@ -30,7 +30,7 @@ module Api
         if @appliance_set.update_attributes(appliance_set_update_params)
           render json: @appliance_set, serializer: ApplianceSetSerializer
         else
-          render_error
+          render_error @appliance_set
         end
       end
 
@@ -38,16 +38,11 @@ module Api
         if @appliance_set.destroy
           render json: {}
         else
-          render_error
+          render_error @appliance_set
         end
       end
 
       private
-
-      def render_error
-        render json: @appliance_set.errors, status: :unprocessable_entity
-      end
-
       def appliance_set_params
         params.require(:appliance_set).permit(:appliance_set_type, :name, :priority)
       end
