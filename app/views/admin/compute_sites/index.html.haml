@@ -6,6 +6,7 @@
     %th Name
     %th Location
     %th Site type
+    %th Technology
     %th
     %th
     %th
@@ -16,10 +17,11 @@
       %td= compute_site.name
       %td= compute_site.location
       %td= compute_site.site_type
-      %td= link_to 'Show', compute_site
-      %td= link_to 'Edit', edit_compute_site_path(compute_site)
-      %td= link_to 'Destroy', compute_site, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %td= compute_site.technology
+      %td= link_to 'Show', admin_compute_site_path(compute_site)
+      %td= link_to 'Edit', edit_admin_compute_site_path(compute_site)
+      %td= link_to 'Destroy', admin_compute_site_path(compute_site), :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
 
-= link_to 'New Compute site', new_compute_site_path
+= link_to 'New Compute site', new_admin_compute_site_path

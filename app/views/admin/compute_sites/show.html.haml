@@ -12,7 +12,10 @@
 %p
   %b Site type:
   = @compute_site.site_type
+%p
+  %b Technology:
+  = @compute_site.technology
 
-= link_to 'Edit', edit_compute_site_path(@compute_site)
+= link_to 'Edit', edit_admin_compute_site_path(@compute_site)
 \|
-= link_to 'Back', compute_sites_path
+= link_to 'Back', admin_compute_sites_path

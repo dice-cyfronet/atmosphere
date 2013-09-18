@@ -20,8 +20,9 @@
 class ComputeSite < ActiveRecord::Base
   extend Enumerize
 
-  validates_presence_of :site_id, :site_type
+  validates_presence_of :site_id, :site_type, :technology
   enumerize :site_type, in: [:public, :private], predicates: true
+  enumerize :technology, in: [:openstack, :amazon], predicates: true
   validates :site_type, inclusion: %w(public private)
 
   # openstack specific

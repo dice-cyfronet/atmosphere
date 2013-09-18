@@ -1,11 +1,12 @@
-= simple_form_for(@compute_site) do |f|
+= simple_form_for([:admin, @compute_site]) do |f|
   = f.error_notification
 
   .inputs
-    = f.input :site_id
+    = f.input :site_id, label: 'Site id'
     = f.input :name
     = f.input :location
     = f.input :site_type
+    = f.input :technology
 
   .actions
     = f.button :submit
