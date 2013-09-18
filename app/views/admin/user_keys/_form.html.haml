@@ -1,0 +1,9 @@
+= simple_form_for([:admin, @user_key]) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.input :name
+    = f.input :public_key
+
+  .form-actions
+    = f.button :submit
