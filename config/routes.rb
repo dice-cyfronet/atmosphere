@@ -19,7 +19,7 @@ Air::Application.routes.draw do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :security_proxies
     resources :security_policies
-    resources :user_keys
+    resources :user_keys, except: [:edit, :update]
   end
 
   devise_for :users

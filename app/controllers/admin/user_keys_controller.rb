@@ -1,16 +1,17 @@
 class Admin::UserKeysController < ApplicationController
   load_and_authorize_resource :user_key
+  #before_filter :set_user_keys, only: :index
 
   def index
+    # it really does the job :-)
   end
 
   def show
+    # it really does the job :-)
   end
 
   def new
-  end
-
-  def edit
+    @users = User.all
   end
 
   def create
@@ -21,8 +22,17 @@ class Admin::UserKeysController < ApplicationController
     end
   end
 
+  def destroy
+    @user_key.destroy
+    redirect_to admin_user_keys_url, notice: 'User key destroyed'
+  end
+
   private
     def user_key_params
-        params.require(:user_key).permit([:public_key, :name])
+        params.require(:user_key).permit([:public_key, :name, :user_id])
     end
+
+    #def set_user_keys
+     # @user_keys = UserKey.all
+    #end
 end

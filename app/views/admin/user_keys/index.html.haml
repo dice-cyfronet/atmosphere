@@ -4,7 +4,7 @@
   %tr
     %th Name
     %th Fingerprint
-    %th
+    %th Owner
     %th
     %th
 
@@ -12,9 +12,9 @@
     %tr
       %td= user_key.name
       %td= user_key.fingerprint
-      %td= link_to 'Show', user_key
-      %td= link_to 'Edit', edit_user_key_path(user_key)
-      %td= link_to 'Destroy', user_key, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %td= user_key.user.login
+      %td= link_to 'Show', admin_user_key_path(user_key)
+      %td= link_to 'Destroy', admin_user_key_path(user_key), :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
 
