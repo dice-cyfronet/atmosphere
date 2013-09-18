@@ -9,8 +9,6 @@ end
 
 Air::Application.routes.draw do
 
-  resources :virtual_machine_templates
-
   resources :virtual_machines
 
   namespace :admin do
@@ -18,6 +16,7 @@ Air::Application.routes.draw do
     resources :security_proxies
     resources :security_policies
     resources :compute_sites
+    resources :virtual_machine_templates
     resources :user_keys, except: [:edit, :update]
   end
 

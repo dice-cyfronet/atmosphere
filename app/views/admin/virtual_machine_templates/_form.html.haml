@@ -1,7 +1,8 @@
-= simple_form_for(@virtual_machine_template) do |f|
+= simple_form_for([:admin, @virtual_machine_template]) do |f|
   = f.error_notification
 
   .inputs
+    = f.input :compute_site_id, collection: @compute_sites
     = f.input :id_at_site
     = f.input :name
     = f.input :state

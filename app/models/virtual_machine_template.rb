@@ -18,4 +18,5 @@ class VirtualMachineTemplate < ActiveRecord::Base
   has_many :instances, class_name: 'VirtualMachine'
   belongs_to :compute_site
   belongs_to :appliance_type
+  validates_presence_of :id_at_site, :name, :state, :compute_site_id
 end

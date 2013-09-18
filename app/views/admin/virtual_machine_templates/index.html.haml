@@ -14,10 +14,10 @@
       %td= virtual_machine_template.id_at_site
       %td= virtual_machine_template.name
       %td= virtual_machine_template.state
-      %td= link_to 'Show', virtual_machine_template
-      %td= link_to 'Edit', edit_virtual_machine_template_path(virtual_machine_template)
-      %td= link_to 'Destroy', virtual_machine_template, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %td= link_to 'Show', admin_virtual_machine_template_path(virtual_machine_template)
+      %td= link_to 'Edit', edit_admin_virtual_machine_template_path(virtual_machine_template)
+      %td= link_to 'Destroy', admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
 
-= link_to 'New Virtual machine template', new_virtual_machine_template_path
+= link_to 'New Virtual machine template', new_admin_virtual_machine_template_path
