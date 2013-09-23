@@ -16,10 +16,10 @@
       %td= virtual_machine.name
       %td= virtual_machine.state
       %td= virtual_machine.ip
-      %td= link_to 'Show', virtual_machine
-      %td= link_to 'Edit', edit_virtual_machine_path(virtual_machine)
-      %td= link_to 'Destroy', virtual_machine, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %td= link_to 'Show', admin_virtual_machine_path(virtual_machine)
+      %td= link_to 'Edit', edit_admin_virtual_machine_path(virtual_machine)
+      %td= link_to 'Destroy', admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
 
-= link_to 'New Virtual machine', new_virtual_machine_path
+= link_to 'New Virtual machine', new_admin_virtual_machine_path

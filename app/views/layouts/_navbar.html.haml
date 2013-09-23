@@ -4,7 +4,7 @@
 
     %ul.nav.navbar-nav
       - if current_user.has_role? :admin
-        - [ApplianceSet, ComputeSite, VirtualMachineTemplate, UserKey, SecurityProxy, SecurityPolicy].each do |model|
+        - [ApplianceSet, ComputeSite, VirtualMachine, VirtualMachineTemplate, UserKey, SecurityProxy, SecurityPolicy].each do |model|
           = nav_link controller: model.name.tableize.to_sym do
             = link_to model.model_name.human, [:admin, model]
 

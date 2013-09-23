@@ -9,13 +9,12 @@ end
 
 Air::Application.routes.draw do
 
-  resources :virtual_machines
-
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :security_proxies
     resources :security_policies
     resources :compute_sites
+    resources :virtual_machines
     resources :virtual_machine_templates
     resources :user_keys, except: [:edit, :update]
   end
