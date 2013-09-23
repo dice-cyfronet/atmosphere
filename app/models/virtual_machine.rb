@@ -23,7 +23,7 @@ class VirtualMachine < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
   def uuid
-    "#{compute_site_id}-tmpl-#{id_at_site}"
+    "#{compute_site_id}-vm-#{id_at_site}"
   end
 
 end
