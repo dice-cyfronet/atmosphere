@@ -20,4 +20,9 @@ class VirtualMachineTemplate < ActiveRecord::Base
   belongs_to :appliance_type
   validates_presence_of :id_at_site, :name, :state, :compute_site_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
+
+  def uuid
+    "#{compute_site_id}-tmpl-#{id_at_site}"
+  end
+
 end
