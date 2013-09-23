@@ -19,4 +19,6 @@ class VirtualMachine < ActiveRecord::Base
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
   has_and_belongs_to_many :appliances
+  validates_presence_of :id_at_site, :name, :state, :compute_site_id
+  validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 end
