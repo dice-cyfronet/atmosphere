@@ -1,5 +1,6 @@
 class Admin::VirtualMachineTemplatesController < ApplicationController
   load_and_authorize_resource :virtual_machine_template
+  before_filter :set_compute_sites, :except => [:index, :show, :destroy]
 
   # GET /virtual_machine_templates
   def index
@@ -11,12 +12,11 @@ class Admin::VirtualMachineTemplatesController < ApplicationController
 
   # GET /virtual_machine_templates/new
   def new
-    @compute_sites = ComputeSite.all
+
   end
 
   # GET /virtual_machine_templates/1/edit
   def edit
-    @compute_sites = ComputeSite.all
   end
 
   # POST /virtual_machine_templates
@@ -30,7 +30,6 @@ class Admin::VirtualMachineTemplatesController < ApplicationController
 
   # PATCH/PUT /virtual_machine_templates/1
   def update
-    @compute_sites = ComputeSite.all
     if @virtual_machine_template.update(virtual_machine_template_params)
       redirect_to admin_virtual_machine_template_url(@virtual_machine_template), notice: 'Virtual machine template was successfully updated.'
     else

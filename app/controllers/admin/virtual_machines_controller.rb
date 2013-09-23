@@ -1,6 +1,7 @@
 class Admin::VirtualMachinesController < ApplicationController
   load_and_authorize_resource :virtual_machine
-
+  before_filter :set_compute_sites, :except => [:index, :show, :destroy]
+  
   # GET /virtual_machines
   def index
   end
@@ -10,17 +11,15 @@ class Admin::VirtualMachinesController < ApplicationController
   end
 
   # GET /virtual_machines/new
-  def new
-    @compute_sites = ComputeSite.all
+  def new   
   end
 
   # GET /virtual_machines/1/edit
-  def edit
-    @compute_sites = ComputeSite.all
+  def edit  
   end
 
   # POST /virtual_machines
-  def create
+  def create 
     if @virtual_machine.save
       redirect_to admin_virtual_machine_url(@virtual_machine), notice: 'Virtual machine was successfully created.'
     else
