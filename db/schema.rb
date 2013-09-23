@@ -246,7 +246,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   add_index "virtual_machine_templates", ["appliance_type_id"], name: "virtual_machine_templates_appliance_type_id_fk", using: :btree
-  add_index "virtual_machine_templates", ["compute_site_id"], name: "virtual_machine_templates_compute_site_id_fk", using: :btree
+  add_index "virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "index_vm_tmpls_on_cs_id_and_id_at_site", unique: true, using: :btree
   add_index "virtual_machine_templates", ["virtual_machine_id"], name: "virtual_machine_templates_virtual_machine_id_fk", using: :btree
 
   create_table "virtual_machines", force: true do |t|
@@ -260,7 +260,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.integer  "virtual_machine_template_id"
   end
 
-  add_index "virtual_machines", ["compute_site_id"], name: "virtual_machines_compute_site_id_fk", using: :btree
+  add_index "virtual_machines", ["compute_site_id", "id_at_site"], name: "index_virtual_machines_on_compute_site_id_and_id_at_site", unique: true, using: :btree
   add_index "virtual_machines", ["virtual_machine_template_id"], name: "index_virtual_machines_on_virtual_machine_template_id", using: :btree
 
   add_foreign_key "appliance_configuration_instances", "appliance_configuration_templates", :name => "ac_instances_ac_template_id_fk"

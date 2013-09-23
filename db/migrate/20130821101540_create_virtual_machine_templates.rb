@@ -15,6 +15,6 @@ class CreateVirtualMachineTemplates < ActiveRecord::Migration
     add_foreign_key :virtual_machine_templates, :compute_sites
     add_foreign_key :virtual_machine_templates, :virtual_machines
     add_foreign_key :virtual_machine_templates, :appliance_types
-    add_index :virtual_machines, [:compute_site_id, :id_at_site], unique: true
+    add_index :virtual_machine_templates, [:compute_site_id, :id_at_site], unique: true, name: 'index_vm_tmpls_on_cs_id_and_id_at_site'
   end
 end
