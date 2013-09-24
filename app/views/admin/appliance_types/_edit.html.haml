@@ -1,0 +1,28 @@
+= simple_form_for([:admin, @appliance_type], remote: true, role: 'form', data: {target: '#appliance_type'}) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :name
+    = f.input :description
+
+    .row
+      .col-lg-4
+        = f.input :visibility
+      .col-lg-4
+        = f.association :author
+      .col-lg-2
+        = f.input :shared
+      .col-lg-2
+        = f.input :scalable
+
+    .row
+      - [:preference_cpu, :preference_memory, :preference_disk].each do |preference|
+        .col-lg-4
+          = f.label preference
+          .input-group
+            = f.input_field preference
+            %span.input-group-addon= preference == :preference_cpu ? 'cores' : 'MB'
+
+
+  .actions
+    = f.button :submit

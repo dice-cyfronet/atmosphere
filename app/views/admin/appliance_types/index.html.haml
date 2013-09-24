@@ -4,7 +4,7 @@
       %legend
         Appliance Types
         .pull-right
-          = link_to new_admin_appliance_type_path, class: "btn btn-success btn-xs", title: "Add new Appliance Type" do
+          = link_to new_admin_appliance_type_path, class: "btn btn-success btn-xs", title: "Add new Appliance Type", remote: true, data: { target: '#appliance_type' }  do
             %i.icon-plus
             Add new
       %ul.nav.nav-pills.nav-stacked
@@ -15,7 +15,7 @@
               - if appliance_type.author
                 %small.text-muted
                   by
-                  = appliance_type.author.name
+                  = appliance_type.author.login
     .col-md-9
       #appliance_type
       -#= hb 'outlet'

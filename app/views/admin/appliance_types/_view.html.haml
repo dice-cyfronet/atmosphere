@@ -2,7 +2,7 @@
   = @appliance_type.name
   %small.text-muted
     by
-    = @appliance_type.author ? @appliance_type.author.name : 'anonymous'
+    = @appliance_type.author ? @appliance_type.author.login : 'anonymous'
 
   -#= hb 'unless isEditing' do
   -#  .pull-right
