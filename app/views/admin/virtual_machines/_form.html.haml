@@ -2,11 +2,8 @@
   = f.error_notification
 
   .inputs
-    = f.input :compute_site_id, collection: @compute_sites
-    = f.input :id_at_site
     = f.input :name
-    = f.input :state
-    = f.input :ip
+    = f.input :virtual_machine_template_id, collection: @virtual_machine_templates
 
   .actions
     = f.button :submit

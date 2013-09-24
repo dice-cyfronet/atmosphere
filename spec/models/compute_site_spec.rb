@@ -35,7 +35,7 @@ describe ComputeSite do
 
   context 'if technology is present' do
     before { subject.technology = 'openstack' }
-    expect_it { to ensure_inclusion_of(:technology).in_array(%w(openstack amazon))}
+    expect_it { to ensure_inclusion_of(:technology).in_array(%w(openstack aws))}
     expect_it { to be_valid }
   end
 

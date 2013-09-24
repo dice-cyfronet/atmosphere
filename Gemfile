@@ -63,6 +63,8 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'redcarpet'
 gem 'github-markup', require: 'github/markup'
 
+# cloud client lib
+gem 'fog'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

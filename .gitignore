@@ -12,6 +12,9 @@
 # Ignore database config.
 /config/database.yml
 
+# Ignore cloud credentials config
+/config/initializers/cloud_credentials.rb
+
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp

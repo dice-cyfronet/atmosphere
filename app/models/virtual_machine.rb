@@ -14,16 +14,38 @@
 #
 
 class VirtualMachine < ActiveRecord::Base
+  include Cloud
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
   has_many :port_mappings, dependent: :destroy
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
   has_and_belongs_to_many :appliances
-  validates_presence_of :id_at_site, :name, :state, :compute_site_id
+  validates_presence_of :name, :virtual_machine_template_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
+  before_create :instantiate_vm
+  before_destroy :delete_in_cloud
+
   def uuid
-    "#{compute_site_id}-vm-#{id_at_site}"
+    "#{compute_site.site_id}-vm-#{id_at_site}"
+  end
+
+  private
+
+  def instantiate_vm
+    logger.info 'Instantiating'
+    vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
+    cloud_client = VirtualMachine.get_cloud_client_for_site(vm_tmpl.compute_site.site_id)
+    server = cloud_client.servers.create(:flavor_ref => 1, :name => name, :image_ref => vm_tmpl.id_at_site)
+    logger.info "instantiated #{server.id}"
+    self[:id_at_site] = server.id
+    self[:compute_site_id] = vm_tmpl.compute_site_id
+    self[:state] = :booting
+  end
+
+  def delete_in_cloud
+    cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
+    cloud_client.servers.destroy(id_at_site)
   end
 
 end
