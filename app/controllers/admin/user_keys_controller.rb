@@ -28,11 +28,8 @@ class Admin::UserKeysController < ApplicationController
   end
 
   private
-    def user_key_params
-        params.require(:user_key).permit([:public_key, :name, :user_id])
-    end
+  def user_key_params
+    params.require(:user_key).permit([:public_key, :name, :user_id])
+  end
 
-    #def set_user_keys
-     # @user_keys = UserKey.all
-    #end
 end
