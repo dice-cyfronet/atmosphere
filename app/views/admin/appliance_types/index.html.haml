@@ -7,15 +7,9 @@
           = link_to new_admin_appliance_type_path, class: "btn btn-success btn-xs", title: "Add new Appliance Type", remote: true, data: { target: '#appliance_type' }  do
             %i.icon-plus
             Add new
-      %ul.nav.nav-pills.nav-stacked
-        - @appliance_types.each do |appliance_type|
-          %li
-            = link_to admin_appliance_type_path(appliance_type), remote: true, data: { target: '#appliance_type' }  do
-              = appliance_type.name
-              - if appliance_type.author
-                %small.text-muted
-                  by
-                  = appliance_type.author.login
+      %ul#appliance-types-menu.nav.nav-pills.nav-stacked
+        = render 'admin/appliance_types/appliance_types_menu'
+
     .col-md-9
       #appliance_type
       -#= hb 'outlet'

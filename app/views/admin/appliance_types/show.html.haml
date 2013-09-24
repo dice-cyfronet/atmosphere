@@ -1,3 +1,10 @@
+- if params[:action] == 'create'
+  -# TODO ugly hack, remove
+  - @appliance_types = ApplianceType.all
+  :javascript
+    $('#appliance-types-menu').html("#{escape_javascript(render partial: 'admin/appliance_types/appliance_types_menu')}");
+
+
 = render 'admin/appliance_types/view'
 
 -#= hb 'if isEditing' do

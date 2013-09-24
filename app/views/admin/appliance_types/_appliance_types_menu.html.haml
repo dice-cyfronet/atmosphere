@@ -1,0 +1,8 @@
+- @appliance_types.each do |appliance_type|
+  %li
+    = link_to admin_appliance_type_path(appliance_type), remote: true, data: { target: '#appliance_type' }  do
+      = appliance_type.name
+      - if appliance_type.author
+        %small.text-muted
+          by
+          = appliance_type.author.login

@@ -19,6 +19,7 @@ class Admin::ApplianceTypesController < ApplicationController
   def create
     if @appliance_type.save#(appliance_type_params)
       #redirect_to [:admin, @appliance_type], notice: 'Compute site was successfully created.'
+
       render 'admin/appliance_types/show', layout: false
     else
       render 'admin/appliance_types/new', layout: false
