@@ -1,0 +1,43 @@
+%p.description
+  FIXME: Port mappings section description
+
+%table.table.table-hover
+  %thead
+    %tr
+      %th Service name
+      %th Target port
+      %th Transport protocol
+      %th Application protocol
+      %th Actions
+  %tbody
+    %tr
+      %td http
+      %td 80
+      %td TCP
+      %td HTTP and HTTPS
+      %td
+        %button.btn.btn-default.btn-xs{title: 'Endpoints'}
+          Endpoints
+
+        .btn-group
+          %button.btn.btn-success.btn-xs{title: 'Edit'}
+            %i.icon-edit
+          %button.btn.btn-danger.btn-xs{title: 'Delete'}
+            %i.icon-trash
+
+    %tr
+      %td ssh
+      %td 22
+      %td TCP
+      %td none
+      %td
+        %button.btn.btn-default.btn-xs{title: 'Endpoints'}
+          Endpoints
+
+        .btn-group
+          %button.btn.btn-success.btn-xs{title: 'Edit'}
+            %i.icon-edit
+          %button.btn.btn-danger.btn-xs{title: 'Delete'}
+            %i.icon-trash
+
+

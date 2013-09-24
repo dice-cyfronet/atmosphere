@@ -1,5 +1,5 @@
 class Admin::ApplianceSetsController < ApplicationController
-  load_and_authorize_resource :set_appliance_set
+  load_and_authorize_resource :appliance_set
 
   # GET /admin/appliance_sets
   def index

@@ -1,0 +1,40 @@
+%h1
+  = @appliance_type.name
+  %small.text-muted
+    by
+    = @appliance_type.author ? @appliance_type.author.login : 'anonymous'
+
+  -#= hb 'unless isEditing' do
+  -#  .pull-right
+  -#    %button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}
+  -#      %i.icon-edit
+  -#      Edit
+  -#    %button.btn.btn-danger.btn-xs{hb: "action 'delete'", title: "Delete"}
+  -#      %i.icon-trash
+  -#      Delete
+
+  %h5
+    - if @appliance_type.visibility == 'published'
+      %span.label.label-success Published
+    - else
+      %span.label.label-warning Unpublished
+    - if @appliance_type.shared
+      %span.label.label-info Shared
+    - if @appliance_type.scalable
+      %span.label.label-info Scalable
+    - if @appliance_type.preference_cpu
+      %span.label.label-primary.dynamic-label
+        CPU
+        = @appliance_type.preference_cpu
+    - if @appliance_type.preference_memory
+      %span.label.label-primary.dynamic-label
+        Memory
+        = @appliance_type.preference_memory
+    - if @appliance_type.preference_disk
+      %span.label.label-primary.dynamic-label
+        Data
+        = @appliance_type.preference_disk
+
+%hr
+.description
+  = markdown @appliance_type.description
