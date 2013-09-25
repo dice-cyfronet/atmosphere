@@ -32,4 +32,9 @@ module ApplicationHelper
   def current_action?(*args)
     args.any? { |v| v.to_s.downcase == action_name }
   end
+
+  # creates a comma-separated string for a collection
+  def model_collection_to_s(model_collection)
+    model_collection.collect { |model_obj| model_obj.to_s}.join(', ')
+  end
 end
