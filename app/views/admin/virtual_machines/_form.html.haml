@@ -4,6 +4,6 @@
   .inputs
     = f.input :name
     = f.input :virtual_machine_template_id, collection: @virtual_machine_templates
-
+    = f.association :appliances
   .actions
     = f.button :submit

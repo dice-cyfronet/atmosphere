@@ -1,7 +1,8 @@
 class Admin::VirtualMachinesController < ApplicationController
-  load_and_authorize_resource :virtual_machine#, :except => :create
-  #authorize_resource only: :create
+  load_and_authorize_resource :virtual_machine
   before_filter :set_virtual_machine_templates, :only => [:new, :create]
+  before_filter :set_appliances, :only => [:new, :create]
+
 
   # GET /virtual_machines
   def index
@@ -47,11 +48,15 @@ class Admin::VirtualMachinesController < ApplicationController
   private
     # Only allow a trusted parameter "white list" through.
     def virtual_machine_params
-      params.require(:virtual_machine).permit(:virtual_machine_template_id, :name)
+      params.require(:virtual_machine).permit(:virtual_machine_template_id, :name, {:appliance_ids => []})
     end
 
     def set_virtual_machine_templates
       @virtual_machine_templates = VirtualMachineTemplate.all 
+    end
+
+    def set_appliances
+      @appliances = Appliance.all
     end
 
 end

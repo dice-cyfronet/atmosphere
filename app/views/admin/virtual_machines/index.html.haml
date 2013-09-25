@@ -6,6 +6,7 @@
     %th Name
     %th State
     %th Ip
+    %th Appliances
     %th
     %th
 
@@ -15,6 +16,7 @@
       %td= virtual_machine.name
       %td= virtual_machine.state
       %td= virtual_machine.ip
+      %td= model_collection_to_s virtual_machine.appliances
       %td= link_to 'Show', admin_virtual_machine_path(virtual_machine)
       %td= link_to 'Destroy', admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' }
 
