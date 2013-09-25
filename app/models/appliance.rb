@@ -27,6 +27,10 @@ class Appliance < ActiveRecord::Base
   before_create :create_dev_mode_property_set, if: :development?
   after_destroy :remove_appliance_configuration_instance_if_needed
 
+  def to_s
+    id.to_s + appliance_type.name + ' with configuration ' + appliance_configuration_instance_id.to_s
+  end
+
   private
 
   def development?
