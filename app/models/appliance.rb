@@ -28,7 +28,7 @@ class Appliance < ActiveRecord::Base
   after_destroy :remove_appliance_configuration_instance_if_needed
 
   def to_s
-    id.to_s + appliance_type.name + ' with configuration ' + appliance_configuration_instance_id.to_s
+    "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
   end
 
   private
