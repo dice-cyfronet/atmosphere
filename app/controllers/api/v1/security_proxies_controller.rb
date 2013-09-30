@@ -14,19 +14,13 @@ module Api
       end
 
       def create
-        if @security_proxy.save
-          render json: @security_proxy, serializer: SecurityProxySerializer, status: :created
-        else
-          render_error
-        end
+        @security_proxy.save!
+        render json: @security_proxy, serializer: SecurityProxySerializer, status: :created
       end
 
       def update
-        if @security_proxy.update_attributes(params[:security_proxy])
-          render json: @security_proxy, serializer: SecurityProxySerializer
-        else
-          render_error
-        end
+        @security_proxy.update_attributes!(params[:security_proxy])
+        render json: @security_proxy, serializer: SecurityProxySerializer
       end
 
       def destroy
@@ -42,10 +36,6 @@ module Api
       end
 
       private
-
-      def render_error
-        render json: @security_proxy.errors, status: :unprocessable_entity
-      end
 
       def security_proxy_params
         init_owners params.require(:security_proxy).permit(:name, :payload, owners: [])

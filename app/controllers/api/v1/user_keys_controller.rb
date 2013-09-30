@@ -5,7 +5,7 @@ module Api
       before_filter :set_user_keys, only: :index
       load_and_authorize_resource :user_key
       respond_to :json
-      
+
       # GET /user_keys
       def index
         respond_with @user_keys
@@ -20,11 +20,8 @@ module Api
       def create
         @user_key = UserKey.new(user_key_params)
         @user_key.user = current_user
-        if @user_key.save
-          render json: @user_key, status: :created
-        else
-          render_error @user_key
-        end
+        @user_key.save!
+        render json: @user_key, status: :created
       end
 
       # DELETE /user_keys/1

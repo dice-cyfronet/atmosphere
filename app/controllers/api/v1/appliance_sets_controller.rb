@@ -18,20 +18,14 @@ module Api
         if conflicted? @appliance_set.appliance_set_type
           render json: {message: "Unable to create two #{@appliance_set.appliance_set_type} appliance sets"}, status: :conflict
         else
-          if @appliance_set.save
-            render json: @appliance_set, serializer: ApplianceSetSerializer, status: :created
-          else
-            render_error @appliance_set
-          end
+          @appliance_set.save!
+          render json: @appliance_set, serializer: ApplianceSetSerializer, status: :created
         end
       end
 
       def update
-        if @appliance_set.update_attributes(appliance_set_update_params)
-          render json: @appliance_set, serializer: ApplianceSetSerializer
-        else
-          render_error @appliance_set
-        end
+        @appliance_set.update_attributes!(appliance_set_update_params)
+        render json: @appliance_set, serializer: ApplianceSetSerializer
       end
 
       def destroy

@@ -14,19 +14,13 @@ module Api
       end
 
       def create
-        if @security_policy.save
-          render json: @security_policy, serializer: SecurityPolicySerializer, status: :created
-        else
-          render_error
-        end
+        @security_policy.save!
+        render json: @security_policy, serializer: SecurityPolicySerializer, status: :created
       end
 
       def update
-        if @security_policy.update_attributes(params[:security_policy])
-          render json: @security_policy, serializer: SecurityPolicySerializer
-        else
-          render_error
-        end
+        @security_policy.update_attributes!(params[:security_policy])
+        render json: @security_policy, serializer: SecurityPolicySerializer
       end
 
       def destroy
@@ -42,10 +36,6 @@ module Api
       end
 
       private
-
-      def render_error
-        render json: @security_policy.errors, status: :unprocessable_entity
-      end
 
       def security_policy_params
         init_owners params.require(:security_policy).permit(:name, :payload, owners: [])

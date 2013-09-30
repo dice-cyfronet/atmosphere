@@ -13,11 +13,8 @@ module Api
       end
 
       def create
-        if @appliance_type.save
-          render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
-        else
-          render_error
-        end
+        @appliance_type.save!
+        render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
       end
 
       def update
@@ -25,11 +22,8 @@ module Api
         update_params[:author] = User.find(update_params[:author]) if update_params[:author]
         update_params[:security_proxy] = SecurityProxy.find(update_params[:security_proxy]) if update_params[:security_proxy]
 
-        if @appliance_type.update_attributes(update_params)
-          render json: @appliance_type, serializer: ApplianceTypeSerializer
-        else
-          render_error
-        end
+        @appliance_type.update_attributes!(update_params)
+        render json: @appliance_type, serializer: ApplianceTypeSerializer
       end
 
       def destroy
@@ -41,10 +35,6 @@ module Api
       end
 
       private
-
-      def render_error
-        render json: @appliance_type.errors, status: :unprocessable_entity
-      end
 
       def appliance_type_params
         params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visibility, :author, :preference_cpu, :preference_memory, :preference_disk, :security_proxy)
