@@ -9,6 +9,7 @@
     %th Appliances
     %th
     %th
+    %th
 
   - @virtual_machines.each do |virtual_machine|
     %tr
@@ -19,7 +20,12 @@
       %td= model_collection_to_s virtual_machine.appliances
       %td= link_to 'Show', admin_virtual_machine_path(virtual_machine)
       %td= link_to 'Destroy', admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' }
-
+      - tmpl = VirtualMachineTemplate.new
+      - tmpl.virtual_machine_id = virtual_machine.id
+      %td
+        = simple_form_for([:admin, tmpl]) do |f|
+          = f.input :virtual_machine_id , :as => :hidden
+          = f.button :submit, 'Save as template'
 %br
 
 = link_to 'New Virtual machine', new_admin_virtual_machine_path

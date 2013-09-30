@@ -46,6 +46,6 @@ class Admin::VirtualMachineTemplatesController < ApplicationController
   private
     # Only allow a trusted parameter "white list" through.
     def virtual_machine_template_params
-      params.require(:virtual_machine_template).permit(:id_at_site, :name, :state, :compute_site_id)
+      params.require(:virtual_machine_template).permit(:id_at_site, :name, :state, :compute_site_id, :virtual_machine_id)
     end
 end
