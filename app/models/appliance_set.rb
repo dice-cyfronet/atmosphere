@@ -28,4 +28,8 @@ class ApplianceSet < ActiveRecord::Base
 
   has_many :appliances, dependent: :destroy
 
+  def production?
+    not appliance_set_type.development?
+  end
+
 end

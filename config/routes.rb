@@ -1,5 +1,6 @@
 def json_resources(name)
   resources name, only: [:index, :show, :create, :update, :destroy]
+  yield if block_given?
 end
 
 def owned_payload_resources(name)
@@ -26,7 +27,9 @@ Air::Application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       json_resources :appliance_types
-      json_resources :appliance_sets
+      resources :appliance_sets , only: [:index, :show, :create, :update, :destroy] do
+        resources :appliances, only: [:create]
+      end
       json_resources :users
       resources :user_keys, only: [:index, :show, :create, :destroy]
 

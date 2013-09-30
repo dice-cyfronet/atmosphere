@@ -14,6 +14,11 @@ class Ability
       can :create, ApplianceSet, appliance_set_type: 'workflow'
       can [:index, :show, :update, :destroy], ApplianceSet, user_id: user.id
 
+      ## Appliances
+      can :create, Appliance do |item|
+        item.appliance_set.user == user
+      end
+
       ## Appliance types
       can [:index, :show], ApplianceType
       can [:update, :destroy], ApplianceType, user_id: user.id

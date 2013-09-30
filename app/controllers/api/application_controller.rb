@@ -20,6 +20,14 @@ module Api
       render json: {message: exception.to_s}, status: :bad_request
     end
 
+    rescue_from Air::Conflict do |exception|
+      render json: {message: exception}, status: :conflict
+    end
+
+    rescue_from ActiveRecord::RecordInvalid do |exception|
+      render_error exception.record
+    end
+
     protected
     def render_error(model_obj)
         render json: model_obj.errors, status: :unprocessable_entity
