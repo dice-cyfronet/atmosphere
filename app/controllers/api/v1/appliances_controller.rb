@@ -9,7 +9,7 @@ module Api
       def create
         @appliance_set.transaction do
           @appliance.appliance_type = config_template.appliance_type
-          @appliance.appliance_configuration_instance =create_configuration_instance
+          @appliance.appliance_configuration_instance = configuration_instance
           @appliance.save!
           render json: @appliance, status: :created
         end
@@ -28,21 +28,15 @@ module Api
       end
 
       def appliance_unique?
-        Appliance.joins(:appliance_configuration_instance).where(appliance_configuration_instances: {payload: config_payload}, appliance_set: @appliance_set, appliance_type: config_template.appliance_type).count == 0
+        Appliance.joins(:appliance_configuration_instance).where(appliance_configuration_instances: {payload: configuration_instance.payload}, appliance_set: @appliance_set, appliance_type: config_template.appliance_type).count == 0
       end
 
-      def create_configuration_instance
-        ApplianceConfigurationInstance.create(payload: config_payload, appliance_configuration_template: config_template)
-      end
-
-      def config_payload
-        @config_payload ||= config_template.payload.gsub(/#{Air.config.config_param_regexp}/) do |param_name|
-          config_params[param_name[config_param_range]]
+      def configuration_instance
+        if @config_instance.blank?
+          @config_instance = ApplianceConfigurationInstance.new(appliance_configuration_template: config_template)
+          @config_instance.create_payload(config_template.payload, config_params)
         end
-      end
-
-      def config_param_range
-        eval(Air.config.config_param_range)
+        @config_instance
       end
 
       def config_template

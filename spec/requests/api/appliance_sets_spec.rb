@@ -223,7 +223,7 @@ describe Api::V1::ApplianceSetsController do
         end
       end
 
-      context 'with dynamic configuration', focus: true do
+      context 'with dynamic configuration' do
         let(:dynamic_config) { create(:appliance_configuration_template, payload: 'dynamic config #{param1} #{param2} #{param3}') }
         let(:dynamic_request_body) do
           {
