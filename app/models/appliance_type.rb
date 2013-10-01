@@ -7,7 +7,7 @@
 #  description       :text
 #  shared            :boolean          default(FALSE), not null
 #  scalable          :boolean          default(FALSE), not null
-#  visibility        :string(255)      default("under_development"), not null
+#  visibility        :string(255)      default("unpublished"), not null
 #  preference_cpu    :float
 #  preference_memory :integer
 #  preference_disk   :integer
@@ -26,7 +26,7 @@ class ApplianceType < ActiveRecord::Base
   validates_presence_of :name, :visibility
   validates_uniqueness_of :name
 
-  enumerize :visibility, in: [:under_development, :unpublished, :published]
+  enumerize :visibility, in: [:unpublished, :published]
 
   validates :visibility, inclusion: %w(unpublished published)
   validates :shared, inclusion: [true, false]
