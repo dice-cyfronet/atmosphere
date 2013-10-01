@@ -59,20 +59,8 @@ module Api
 
       def index_appliances
         if current_user
-          if load_all?
-            @appliances = Appliance.all
-          else
-            @appliances = Appliance.joins(:appliance_set).where(appliance_sets: {user_id: current_user.id})
-          end
+          @appliances = load_all? ? Appliance.all : Appliance.joins(:appliance_set).where(appliance_sets: {user_id: current_user.id})
         end
-      end
-
-      def load_all?
-        is_admin? and params['all']
-      end
-
-      def is_admin?
-        current_user and current_user.has_role? :admin
       end
     end
   end

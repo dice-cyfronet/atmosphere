@@ -56,7 +56,7 @@ module Api
 
       def set_appliance_sets
         if current_user
-          @appliance_sets = (current_user.has_role? :admin) ? ApplianceSet.all : current_user.appliance_sets
+          @appliance_sets = load_all? ? ApplianceSet.all : current_user.appliance_sets
         end
       end
     end
