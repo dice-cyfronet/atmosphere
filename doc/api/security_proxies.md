@@ -34,13 +34,11 @@ Parameters:
 
 ```json
 {
-  "security_proxy": [
-    {
-      "name": "foobar/security/proxy",
-      "payload": "Security proxy payload",
-      "owners": [1, 2, 3]
-    }
-  ]
+  "security_proxy": {
+    "name": "foobar/security/proxy",
+    "payload": "Security proxy payload",
+    "owners": [1, 2, 3]
+  }
 }
 ```
 

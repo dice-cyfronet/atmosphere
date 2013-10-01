@@ -35,14 +35,12 @@ Parameters:
 
 ```json
 {
-  "appliance_set": [
-    {
-        "id": 1,
-        "name": "Foobar Appliance Set",
-        "priority": 50,
-        "appliance_set_type": "workflow"
-    }
-  ]
+  "appliance_set": {
+      "id": 1,
+      "name": "Foobar Appliance Set",
+      "priority": 50,
+      "appliance_set_type": "workflow"
+  }
 }
 ```
 

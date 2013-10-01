@@ -34,13 +34,11 @@ Parameters:
 
 ```json
 {
-  "security_policy": [
-    {
-      "name": "foobar/security/policy",
-      "payload": "Security policy payload",
-      "owners": [1, 2, 3]
-    }
-  ]
+  "security_policy": {
+    "name": "foobar/security/policy",
+    "payload": "Security policy payload",
+    "owners": [1, 2, 3]
+  }
 }
 ```
 

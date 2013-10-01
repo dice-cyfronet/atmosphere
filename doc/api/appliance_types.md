@@ -42,21 +42,19 @@ Parameters:
 
 ```json
 {
-  "appliance_type": [
-    {
-      "id": 1,
-      "name": "Foobar Appliance Type",
-      "description": "Foobar Appliance Type description",
-      "shared": false,
-      "scalable": true,
-      "visibility": "published",
-      "preference_cpu": 1.0,
-      "preference_memory": 1024,
-      "preference_disk": 10240,
-      "author": 1,
-      "security_proxy": 1
-    }
-  ]
+  "appliance_type": {
+    "id": 1,
+    "name": "Foobar Appliance Type",
+    "description": "Foobar Appliance Type description",
+    "shared": false,
+    "scalable": true,
+    "visibility": "published",
+    "preference_cpu": 1.0,
+    "preference_memory": 1024,
+    "preference_disk": 10240,
+    "author": 1,
+    "security_proxy": 1
+  }
 }
 ```
 
