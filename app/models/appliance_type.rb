@@ -42,6 +42,8 @@ class ApplianceType < ActiveRecord::Base
   has_many :virtual_machine_templates, dependent: :destroy
 
 
+  scope :def_order, -> { order(:name) }
+
   def destroy(force = false)
     if !force and has_dependencies?
       errors.add :base, "ApplianceType #{name} cannot be destroyed due to existing dependencies."

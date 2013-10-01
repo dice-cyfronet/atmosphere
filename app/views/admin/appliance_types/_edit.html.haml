@@ -1,4 +1,5 @@
-= simple_form_for([:admin, @appliance_type], remote: true, role: 'form', data: {target: '#appliance_type'}) do |f|
+=# simple_form_for([:admin, @appliance_type], remote: true, role: 'form', data: {target: '#appliance_type'}) do |f|
+= simple_form_for([:admin, @appliance_type], role: 'form') do |f|
   = f.error_notification
 
   .inputs
@@ -23,6 +24,6 @@
             = f.input_field preference
             %span.input-group-addon= preference == :preference_cpu ? 'cores' : 'MB'
 
-
-  .actions
-    = f.button :submit
+  -#
+  -#.actions
+  -#  = f.button :submit

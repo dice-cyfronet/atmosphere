@@ -7,22 +7,23 @@
 
         .edit
           %h4
-            Create new Appliance Type
+            Edit Appliance Type:
+            = @appliance_type.name
             .pull-right
-              %button.btn.btn-success.btn-xs{title: 'Create', id: 'save-appliance-type'}
+              %button.btn.btn-success.btn-xs{title: 'Save', id: 'save-appliance-type'}
                 %i.icon-save
                 Save
               :javascript
                 $(function() {
                   $('#save-appliance-type').on('click', function() {
-                    $('#new_appliance_type').submit();
+                    $('#edit_appliance_type_#{@appliance_type.id}').submit();
                   });
                 });
 
-              = link_to admin_appliance_types_path, class: 'btn btn-default btn-xs', title: 'Cancel' do
+              = link_to [:admin, @appliance_type], class: 'btn btn-default btn-xs', title: 'Cancel' do
                 Cancel
           %hr
-          = render 'admin/appliance_types/edit'
+          = render partial: 'admin/appliance_types/edit'
 
         -#%ul.nav.nav-tabs#tabs
         -#  %li.active
@@ -31,10 +32,19 @@
         -#    %a{href: '#configurations-tab', 'data-toggle' => 'tab'} Configurations
         -#  %li
         -#    %a{href: '#templates-tab', 'data-toggle' => 'tab'} Templates
+        -#  %li
+        -#    %a{href: '#appliances-tab', 'data-toggle' => 'tab'} Appliances
+        -#  %li.pull-right
+        -#    %button.btn.btn-success.btn-xs
+        -#      %i.icon-plus
+        -#      Add
+        -#
         -#.tab-content
         -#  #port-mappings-tab.tab-pane.active
-        -#    = hb "partial 'appliance_types/port_mappings'"
+        -#    = render 'admin/appliance_types/port_mappings'
         -#  #configurations-tab.tab-pane
-        -#    = hb "partial 'appliance_types/configurations'"
+        -#    = render 'admin/appliance_types/configurations'
         -#  #templates-tab.tab-pane
-        -#    = hb "partial 'appliance_types/templates'"
+        -#    = render 'admin/appliance_types/templates'
+        -#  #appliances-tab.tab-pane
+        -#    = render 'admin/appliance_types/appliances'

@@ -1,44 +1,52 @@
-- if params[:action] == 'create'
-  -# TODO ugly hack, remove
-  - @appliance_types = ApplianceType.all
-  :javascript
-    $('#appliance-types-menu').html("#{escape_javascript(render partial: 'admin/appliance_types/appliance_types_menu')}");
+.appliance_types
+  .row
+    = render 'admin/appliance_types/appliance_types_menu'
+
+    .col-md-9
+      #appliance_type
 
 
-= render 'admin/appliance_types/view'
+        -#- if params[:action] == 'create'
+        -#  -# TODO ugly hack, remove
+        -#  - @appliance_types = ApplianceType.all
+        -#  :javascript
+        -#    $('#appliance-types-menu').html("#{escape_javascript(render partial: 'admin/appliance_types/appliance_types_menu')}");
 
--#= hb 'if isEditing' do
--#  .edit
--#    %h4
--#      Edit Appliance Type
--#      .pull-right
--#        %button.btn.btn-success.btn-xs{hb: 'action "doneEditing"'}
--#          %i.icon-save
--#          Save
--#        %button.btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
--#    %hr
--#    = hb "partial 'appliance_types/edit'"
 
-%ul.nav.nav-tabs#tabs
-  %li.active
-    %a{href: '#port-mappings-tab', 'data-toggle' => 'tab'} Port mappings
-  %li
-    %a{href: '#configurations-tab', 'data-toggle' => 'tab'} Configurations
-  %li
-    %a{href: '#templates-tab', 'data-toggle' => 'tab'} Templates
-  %li
-    %a{href: '#appliances-tab', 'data-toggle' => 'tab'} Appliances
-  %li.pull-right
-    %button.btn.btn-success.btn-xs
-      %i.icon-plus
-      Add
+        = render 'admin/appliance_types/view'
 
-.tab-content
-  #port-mappings-tab.tab-pane.active
-    = render 'admin/appliance_types/port_mappings'
-  #configurations-tab.tab-pane
-    = render 'admin/appliance_types/configurations'
-  #templates-tab.tab-pane
-    = render 'admin/appliance_types/templates'
-  #appliances-tab.tab-pane
-    = render 'admin/appliance_types/appliances'
+        -#= hb 'if isEditing' do
+        -#  .edit
+        -#    %h4
+        -#      Edit Appliance Type
+        -#      .pull-right
+        -#        %button.btn.btn-success.btn-xs{hb: 'action "doneEditing"'}
+        -#          %i.icon-save
+        -#          Save
+        -#        %button.btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
+        -#    %hr
+        -#    = hb "partial 'appliance_types/edit'"
+
+        %ul.nav.nav-tabs#tabs
+          %li.active
+            %a{href: '#port-mappings-tab', 'data-toggle' => 'tab'} Port mappings
+          %li
+            %a{href: '#configurations-tab', 'data-toggle' => 'tab'} Configurations
+          %li
+            %a{href: '#templates-tab', 'data-toggle' => 'tab'} Templates
+          %li
+            %a{href: '#appliances-tab', 'data-toggle' => 'tab'} Appliances
+          %li.pull-right
+            %button.btn.btn-success.btn-xs
+              %i.icon-plus
+              Add
+
+        .tab-content
+          #port-mappings-tab.tab-pane.active
+            = render 'admin/appliance_types/port_mappings'
+          #configurations-tab.tab-pane
+            = render 'admin/appliance_types/configurations'
+          #templates-tab.tab-pane
+            = render 'admin/appliance_types/templates'
+          #appliances-tab.tab-pane
+            = render 'admin/appliance_types/appliances'

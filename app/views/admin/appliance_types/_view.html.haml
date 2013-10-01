@@ -4,14 +4,14 @@
     by
     = @appliance_type.author ? @appliance_type.author.login : 'anonymous'
 
-  -#= hb 'unless isEditing' do
-  -#  .pull-right
-  -#    %button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}
-  -#      %i.icon-edit
-  -#      Edit
-  -#    %button.btn.btn-danger.btn-xs{hb: "action 'delete'", title: "Delete"}
-  -#      %i.icon-trash
-  -#      Delete
+  .pull-right
+    -#%button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}
+    = link_to edit_admin_appliance_type_path(@appliance_type), class: 'btn btn-success btn-xs', title: 'Edit' do
+      %i.icon-edit
+      Edit
+    = link_to admin_appliance_type_path(@appliance_type), method: :delete, class: 'btn btn-danger btn-xs', title: 'Delete' do
+      %i.icon-trash
+      Delete
 
   %h5
     - if @appliance_type.visibility == 'published'
