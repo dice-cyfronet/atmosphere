@@ -1,10 +1,17 @@
 module Api
   module V1
     class AppliancesController < Api::ApplicationController
-      load_resource :appliance_set
+      before_filter :unify_appliance_set_id, only: :create
+      load_resource :appliance_set, only: :create
       before_filter :create_appliance, only: :create
-      load_and_authorize_resource :appliance, through: :appliance_set
-      before_filter :check_for_conflict!
+      before_filter :index_appliances, only: :index
+      load_and_authorize_resource :appliance
+      before_filter :check_for_conflict!, only: :create
+      respond_to :json
+
+      def index
+        respond_with @appliances
+      end
 
       def create
         @appliance_set.transaction do
@@ -16,6 +23,10 @@ module Api
       end
 
       private
+
+      def unify_appliance_set_id
+        params[:appliance_set_id] ||= params[:appliance][:appliance_set_id] if params[:appliance]
+      end
 
       def create_appliance
         @appliance = @appliance_set.appliances.create
@@ -49,6 +60,12 @@ module Api
 
       def config_params
         params[:appliance][:params] || {}
+      end
+
+      def index_appliances
+        if current_user
+          @appliances = load_all? ? Appliance.all : Appliance.joins(:appliance_set).where(appliance_sets: {user_id: current_user.id})
+        end
       end
     end
   end

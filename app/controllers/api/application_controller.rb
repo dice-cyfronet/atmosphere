@@ -32,5 +32,13 @@ module Api
     def render_error(model_obj)
         render json: model_obj.errors, status: :unprocessable_entity
     end
+
+    def load_all?
+      is_admin? and params['all']
+    end
+
+    def is_admin?
+      current_user and current_user.has_role? :admin
+    end
   end
 end

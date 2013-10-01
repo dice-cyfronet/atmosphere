@@ -40,6 +40,15 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :appliance_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id
+    actual['appliance_set_id'] == expected.appliance_set_id
+    actual['appliance_type_id'] == expected.appliance_type_id
+    actual['appliance_configuration_instance_id'] == expected.appliance_configuration_instance_id
+  end
+end
+
 RSpec::Matchers.define :be_updated_by do |expected|
   match do |actual|
     actual.name == expected[:name] if expected[:name]
