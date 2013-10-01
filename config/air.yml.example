@@ -1,6 +1,7 @@
 #Please keep air.yml.example up to date
 defaults: &defaults
-  #TODO
+  config_param_regexp: '#{\w*}'
+  config_param_range: 2..-2
 
 development:
   <<: *defaults

@@ -223,6 +223,33 @@ describe Api::V1::ApplianceSetsController do
         end
       end
 
+      context 'with dynamic configuration', focus: true do
+        let(:dynamic_config) { create(:appliance_configuration_template, payload: 'dynamic config #{param1} #{param2} #{param3}') }
+        let(:dynamic_request_body) do
+          {
+            appliance: {
+              configuration_template_id: dynamic_config.id,
+              params: {
+                param1: 'a',
+                param2: 'b',
+                param3: 'c'
+              }
+            }
+          }
+        end
+
+        it 'creates config instance with all required parameters' do
+          post api("/appliance_sets/#{portal_set.id}/appliances", user), dynamic_request_body
+          expect(response.status).to eq 201
+        end
+
+        it 'creates dynamic configuration instance payload' do
+          post api("/appliance_sets/#{portal_set.id}/appliances", user), dynamic_request_body
+          config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+          expect(config_instance.payload).to eq 'dynamic config a b c'
+        end
+      end
+
       context 'with appliance type already added to appliance set' do
         let(:config_instance) { create(:appliance_configuration_instance, payload: static_config.payload, appliance_configuration_template: static_config) }
         let(:second_static_config) { create(:static_config_template) }

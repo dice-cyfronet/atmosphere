@@ -32,11 +32,17 @@ module Api
       end
 
       def create_configuration_instance
-        ApplianceConfigurationInstance.create(payload: config_template.payload, appliance_configuration_template: config_template)
+        ApplianceConfigurationInstance.create(payload: config_payload, appliance_configuration_template: config_template)
       end
 
       def config_payload
-        config_template.payload
+        @config_payload ||= config_template.payload.gsub(/#{Air.config.config_param_regexp}/) do |param_name|
+          config_params[param_name[config_param_range]]
+        end
+      end
+
+      def config_param_range
+        eval(Air.config.config_param_range)
       end
 
       def config_template
@@ -45,6 +51,10 @@ module Api
 
       def config_template_id
         params[:appliance][:configuration_template_id] if params[:appliance]
+      end
+
+      def config_params
+        params[:appliance][:params] || {}
       end
     end
   end
