@@ -15,7 +15,7 @@ class Ability
       can [:index, :show, :update, :destroy], ApplianceSet, user_id: user.id
 
       ## Appliances
-      can :create, Appliance do |item|
+      can [:index, :create], Appliance do |item|
         item.appliance_set.user == user
       end
 

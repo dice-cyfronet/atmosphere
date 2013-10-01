@@ -1,10 +1,16 @@
 module Api
   module V1
     class AppliancesController < Api::ApplicationController
-      load_resource :appliance_set
+      load_resource :appliance_set, only: :create
       before_filter :create_appliance, only: :create
-      load_and_authorize_resource :appliance, through: :appliance_set
-      before_filter :check_for_conflict!
+      before_filter :index_appliances, only: :index
+      load_and_authorize_resource :appliance
+      before_filter :check_for_conflict!, only: :create
+      respond_to :json
+
+      def index
+        respond_with @appliances
+      end
 
       def create
         @appliance_set.transaction do
@@ -49,6 +55,24 @@ module Api
 
       def config_params
         params[:appliance][:params] || {}
+      end
+
+      def index_appliances
+        if current_user
+          if load_all?
+            @appliances = Appliance.all
+          else
+            @appliances = Appliance.joins(:appliance_set).where(appliance_sets: {user_id: current_user.id})
+          end
+        end
+      end
+
+      def load_all?
+        is_admin? and params['all']
+      end
+
+      def is_admin?
+        current_user and current_user.has_role? :admin
       end
     end
   end
