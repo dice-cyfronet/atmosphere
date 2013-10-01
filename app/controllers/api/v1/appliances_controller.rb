@@ -1,6 +1,7 @@
 module Api
   module V1
     class AppliancesController < Api::ApplicationController
+      before_filter :unify_appliance_set_id, only: :create
       load_resource :appliance_set, only: :create
       before_filter :create_appliance, only: :create
       before_filter :index_appliances, only: :index
@@ -22,6 +23,10 @@ module Api
       end
 
       private
+
+      def unify_appliance_set_id
+        params[:appliance_set_id] ||= params[:appliance][:appliance_set_id] if params[:appliance]
+      end
 
       def create_appliance
         @appliance = @appliance_set.appliances.create

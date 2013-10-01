@@ -51,6 +51,136 @@ describe Api::V1::AppliancesController do
     end
   end
 
+  describe 'POST /appliances' do
+    let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
+    let!(:development_set) { create(:appliance_set, user: user, appliance_set_type: :development)}
+
+    let(:static_config) { create(:static_config_template) }
+    let(:static_request_body) do
+      {
+        appliance: {
+          configuration_template_id: static_config.id,
+          appliance_set_id: portal_set.id
+        }
+      }
+    end
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        post api("appliances"), static_request_body
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 201 Created on success' do
+        post api("/appliances", user), static_request_body
+        expect(response.status).to eq 201
+      end
+
+      context 'with static config' do
+        it 'creates config instance' do
+          expect {
+            post api("/appliances", user), static_request_body
+          }.to change { ApplianceConfigurationInstance.count}.by(1)
+        end
+
+        it 'creates new appliance' do
+          expect {
+            post api("/appliances", user), static_request_body
+          }.to change { Appliance.count}.by(1)
+        end
+
+        it 'copies config payload from template' do
+          post api("/appliances", user), static_request_body
+          config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+          expect(config_instance.payload).to eq config_instance.appliance_configuration_template.payload
+        end
+      end
+
+      context 'with dynamic configuration' do
+        let(:dynamic_config) { create(:appliance_configuration_template, payload: 'dynamic config #{param1} #{param2} #{param3}') }
+        let(:dynamic_request_body) do
+          {
+            appliance: {
+              configuration_template_id: dynamic_config.id,
+              appliance_set_id: portal_set.id,
+              params: {
+                param1: 'a',
+                param2: 'b',
+                param3: 'c'
+              }
+            }
+          }
+        end
+
+        it 'creates config instance with all required parameters' do
+          post api("/appliances", user), dynamic_request_body
+          expect(response.status).to eq 201
+        end
+
+        it 'creates dynamic configuration instance payload' do
+          post api("/appliances", user), dynamic_request_body
+          config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+          expect(config_instance.payload).to eq 'dynamic config a b c'
+        end
+      end
+
+      context 'with appliance type already added to appliance set' do
+        let(:config_instance) { create(:appliance_configuration_instance, payload: static_config.payload, appliance_configuration_template: static_config) }
+        let(:second_static_config) { create(:static_config_template) }
+
+        context 'when production appliance set' do
+          let!(:existing_appliance) { create(:appliance, appliance_configuration_instance: config_instance, appliance_set: portal_set, appliance_type: static_config.appliance_type) }
+
+          it 'returns 409 Conflict' do
+            post api("/appliances", user), static_request_body
+            expect(response.status).to eq 409
+          end
+
+          it 'does not create new configuration instance' do
+            expect {
+              post api("/appliances", user), static_request_body
+            }.to change { ApplianceConfigurationInstance.count}.by(0)
+          end
+
+          it 'does not create new appliance' do
+            expect {
+              post api("/appliances", user), static_request_body
+            }.to change { Appliance.count}.by(0)
+          end
+
+          it 'creates new appliance when configuration payload the same but different appliance types' do
+            post api("/appliances", user), {appliance: { configuration_template_id: second_static_config.id } }
+
+          end
+        end
+
+        context 'when development appliance set' do
+          let(:development_set) { create(:appliance_set, user: user, appliance_set_type: :development)}
+          let!(:existing_appliance) { create(:appliance, appliance_configuration_instance: config_instance, appliance_set: development_set) }
+          let(:static_request_body) do
+            {
+              appliance: {
+                configuration_template_id: static_config.id,
+                appliance_set_id: development_set.id
+              }
+            }
+          end
+
+          it 'creates second appliance with the same configuration instance' do
+            post api("/appliances", user), static_request_body
+            expect(response.status).to eq 201
+          end
+        end
+      end
+    end
+  end
+
+  def appliance_response
+    json_response['appliance']
+  end
+
   def appliances_response
     json_response['appliances']
   end
