@@ -198,12 +198,12 @@ describe Api::V1::ApplianceSetsController do
         }
       end
 
-      context 'with static config' do
-        it 'returns 201 Created on success' do
-          post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
-          expect(response.status).to eq 201
-        end
+      it 'returns 201 Created on success' do
+        post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
+        expect(response.status).to eq 201
+      end
 
+      context 'with static config' do
         it 'creates config instance' do
           expect {
             post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
@@ -225,9 +225,10 @@ describe Api::V1::ApplianceSetsController do
 
       context 'with appliance type already added to appliance set' do
         let(:config_instance) { create(:appliance_configuration_instance, payload: static_config.payload, appliance_configuration_template: static_config) }
+        let(:second_static_config) { create(:static_config_template) }
 
         context 'when production appliance set' do
-          let!(:existing_appliance) { create(:appliance, appliance_configuration_instance: config_instance, appliance_set: portal_set) }
+          let!(:existing_appliance) { create(:appliance, appliance_configuration_instance: config_instance, appliance_set: portal_set, appliance_type: static_config.appliance_type) }
 
           it 'returns 409 Conflict' do
             post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
@@ -244,6 +245,11 @@ describe Api::V1::ApplianceSetsController do
             expect {
               post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
             }.to change { Appliance.count}.by(0)
+          end
+
+          it 'creates new appliance when configuration payload the same but different appliance types' do
+            post api("/appliance_sets/#{portal_set.id}/appliances", user), {appliance: { configuration_template_id: second_static_config.id } }
+
           end
         end
 
