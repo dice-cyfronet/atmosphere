@@ -4,7 +4,7 @@
 #
 #  id                                  :integer          not null, primary key
 #  payload                             :text
-#  appliance_configuration_template_id :integer          not null
+#  appliance_configuration_template_id :integer
 #  created_at                          :datetime
 #  updated_at                          :datetime
 #

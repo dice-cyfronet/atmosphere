@@ -2,14 +2,15 @@
 #
 # Table name: port_mapping_templates
 #
-#  id                   :integer          not null, primary key
-#  transport_protocol   :string(255)      default("tcp"), not null
-#  application_protocol :string(255)      default("http_https"), not null
-#  service_name         :string(255)      not null
-#  target_port          :integer          not null
-#  appliance_type_id    :integer          not null
-#  created_at           :datetime
-#  updated_at           :datetime
+#  id                       :integer          not null, primary key
+#  transport_protocol       :string(255)      default("tcp"), not null
+#  application_protocol     :string(255)      default("http_https"), not null
+#  service_name             :string(255)      not null
+#  target_port              :integer          not null
+#  appliance_type_id        :integer
+#  dev_mode_property_set_id :integer
+#  created_at               :datetime
+#  updated_at               :datetime
 #
 
 require 'spec_helper'

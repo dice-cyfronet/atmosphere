@@ -7,7 +7,7 @@
 #  description       :text
 #  shared            :boolean          default(FALSE), not null
 #  scalable          :boolean          default(FALSE), not null
-#  visibility        :string(255)      default("under_development"), not null
+#  visibility        :string(255)      default("unpublished"), not null
 #  preference_cpu    :float
 #  preference_memory :integer
 #  preference_disk   :integer

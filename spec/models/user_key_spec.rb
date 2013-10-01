@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: user_keys
+#
+#  id          :integer          not null, primary key
+#  name        :string(255)      not null
+#  fingerprint :string(255)      not null
+#  public_key  :text             not null
+#  user_id     :integer          not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+
 require 'spec_helper'
 
 describe UserKey do

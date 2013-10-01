@@ -3,10 +3,10 @@
 # Table name: compute_sites
 #
 #  id              :integer          not null, primary key
-#  site_id         :string(255)
+#  site_id         :string(255)      not null
 #  name            :string(255)
 #  location        :string(255)
-#  site_type       :string(255)
+#  site_type       :string(255)      default("private")
 #  technology      :string(255)
 #  username        :string(255)
 #  api_key         :string(255)

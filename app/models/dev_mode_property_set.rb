@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: dev_mode_property_sets
+#
+#  id                :integer          not null, primary key
+#  name              :string(255)      not null
+#  description       :text
+#  shared            :boolean          default(FALSE), not null
+#  scalable          :boolean          default(FALSE), not null
+#  preference_cpu    :float
+#  preference_memory :integer
+#  preference_disk   :integer
+#  appliance_id      :integer          not null
+#  security_proxy_id :integer
+#  created_at        :datetime
+#  updated_at        :datetime
+#
+
 class DevModePropertySet < ActiveRecord::Base
   validates_presence_of :name
 
