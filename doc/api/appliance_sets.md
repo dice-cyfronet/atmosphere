@@ -85,3 +85,27 @@ DELETE /appliance_sets/:id
 Parameters:
 
 + `id` (required) - The ID of an appliance set
+
+```
+POST /appliance_sets/:id/appliances
+```
+
+Add new appliance to the appliance set
+
+```json
+{
+  "appliance": {
+      "configuration_template_id": 1,
+      "params": {
+        "param1": "param value",
+        "param2": "another param",
+        ...
+      }
+    }
+}
+```
+
+Parameters:
+
++ `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
++ `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
