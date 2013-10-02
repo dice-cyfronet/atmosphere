@@ -1,6 +1,6 @@
 ## List user appliance sets
 
-Get a list of user appliance sets. For normal user only owned appliance sets are returned, for the user all users appliance sets.
+Get a list of user appliance sets. For normal user only owned appliance sets are returned, admin is able to set flag `all` into `true` (e.g. by adding `?all=true` to the request path) and thus receive all users appliance sets.
 
 ```
 GET /appliance_sets
