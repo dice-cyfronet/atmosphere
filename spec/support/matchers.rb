@@ -49,6 +49,16 @@ RSpec::Matchers.define :appliance_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :user_key_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id
+    actual['name'] == expected.name
+    actual['fingerprint'] == expected.fingerprint
+    actual['public_key'] == expected.public_key
+    actual['user_id'] == expected.user_id
+  end
+end
+
 RSpec::Matchers.define :be_updated_by do |expected|
   match do |actual|
     actual.name == expected[:name] if expected[:name]
