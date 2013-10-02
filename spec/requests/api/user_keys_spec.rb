@@ -130,8 +130,19 @@ describe Api::V1::UserKeysController do
       end
 
       it 'returns 403 Forbidden when deleting not owned user key' do
-        delete api("/user_keys/#{other_user_key.id}", user)
-        expect(response.status).to eq 403
+        expect {
+          delete api("/user_keys/#{other_user_key.id}", user)
+          expect(response.status).to eq 403
+        }.to change { UserKey.count }.by(0)
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'allows to remove not owned user keys' do
+        expect {
+          delete api("/user_keys/#{other_user_key.id}", admin)
+          expect(response.status).to eq 200
+          }.to change { UserKey.count }.by(-1)
       end
     end
   end
