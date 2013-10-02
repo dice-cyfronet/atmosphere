@@ -84,6 +84,8 @@ Parameters:
 
 + `id` (required) - The ID of an appliance set
 
+## Add new appliance to appliance set
+
 ```
 POST /appliance_sets/:id/appliances
 ```
