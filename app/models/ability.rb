@@ -29,6 +29,8 @@ class Ability
         item.users.include? user
       end
 
+      can :manage, UserKey, user_id: user.id
+
       can :manage, :all if user.has_role? :admin
     end
 
