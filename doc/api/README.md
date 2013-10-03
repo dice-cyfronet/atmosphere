@@ -48,7 +48,9 @@ Return values:
 
 ## Contents
 
-+ [Appliance Types](appliance_types)
-+ [Appliance Sets](appliance_sets)
-+ [Security Proxies](security_proxies)
-+ [Security Policies](security_policies)
++ [Appliance Types](api/appliance_types)
++ [Appliance Sets](api/appliance_sets)
++ [Appliancs](api/appliances)
++ [User Keys](api/user_keys)
++ [Security Proxies](api/security_proxies)
++ [Security Policies](api/security_policies)
