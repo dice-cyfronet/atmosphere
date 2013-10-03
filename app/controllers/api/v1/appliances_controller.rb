@@ -27,6 +27,14 @@ module Api
         end
       end
 
+      def destroy
+        if @appliance.destroy
+          render json: {}
+        else
+          render_error @appliance
+        end
+      end
+
       private
 
       def unify_appliance_set_id

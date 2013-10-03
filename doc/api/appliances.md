@@ -71,3 +71,15 @@ Parameters:
 + `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `appliance_set_id` (required) - The ID of appliance set into which appliance will be added
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
+
+## Delete appliance
+
+Delete user appliance. You need to be an appliance owner (or admin) do delete it.
+
+```
+DELETE /appliances/:id
+```
+
+Parameters:
+
++ `id` (required) - The ID of an appliance

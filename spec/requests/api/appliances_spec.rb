@@ -211,7 +211,47 @@ describe Api::V1::AppliancesController do
     end
   end
 
-  pending 'DELETE /appliances/{id}'
+  context 'DELETE /appliances/{id}' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        delete api("/appliances/#{user_appliance1.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 201 Created on success' do
+        delete api("/appliances/#{user_appliance1.id}", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'deletes user appliance' do
+        expect {
+          delete api("/appliances/#{user_appliance1.id}", user)
+        }.to change { Appliance.count }.by(-1)
+      end
+
+      it 'returns 403 Forbidden when trying to remove other user appliance' do
+        delete api("/appliances/#{other_user_appliance.id}", user)
+        expect(response.status).to eq 403
+      end
+
+      it 'does not remove other user appliance' do
+        expect {
+          delete api("/appliances/#{other_user_appliance.id}", user)
+        }.to change { Appliance.count }.by(0)
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'removes other user appliance' do
+        expect {
+          delete api("/appliances/#{other_user_appliance.id}", admin)
+          expect(response.status).to eq 200
+        }.to change { Appliance.count }.by(-1)
+      end
+    end
+  end
 
   def appliance_response
     json_response['appliance']
