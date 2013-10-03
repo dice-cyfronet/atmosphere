@@ -13,6 +13,6 @@ module MarkdownHelper
                       superscript: true)
     end
 
-    @markdown.render(text).html_safe
+    @markdown.render(text || '').html_safe
   end
 end
