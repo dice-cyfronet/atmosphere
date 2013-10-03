@@ -17,7 +17,7 @@ module Api
 
       def index_templates
         if current_user
-          @appliance_configuration_templates = ApplianceConfigurationTemplate.joins(:appliance_type).where("appliance_types.visibility='published' or appliance_types.user_id=?", current_user.id)
+          @appliance_configuration_templates = load_all? ? ApplianceConfigurationTemplate.all : ApplianceConfigurationTemplate.joins(:appliance_type).where("appliance_types.visibility='published' or appliance_types.user_id=?", current_user.id)
         end
       end
 

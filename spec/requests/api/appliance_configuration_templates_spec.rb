@@ -3,7 +3,9 @@ require 'spec_helper'
 describe Api::V1::ApplianceConfigurationTemplatesController do
   include ApiHelpers
 
-  let(:user) { create(:user) }
+  let(:user)  { create(:user) }
+  let(:admin) { create(:admin) }
+
   let(:at1) { create(:appliance_type, author: user, visibility: :unpublished) }
   let(:at2) { create(:appliance_type, visibility: :published) }
   let(:at3) { create(:appliance_type, visibility: :unpublished) }
@@ -43,6 +45,13 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
 
         expect(acts_response[0]).to config_template_eq at1_config_tpl1
         expect(acts_response[1]).to config_template_eq at1_config_tpl2
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'returns all appliance configuration templates' do
+        get api("/appliance_configuration_templates?all=true", admin)
+        expect(acts_response.size).to eq 4
       end
     end
   end
