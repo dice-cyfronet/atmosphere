@@ -128,5 +128,6 @@ Add new appliance to the appliance set
 
 Parameters:
 
++ `id` (required) - The ID of appliance set into which appliance will be added
 + `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
