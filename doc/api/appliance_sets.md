@@ -84,6 +84,27 @@ Parameters:
 
 + `id` (required) - The ID of an appliance set
 
+## List appliances added to appliance set
+
+```
+GET /appliance_sets/:id/appliances
+```
+
+```json
+{
+  "appliances": [
+    {
+      "id": 1,
+      "appliance_set_id": 2,
+      "appliance_type_id": 3,
+      "appliance_configuration_instance_id": 4
+    }, {
+      ...
+    }
+  ]
+}
+```
+
 ## Add new appliance to appliance set
 
 ```

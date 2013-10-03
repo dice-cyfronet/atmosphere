@@ -27,8 +27,8 @@ Air::Application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       json_resources :appliance_types
-      resources :appliance_sets , only: [:index, :show, :create, :update, :destroy] do
-        resources :appliances, only: [:create]
+      resources :appliance_sets, only: [:index, :show, :create, :update, :destroy] do
+        resources :appliances, only: [:index, :create]
       end
       json_resources :appliances
       json_resources :users
