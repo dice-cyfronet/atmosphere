@@ -74,7 +74,7 @@ Parameters:
 
 ## Delete appliance set
 
-Delete user appliance set. You need to be an appliance type owner (or admin) do delete this appliance set.
+Delete user appliance set. You need to be an appliance set owner (or admin) do delete it.
 
 ```
 DELETE /appliance_sets/:id
