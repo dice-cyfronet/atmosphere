@@ -30,7 +30,7 @@ Air::Application.routes.draw do
       resources :appliance_sets, only: [:index, :show, :create, :update, :destroy] do
         resources :appliances, only: [:index, :create]
       end
-      json_resources :appliances
+      resources :appliances, only: [:index, :show, :create, :destroy]
       json_resources :users
       resources :user_keys, only: [:index, :show, :create, :destroy]
 

@@ -14,6 +14,10 @@ module Api
         respond_with @appliances
       end
 
+      def show
+        respond_with @appliance
+      end
+
       def create
         @appliance_set.transaction do
           @appliance.appliance_type = config_template.appliance_type

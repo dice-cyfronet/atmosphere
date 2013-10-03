@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Api::V1::AppliancesController do
   include ApiHelpers
 
-  let(:user) { create(:user) }
+  let(:user)  { create(:user) }
+  let(:admin) { create(:admin) }
 
   let(:user_as) { create(:appliance_set, user: user) }
   let(:other_user_as) { create(:appliance_set) }
@@ -47,6 +48,39 @@ describe Api::V1::AppliancesController do
       it 'returns all appliances when all flag set to true' do
         get api("/appliances?all=true", admin)
         expect(appliances_response.size).to eq 3
+      end
+    end
+  end
+
+  describe 'GET /appliances/{id}' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        get api("/appliances/#{user_appliance1.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 on success' do
+        get api("/appliances/#{user_appliance1.id}", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns appliance details' do
+        get api("/appliances/#{user_appliance1.id}", user)
+        expect(appliance_response).to appliance_eq user_appliance1
+      end
+
+      it 'returns 403 Forbidden when getting other user appliance details' do
+        get api("/appliances/#{other_user_appliance.id}", user)
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'returns appliance details of other user appliance' do
+        get api("/appliances/#{other_user_appliance.id}", admin)
+        expect(response.status).to eq 200
       end
     end
   end
@@ -176,6 +210,8 @@ describe Api::V1::AppliancesController do
       end
     end
   end
+
+  pending 'DELETE /appliances/{id}'
 
   def appliance_response
     json_response['appliance']
