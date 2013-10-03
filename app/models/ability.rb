@@ -23,7 +23,9 @@ class Ability
       can [:index, :show], ApplianceType
       can [:update, :destroy], ApplianceType, user_id: user.id
 
-      can [:index, :show], ApplianceConfigurationTemplate
+      can [:index, :show], ApplianceConfigurationTemplate do |item|
+        item.appliance_type.author == user or item.appliance_type.visibility.published?
+      end
 
       ## Security proxies and policies
       can :create, owned_payloads

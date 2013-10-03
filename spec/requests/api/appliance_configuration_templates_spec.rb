@@ -65,6 +65,11 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
         get api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user)
         expect(act_response).to config_template_eq at1_config_tpl1
       end
+
+      it 'returns 403 Forbidden when accessing unpublished not owned appliance configuration template' do
+        get api("/appliance_configuration_templates/#{at3_config_tpl.id}", user)
+        expect(response.status).to eq 403
+      end
     end
   end
 
