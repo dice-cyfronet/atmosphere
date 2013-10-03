@@ -40,6 +40,16 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :config_template_eq do |expected|
+  match do |actual|
+    actual['id'] = expected.id
+    actual['name'] = expected.name
+    actual['payload'] = expected.payload
+    actual['appliance_type_id'] = expected.appliance_type.id
+  end
+end
+
+
 RSpec::Matchers.define :appliance_eq do |expected|
   match do |actual|
     actual['id'] == expected.id
