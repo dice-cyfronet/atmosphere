@@ -68,11 +68,11 @@ POST /appliance_types
 
 Parameters:
 
-+ `name` (optional) - New appliance type
++ `name` (required) - New appliance type
 + `description` (optional) - New appliance type description
 + `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared amoung many users.
 + `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scalled up or down.
-+ `visiblity` (optional) - `unpublished` - appliance type can be used only in appliance sets started in development mode / `published` - appliance type is production ready.
++ `visiblity` (required) - `unpublished` - appliance type can be used only in appliance sets started in development mode / `published` - appliance type is production ready.
 + `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type.
 + `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type.
 + `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type.
