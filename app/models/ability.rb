@@ -23,7 +23,7 @@ class Ability
       can [:index, :show], ApplianceType
       can [:update, :destroy], ApplianceType, user_id: user.id
 
-      can :index, ApplianceConfigurationTemplate
+      can [:index, :show], ApplianceConfigurationTemplate
 
       ## Security proxies and policies
       can :create, owned_payloads
