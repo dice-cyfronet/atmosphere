@@ -1,13 +1,15 @@
-= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-signin' }) do |f|
-  %h2.form-signin-heading= t('code_name')
-  = f.text_field :login, autofocus: true, placeholder: t('devise.login_or_email'), class: 'form-control'
-  = f.password_field :password, placeholder: t('devise.password'), class: 'form-control'
-  - if devise_mapping.rememberable?
-    .clearfix.remember
-      %label.checkbox.remember_me
-        = f.check_box :remember_me
-        %span= t('devise.remember_me')
-
-  %div.login-buttons
-    = f.submit t('devise.login'), class: 'btn btn-success'
-    .pull-right= link_to t('devise.forgot_your_password'), new_password_path(resource_name), :class => 'btn btn-default'
+- if mi_login_enabled?
+  .multi-login-box
+    %ul.nav.nav-tabs
+      %li.active
+        = link_to 'MI Token', '#tab-mi', 'data-toggle' => 'tab'
+      %li
+        = link_to 'Standard', '#tab-signin', 'data-toggle' => 'tab'
+    .tab-content
+      %div#tab-mi.tab-pane.active
+        = render partial: 'devise/sessions/new_mi'
+      %div#tab-signin.tab-pane
+        = render partial: 'devise/sessions/new_base'
+-else
+  .login-box
+    = render partial: 'devise/sessions/new_base'

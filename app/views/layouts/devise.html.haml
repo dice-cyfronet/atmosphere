@@ -4,4 +4,7 @@
   %body.login-page
     = render "layouts/flash"
     .container
-      .content= yield
+      .content
+        %center
+          %h1= t('code_name')
+          = yield

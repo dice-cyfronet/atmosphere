@@ -1,0 +1,11 @@
+= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+  = f.password_field :ticket, placeholder: t('devise.ticket'), class: 'form-control'
+  - if devise_mapping.rememberable?
+    .clearfix.remember
+      %label.checkbox.remember_me
+        = f.check_box :remember_me
+        %span= t('devise.remember_me')
+
+  %div.login-buttons
+    = f.submit t('devise.login'), class: 'btn btn-success'
+    .pull-right= link_to t('devise.forgot_your_password'), new_password_path(resource_name), :class => 'btn btn-default'
