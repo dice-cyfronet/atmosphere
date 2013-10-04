@@ -149,8 +149,90 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
     end
   end
 
-  pending 'PUT /appliance_configuration_templates/{id}'
-  pending 'DELETE /appliance_configuration_templates/{id}'
+  context 'PUT /appliance_configuration_templates/{id}' do
+    let(:update_request) do
+      {
+        appliance_configuration_template: {
+          name: 'updated name',
+          payload: 'updated payload'
+        }
+      }
+    end
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 201 Created on success' do
+        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user), update_request
+        expect(response.status).to eq 200
+      end
+
+      it 'updates appliance configuration template' do
+        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user), update_request
+        updated = ApplianceConfigurationTemplate.find(at1_config_tpl1.id)
+        expect(act_response).to config_template_eq updated
+      end
+
+      it 'returns 403 Forbidden when updating configuration template from not owned appliance type' do
+        put api("/appliance_configuration_templates/#{at2_config_tpl.id}", user), update_request
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'updates configuration template even for not owned appliance type' do
+        put api("/appliance_configuration_templates/#{at2_config_tpl.id}", admin), update_request
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
+  context 'DELETE /appliance_configuration_templates/{id}' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        delete api("/appliance_configuration_templates/#{at1_config_tpl1.id}")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 201 Created on success' do
+        delete api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'deletes appliance configuration template' do
+        expect {
+          delete api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user)
+        }.to change { ApplianceConfigurationTemplate.count }.by(-1)
+      end
+
+      it 'returns 403 Forbidden when trying to remove configuration template from not owned appliance type' do
+          delete api("/appliance_configuration_templates/#{at2_config_tpl.id}", user)
+          expect(response.status).to eq 403
+      end
+
+      it 'does not remove configuration template from not owned appliance type' do
+        expect {
+          delete api("/appliance_configuration_templates/#{at2_config_tpl.id}", user)
+        }.to change { ApplianceConfigurationTemplate.count }.by(0)
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'deletes configuration template even from not owned appliance type' do
+        expect {
+          delete api("/appliance_configuration_templates/#{at2_config_tpl.id}", admin)
+          expect(response.status).to eq 200
+        }.to change { ApplianceConfigurationTemplate.count }.by(-1)
+      end
+    end
+  end
 
   def acts_response
     json_response['appliance_configuration_templates']
