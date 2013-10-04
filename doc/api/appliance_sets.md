@@ -10,10 +10,10 @@ GET /appliance_sets
 {
   "appliance_sets": [
     {
-        "id": 1,
-        "name": "Foobar Appliance Set",
-        "priority": 50,
-        "appliance_set_type": "workflow"
+      "id": 1,
+      "name": "Foobar Appliance Set",
+      "priority": 50,
+      "appliance_set_type": "workflow"
     }, {
       ...
     }
@@ -36,10 +36,10 @@ Parameters:
 ```json
 {
   "appliance_set": {
-      "id": 1,
-      "name": "Foobar Appliance Set",
-      "priority": 50,
-      "appliance_set_type": "workflow"
+    "id": 1,
+    "name": "Foobar Appliance Set",
+    "priority": 50,
+    "appliance_set_type": "workflow"
   }
 }
 ```
@@ -116,13 +116,13 @@ Add new appliance to the appliance set
 ```json
 {
   "appliance": {
-      "configuration_template_id": 1,
-      "params": {
-        "param1": "param value",
-        "param2": "another param",
-        ...
-      }
+    "configuration_template_id": 1,
+    "params": {
+      "param1": "param value",
+      "param2": "another param",
+      ...
     }
+  }
 }
 ```
 
