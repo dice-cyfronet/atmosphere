@@ -82,7 +82,73 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
     end
   end
 
-  pending 'POST /appliance_configuration_templates'
+  context 'POST /appliance_configuration_templates' do
+    let(:new_config_template_request) do
+      {
+        appliance_configuration_template: {
+          name: 'config name',
+          payload: 'payload',
+          appliance_type_id: at1.id
+        }
+      }
+    end
+
+    let(:new_not_owned_config_template_request) do
+      {
+        appliance_configuration_template: {
+          name: 'config name',
+          payload: 'payload',
+          appliance_type_id: at2.id
+        }
+      }
+    end
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        post api("/appliance_configuration_templates")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 201 Created on success' do
+        post api("/appliance_configuration_templates", user), new_config_template_request
+        expect(response.status).to eq 201
+      end
+
+      it 'creates new appliance configuration template' do
+        expect {
+          post api("/appliance_configuration_templates", user), new_config_template_request
+        }.to change { ApplianceConfigurationTemplate.count }.by(1)
+      end
+
+      it 'creates new appliance configuration template with correct attrs values' do
+        post api("/appliance_configuration_templates", user), new_config_template_request
+        result = ApplianceConfigurationTemplate.find(act_response['id'])
+        expect(act_response).to config_template_eq result
+      end
+
+      it 'returns 403 Forbidden when creating configuration template for not owned appliance type' do
+        post api("/appliance_configuration_templates", user), new_not_owned_config_template_request
+      end
+
+      it 'does not creates new configuration template when creating new one for not owned appliance type' do
+        expect {
+          post api("/appliance_configuration_templates", user), new_not_owned_config_template_request
+        }.to change { ApplianceConfigurationTemplate.count }.by(0)
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'creates new configuration template even for not owned appliance type' do
+        expect {
+          post api("/appliance_configuration_templates", admin), new_not_owned_config_template_request
+          expect(response.status).to eq 201
+        }.to change { ApplianceConfigurationTemplate.count }.by(1)
+      end
+    end
+  end
+
   pending 'PUT /appliance_configuration_templates/{id}'
   pending 'DELETE /appliance_configuration_templates/{id}'
 

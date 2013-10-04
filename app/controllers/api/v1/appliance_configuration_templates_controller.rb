@@ -13,6 +13,11 @@ module Api
         respond_with @appliance_configuration_template
       end
 
+      def create
+        @appliance_configuration_template.save!
+        render json: @appliance_configuration_template, status: :created
+      end
+
       private
 
       def index_templates
