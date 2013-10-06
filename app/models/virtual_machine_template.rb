@@ -22,7 +22,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   #validates_presence_of :id_at_site, :name, :state, :compute_site_id
   #validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
-  # before_create :save_template_in_cloud
+  before_create :save_template_in_cloud
   before_destroy :delete_in_cloud
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
