@@ -1,11 +1,12 @@
-= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
-  = f.password_field :ticket, placeholder: t('devise.ticket'), class: 'form-control'
+= form_tag(user_omniauth_callback_path(:vph), id: 'new_vph_user' ) do
+  = password_field_tag :ticket, nil, {class: 'form-control', placeholder: t('devise.ticket')}
+
   - if devise_mapping.rememberable?
     .clearfix.remember
       %label.checkbox.remember_me
-        = f.check_box :remember_me
+        = check_box_tag :remember_me
         %span= t('devise.remember_me')
 
   %div.login-buttons
-    = f.submit t('devise.login'), class: 'btn btn-success'
+    = submit_tag t('devise.login'), class: 'btn btn-success'
     .pull-right= link_to t('devise.forgot_your_password'), new_password_path(resource_name), :class => 'btn btn-default'

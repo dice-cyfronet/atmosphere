@@ -41,6 +41,9 @@ gem 'gravtastic'
 gem 'devise', '~>3.0.0'
 gem 'cancan'
 gem 'role_model'
+gem 'omniauth'
+gem 'omniauth-vph', git: 'http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git', branch: :master
+
 
 gem 'haml-rails'
 gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass', branch: '3'

@@ -21,7 +21,7 @@ Air::Application.routes.draw do
     resources :user_keys, except: [:edit, :update]
   end
 
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
   root to: 'home#index'
 
   namespace :api, defaults: {format: :json} do

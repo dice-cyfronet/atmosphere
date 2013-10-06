@@ -1,5 +1,5 @@
 module MasterInterfaceHelper
   def mi_login_enabled?
-    true
+    Devise.omniauth_providers.include?(:vph)
   end
 end

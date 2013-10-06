@@ -7,6 +7,16 @@ GIT
       sass (~> 3.2)
 
 GIT
+  remote: http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git
+  revision: d971b37265fb8bc2dcd7d208d0c87ed15fd2515b
+  branch: master
+  specs:
+    omniauth-vph (0.1.0)
+      faraday
+      multi_json
+      omniauth (~> 1.0)
+
+GIT
   remote: https://github.com/ctran/annotate_models.git
   revision: aaab884fe430bf6ef418cfbedde603d660c78f9b
   specs:
@@ -107,6 +117,8 @@ GEM
     execjs (2.0.1)
     factory_girl (4.2.0)
       activesupport (>= 3.0.0)
+    faraday (0.8.8)
+      multipart-post (~> 1.2.0)
     ffaker (1.18.0)
     ffi (1.9.0)
     fog (1.15.0)
@@ -152,6 +164,7 @@ GEM
       sprockets
       tilt
     handlebars-source (1.0.12)
+    hashie (2.0.5)
     hike (1.2.3)
     i18n (0.6.5)
     jquery-rails (3.0.4)
@@ -177,12 +190,16 @@ GEM
     mini_portile (0.5.1)
     minitest (4.7.5)
     multi_json (1.7.9)
+    multipart-post (1.2.0)
     mysql2 (0.3.13)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (2.6.8)
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
+    omniauth (1.1.4)
+      hashie (>= 1.2, < 3)
+      rack
     orm_adapter (0.4.0)
     polyglot (0.3.3)
     pry (0.9.12.2)
@@ -326,6 +343,8 @@ DEPENDENCIES
   letter_opener
   libnotify
   mysql2
+  omniauth
+  omniauth-vph!
   pry-rails
   quiet_assets
   rack-cors
