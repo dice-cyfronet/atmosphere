@@ -2,7 +2,7 @@
   = @appliance_type.name
   %small.text-muted
     by
-    = @appliance_type.author ? @appliance_type.author.login : 'anonymous'
+    = @appliance_type.author_name
 
   .pull-right
     -#%button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}

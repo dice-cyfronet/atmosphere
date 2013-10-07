@@ -1,7 +1,7 @@
 class Admin::ApplianceTypesController < ApplicationController
 
-  before_filter :set_appliance_types#, only: [:index, :show, :new, :create, :destroy]
   load_and_authorize_resource :appliance_type
+  before_filter :set_appliance_types#, only: [:index, :show, :new, :create, :destroy]
 
   # GET /admin/appliance_types
   def index
@@ -51,7 +51,7 @@ class Admin::ApplianceTypesController < ApplicationController
   private
 
     def set_appliance_types
-      @appliance_types = ApplianceType.all.def_order
+      @appliance_types = (@appliance_types ? @appliance_types : ApplianceType.all).def_order
     end
 
     # Only allow a trusted parameter "white list" through.

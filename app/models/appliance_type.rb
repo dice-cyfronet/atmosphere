@@ -56,4 +56,8 @@ class ApplianceType < ActiveRecord::Base
     virtual_machine_templates.present? or appliances.present?
   end
 
+  def author_name
+    author ? author.login : 'anonymous'
+  end
+
 end
