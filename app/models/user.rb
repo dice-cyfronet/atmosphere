@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   # :registerable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,
          :rememberable, :trackable, :recoverable,
-         :validatable, :token_authenticatable
+         :validatable, :token_authenticatable, :omniauthable
 
   validates :login, uniqueness: { case_sensitive: false }
   include LoginAndEmail
@@ -46,6 +46,25 @@ class User < ActiveRecord::Base
   include RoleModel
   roles :admin, :developer
 
+  def self.vph_find_or_create(auth)
+    user = User.where(login: auth.info.login).first || User.where(email: auth.info.email).first
+    unless user
+      user = User.new
+      user.generate_password
+    end
+
+    user.login     = auth.info.login
+    user.email     = auth.info.email
+    user.full_name = auth.info.full_name
+    user.roles     = auth.info.roles
+    user.save
+
+    user
+  end
+
+  def generate_password
+    self.password = self.password_confirmation = Devise.friendly_token.first(8)
+  end
 
   def to_s
     "#{login} <#{email}>"

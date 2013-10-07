@@ -13,8 +13,28 @@ body {
 
 /** FLASH message **/
 .flash-container {
-  .alert {
-    text-align: center;
+  display: none;
+  cursor: pointer;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  opacity: 0.8;
+  z-index: 100;
+
+  .flash-notice {
+    background: #D9EDF7;
+    padding: 10px;
+    color: #3A87AD;
+  }
+
+  .flash-alert {
+    background: #F2DEDE;
+    color: #B94A48;
+    padding: 10px;
   }
 }
 

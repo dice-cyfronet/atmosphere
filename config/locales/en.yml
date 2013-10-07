@@ -20,7 +20,7 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  code_name: AIR
+  code_name: Atmosphere
   logout: Logout
   save: Save
   back: Back

@@ -1,5 +1,10 @@
 #Please keep air.yml.example up to date
 defaults: &defaults
+  vph:
+    enabled: true
+    host: 'http://jump.vph-share.eu'
+    roles_map: {cloudadmin: 'admin', developer: 'developer'}
+
   #config_param
   #  regexp: '#{\w*}'
   #  range: '2..-2'
