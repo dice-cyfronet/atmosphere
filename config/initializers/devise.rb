@@ -248,5 +248,12 @@ Devise.setup do |config|
     config.omniauth :vph,
       host: Air.config.vph.host,
       roles_map: Air.config.vph.roles_map
+
+    Warden::Strategies.add(:mi_token_authenticatable, Devise::Strategies::MiTokenAuthenticatable)
+
+    config.warden do |manager|
+      manager.intercept_401 = false
+      manager.default_strategies(:scope => :user).unshift :mi_token_authenticatable
+    end
   end
 end

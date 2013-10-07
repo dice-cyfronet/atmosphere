@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git
-  revision: d971b37265fb8bc2dcd7d208d0c87ed15fd2515b
+  revision: ad223882124cc2d29f2c68f4f7287eb1b6ecaefe
   branch: master
   specs:
     omniauth-vph (0.1.0)
@@ -189,7 +189,7 @@ GEM
     mime-types (1.24)
     mini_portile (0.5.1)
     minitest (4.7.5)
-    multi_json (1.7.9)
+    multi_json (1.8.1)
     multipart-post (1.2.0)
     mysql2 (0.3.13)
     net-scp (1.1.2)
