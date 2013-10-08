@@ -30,14 +30,16 @@ class Admin::PortMappingTemplatesController < ApplicationController
     render partial: 'edit', layout: false
   end
 
-  ## PATCH/PUT /admin/port_mapping_templates/1
-  #def update
-  #  if @appliance_type.update appliance_type_params
-  #    redirect_to [:admin, @appliance_type], notice: 'Appliance Type was successfully updated.'
-  #  else
-  #    render action: 'edit'
-  #  end
-  #end
+  # PATCH/PUT /admin/port_mapping_templates/1
+  def update
+    @appliance_type = @port_mapping_template.appliance_type
+    if @port_mapping_template.update port_mapping_template_params
+      @notice = 'Appliance Type was successfully updated.'
+    else
+      @alert = @port_mapping_template.errors.full_messages.join('</br>')
+    end
+    render partial: 'index', layout: false
+  end
 
   # DELETE /admin/port_mapping_templates/1.json
   def destroy
@@ -56,12 +58,11 @@ class Admin::PortMappingTemplatesController < ApplicationController
     #def set_appliance_types
     #  @appliance_types = (@appliance_types ? @appliance_types : ApplianceType.all).def_order
     #end
-    #
-    ## Only allow a trusted parameter "white list" through.
-    #def appliance_type_params
-    #  params.require(:appliance_type).permit(
-    #    :name, :description, :visibility, :shared, :scalable, :user_id,
-    #    :preference_memory, :preference_disk,  :preference_cpu)
-    #end
+
+    # Only allow a trusted parameter "white list" through.
+    def port_mapping_template_params
+      params.require(:port_mapping_template).permit(
+        :service_name, :target_port, :transport_protocol, :application_protocol)
+    end
 
 end

@@ -9,7 +9,7 @@
     %button.btn.btn-default.btn-xs{title: 'Endpoints'}
       Endpoints
 
-    .btn-group
+    .btn-group.pull-right
       = link_to edit_admin_port_mapping_template_path(pmt), remote: true,
           class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
         %i.icon-edit
