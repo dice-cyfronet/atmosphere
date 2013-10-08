@@ -1,0 +1,21 @@
+- normal_user = !(current_user.has_role? :admin)
+.row.section
+  .col-md-7
+    = simple_form_for current_user, url: profile_path, method: :put, wrapper: :bootstrap3_horizontal, defaults: {right_column_html: {class: "col-lg-6 col-md-6"}, label_html: {class: "col-lg-4 col-md-4"} }, html: {class: "form-horizontal", role: "form"} do |f|
+      =f.input :full_name
+      =f.input :login, disabled: normal_user
+      =f.input :email
+      .row.form-actions
+        .col-lg-offset-4.col-md-offset-4.col-lg-8.col-md-8
+          %button.btn.btn-success{type: "submit"}
+            %i.icon-edit
+            =t('save')
+
+
+  .col-md-5.pull-right
+    %fieldset
+      %legend= t('tips')
+      %ul
+        %li= t('profiles.tips.login_and_email')
+        - if vph_login_enabled?
+          %li= t('profiles.tips.vph_login')

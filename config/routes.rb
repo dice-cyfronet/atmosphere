@@ -10,9 +10,10 @@ end
 
 Air::Application.routes.draw do
 
-  resource :profile, only: [:show] do
+  resource :profile, only: [:show, :update] do
     member do
-      get :credentials
+      put :update_password
+      put :reset_private_token
     end
   end
 
