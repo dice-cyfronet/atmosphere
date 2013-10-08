@@ -6,8 +6,9 @@
       - if current_user.has_role? :admin
         -# [ApplianceType, ApplianceSet, ComputeSite, VirtualMachine, VirtualMachineTemplate, UserKey, SecurityProxy, SecurityPolicy].each do |model|
         - [ApplianceType, ComputeSite, VirtualMachine, VirtualMachineTemplate, UserKey, SecurityProxy, SecurityPolicy].each do |model|
-          = nav_link controller: model.name.tableize.to_sym do
-            = link_to model.model_name.human, [:admin, model]
+          - tab_name = model.name.tableize
+          = nav_link controller: tab_name.to_sym do
+            = link_to t("#{tab_name}.title"), [:admin, model], class: "has_bottom_tooltip", title: t("#{tab_name}.long_title")
 
     %ul.nav.navbar-nav.pull-right
       %li

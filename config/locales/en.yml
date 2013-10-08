@@ -40,5 +40,28 @@ en:
     title: Help
     back: "Back to help"
 
+  appliance_types:
+    title: Types
+    long_title: Appliance Types
+  compute_sites:
+    title: Sites
+    long_title: Compute Sites
+  virtual_machines:
+    title: VMs
+    long_title: Virtual Machines
+  virtual_machine_templates:
+    title: Templates
+    long_title: Virtual Machine Templates
+  user_keys:
+    title: User keys
+    long_title: User keys
+  security_proxies:
+    title: Proxies
+    long_title: Security Proxies
+  security_policies:
+    title: Policies
+    long_title: Security Policies
+
+
   api:
     e403: "You are not allowed to %{action} this %{type}"
