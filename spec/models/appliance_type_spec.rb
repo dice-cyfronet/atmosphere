@@ -53,4 +53,26 @@ describe ApplianceType do
   expect_it { to have_many(:appliance_configuration_templates).dependent(:destroy) }
   expect_it { to have_many(:virtual_machine_templates).dependent(:destroy) }
 
+  context 'has virtual_machine_templates or appliances (aka "is used")' do
+    let(:appliance_type) { create(:appliance_type) }
+    let(:user)  { create(:user) }
+    let(:appliance_set) { create(:appliance_set, user: user) }
+    let!(:appliance) { create(:appliance, appliance_set: appliance_set, appliance_type: appliance_type) }
+
+    it 'is valid' do
+      expect(appliance_type).to be_valid
+      expect(appliance_type.appliances).not_to be_empty
+    end
+
+    it 'has a proper dependencies detection' do
+      expect(appliance_type.has_dependencies?).to be_true
+    end
+
+    it 'is not destroyable without force' do
+      appliance_type.destroy
+      expect(appliance_type.errors).not_to be_empty
+    end
+
+  end
+
 end
