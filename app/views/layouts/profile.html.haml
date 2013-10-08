@@ -1,0 +1,22 @@
+!!! 5
+%html{ lang: 'en'}
+  = render 'layouts/head'
+  %body
+    = render 'layouts/flash'
+    = render 'layouts/navbar'
+    .container
+      .row
+        .col-md-3
+          = image_tag current_user.gravatar_url(:size => 260), class: "img-thumbnail"
+          %h4
+            = current_user.full_name
+            %br
+            %small= current_user.email
+          %hr
+          %ul.nav.nav-pills.nav-stacked
+            = nav_link controller: :profiles, action: :show do
+              = link_to t('profiles.title'), profile_path
+            = nav_link controller: :profiles, action: :credentials do
+              = link_to t('profiles.credentials'), credentials_profile_path
+        .col-md-9
+          = yield

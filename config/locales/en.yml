@@ -62,6 +62,9 @@ en:
     title: Policies
     long_title: Security Policies
 
+  profiles:
+    title: Profile
+    credentials: Credentials
 
   api:
     e403: "You are not allowed to %{action} this %{type}"

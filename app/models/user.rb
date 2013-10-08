@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
          :validatable, :token_authenticatable, :omniauthable
 
   validates :login, uniqueness: { case_sensitive: false }
+
   include LoginAndEmail
   include Nondeletable
 
@@ -40,6 +41,9 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :security_proxies
   has_and_belongs_to_many :security_policies
+
+  include Gravtastic
+  gravtastic default: 'mm'
 
 
   #roles

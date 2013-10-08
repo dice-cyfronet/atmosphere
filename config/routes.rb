@@ -10,6 +10,12 @@ end
 
 Air::Application.routes.draw do
 
+  resource :profile, only: [:show] do
+    member do
+      get :credentials
+    end
+  end
+
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :appliance_types
