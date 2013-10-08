@@ -26,6 +26,7 @@ class PortMappingTemplate < ActiveRecord::Base
   validates_absence_of :dev_mode_property_set, if: 'appliance_type != nil'
 
   before_validation :check_only_one_belonging
+  before_destroy :cant_change_used_appliance_type
 
   validates_presence_of :service_name, :target_port, :application_protocol, :transport_protocol
 
@@ -53,7 +54,14 @@ class PortMappingTemplate < ActiveRecord::Base
   def check_only_one_belonging
     unless appliance_type.blank? or dev_mode_property_set.blank?
       errors.add :base, 'Port Mapping template cannot belong to both Appliance Type and Dev Mode Property Set'
-      return false
+      false
+    end
+  end
+
+  def cant_change_used_appliance_type
+    if appliance_type and appliance_type.has_dependencies?
+      errors.add :base, 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
+      false
     end
   end
 end

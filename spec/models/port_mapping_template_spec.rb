@@ -107,4 +107,23 @@ describe PortMappingTemplate do
       expect(dev_pmt).to_not be_valid
     end
   end
+
+  context 'belongs_to appliance type that "is used"' do
+    let(:appliance_type) { create(:appliance_type) }
+    let(:user)  { create(:user) }
+    let(:appliance_set) { create(:appliance_set, user: user) }
+    let!(:appliance) { create(:appliance, appliance_set: appliance_set, appliance_type: appliance_type) }
+    let(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil) }
+
+    it 'is valid' do
+      expect(pmt).to be_valid
+    end
+
+    it 'is not destroyable' do
+      pmt.destroy
+      expect(pmt.errors).not_to be_empty
+    end
+
+  end
+
 end
