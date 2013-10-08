@@ -10,6 +10,13 @@ end
 
 Air::Application.routes.draw do
 
+  resource :profile, only: [:show, :update] do
+    member do
+      put :update_password
+      put :reset_private_token
+    end
+  end
+
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :appliance_types

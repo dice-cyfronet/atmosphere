@@ -11,6 +11,23 @@ SimpleForm.setup do |config|
     end
   end
 
+  config.wrappers :bootstrap3_horizontal, tag: 'div', class: 'form-group', error_class: 'has-error', defaults: { input_html: { class: 'default-class '}, wrapper_html: { class: "col-lg-10 col-md-10"} } do |b|
+    b.use :html5
+    b.use :min_max
+    b.use :maxlength
+    b.use :placeholder
+
+    b.optional :pattern
+    b.optional :readonly
+
+    b.use :label
+    b.wrapper :right_column, tag: :div do |component|
+    component.use :input
+    end
+    b.use :hint, wrap_with: { tag: 'span', class: 'help-block' }
+    b.use :error, wrap_with: { tag: 'span', class: 'help-block has-error' }
+  end
+
   config.wrappers :prepend, tag: 'div', class: "control-group", error_class: 'error' do |b|
     b.use :html5
     b.use :placeholder
