@@ -23,8 +23,15 @@ en:
   code_name: Atmosphere
   logout: Logout
   save: Save
+  save_password: Save password
   back: Back
   loading: Loading...
+  tips: Tips
+  password: Password
+  private_token: Private token
+  keep_it_secret: keep is secret!
+  reset: Reset
+  are_you_sure: Are you sure?
 
   security_proxy:
     created: "Security proxy created"
@@ -39,6 +46,46 @@ en:
   help:
     title: Help
     back: "Back to help"
+
+  appliance_types:
+    title: Types
+    long_title: Appliance Types
+  compute_sites:
+    title: Sites
+    long_title: Compute Sites
+  virtual_machines:
+    title: VMs
+    long_title: Virtual Machines
+  virtual_machine_templates:
+    title: Templates
+    long_title: Virtual Machine Templates
+  user_keys:
+    title: User keys
+    long_title: User keys
+  security_proxies:
+    title: Proxies
+    long_title: Security Proxies
+  security_policies:
+    title: Policies
+    long_title: Security Policies
+
+  profiles:
+    title: Profile
+    credentials: Credentials
+    updated: Profile updated
+    tips:
+      login_and_email: Login or email are used for standard Atmosphere login
+      vph_login: If you login using VPH-Share token than your user details will be updated using information stored inside the token
+      private_token: "Private token can be used to invoke REST API withould authentication. Take a look into %{href} for mode details"
+      api_help: REST API documentation
+      mi_token: "Once you login into Atmosphere using VPH-Share token you can set Atmosphere password and generate private Atmosphere token. It can be used to simplify login procedure and REST API usage"
+    private_token:
+      description: Your private token is used to access application resources without authentication (e.g. it can be used for invoking API).
+    password_changed: Password successfully changed
+    password_update_description: After a successful password update you will be redirected to login page where you should login with your new password
+    token_updated: Token was successfully updated
+    token_empty: You don`t have one yet. Click generate to fix it.
+    generate: Generate
 
   api:
     e403: "You are not allowed to %{action} this %{type}"

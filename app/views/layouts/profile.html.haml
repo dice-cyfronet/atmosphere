@@ -1,0 +1,25 @@
+!!! 5
+%html{ lang: 'en'}
+  = render 'layouts/head'
+  %body
+    = render 'layouts/flash'
+    = render 'layouts/navbar'
+    .container
+      .row
+        .col-md-2
+          = image_tag current_user.gravatar_url(:size => 165), class: "img-thumbnail"
+          %h4
+            = current_user.full_name
+          %h5
+            = current_user.login
+            %br
+            %small= current_user.email
+            %p
+            - if current_user.has_role? :admin
+              %span.label.label-danger Admin
+            - if current_user.has_role? :developer
+              %span.label.label-info Developer
+
+          %hr
+        .col-md-10
+          = yield

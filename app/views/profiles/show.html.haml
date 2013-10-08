@@ -1,0 +1,16 @@
+%ul.nav.nav-tabs#tabs
+  %li.active
+    %a{href: '#profile-tab', 'data-toggle' => 'tab'}
+      %i.icon-male
+      = t('profiles.title')
+  %li
+    %a{href: '#credentials-tab', 'data-toggle' => 'tab'}
+      %i.icon-key
+      = t('profiles.credentials')
+
+.tab-content
+  #profile-tab.tab-pane.active
+    = render 'profile'
+  #credentials-tab.tab-pane
+    = render 'credentials'
+
