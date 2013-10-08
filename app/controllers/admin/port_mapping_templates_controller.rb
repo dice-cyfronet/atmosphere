@@ -7,9 +7,10 @@ class Admin::PortMappingTemplatesController < ApplicationController
   #def index
   #end
 
-  ## GET /admin/port_mapping_templates/1
-  #def show
-  #end
+  # GET /admin/port_mapping_templates/1
+  def show
+    render partial: 'show', layout: false
+  end
 
   ## GET /admin/port_mapping_templates/new
   #def new
@@ -24,9 +25,10 @@ class Admin::PortMappingTemplatesController < ApplicationController
   #  end
   #end
 
-  ## GET /admin/port_mapping_templates/1/edit
-  #def edit
-  #end
+  # GET /admin/port_mapping_templates/1/edit
+  def edit
+    render partial: 'edit', layout: false
+  end
 
   ## PATCH/PUT /admin/port_mapping_templates/1
   #def update

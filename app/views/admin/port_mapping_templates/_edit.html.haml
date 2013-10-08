@@ -1,0 +1,23 @@
+- pmt = @port_mapping_template
+%tr(data-port-mapping-template-id="#{pmt.id}")
+  = simple_form_for [:admin, pmt], remote: true, defaults: {label_html: {class: 'sr-only'}, input_html: {class: 'input-sm'}} do |f|
+    %td= f.input :service_name
+    %td= f.input :target_port
+    -# NOTE collections are explicit as otherwise the I18n translation does not work as it should
+    %td= f.input :transport_protocol, include_blank: false, collection: [:tcp, :udp]
+    %td= f.input :application_protocol, include_blank: false, collection: [:http, :https, :http_https, :none]
+
+    %td
+      .btn-group
+        -#= f.submit
+        -#  %i.icon-save
+        -#%button.btn.btn-success.btn-xs{title: 'Save'}
+          %i.icon-save
+        -#%button.btn.btn-default.btn-xs{title: 'Cancel'}
+        -#  %i.icon-undo
+        = link_to admin_port_mapping_template_path(pmt), remote: true,
+            class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
+          %i.icon-undo
+        -#= link_to admin_port_mapping_template_path(pmt), method: :delete, remote: true,
+        -#    class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mappings-tab'} do
+        -#  %i.icon-trash

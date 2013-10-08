@@ -1,16 +1,22 @@
-%tr
+- pmt ||= @port_mapping_template
+
+%tr(data-port-mapping-template-id="#{pmt.id}")
   %td= pmt.service_name
   %td= pmt.target_port
-  %td= t "port_mapping_template.#{pmt.transport_protocol}"
-  %td= t "port_mapping_template.#{pmt.application_protocol}"
+  %td= t "simple_form.options.port_mapping_template.transport_protocol.#{pmt.transport_protocol}"
+  %td= t "simple_form.options.port_mapping_template.application_protocol.#{pmt.application_protocol}"
   %td
     %button.btn.btn-default.btn-xs{title: 'Endpoints'}
       Endpoints
 
     .btn-group
-      %button.btn.btn-success.btn-xs{title: 'Edit'}
+      = link_to edit_admin_port_mapping_template_path(pmt), remote: true,
+          class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
         %i.icon-edit
-      = link_to admin_port_mapping_template_path(pmt), method: :delete, remote: true, class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mappings-tab'} do
+      -#%button.btn.btn-success.btn-xs{title: 'Edit'}
+      -#  %i.icon-edit
+      = link_to admin_port_mapping_template_path(pmt), method: :delete, remote: true,
+          class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mapping-templates'} do
         %i.icon-trash
       -#%button.btn.btn-danger.btn-xs{title: 'Delete', remote: true, data: {target: '#port-mappings-tab'}}
       -#  %i.icon-trash

@@ -24,3 +24,13 @@ en:
     #     username: 'User name to sign in.'
     #     password: 'No special characters, please.'
 
+    options:
+      port_mapping_template:
+        transport_protocol:
+          tcp: TCP
+          udp: UDP
+        application_protocol:
+          http: HTTP
+          https: HTTPS
+          http_https: HTTP or HTTPS
+          none: None

@@ -43,8 +43,7 @@
 
         .tab-content
           #port-mappings-tab.tab-pane.active
-            =# render 'admin/appliance_types/port_mappings'
-            = render 'admin/port_mapping_templates/index'
+            = render partial: 'admin/port_mapping_templates/index', locals: {port_mapping_templates: @appliance_type.port_mapping_templates}
           #configurations-tab.tab-pane
             = render 'admin/appliance_types/configurations'
           #templates-tab.tab-pane

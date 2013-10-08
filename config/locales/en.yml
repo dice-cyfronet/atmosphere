@@ -36,13 +36,6 @@ en:
     create_error: "Unable to create security policy"
     updated: "Security policy updated"
     update_error: "Unable to update security policy"
-  port_mapping_template:
-    tcp: TCP
-    udp: UDP
-    http: HTTP
-    https: HTTPS
-    http_https: HTTP or HTTPS
-    none: None
   help:
     title: Help
     back: "Back to help"
