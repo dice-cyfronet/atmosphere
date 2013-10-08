@@ -1,0 +1,52 @@
+%p
+  -#.flash-container
+  - if @alert
+    .alert.alert-danger
+      %span= @alert
+
+  - elsif @notice
+    .alert.alert-info
+      %span= @notice
+
+
+- unless @appliance_type.port_mapping_templates.present?
+  %p
+    .alert.alert-warning No Port Mappings defined.
+
+- else
+  %p.description
+    -# TODO, FIXME: Port mappings section description
+
+  %table.table.table-hover
+    %thead
+      %tr
+        %th Service name
+        %th Target port
+        %th Transport protocol
+        %th Application protocol
+        %th Actions
+
+    %tbody
+      = render partial: 'admin/port_mapping_templates/show', collection: @appliance_type.port_mapping_templates.def_order, as: :pmt
+      -#- @appliance_type.port_mapping_templates.def_order.each do |pmt|
+      -#  %tr
+      -#    %td= pmt.service_name
+      -#    %td= pmt.target_port
+      -#    %td= t "port_mapping_template.#{pmt.transport_protocol}"
+      -#    %td= t "port_mapping_template.#{pmt.application_protocol}"
+      -#    %td
+      -#      %button.btn.btn-default.btn-xs{title: 'Endpoints'}
+      -#        Endpoints
+      -#
+      -#      .btn-group
+      -#        %button.btn.btn-success.btn-xs{title: 'Edit'}
+      -#          %i.icon-edit
+      -#        = link_to admin_port_mapping_template_path(pmt), method: :delete, remote: true, class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mappings-tab'} do
+      -#          %i.icon-trash
+      -#        -#%button.btn.btn-danger.btn-xs{title: 'Delete', remote: true, data: {target: '#port-mappings-tab'}}
+      -#        -#  %i.icon-trash
+
+:javascript
+  $('body').on('ajax:success', '[data-target]', function(xhr, data, status) {
+    $($(this).attr('data-target')).html(data);
+  });

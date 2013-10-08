@@ -45,7 +45,7 @@ class Admin::PortMappingTemplatesController < ApplicationController
     else
       @alert = @port_mapping_template.errors.full_messages.join('</br>')
     end
-    render partial: 'admin/appliance_types/port_mappings', layout: false
+    render partial: 'index', layout: false
   end
 
 

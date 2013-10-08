@@ -1,0 +1,16 @@
+%tr
+  %td= pmt.service_name
+  %td= pmt.target_port
+  %td= t "port_mapping_template.#{pmt.transport_protocol}"
+  %td= t "port_mapping_template.#{pmt.application_protocol}"
+  %td
+    %button.btn.btn-default.btn-xs{title: 'Endpoints'}
+      Endpoints
+
+    .btn-group
+      %button.btn.btn-success.btn-xs{title: 'Edit'}
+        %i.icon-edit
+      = link_to admin_port_mapping_template_path(pmt), method: :delete, remote: true, class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mappings-tab'} do
+        %i.icon-trash
+      -#%button.btn.btn-danger.btn-xs{title: 'Delete', remote: true, data: {target: '#port-mappings-tab'}}
+      -#  %i.icon-trash
