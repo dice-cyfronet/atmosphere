@@ -40,7 +40,7 @@ class Admin::ApplianceTypesController < ApplicationController
   # DELETE /admin/appliance_types/1
   def destroy
     if @appliance_type.destroy
-      redirect_to [:admin, :appliance_types], notice: 'ApplianceType was successfully destroyed.'
+      redirect_to [:admin, :appliance_types], notice: 'Appliance Type was successfully removed.'
     else
       flash[:alert] = @appliance_type.errors.full_messages.join('</br>')
       render action: 'show'

@@ -45,11 +45,14 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :endpoints, dependent: :destroy
 
+
+  scope :def_order, -> { order(:service_name) }
+
   private
 
   def check_only_one_belonging
     unless appliance_type.blank? or dev_mode_property_set.blank?
-      errors.add :base, "Port Mapping template cannot belong into both: Appliance Type and Dev Mode Property Set "
+      errors.add :base, 'Port Mapping template cannot belong to both Appliance Type and Dev Mode Property Set'
       return false
     end
   end

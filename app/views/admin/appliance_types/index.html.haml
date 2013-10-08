@@ -6,7 +6,8 @@
       #appliance_type
 
 
-:javascript
-  $('body').on('ajax:success', '[data-target]', function(xhr, data, status) {
-    $($(this).attr('data-target')).html(data);
-  });
+-#:javascript
+-#  $('body').on('ajax:success', '[data-target]', function(xhr, data, status) {
+-#    console.log('replacing');
+-#    $($(this).attr('data-target')).html(data);
+-#  });
