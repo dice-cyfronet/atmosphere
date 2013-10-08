@@ -3,27 +3,33 @@ class Admin::PortMappingTemplatesController < ApplicationController
   load_and_authorize_resource :port_mapping_template
   #before_filter :set_appliance_types#, only: [:index, :show, :new, :create, :destroy]
 
-  ## GET /admin/port_mapping_templates
-  #def index
-  #end
+  # GET /admin/port_mapping_templates
+  def index
+    @appliance_type = ApplianceType.find(params[:appliance_type_id])
+    render partial: 'index', layout: false
+  end
 
   # GET /admin/port_mapping_templates/1
   def show
     render partial: 'show', layout: false
   end
 
-  ## GET /admin/port_mapping_templates/new
-  #def new
-  #end
+  # GET /admin/port_mapping_templates/new
+  def new
+    @appliance_type = ApplianceType.find(params[:appliance_type_id])
+    render partial: 'edit', layout: false
+  end
 
-  ## POST /admin/port_mapping_templates
-  #def create
-  #  if @appliance_type.save appliance_type_params
-  #    redirect_to [:admin, @appliance_type], notice: 'Appliance Type was successfully created.'
-  #  else
-  #    render action: 'new'
-  #  end
-  #end
+  # POST /admin/port_mapping_templates
+  def create
+    @appliance_type = ApplianceType.find(params[:port_mapping_template][:appliance_type_id])
+    if @port_mapping_template.save port_mapping_template_params
+      @notice = 'Appliance Type was successfully added.'
+    else
+      @alert = @port_mapping_template.errors.full_messages.join('</br>')
+    end
+    render partial: 'index', layout: false
+  end
 
   # GET /admin/port_mapping_templates/1/edit
   def edit
@@ -55,14 +61,14 @@ class Admin::PortMappingTemplatesController < ApplicationController
 
   private
 
-    #def set_appliance_types
-    #  @appliance_types = (@appliance_types ? @appliance_types : ApplianceType.all).def_order
-    #end
+    def set_appliance_type
+      #@appliance_type = (@port_mapping_template (@appliance_types ? @appliance_types : ApplianceType.all).def_order
+    end
 
     # Only allow a trusted parameter "white list" through.
     def port_mapping_template_params
       params.require(:port_mapping_template).permit(
-        :service_name, :target_port, :transport_protocol, :application_protocol)
+        :service_name, :target_port, :transport_protocol, :application_protocol, :appliance_type_id)
     end
 
 end

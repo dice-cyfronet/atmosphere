@@ -5,11 +5,11 @@
     -#.flash-container
     - if @alert
       .alert.alert-danger
-        %span= @alert
+        %span= raw @alert
 
     - elsif @notice
       .alert.alert-info
-        %span= @notice
+        %span= raw @notice
 
 
   - unless @port_mapping_templates.present?
@@ -31,6 +31,14 @@
 
       %tbody
         = render partial: 'admin/port_mapping_templates/show', collection: @port_mapping_templates.def_order, as: :pmt
+
+        %tr#new-port-mapping-template
+          %td(colspan='5')
+            = link_to new_admin_port_mapping_template_path(appliance_type_id: @appliance_type.id), remote: true,
+                class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
+              %i.icon-plus
+              Add
+
 
 :javascript
   $('body').on('ajax:success', '[data-target]', function(xhr, data, status) {

@@ -1,10 +1,12 @@
 - pmt = @port_mapping_template
 %tr(data-port-mapping-template-id="#{pmt.id}")
   %td(colspan=4)
-    = simple_form_for [:admin, @port_mapping_template], remote: true,
+    = simple_form_for [:admin, pmt], remote: true,
         data: {target: '#port-mapping-templates'},
         html: {class: 'form-inline'},
         defaults: {label_html: {class: 'sr-only'}, input_html: {class: 'input-sm'}} do |f|
+      - if request[:action] == 'new'
+        = f.input :appliance_type_id, as: :hidden, input_html: {value: @appliance_type.id}
       = f.input :service_name
       = f.input :target_port
       -# NOTE collections are explicit as otherwise the I18n translation does not work as it should
@@ -13,8 +15,15 @@
 
   %td(colspan=1)
     .btn-group.pull-right
-      = button_tag class: 'btn btn-success btn-xs', onclick: "$('#edit_port_mapping_template_#{pmt.id}').submit()" do
-        %i.icon-save
-      = link_to admin_port_mapping_template_path(pmt), remote: true,
-          class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
-        %i.icon-undo
+      - if request[:action] == 'new'
+        = button_tag class: 'btn btn-success btn-xs', onclick: "$('#new_port_mapping_template').submit()" do
+          %i.icon-save
+        = link_to admin_port_mapping_templates_path(appliance_type_id: @appliance_type.id), remote: true,
+            class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#port-mapping-templates'} do
+          %i.icon-undo
+      - else
+        = button_tag class: 'btn btn-success btn-xs', onclick: "$('#edit_port_mapping_template_#{pmt.id}').submit()" do
+          %i.icon-save
+        = link_to admin_port_mapping_template_path(pmt), remote: true,
+            class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
+          %i.icon-undo
