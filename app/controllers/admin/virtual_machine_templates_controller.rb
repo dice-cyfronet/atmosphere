@@ -10,22 +10,8 @@ class Admin::VirtualMachineTemplatesController < ApplicationController
   def show
   end
 
-  # GET /virtual_machine_templates/new
-  def new
-
-  end
-
   # GET /virtual_machine_templates/1/edit
   def edit
-  end
-
-  # POST /virtual_machine_templates
-  def create
-    if @virtual_machine_template.save
-      redirect_to admin_virtual_machine_template_url(@virtual_machine_template), notice: 'Virtual machine template was successfully created.'
-    else
-      render action: 'new'
-    end
   end
 
   # PATCH/PUT /virtual_machine_templates/1
