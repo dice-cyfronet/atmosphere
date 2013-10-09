@@ -24,8 +24,13 @@ Air::Application.routes.draw do
     resources :security_proxies
     resources :security_policies
     resources :compute_sites
-    resources :virtual_machines, except: [:edit, :update]
-    resources :virtual_machine_templates
+    resources :virtual_machines, except: [:edit, :update] do
+      member do
+        post :save_as_template
+        post :reboot
+      end 
+    end
+    resources :virtual_machine_templates, except: [:new, :create]
     resources :user_keys, except: [:edit, :update]
   end
 
