@@ -30,6 +30,13 @@ class VirtualMachine < ActiveRecord::Base
     "#{compute_site.site_id}-vm-#{id_at_site}"
   end
 
+  def reboot
+    cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
+    cloud_client.reboot_server id_at_site
+    state = :booting
+    save
+  end
+
   private
 
   def instantiate_vm
