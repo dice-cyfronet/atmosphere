@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Api::V1::AppliancesController do
   include ApiHelpers
 
+  let(:optimizer) {double}
+
   let(:user)  { create(:user) }
   let(:admin) { create(:admin) }
 
@@ -107,6 +109,10 @@ describe Api::V1::AppliancesController do
     end
 
     context 'when authenticated as user' do
+      before do
+        Optimizer.stub(:instance).and_return(optimizer)
+        expect(optimizer).to receive(:run).once
+      end
       it 'returns 201 Created on success' do
         post api("/appliances", user), static_request_body
         expect(response.status).to eq 201
@@ -203,6 +209,7 @@ describe Api::V1::AppliancesController do
           end
 
           it 'creates second appliance with the same configuration instance' do
+            expect(optimizer).to receive(:run).once
             post api("/appliances", user), static_request_body
             expect(response.status).to eq 201
           end
