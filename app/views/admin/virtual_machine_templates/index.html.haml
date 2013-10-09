@@ -2,6 +2,7 @@
 
 %table
   %tr
+    %th Site
     %th Id at site
     %th Name
     %th State
@@ -11,6 +12,7 @@
 
   - @virtual_machine_templates.each do |virtual_machine_template|
     %tr
+      %td= virtual_machine_template.compute_site.site_id
       %td= virtual_machine_template.id_at_site
       %td= virtual_machine_template.name
       %td= virtual_machine_template.state
@@ -19,5 +21,3 @@
       %td= link_to 'Destroy', admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
-
-= link_to 'New Virtual machine template', new_admin_virtual_machine_template_path
