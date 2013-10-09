@@ -30,6 +30,21 @@ class Admin::VirtualMachinesController < ApplicationController
     end
   end
 
+  # POST /admin.virtual_machines/1/save_as_template
+  def save_as_template
+    if VirtualMachineTemplate.create_from_vm(@virtual_machine)
+      redirect_to admin_virtual_machine_templates_url, notice: 'Template is being saved'
+    else
+      redirect_to admin_virtual_machines_url, notice: 'Error while saving template'
+    end
+  end
+
+  # POST /admin/virtual_machines/1/reboot
+  def reboot
+    @virtual_machine.reboot
+    redirect_to admin_virtual_machines_url
+  end
+
   # PATCH/PUT /virtual_machines/1
   #def update
   #   if @virtual_machine.update(virtual_machine_params)
