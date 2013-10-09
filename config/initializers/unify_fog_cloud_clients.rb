@@ -1,4 +1,6 @@
 require 'fog/openstack/compute'
+require 'fog/aws/compute'
+require 'fog/aws/models/compute/image'
 
 # open stack client does not provide import_key_pair method
 # while aws does
@@ -10,4 +12,37 @@ class Fog::Compute::OpenStack::Real
 
   # alias does not work since create_key_pair method is also added using magic
   # alias :import_key_pair :create_key_pair
+
+  # AWS and openstack create_image methods have different signatures...
+  def save_template(instance_id, tmpl_name)
+    resp = create_image(instance_id, tmpl_name)
+    if resp.status == 200
+      resp.body['image']['id']
+    else
+      # TODO raise specific exc
+      raise "Failed to save vm #{instance_id} as template"
+    end
+  end
+end
+
+class Fog::Compute::AWS::Real
+  def save_template(instance_id, tmpl_name)
+    resp = create_image(instance_id, tmpl_name, nil)
+    if resp.status == 200
+      resp.body['imageId']
+    else
+      # TODO raise specific exc
+      raise "Failed to save vm #{instance_id} as template"
+    end
+  end
+  def reboot_server(server_id)
+    reboot_instances([server_id])
+  end
+end
+
+# Image class does not implement destroy method
+class Fog::Compute::AWS::Image
+  def destroy
+    deregister
+  end
 end
