@@ -1,4 +1,4 @@
-- pmts_present = @appliance_type.port_mapping_templates.present?
+- pmts_present = @appliance_type.reload.port_mapping_templates.present?
 
 #port-mapping-templates
   %p

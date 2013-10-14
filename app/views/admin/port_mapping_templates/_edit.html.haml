@@ -14,15 +14,17 @@
 
   %td(colspan=1)
     .btn-group.pull-right
+
       - if request[:action] == 'new'
         = button_tag class: 'btn btn-success btn-xs', onclick: "$('#new_port_mapping_template').submit()" do
           %i.icon-save
         = link_to admin_appliance_type_port_mapping_templates_path(@appliance_type), remote: true,
             class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#port-mapping-templates'} do
           %i.icon-undo
+
       - else
         = button_tag class: 'btn btn-success btn-xs', onclick: "$('#edit_port_mapping_template_#{pmt.id}').submit()" do
           %i.icon-save
-        = link_to admin_appliance_type_port_mapping_templates_path(@appliance_type), remote: true,
+        = link_to admin_appliance_type_port_mapping_template_path(@appliance_type, pmt), remote: true,
             class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
           %i.icon-undo
