@@ -9,7 +9,7 @@ class Optimizer
   # Hint can be provided in a hash with one of the following keys:
   # :appliance_id DB id of the appliance that was created. Optimization only takes care of finding a vm or creating a new one for given appliance.
   def run(hint)
-    if hint[:appliance_id] then satisfy_appliance(hint[:appliance_id])
+    #if hint[:appliance_id] satisfy_appliance(hint[:appliance_id])
   end
 
   private
