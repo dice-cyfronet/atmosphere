@@ -49,6 +49,6 @@ class Appliance < ActiveRecord::Base
   end
 
   def trigger_optimization
-    Optimizer.instance.run
+    Optimizer.instance.run(appliance_id: self.id)
   end
 end

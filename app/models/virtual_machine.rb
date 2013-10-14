@@ -37,6 +37,11 @@ class VirtualMachine < ActiveRecord::Base
     save
   end
 
+  def appliance_type
+    return source_template.appliance_type if source_template
+    return nil
+  end
+
   private
 
   def instantiate_vm
