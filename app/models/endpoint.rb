@@ -21,4 +21,6 @@ class Endpoint < ActiveRecord::Base
 
   validates_presence_of :port_mapping_template
 
+  scope :def_order, -> { order(:description) }
+
 end
