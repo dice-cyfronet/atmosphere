@@ -9,6 +9,7 @@ describe Api::V1::UserKeysController do
   let!(:user_key1) { create(:user_key, user: user) }
   let!(:user_key2) { create(:user_key, user: user) }
   let!(:other_user_key) { create(:user_key) }
+  let!(:admin_key) { create(:user_key, user: admin) }
 
   describe 'GET /user_keys' do
     context 'when unauthenticated' do
@@ -35,10 +36,18 @@ describe Api::V1::UserKeysController do
     end
 
     context 'when authenticated as admin' do
+      it 'returns only owned keys when not all flag' do
+        get api('/user_keys', admin)
+        expect(user_keys_response).to be_an Array
+        expect(user_keys_response.size).to eq 1
+
+        expect(user_keys_response[0]).to user_key_eq admin_key
+      end
+
       it 'returns all user keys when all flag is true' do
         get api('/user_keys?all=true', admin)
         expect(user_keys_response).to be_an Array
-        expect(user_keys_response.size).to eq 3
+        expect(user_keys_response.size).to eq 4
       end
     end
   end
