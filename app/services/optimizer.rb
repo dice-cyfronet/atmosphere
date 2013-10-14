@@ -1,6 +1,7 @@
 class Optimizer
   include Singleton
 
+  # TODO move to air.yml
   # max number of appliances that use single vm
   MAX_APPLIANCES_NO = 5
 
@@ -9,15 +10,14 @@ class Optimizer
   # Hint can be provided in a hash with one of the following keys:
   # :appliance_id DB id of the appliance that was created. Optimization only takes care of finding a vm or creating a new one for given appliance.
   def run(hint)
-    #if hint[:appliance_id] satisfy_appliance(hint[:appliance_id])
+    satisfy_appliance(hint[:appliance_id]) if hint[:appliance_id]
   end
 
   private
   def satisfy_appliance(appliance_id)
     appliance = Appliance.find(appliance_id)
     if appliance.virtual_machines.blank?
-      vm_to_be_resued = fing_vm_that_can_be_resued(appliance)
-      if vm_to_be_resued
+      if appliance.appliance_type.shared and not (vm_to_be_resued = fing_vm_that_can_be_resued(appliance)).nil?
         appliance.virtual_machines << vm_to_be_resued
         appliance.save
       else
@@ -33,10 +33,8 @@ class Optimizer
   end
 
   def find_vm_that_can_be_reused(appliance)
-    # find vms of specified appliance type that has no more than MAX appliances associated
-    # TODO ask TG, PN and MK for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
-    # vms = VirtualMachine.joins(:appliances).where(appliances.appliance_configuration_instance_id: appliance.appliance_configuration_instance_id).order(appliances_count: :asc).first
-    nil
+    # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
+    VirtualMachine.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count > MAX_APPLIANCES_NO}
   end
 
 end
