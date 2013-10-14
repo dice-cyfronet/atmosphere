@@ -2,7 +2,6 @@ module Api
   module V1
     class ApplianceSetsController < Api::ApplicationController
       before_filter :create_appliance_set, only: :create
-      before_filter :set_appliance_sets, only: :index
       load_and_authorize_resource :appliance_set
       respond_to :json
 

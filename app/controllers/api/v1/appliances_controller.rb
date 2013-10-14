@@ -92,6 +92,10 @@ module Api
       def in_set_context?
         not params[:appliance_set_id].blank?
       end
+
+      def load_admin_abilities?
+        in_set_context? || super
+      end
     end
   end
 end
