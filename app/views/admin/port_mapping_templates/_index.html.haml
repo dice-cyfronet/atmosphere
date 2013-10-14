@@ -11,30 +11,38 @@
       .alert.alert-info
         %span= raw @notice
 
+  %p.description
+    -# TODO, FIXME: Port mappings section description
 
-  - unless @port_mapping_templates.present?
-    %p
-      .alert.alert-warning No Port Mappings defined.
+  %table.table.table-hover
+    %thead
+      %tr
+        %th(style='width:25%') Service name
+        %th(style='width:15%') Target port
+        %th(style='width:20%') Transport protocol
+        %th(style='width:20%') Application protocol
+        %th Actions
 
-  - else
-    %p.description
-      -# TODO, FIXME: Port mappings section description
+    %tbody
+      -#- if @port_mapping_templates.present?
+      = render partial: 'admin/port_mapping_templates/show', collection: @port_mapping_templates.def_order, as: :pmt
 
-    %table.table.table-hover
-      %thead
-        %tr
-          %th(style='width:25%') Service name
-          %th(style='width:15%') Target port
-          %th(style='width:20%') Transport protocol
-          %th(style='width:20%') Application protocol
-          %th Actions
+      - unless @port_mapping_templates.present?
+        %tr#new-port-mapping-template
+          %td(colspan='4')
+            .alert.alert-warning No Port Mappings defined.
 
-      %tbody
-        = render partial: 'admin/port_mapping_templates/show', collection: @port_mapping_templates.def_order, as: :pmt
+          %td
+            = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
+                class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
+              %i.icon-plus
+              Add first
+
+      - else
 
         %tr#new-port-mapping-template
           %td(colspan='5')
-            = link_to new_admin_port_mapping_template_path(appliance_type_id: @appliance_type.id), remote: true,
+            = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
                 class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
               %i.icon-plus
               Add

@@ -10,12 +10,12 @@
       Endpoints
 
     .btn-group.pull-right
-      = link_to edit_admin_port_mapping_template_path(pmt), remote: true,
+      = link_to edit_admin_appliance_type_port_mapping_template_path(pmt.appliance_type, pmt), remote: true,
           class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
         %i.icon-edit
       -#%button.btn.btn-success.btn-xs{title: 'Edit'}
       -#  %i.icon-edit
-      = link_to admin_port_mapping_template_path(pmt), method: :delete, remote: true,
+      = link_to admin_appliance_type_port_mapping_template_path(pmt.appliance_type, pmt), method: :delete, remote: true,
           class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mapping-templates'} do
         %i.icon-trash
       -#%button.btn.btn-danger.btn-xs{title: 'Delete', remote: true, data: {target: '#port-mappings-tab'}}

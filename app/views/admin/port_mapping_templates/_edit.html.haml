@@ -1,7 +1,7 @@
 - pmt = @port_mapping_template
 %tr(data-port-mapping-template-id="#{pmt.id}")
   %td(colspan=4)
-    = simple_form_for [:admin, pmt], remote: true,
+    = simple_form_for [:admin, @appliance_type, @port_mapping_template], remote: true,
         data: {target: '#port-mapping-templates'},
         html: {class: 'form-inline'},
         defaults: {label_html: {class: 'sr-only'}, input_html: {class: 'input-sm'}} do |f|
@@ -18,12 +18,12 @@
       - if request[:action] == 'new'
         = button_tag class: 'btn btn-success btn-xs', onclick: "$('#new_port_mapping_template').submit()" do
           %i.icon-save
-        = link_to admin_port_mapping_templates_path(appliance_type_id: @appliance_type.id), remote: true,
+        = link_to admin_appliance_type_port_mapping_templates_path(@appliance_type), remote: true,
             class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#port-mapping-templates'} do
           %i.icon-undo
       - else
         = button_tag class: 'btn btn-success btn-xs', onclick: "$('#edit_port_mapping_template_#{pmt.id}').submit()" do
           %i.icon-save
-        = link_to admin_port_mapping_template_path(pmt), remote: true,
+        = link_to admin_appliance_type_port_mapping_templates_path(@appliance_type), remote: true,
             class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
           %i.icon-undo
