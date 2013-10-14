@@ -1,7 +1,7 @@
 class Admin::ApplianceTypesController < ApplicationController
 
   load_and_authorize_resource :appliance_type
-  before_filter :set_appliance_types#, only: [:index, :show, :new, :create, :destroy]
+  before_filter :set_appliance_types
 
   # GET /admin/appliance_types
   def index
