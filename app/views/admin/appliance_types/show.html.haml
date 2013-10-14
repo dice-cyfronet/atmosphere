@@ -5,14 +5,6 @@
     .col-md-9
       #appliance_type
 
-
-        -#- if params[:action] == 'create'
-        -#  -# TODO ugly hack, remove
-        -#  - @appliance_types = ApplianceType.all
-        -#  :javascript
-        -#    $('#appliance-types-menu').html("#{escape_javascript(render partial: 'admin/appliance_types/appliance_types_menu')}");
-
-
         = render 'admin/appliance_types/view'
 
         -#= hb 'if isEditing' do
@@ -36,14 +28,10 @@
             %a{href: '#templates-tab', 'data-toggle' => 'tab'} Templates
           %li
             %a{href: '#appliances-tab', 'data-toggle' => 'tab'} Appliances
-          -#%li.pull-right
-          -#  %button.btn.btn-success.btn-xs
-          -#    %i.icon-plus
-          -#    Add
 
         .tab-content
           #port-mappings-tab.tab-pane.active
-            = render partial: 'admin/port_mapping_templates/index', locals: {port_mapping_templates: @appliance_type.port_mapping_templates}
+            = render partial: 'admin/port_mapping_templates/index'
           #configurations-tab.tab-pane
             = render 'admin/appliance_types/configurations'
           #templates-tab.tab-pane

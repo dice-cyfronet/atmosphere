@@ -1,8 +1,7 @@
-- @port_mapping_templates ||= @appliance_type.port_mapping_templates
+- pmts_present = @appliance_type.port_mapping_templates.present?
 
 #port-mapping-templates
   %p
-    -#.flash-container
     - if @alert
       .alert.alert-danger
         %span= raw @alert
@@ -24,28 +23,20 @@
         %th Actions
 
     %tbody
-      -#- if @port_mapping_templates.present?
-      = render partial: 'admin/port_mapping_templates/show', collection: @port_mapping_templates.def_order, as: :pmt
+      = render partial: 'admin/port_mapping_templates/show', collection: @appliance_type.port_mapping_templates.def_order, as: :pmt
 
-      - unless @port_mapping_templates.present?
-        %tr#new-port-mapping-template
+      %tr#new-port-mapping-template
+
+        - unless pmts_present
           %td(colspan='4')
             .alert.alert-warning No Port Mappings defined.
 
-          %td
-            = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
-                class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
-              %i.icon-plus
-              Add first
-
-      - else
-
-        %tr#new-port-mapping-template
-          %td(colspan='5')
-            = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
-                class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
-              %i.icon-plus
-              Add
+        %td(colspan="#{pmts_present ? '5' : ''}")
+          = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
+              class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
+            %i.icon-plus
+            Add
+            = 'first' unless pmts_present
 
 
 :javascript
