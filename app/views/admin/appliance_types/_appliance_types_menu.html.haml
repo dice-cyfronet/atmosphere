@@ -2,7 +2,6 @@
   %legend
     Appliance Types
     .pull-right
-      =# link_to new_admin_appliance_type_path, class: "btn btn-success btn-xs", title: "Add new Appliance Type", remote: true, data: { target: '#appliance_type' }  do
       = link_to new_admin_appliance_type_path, class: 'btn btn-success btn-xs', title: 'Add new Appliance Type' do
         %i.icon-plus
         Add new
@@ -10,7 +9,6 @@
   %ul#appliance-types-menu.nav.nav-pills.nav-stacked
     - @appliance_types.each do |appliance_type|
       %li
-        =# link_to admin_appliance_type_path(appliance_type), remote: true, data: { target: '#appliance_type' }  do
         = link_to admin_appliance_type_path(appliance_type) do
           = appliance_type.name
           %small.text-muted

@@ -1,8 +1,9 @@
 class Admin::PortMappingTemplatesController < ApplicationController
 
   load_and_authorize_resource :appliance_type
-  load_and_authorize_resource :port_mapping_template, through: :appliance_type#, shallow: true
+  load_and_authorize_resource :port_mapping_template, through: :appliance_type
   layout false
+
 
   # GET /admin/port_mapping_templates
   def index
@@ -21,12 +22,8 @@ class Admin::PortMappingTemplatesController < ApplicationController
 
   # POST /admin/port_mapping_templates
   def create
-    if @port_mapping_template.save port_mapping_template_params
-      @notice = 'Appliance Type was successfully added.'
-    else
-      @alert = @port_mapping_template.errors.full_messages.join('</br>')
-    end
-    render partial: 'index'
+    @port_mapping_template.save port_mapping_template_params
+    render_index
   end
 
   # GET /admin/port_mapping_templates/1/edit
@@ -36,31 +33,33 @@ class Admin::PortMappingTemplatesController < ApplicationController
 
   # PATCH/PUT /admin/port_mapping_templates/1
   def update
-    if @port_mapping_template.update port_mapping_template_params
-      @notice = 'Appliance Type was successfully updated.'
-    else
-      @alert = @port_mapping_template.errors.full_messages.join('</br>')
-    end
-    render partial: 'index'
+    @port_mapping_template.update port_mapping_template_params
+    render_index
   end
 
   # DELETE /admin/port_mapping_templates/1.json
   def destroy
-    if @port_mapping_template.destroy
-      @notice = 'Port Mapping was successfully removed.'
-    else
-      @alert = @port_mapping_template.errors.full_messages.join('</br>')
-    end
-    render partial: 'index'
+    @port_mapping_template.destroy
+    render_index
   end
 
 
   private
 
-    # Only allow a trusted parameter "white list" through.
-    def port_mapping_template_params
-      params.require(:port_mapping_template).permit(
-        :service_name, :target_port, :transport_protocol, :application_protocol, :appliance_type_id)
+  # Only allow a trusted parameter "white list" through.
+  def port_mapping_template_params
+    params.require(:port_mapping_template).permit(
+      :service_name, :target_port, :transport_protocol, :application_protocol, :appliance_type_id)
+  end
+
+  # Set a simple flash-like message for the user and show the PMTs index
+  def render_index
+    if @port_mapping_template.errors.blank?
+      @notice = "Port Mapping was successfully #{request[:action]}ed.".gsub('ee','e') # ;)
+    else
+      @alert = @port_mapping_template.errors.full_messages.join('</br>')
     end
+    render partial: 'index'
+  end
 
 end
