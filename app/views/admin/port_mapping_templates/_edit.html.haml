@@ -9,9 +9,8 @@
         = f.input :appliance_type_id, as: :hidden, input_html: {value: @appliance_type.id}
       = f.input :service_name
       = f.input :target_port
-      -# NOTE collections are explicit as otherwise the I18n translation does not work as it should
-      = f.input :transport_protocol, include_blank: false, collection: [:tcp, :udp]
-      = f.input :application_protocol, include_blank: false, collection: [:http, :https, :http_https, :none]
+      = f.input :transport_protocol, include_blank: false
+      = f.input :application_protocol, include_blank: false
 
   %td(colspan=1)
     .btn-group.pull-right
