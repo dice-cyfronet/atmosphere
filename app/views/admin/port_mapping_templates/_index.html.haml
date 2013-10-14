@@ -39,6 +39,8 @@
             = 'first' unless pmts_present
 
 
+  #endpoints
+
 :javascript
   $('body').on('ajax:success', '[data-target]', function(xhr, data, status) {
     $($(this).attr('data-target')).replaceWith(data);

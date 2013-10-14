@@ -6,7 +6,9 @@
   %td= t "enumerize.transport_protocol.#{pmt.transport_protocol}"
   %td= t "enumerize.application_protocol.#{pmt.application_protocol}"
   %td
-    %button.btn.btn-default.btn-xs{title: 'Endpoints'}
+
+    = link_to admin_appliance_type_port_mapping_template_endpoints_path(pmt.appliance_type, pmt), remote: true,
+        class: 'btn btn-default btn-xs', title: 'Endpoints', data: {target: '#endpoints'} do
       Endpoints
 
     .btn-group.pull-right

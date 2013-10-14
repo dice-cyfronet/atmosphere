@@ -20,7 +20,9 @@ Air::Application.routes.draw do
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :appliance_types do
-      resources :port_mapping_templates
+      resources :port_mapping_templates do
+        resources :endpoints, only: [:index]
+      end
     end
     resources :security_proxies
     resources :security_policies

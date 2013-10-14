@@ -33,3 +33,7 @@ en:
       https: HTTPS
       http_https: HTTP or HTTPS
       none: None
+    endpoint_type:
+      ws: Web Service
+      rest: REST Service
+      webapp: Web Application

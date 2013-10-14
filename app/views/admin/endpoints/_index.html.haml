@@ -1,0 +1,43 @@
+-#- pmts_present = @appliance_type.reload.port_mapping_templates.present?
+
+#endpoints
+  %p
+    - if @alert
+      .alert.alert-danger
+        %span= raw @alert
+
+    - elsif @notice
+      .alert.alert-info
+        %span= raw @notice
+
+  %p.description
+    -# TODO, FIXME: Endpoints section description
+
+  %table.table.table-hover
+    %thead
+      %tr
+        %th(style='width:65%') Description
+        %th(style='width:15%') Endpoint Type
+        %th Actions
+
+    %tbody
+      = render partial: 'admin/endpoints/show', collection: @port_mapping_template.endpoints.def_order, as: :endpoint
+
+      %tr#new-endpoint
+
+        -#- unless pmts_present
+        -#  %td(colspan='4')
+        -#    .alert.alert-warning No Port Mappings defined.
+        -#
+        -#%td(colspan="#{pmts_present ? '5' : ''}")
+        -#  = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
+        -#      class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
+        -#    %i.icon-plus
+        -#    Add
+        -#    = 'first' unless pmts_present
+
+
+-#:javascript
+-#  $('body').on('ajax:success', '[data-target]', function(xhr, data, status) {
+-#    $($(this).attr('data-target')).replaceWith(data);
+-#  });
