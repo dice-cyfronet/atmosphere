@@ -8,10 +8,13 @@ at = ApplianceType.create(name: 'Ubuntu 12.04 LTS 64b V3')
 
 at2 = ApplianceType.create(name: 'Ubuntu 12.04 LTS 64b at Amazon')
 
-at3 = ApplianceType.create(name: 'PLD v.1 super-stable at-last-we-are-secure-edition Remix 2006 with all repos blocked (no poldek release)')
+ApplianceType.create(name: 'PLD v.1 super-stable at-last-we-are-secure-edition Remix 2006 with all repos blocked (no poldek release)')
 
 PortMappingTemplate.create(service_name: 'pmt', target_port: 1, application_protocol: 'http', transport_protocol: 'tcp', appliance_type: at)
-PortMappingTemplate.create(service_name: 'pmt2', target_port: 144, application_protocol: 'none', transport_protocol: 'udp', appliance_type: at)
+pmt2 = PortMappingTemplate.create(service_name: 'pmt2', target_port: 144, application_protocol: 'none', transport_protocol: 'udp', appliance_type: at)
+
+Endpoint.create(description: 'No descriptor endpoint', endpoint_type: 'ws', port_mapping_template: pmt2)
+
 
 act = ApplianceConfigurationTemplate.create(name: 'act', appliance_type: at)
 
