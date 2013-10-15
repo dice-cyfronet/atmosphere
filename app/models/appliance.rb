@@ -26,7 +26,8 @@ class Appliance < ActiveRecord::Base
 
   before_create :create_dev_mode_property_set, if: :development?
   after_destroy :remove_appliance_configuration_instance_if_needed
-  after_save :trigger_optimization
+  after_destroy :optimize_destroyed_appliance
+  after_save :optimize_saved_appliance
 
   def to_s
     "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
@@ -48,7 +49,11 @@ class Appliance < ActiveRecord::Base
     end
   end
 
-  def trigger_optimization
-    Optimizer.instance.run(appliance_id: self.id)
+  def optimize_saved_appliance
+    Optimizer.instance.run(created_appliance: self)
+  end
+
+  def optimize_destroyed_appliance
+    Optimizer.instance.run(destroyed_appliance: self)
   end
 end

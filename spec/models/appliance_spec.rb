@@ -14,6 +14,8 @@ require 'spec_helper'
 
 describe Appliance do
 
+  let(:optimizer) {double}
+
   expect_it { to belong_to :appliance_set }
   expect_it { to validate_presence_of :appliance_set }
 
@@ -31,6 +33,10 @@ describe Appliance do
   pending 'should require zero or many VirtualMachines'
 
   context 'appliance configuration instances management' do
+    before do
+      Optimizer.stub(:instance).and_return(optimizer)
+      expect(optimizer).to receive(:run).twice
+    end
     let!(:appliance) { create(:appliance) }
 
     it 'removes appliance configuratoin instance when last Appliance using it' do
@@ -40,6 +46,7 @@ describe Appliance do
     end
 
     it 'does not remove appliance configuration instance when other Appliance is using it' do
+      expect(optimizer).to receive(:run).once
       create(:appliance, appliance_configuration_instance: appliance.appliance_configuration_instance)
       expect {
         appliance.destroy

@@ -10,12 +10,12 @@ class Optimizer
   # Hint can be provided in a hash with one of the following keys:
   # :appliance_id DB id of the appliance that was created. Optimization only takes care of finding a vm or creating a new one for given appliance.
   def run(hint)
-    satisfy_appliance(hint[:appliance_id]) if hint[:appliance_id]
+    satisfy_appliance(hint[:created_appliance]) if hint[:created_appliance]
+    terminate_unused_vms if hint[:destroyed_appliance]
   end
 
   private
-  def satisfy_appliance(appliance_id)
-    appliance = Appliance.find(appliance_id)
+  def satisfy_appliance(appliance)
     if appliance.virtual_machines.blank?
       if appliance.appliance_type.shared and not (vm_to_be_resued = fing_vm_that_can_be_resued(appliance)).nil?
         appliance.virtual_machines << vm_to_be_resued
@@ -26,7 +26,7 @@ class Optimizer
         if tmpl.blank?
           # raise error
         else
-          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance_id])
+          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id])
         end
       end
     end
@@ -35,6 +35,12 @@ class Optimizer
   def find_vm_that_can_be_reused(appliance)
     # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
     VirtualMachine.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count > MAX_APPLIANCES_NO}
+  end
+
+  def terminate_unused_vms
+    #logger.info 'Terminating unused vms'
+    # TODO ask PN for better query
+    VirtualMachine.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM appliances_virtual_machines)').each {|vm| vm.destroy }
   end
 
 end
