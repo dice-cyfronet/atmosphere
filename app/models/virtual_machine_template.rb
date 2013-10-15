@@ -22,7 +22,6 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates_presence_of :id_at_site, :name, :state, :compute_site_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
-  before_destroy :delete_in_cloud
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
   end
@@ -38,6 +37,11 @@ class VirtualMachineTemplate < ActiveRecord::Base
     vm_template.compute_site = cs
     vm_template.state = :saving
     vm_template.save
+  end
+
+  def destroy(delete_in_cloud = true)
+    delete_in_cloud if delete_in_cloud
+    super()
   end
 
   private
