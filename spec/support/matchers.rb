@@ -83,3 +83,12 @@ RSpec::Matchers.define :be_updated_by do |expected|
     actual.author.id == expected[:author] if expected[:author]
   end
 end
+
+RSpec::Matchers.define :vmt_fog_data_equals do |fog_im, site|
+  match do |actual|
+    actual.id_at_site == fog_im['id']
+    actual.name == fog_im['name']
+    actual.state == fog_im['status'].downcase.to_sym
+    actual.compute_site == site
+  end
+end
