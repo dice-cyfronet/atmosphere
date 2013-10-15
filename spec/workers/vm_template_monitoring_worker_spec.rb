@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe VmTemplateMonitoringWorker, focus: true do
+describe VmTemplateMonitoringWorker do
 
   before { Fog.mock! }
 
