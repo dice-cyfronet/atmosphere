@@ -14,7 +14,6 @@
 #
 
 class VirtualMachine < ActiveRecord::Base
-  include Cloud
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
   has_many :port_mappings, dependent: :destroy
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
@@ -47,7 +46,7 @@ class VirtualMachine < ActiveRecord::Base
   def instantiate_vm
     logger.info 'Instantiating'
     vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
-    cloud_client = VirtualMachine.get_cloud_client_for_site(vm_tmpl.compute_site.site_id)
+    cloud_client = vm_tmpl.compute_site.cloud_client
     servers_params = {:flavor_ref => 1, :name => name, :image_ref => vm_tmpl.id_at_site, :key_name => 'tomek'}
     unless appliances.blank?
       user_data = appliances.first.appliance_configuration_instance.payload
@@ -61,7 +60,7 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def delete_in_cloud
-    cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
+    cloud_client = compute_site.cloud_client
     cloud_client.servers.destroy(id_at_site)
   end
 

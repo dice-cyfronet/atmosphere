@@ -4,4 +4,10 @@ module Air
   def self.config
     Settings
   end
+
+  @@cloud_clients = {}
+
+  def self.cloud_clients
+    @@cloud_clients
+  end
 end
