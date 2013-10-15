@@ -24,10 +24,6 @@ class ComputeSite < ActiveRecord::Base
   enumerize :site_type, in: [:public, :private], predicates: true
   enumerize :technology, in: [:openstack, :aws], predicates: true
   validates :site_type, inclusion: %w(public private)
-
-  # openstack specific
-  #validates :auth_method, inclusion: %w(password key rax-kskey), :allow_nil => true
-  
   validates :technology, inclusion: %w(openstack aws)
 
   has_many :virtual_machines, dependent: :destroy
