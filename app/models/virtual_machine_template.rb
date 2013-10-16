@@ -14,7 +14,6 @@
 #
 
 class VirtualMachineTemplate < ActiveRecord::Base
-  include Cloud
   belongs_to :source_vm, class_name: 'VirtualMachine', foreign_key: 'virtual_machine_id'
   has_many :instances, class_name: 'VirtualMachine'
   belongs_to :compute_site
@@ -22,7 +21,6 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates_presence_of :id_at_site, :name, :state, :compute_site_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
-  before_destroy :delete_in_cloud
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
   end
@@ -31,7 +29,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
     vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: name|| virtual_machine.name)
     logger.info "Saving template #{vm_template}"
     cs = vm_template.source_vm.compute_site
-    cloud_client = VirtualMachineTemplate.get_cloud_client_for_site(cs.site_id)
+    cloud_client = cs.cloud_client
     id_at_site = cloud_client.save_template(vm_template.source_vm.id_at_site, vm_template.name)
     logger.info "Created template #{id_at_site}"
     vm_template.id_at_site = id_at_site
@@ -40,12 +38,17 @@ class VirtualMachineTemplate < ActiveRecord::Base
     vm_template.save
   end
 
+  def destroy(delete_in_cloud = true)
+    delete_in_cloud if delete_in_cloud
+    super()
+  end
+
   private
 
   def save_template_in_cloud
     logger.info "Saving template"
     cs = source_vm.compute_site
-    cloud_client = VirtualMachineTemplate.get_cloud_client_for_site(cs.site_id)
+    cloud_client = cs.cloud_client
     id_at_site = cloud_client.save_template(source_vm.id_at_site, name)
     logger.info "Created template #{id_at_site}"
     self.id_at_site = id_at_site
@@ -56,7 +59,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
 
   def delete_in_cloud
     logger.info "Deleting template #{uuid}"
-    cloud_client = VirtualMachineTemplate.get_cloud_client_for_site(self.compute_site.site_id)
+    cloud_client = self.compute_site.cloud_client
     cloud_client.images.destroy self.id_at_site
     logger.info "Destroyed template #{uuid}"
   end

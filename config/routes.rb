@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 def json_resources(name)
   resources name, only: [:index, :show, :create, :update, :destroy]
   yield if block_given?
@@ -10,12 +12,20 @@ end
 
 Air::Application.routes.draw do
 
+  get "jobs/show"
   resource :profile, only: [:show, :update] do
     member do
       put :update_password
       put :reset_private_token
     end
   end
+
+  constraint = lambda { |request| request.env["warden"].authenticate? }
+  constraints constraint do
+    mount Sidekiq::Web, at: "/admin/sidekiq", as: :sidekiq
+    get 'admin/jobs' => 'admin/jobs#show', as: :jobs
+  end
+
 
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
@@ -31,7 +41,7 @@ Air::Application.routes.draw do
       member do
         post :save_as_template
         post :reboot
-      end 
+      end
     end
     resources :virtual_machine_templates, except: [:new, :create]
     resources :user_keys, except: [:edit, :update]

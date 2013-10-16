@@ -14,6 +14,13 @@
 require 'spec_helper'
 
 describe UserKey do
+
+  let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
+  before do
+    Fog.mock! 
+    cs.cloud_client.reset_data
+  end
+
   subject { create(:user_key) }
   expect_it { to be_valid }
   [:name, :public_key, :user].each do |attr|
@@ -25,4 +32,11 @@ describe UserKey do
   end
   expect_it { to belong_to :user }
 
+  it 'should import key to cloud site' do
+    subject.name
+    ComputeSite.all.each do |cs|
+      keypair = cs.cloud_client.key_pairs.select{|k| k.name == subject.name}.first
+      expect(keypair.name).to eq(subject.name)
+    end
+  end
 end

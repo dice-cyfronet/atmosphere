@@ -13,7 +13,6 @@
 
 require 'tempfile'
 class UserKey < ActiveRecord::Base
-  include Cloud
 
   FINGER_PRINT_RE = /([\d\h]{2}:)+[\d\h]{2}/
 
@@ -54,7 +53,7 @@ class UserKey < ActiveRecord::Base
 
   def import_to_clouds
     ComputeSite.all.each do |cs|
-      cloud_client = UserKey.get_cloud_client_for_site(cs.site_id)
+      cloud_client = cs.cloud_client
       logger.debug "Importing key #{name} to #{cs.name}"
       cloud_client.import_key_pair(name, public_key)
       logger.info "Imported key #{name} to #{cs.name}"
@@ -63,7 +62,7 @@ class UserKey < ActiveRecord::Base
 
   def delete_in_clouds
     ComputeSite.all.each do |cs|
-      cloud_client = UserKey.get_cloud_client_for_site(cs.site_id)
+      cloud_client = cs.cloud_client
       logger.debug "Deleting key #{name} from #{cs.name}"
       cloud_client.delete_key_pair(name)
       logger.info "Deleted key #{name} from #{cs.name}"

@@ -69,6 +69,11 @@ gem 'github-markup', require: 'github/markup'
 # cloud client lib
 gem 'fog'
 
+#delay and scheduled jobs
+gem 'sinatra', require: nil
+gem 'sidekiq'
+gem 'whenever'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
@@ -85,6 +90,8 @@ group :development do
   gem 'binding_of_caller'
 
   gem 'rails_best_practices'
+
+  gem 'foreman'
 end
 
 group :development, :test do

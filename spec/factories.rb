@@ -78,10 +78,11 @@ FactoryGirl.define do
   end
 
   factory :compute_site do |f|
-    site_id 'factorized'
-    name 'Factoriez'
+    site_id { SecureRandom.hex(4) }
+    name { SecureRandom.hex(4) }
     site_type 'private'
     technology 'openstack'
+    config 'dummy config'
   end
 
   factory :user_key do |f|
@@ -127,5 +128,20 @@ FactoryGirl.define do
   factory :dev_mode_property_set do |f|
     name 'AS'
     appliance
+  end
+
+  factory :virtual_machine_template, aliases: [:source_template] do |f|
+    compute_site
+    name { Faker::Internet.user_name }
+    id_at_site { Faker::Internet.ip_v4_address }
+    state :active
+  end
+
+  factory :virtual_machine do |f|
+    name { Faker::Internet.user_name }
+    id_at_site { Faker::Internet.ip_v4_address }
+    state :active
+    source_template
+    compute_site
   end
 end

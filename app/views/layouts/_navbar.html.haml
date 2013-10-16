@@ -8,6 +8,8 @@
           - tab_name = model.name.tableize
           = nav_link controller: tab_name.to_sym do
             = link_to t("#{tab_name}.title"), [:admin, model], class: "has_bottom_tooltip", title: t("#{tab_name}.long_title")
+        = nav_link controller: :jobs do
+          = link_to 'Jobs', jobs_path, class: "has_bottom_tooltip", title: 'Background jobs'
 
     %ul.nav.navbar-nav.pull-right
       %li
