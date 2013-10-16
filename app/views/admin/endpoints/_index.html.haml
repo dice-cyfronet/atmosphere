@@ -16,7 +16,8 @@
   %table.table.table-hover
     %thead
       %tr
-        %th(style='width:65%') Description
+        %th(style='width:35%') Description
+        %th(style='width:30%') Descriptor
         %th(style='width:15%') Endpoint Type
         %th
           .pull-right Actions
@@ -27,10 +28,10 @@
       %tr#new-endpoint
 
         - unless endpoints_present
-          %td(colspan='2')
+          %td(colspan='3')
             .alert.alert-warning No Endpoints defined.
 
-        %td(colspan="#{endpoints_present ? '3' : ''}")
+        %td(colspan="#{endpoints_present ? '4' : ''}")
           = link_to [:new, :admin, @port_mapping_template.appliance_type, @port_mapping_template, :endpoint],
               remote: true, class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-endpoint'} do
             %i.icon-plus
