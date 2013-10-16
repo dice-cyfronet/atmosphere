@@ -1,2 +1,2 @@
 web: bundle exec rails server
-worker: bundle exec sidekiq
+worker: bundle exec sidekiq -q monitoring

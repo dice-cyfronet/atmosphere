@@ -9,4 +9,8 @@ class Settings < Settingslogic
 
   Settings['vph'] ||= Settingslogic.new({})
   Settings.vph['enabled'] = false if Settings.vph['enabled'].nil?
+
+  Settings['sidekiq'] ||= Settingslogic.new({})
+  Settings.sidekiq['url'] ||= "redis://localhost:6379"
+  Settings.sidekiq['namespace'] ||= "air"
 end
