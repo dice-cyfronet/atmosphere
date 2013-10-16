@@ -1,22 +1,17 @@
 - endpoint ||= @endpoint
+- pmt = endpoint.port_mapping_template
 
 %tr(data-endpoint-id="#{endpoint.id}")
   %td= endpoint.description
   %td= t "enumerize.endpoint_type.#{endpoint.endpoint_type}"
   %td
-    -#%button.btn.btn-default.btn-xs{title: 'Endpoints'}
-    -#  Endpoints
-    -#
-    -#= link_to admin_appliance_type_port_mapping_template_endpoints_path(pmt.appliance_type, pmt), remote: true,
-    -#    class: 'btn btn-default btn-xs', title: 'Endpoints', data: {target: '#endpoints'} do
-    -#  Endpoints
-    -#
-    -#.btn-group.pull-right
-    -#
-    -#  = link_to edit_admin_appliance_type_port_mapping_template_path(pmt.appliance_type, pmt), remote: true,
-    -#      class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-port-mapping-template-id='#{pmt.id}']"} do
-    -#    %i.icon-edit
-    -#
-    -#  = link_to admin_appliance_type_port_mapping_template_path(pmt.appliance_type, pmt), method: :delete, remote: true,
-    -#      class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#port-mapping-templates'} do
-    -#    %i.icon-trash
+
+    .btn-group.pull-right
+
+      = link_to edit_admin_appliance_type_port_mapping_template_endpoint_path(pmt.appliance_type, pmt, endpoint), remote: true,
+          class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-endpoint-id='#{endpoint.id}']"} do
+        %i.icon-edit
+
+      = link_to admin_appliance_type_port_mapping_template_endpoint_path(pmt.appliance_type, pmt, endpoint), method: :delete, remote: true,
+          class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#endpoints'} do
+        %i.icon-trash

@@ -31,7 +31,7 @@ Air::Application.routes.draw do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :appliance_types do
       resources :port_mapping_templates do
-        resources :endpoints, only: [:index]
+        resources :endpoints
       end
     end
     resources :security_proxies

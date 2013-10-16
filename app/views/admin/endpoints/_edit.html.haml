@@ -1,0 +1,30 @@
+-# endpoint = @endpoint
+- pmt = @port_mapping_template
+
+%tr(data-endpoint-id="#{@endpoint.id}")
+  %td(colspan=2)
+    = simple_form_for [:admin, pmt.appliance_type, pmt, @endpoint], remote: true,
+        data: {target: '#endpoints'},
+        html: {class: 'form-inline'},
+        defaults: {label_html: {class: 'sr-only'}, input_html: {class: 'input-sm'}} do |f|
+      - if request[:action] == 'new'
+        = f.input :port_mapping_template_id, as: :hidden, input_html: {value: pmt.id}
+      = f.input :description
+      = f.input :endpoint_type, include_blank: false
+
+  %td
+    .btn-group.pull-right
+
+      - if request[:action] == 'new'
+        = button_tag class: 'btn btn-success btn-xs', onclick: "$('#new_endpoint').submit()" do
+          %i.icon-save
+        = link_to admin_appliance_type_port_mapping_template_endpoints_path(pmt.appliance_type, pmt), remote: true,
+            class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#endpoints'} do
+          %i.icon-undo
+
+      - else
+        = button_tag class: 'btn btn-success btn-xs', onclick: "$('#edit_endpoint_#{@endpoint.id}').submit()" do
+          %i.icon-save
+        = link_to admin_appliance_type_port_mapping_template_endpoint_path(pmt.appliance_type, pmt, @endpoint), remote: true,
+            class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: "tr[data-endpoint-id='#{@endpoint.id}']"} do
+          %i.icon-undo

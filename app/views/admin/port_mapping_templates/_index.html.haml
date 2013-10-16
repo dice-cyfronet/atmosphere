@@ -20,7 +20,8 @@
         %th(style='width:15%') Target port
         %th(style='width:20%') Transport protocol
         %th(style='width:20%') Application protocol
-        %th Actions
+        %th
+          .pull-right Actions
 
     %tbody
       = render partial: 'admin/port_mapping_templates/show', collection: @appliance_type.port_mapping_templates.def_order, as: :pmt
