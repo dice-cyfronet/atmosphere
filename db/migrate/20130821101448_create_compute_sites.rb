@@ -7,12 +7,8 @@ class CreateComputeSites < ActiveRecord::Migration
       t.string :site_type, default: 'private'
       t.string :technology
 
-      # openstack specific fields
-      t.string :username
-      t.string :api_key
-      t.string :auth_method
-      t.string :auth_url
-      t.string :authtenant_name
+      # a JSON string with cloud site specific configuration
+      t.text :config
 
       t.timestamps
     end

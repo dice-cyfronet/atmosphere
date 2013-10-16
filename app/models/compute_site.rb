@@ -24,10 +24,6 @@ class ComputeSite < ActiveRecord::Base
   enumerize :site_type, in: [:public, :private], predicates: true
   enumerize :technology, in: [:openstack, :aws], predicates: true
   validates :site_type, inclusion: %w(public private)
-
-  # openstack specific
-  validates :auth_method, inclusion: %w(password key rax-kskey), :allow_nil => true
-
   validates :technology, inclusion: %w(openstack aws)
 
   has_many :virtual_machines, dependent: :destroy
@@ -37,4 +33,17 @@ class ComputeSite < ActiveRecord::Base
   def to_s
     name
   end
+
+  def cloud_client
+    Air.cloud_clients[self.site_id] || register_cloud_client
+  end
+
+  private
+  def register_cloud_client
+    cloud_site_conf = JSON.parse(self.config).symbolize_keys
+    client = Fog::Compute.new(cloud_site_conf)
+    Air.cloud_clients[self.site_id] = client
+    client
+  end
+
 end

@@ -80,16 +80,12 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id",                             null: false
+    t.string   "site_id",                        null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",       default: "private"
+    t.string   "site_type",  default: "private"
     t.string   "technology"
-    t.string   "username"
-    t.string   "api_key"
-    t.string   "auth_method"
-    t.string   "auth_url"
-    t.string   "authtenant_name"
+    t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
