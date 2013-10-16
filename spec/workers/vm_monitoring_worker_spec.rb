@@ -11,7 +11,8 @@ describe VmMonitoringWorker do
   end
 
   context 'updating cloud site virtual machines' do
-    let(:cyfronet_folsom) { create(:compute_site, site_id: 'cyfronet-folsom') }
+    let(:cyfronet_folsom) { create(:compute_site, site_id: 'cyfronet-folsom', config: '{"provider": "openstack", "openstack_auth_url": "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key": "key", "openstack_username": "vphadmin"}') }
+
     let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', compute_site: cyfronet_folsom, state: :active) }
 
     let(:vm1_data) { vm '1', 'vm1', :active }
@@ -19,7 +20,10 @@ describe VmMonitoringWorker do
     let(:vm3_data) { vm '3', 'vm3', :error }
 
     before do
+      # Fog::Compute[:openstack].reset
       data = Fog::Compute[:openstack].data
+      # Fog::Compute::OpenStack::Mock.reset
+      # data = Fog::Compute::OpenStack::Mock.data
       servers = data[:servers]
 
       servers['1'] = vm1_data

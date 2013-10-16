@@ -1,13 +1,11 @@
 class VmTemplateMonitoringWorker
   include Sidekiq::Worker
-  include Cloud
 
   sidekiq_options queue: :monitoring
 
   def perform(site_id)
     site = ComputeSite.find(site_id)
-    client = VmTemplateMonitoringWorker.get_cloud_client_for_site(site.site_id)
-    update_images(site, client.images)
+    update_images(site, site.cloud_client.images)
   end
 
   private
