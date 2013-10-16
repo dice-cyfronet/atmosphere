@@ -36,3 +36,7 @@
             %i.icon-plus
             Add
             = 'first' unless endpoints_present
+
+:javascript
+  $("a[data-role='endpoints']").removeClass('disabled');
+  $("tr[data-port-mapping-template-id='#{@port_mapping_template.id}'] a[data-role='endpoints']").addClass('disabled');
