@@ -81,6 +81,7 @@ FactoryGirl.define do
     site_id { SecureRandom.hex(4) }
     name { SecureRandom.hex(4) }
     site_type 'private'
+    technology 'openstack'
     config 'dummy config'
   end
 
