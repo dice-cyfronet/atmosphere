@@ -15,10 +15,9 @@ require 'spec_helper'
 
 describe UserKey do
 
-let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
+  let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
   before do
-    Fog.mock!
-    
+    Fog.mock! 
     cs.cloud_client.reset_data
   end
 
@@ -34,16 +33,10 @@ let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws",
   expect_it { to belong_to :user }
 
   it 'should import key to cloud site' do
+    subject.name
     ComputeSite.all.each do |cs|
-      puts "Keypairs #{cs.cloud_client.key_pairs}"
-      keypair = cs.cloud_client.key_pairs.select{|k|
-        puts k.name
-        k.name == subject.name
-      }.first
-      #puts "K#{keypair}"
-      #puts "S#{subject.name}"
+      keypair = cs.cloud_client.key_pairs.select{|k| k.name == subject.name}.first
       expect(keypair.name).to eq(subject.name)
-      #expect(keypair['keyFingerPrint']).to eq(subject.fingerprint)
     end
   end
 end
