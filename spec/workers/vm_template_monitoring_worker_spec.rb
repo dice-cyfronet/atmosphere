@@ -11,7 +11,7 @@ describe VmTemplateMonitoringWorker do
   end
 
   context 'updating cloud site images' do
-    let(:cyfronet_folsom) { create(:compute_site, site_id: 'cyfronet-folsom') }
+    let(:cyfronet_folsom) { create(:compute_site, site_id: 'cyfronet-folsom',config: '{"provider": "openstack", "openstack_auth_url": "http://10.100.0.2:5000/v2.0/tokens", "openstack_api_key": "key", "openstack_username": "vphadmin"}') }
     let(:ubuntu_data) { image 'ubuntu', 'Ubuntu 12.04', :active }
     let(:arch_data)   { image 'arch',   'Arch',         :saving }
     let(:centos_data) { image 'centos', 'Centos',       :error }

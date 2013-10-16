@@ -1,13 +1,11 @@
 class VmMonitoringWorker
   include Sidekiq::Worker
-  include Cloud
 
   sidekiq_options queue: :monitoring
 
   def perform(site_id)
     site = ComputeSite.find(site_id)
-    client = VmTemplateMonitoringWorker.get_cloud_client_for_site(site.site_id)
-    update_vms(site, client.servers)
+    update_vms(site, site.cloud_client.servers)
   end
 
   def update_vms(site, servers)
@@ -24,7 +22,7 @@ class VmMonitoringWorker
         error("unable to create/update #{vm.id} virtual machine because: #{vm.errors.to_json}")
       end
 
-      #remove deleted templates
+    #remove deleted templates
     all_site_vms.each { |vm| vm.destroy }
     end
   end
