@@ -12,11 +12,6 @@ class Admin::PortMappingTemplatesController < ApplicationController
     render partial: 'index'
   end
 
-  # GET /admin/appliance_types/1/port_mapping_templates/1
-  def show
-    render partial: 'show'
-  end
-
   # GET /admin/appliance_types/1/port_mapping_templates/new
   def new
     render partial: 'edit'

@@ -13,11 +13,6 @@ class Admin::EndpointsController < ApplicationController
     render partial: 'index'
   end
 
-  # GET /admin/appliance_types/1/port_mapping_templates/1/endpoints/1
-  def show
-    render partial: 'show'
-  end
-
   # GET /admin/appliance_types/1/port_mapping_templates/1/endpoints/new
   def new
     render partial: 'edit'

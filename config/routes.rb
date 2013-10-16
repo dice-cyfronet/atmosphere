@@ -30,8 +30,8 @@ Air::Application.routes.draw do
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :appliance_types do
-      resources :port_mapping_templates do
-        resources :endpoints
+      resources :port_mapping_templates, except: [:show] do
+        resources :endpoints, except: [:show]
       end
     end
     resources :security_proxies
