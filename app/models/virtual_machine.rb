@@ -22,9 +22,8 @@ class VirtualMachine < ActiveRecord::Base
   has_and_belongs_to_many :appliances
   validates_presence_of :name, :virtual_machine_template_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
-  
-  before_create :instantiate_vm
-  before_destroy :delete_in_cloud
+
+  before_create :instantiate_vm, unless: :id_at_site
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -40,6 +39,11 @@ class VirtualMachine < ActiveRecord::Base
   def appliance_type
     return source_template.appliance_type if source_template
     return nil
+  end
+
+  def destroy(delete_in_cloud = true)
+    delete_in_cloud if delete_in_cloud
+    super()
   end
 
   private
@@ -64,5 +68,4 @@ class VirtualMachine < ActiveRecord::Base
     cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
     cloud_client.servers.destroy(id_at_site)
   end
-
 end

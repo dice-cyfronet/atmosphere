@@ -129,10 +129,18 @@ FactoryGirl.define do
     appliance
   end
 
-  factory :virtual_machine_template do |f|
+  factory :virtual_machine_template, aliases: [:source_template] do |f|
     compute_site
     name { Faker::Internet.user_name }
     id_at_site { Faker::Internet.ip_v4_address }
     state :active
+  end
+
+  factory :virtual_machine do |f|
+    name { Faker::Internet.user_name }
+    id_at_site { Faker::Internet.ip_v4_address }
+    state :active
+    source_template
+    compute_site
   end
 end
