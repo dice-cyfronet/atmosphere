@@ -4,6 +4,9 @@ defaults: &defaults
     enabled: true
     host: 'http://jump.vph-share.eu'
     roles_map: {cloudadmin: 'admin', developer: 'developer'}
+  #sidekiq:
+  #  url: redis://localhost:6379
+  #  namespace: air
 
   #config_param
   #  regexp: '#{\w*}'
