@@ -1,43 +1,45 @@
 class Admin::PortMappingTemplatesController < ApplicationController
 
+  # NOTE: all actions below do Ajax/JSON
+
   load_and_authorize_resource :appliance_type
   load_and_authorize_resource :port_mapping_template, through: :appliance_type
   layout false
 
 
-  # GET /admin/port_mapping_templates
+  # GET /admin/appliance_types/1/port_mapping_templates
   def index
     render partial: 'index'
   end
 
-  # GET /admin/port_mapping_templates/1
+  # GET /admin/appliance_types/1/port_mapping_templates/1
   def show
     render partial: 'show'
   end
 
-  # GET /admin/port_mapping_templates/new
+  # GET /admin/appliance_types/1/port_mapping_templates/new
   def new
     render partial: 'edit'
   end
 
-  # POST /admin/port_mapping_templates
+  # POST /admin/appliance_types/1/port_mapping_templates
   def create
     @port_mapping_template.save port_mapping_template_params
     render_index
   end
 
-  # GET /admin/port_mapping_templates/1/edit
+  # GET /admin/appliance_types/1/port_mapping_templates/1/edit
   def edit
     render partial: 'edit'
   end
 
-  # PATCH/PUT /admin/port_mapping_templates/1
+  # PATCH/PUT /admin/appliance_types/1/port_mapping_templates/1
   def update
     @port_mapping_template.update port_mapping_template_params
     render_index
   end
 
-  # DELETE /admin/port_mapping_templates/1.json
+  # DELETE /admin/appliance_types/1/port_mapping_templates/1
   def destroy
     @port_mapping_template.destroy
     render_index
