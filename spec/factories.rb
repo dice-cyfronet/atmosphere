@@ -78,10 +78,10 @@ FactoryGirl.define do
   end
 
   factory :compute_site do |f|
-    site_id 'factorized'
-    name 'Factoriez'
+    site_id { SecureRandom.hex(4) }
+    name { SecureRandom.hex(4) }
     site_type 'private'
-    technology 'openstack'
+    config 'dummy config'
   end
 
   factory :user_key do |f|
