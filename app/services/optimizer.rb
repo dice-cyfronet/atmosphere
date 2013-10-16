@@ -17,7 +17,8 @@ class Optimizer
   private
   def satisfy_appliance(appliance)
     if appliance.virtual_machines.blank?
-      if appliance.appliance_type.shared and not (vm_to_be_resued = fing_vm_that_can_be_resued(appliance)).nil?
+      vm_to_be_reused = nil
+      if appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appliance.virtual_machines << vm_to_be_resued
         appliance.save
       else
@@ -34,7 +35,7 @@ class Optimizer
 
   def find_vm_that_can_be_reused(appliance)
     # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
-    VirtualMachine.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count > MAX_APPLIANCES_NO}
+    VirtualMachine.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count > MAX_APPLIANCES_NO}.first
   end
 
   def terminate_unused_vms

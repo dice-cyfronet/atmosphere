@@ -53,7 +53,17 @@ FactoryGirl.define do
       security_proxy
     end
 
+    trait :shareable do
+      shared true
+    end
+
+    trait :not_shareable do
+      shared false
+    end
+
     factory :filled_appliance_type, traits: [:all_attributes_not_empty]
+    factory :shareable_appliance_type, traits: [:shareable]
+    factory :not_shareable_appliance_type, traits: [:not_shareable]
   end
 
   factory :security_proxy do |f|
