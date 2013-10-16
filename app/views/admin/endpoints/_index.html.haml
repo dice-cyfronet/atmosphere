@@ -31,7 +31,7 @@
             .alert.alert-warning No Endpoints defined.
 
         %td(colspan="#{endpoints_present ? '3' : ''}")
-          = link_to new_admin_appliance_type_port_mapping_template_endpoint_path(@port_mapping_template.appliance_type, @port_mapping_template),
+          = link_to [:new, :admin, @port_mapping_template.appliance_type, @port_mapping_template, :endpoint],
               remote: true, class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-endpoint'} do
             %i.icon-plus
             Add

@@ -33,7 +33,7 @@
             .alert.alert-warning No Port Mappings defined.
 
         %td(colspan="#{pmts_present ? '5' : ''}")
-          = link_to new_admin_appliance_type_port_mapping_template_path(@appliance_type), remote: true,
+          = link_to [:new, :admin, @appliance_type, :port_mapping_template], remote: true,
               class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-port-mapping-template'} do
             %i.icon-plus
             Add
