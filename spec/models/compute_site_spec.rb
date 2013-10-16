@@ -41,7 +41,6 @@ describe ComputeSite do
       it 'returns appropriate cloud client for openstack' do
         subject.config = '{"provider": "openstack", "openstack_auth_url":  "http://bzdura.com:5000/v2.0/tokens", "openstack_api_key":  "bzdura", "openstack_username": "bzdura"}'
         expect(subject.cloud_client).to be_an_instance_of(Fog::Compute::OpenStack::Mock)
-        puts subject.site_id
       end
     end
 
