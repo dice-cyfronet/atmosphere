@@ -92,7 +92,7 @@ FactoryGirl.define do
     name { SecureRandom.hex(4) }
     site_type 'private'
     technology 'openstack'
-    config 'dummy config'
+    config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
   end
 
   factory :user_key do |f|

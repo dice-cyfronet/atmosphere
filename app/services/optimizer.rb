@@ -19,7 +19,7 @@ class Optimizer
     if appliance.virtual_machines.blank?
       vm_to_be_reused = nil
       if appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
-        appliance.virtual_machines << vm_to_be_resued
+        appliance.virtual_machines << vm_to_be_reused
         appliance.save
       else
         # TODO orders templates based on cost model
