@@ -2,7 +2,7 @@ FactoryGirl.define do
 
   factory :user do
     email { Faker::Internet.email }
-    login { Faker::Internet.user_name }
+    login { SecureRandom.hex(4) }
     password '12345678'
     password_confirmation { password }
     authentication_token { login }
