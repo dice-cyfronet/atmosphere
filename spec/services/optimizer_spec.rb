@@ -33,16 +33,17 @@ describe Optimizer do
           expect(vm.appliances).to include appl
         end
 
-        context 'max appl number equal one', :focus => true do
+        context 'max appl number equal one' do
           let(:config_inst) { create(:appliance_configuration_instance) }
-          let!(:appl1) { Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
-          let!(:appl2) { Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
-
+          
           before do
             Air.config.optimizer.stub(:max_appl_no).and_return 1
           end
 
-          it 'instantiates a new vm if already running vm cannot accept more load' do   
+          it 'instantiates a new vm if already running vm cannot accept more load' do
+            appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+            appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+
             vms = VirtualMachine.all
             expect(vms.size).to eql 2
             appl1.reload

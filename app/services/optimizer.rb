@@ -34,7 +34,6 @@ class Optimizer
 
   def find_vm_that_can_be_reused(appliance)
     # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
-    puts "============ #{Air.config.optimizer.max_appl_no}"
     VirtualMachine.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no}.first
   end
 
