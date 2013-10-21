@@ -33,15 +33,14 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "appliance_configuration_templates", ["appliance_type_id"], name: "index_appliance_configuration_templates_on_appliance_type_id", using: :btree
 
   create_table "appliance_sets", force: true do |t|
-    t.string   "name"
-    t.integer  "priority",           default: 50,         null: false
-    t.string   "appliance_set_type", default: "workflow", null: false
-    t.integer  "user_id",                                 null: false
+    t.string   "context_id",                                 null: false
+    t.integer  "priority",           default: 50,            null: false
+    t.string   "appliance_set_type", default: "development", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
+  add_index "appliance_sets", ["context_id"], name: "index_appliance_sets_on_context_id", unique: true, using: :btree
 
   create_table "appliance_types", force: true do |t|
     t.string   "name",                                      null: false
@@ -221,7 +220,6 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.string   "authentication_token"
     t.string   "email",                  default: "", null: false
     t.string   "full_name"
-    t.integer  "roles_mask"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -262,8 +260,6 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_foreign_key "appliance_configuration_instances", "appliance_configuration_templates", :name => "ac_instances_ac_template_id_fk"
 
   add_foreign_key "appliance_configuration_templates", "appliance_types", :name => "appliance_configuration_templates_appliance_type_id_fk"
-
-  add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
 
   add_foreign_key "appliance_types", "security_proxies", :name => "appliance_types_security_proxy_id_fk"
   add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
