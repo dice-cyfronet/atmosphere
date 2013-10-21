@@ -33,23 +33,26 @@ describe Optimizer do
           expect(vm.appliances).to include appl
         end
 
-        it 'instantiates a new vm if already running vm cannot accept more load' do
-          original_max_appl_no = Optimizer.const_get(:MAX_APPLIANCES_NO)
-          Optimizer.const_set(:MAX_APPLIANCES_NO, 1)
-          tmpl_of_shareable_at
-          config_inst = create(:appliance_configuration_instance)
-          appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          vms = VirtualMachine.all
-          expect(vms.size).to eql 2
-          appl1.reload
-          appl2.reload
-          expect(appl1.virtual_machines.size).to eql 1
-          expect(appl2.virtual_machines.size).to eql 1
-          vm1 = appl1.virtual_machines.first
-          vm2 = appl2.virtual_machines.first
-          expect(vm1 == vm2).to be_false
-          Optimizer.const_set(:MAX_APPLIANCES_NO, original_max_appl_no)
+        context 'max appl number equal one', :focus => true do
+          let(:config_inst) { create(:appliance_configuration_instance) }
+          let!(:appl1) { Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
+          let!(:appl2) { Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
+
+          before do
+            Air.config.optimizer.stub(:max_appl_no).and_return 1
+          end
+
+          it 'instantiates a new vm if already running vm cannot accept more load' do   
+            vms = VirtualMachine.all
+            expect(vms.size).to eql 2
+            appl1.reload
+            appl2.reload
+            expect(appl1.virtual_machines.size).to eql 1
+            expect(appl2.virtual_machines.size).to eql 1
+            vm1 = appl1.virtual_machines.first
+            vm2 = appl2.virtual_machines.first
+            expect(vm1 == vm2).to be_false
+          end
         end
 
       end
