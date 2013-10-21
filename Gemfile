@@ -80,7 +80,7 @@ group :doc do
 end
 
 group :development do
-  gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
+  gem 'annotate', github: 'ctran/annotate_models'
   gem 'quiet_assets'
   gem 'letter_opener'
   # gem 'rack-mini-profiler'
@@ -102,7 +102,7 @@ group :development, :test do
 
   # Guard
   gem 'guard-rspec'
-  gem 'spork-rails', git: 'https://github.com/sporkrb/spork-rails.git'
+  gem 'spork-rails', github: 'sporkrb/spork-rails'
   gem 'guard-spork'
   gem 'libnotify'
 

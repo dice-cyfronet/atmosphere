@@ -1,4 +1,20 @@
 GIT
+  remote: git://github.com/ctran/annotate_models.git
+  revision: 54bdf7e2963b673a3c4f865d56dc5055dbff11cd
+  specs:
+    annotate (2.6.0.beta2)
+      activerecord (>= 2.3.0)
+      rake (>= 0.8.7)
+
+GIT
+  remote: git://github.com/sporkrb/spork-rails.git
+  revision: 0dd45e59d3237b4c8f9efc215b46d9c07072a95e
+  specs:
+    spork-rails (4.0.0)
+      rails (>= 3.0.0, < 5)
+      spork (>= 1.0rc0)
+
+GIT
   remote: git://github.com/thomas-mcdonald/bootstrap-sass.git
   revision: 0e88056ac5d58fb0bbd23d3fe929eac01712d964
   branch: 3
@@ -15,22 +31,6 @@ GIT
       faraday
       multi_json
       omniauth (~> 1.0)
-
-GIT
-  remote: https://github.com/ctran/annotate_models.git
-  revision: aaab884fe430bf6ef418cfbedde603d660c78f9b
-  specs:
-    annotate (2.6.0.beta2)
-      activerecord (>= 2.3.0)
-      rake (>= 0.8.7)
-
-GIT
-  remote: https://github.com/sporkrb/spork-rails.git
-  revision: 3224f84d8c31fcb0894e9a43f6c3ac67e3aa0d71
-  specs:
-    spork-rails (3.2.1)
-      rails (>= 3.0.0, < 5)
-      spork (>= 1.0rc0)
 
 GEM
   remote: https://rubygems.org/
