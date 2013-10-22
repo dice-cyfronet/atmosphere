@@ -6,6 +6,10 @@ describe Optimizer do
     Fog.mock!
   end
 
+  let!(:wf) { create(:workflow_appliance_set) }
+  let!(:wf2) { create(:workflow_appliance_set) }
+  let!(:shareable_appl_type) { create(:shareable_appliance_type) }
+
   subject { Optimizer.instance }
 
   it 'is not nil' do
@@ -14,17 +18,13 @@ describe Optimizer do
 
   context 'new appliance created' do
 
-    let!(:wf) { create(:workflow_appliance_set) }
-    let!(:wf2) { create(:workflow_appliance_set) }
+    let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type)}
 
     context 'shareable appliance type' do
-      let!(:shareable_appl_type) { create(:shareable_appliance_type) }
-      let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type)}
 
       context 'vm cannot be reused' do
 
         it 'instantiates a new vm if there are no vms at all' do
-          tmpl_of_shareable_at
           appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
           vms = VirtualMachine.all
           expect(vms.size).to eql 1
@@ -104,5 +104,14 @@ describe Optimizer do
       subject.run(destroyed_appliance: true)
       expect(VirtualMachine.all).to be_blank
     end
+  end
+
+  context 'no template is available' do
+    
+    it 'sets appliance to unsatisfied state' do
+      appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      expect(appl.state).to eql 'unsatisfied'
+    end
+
   end
 end

@@ -18,13 +18,14 @@ class Optimizer
       if appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appliance.virtual_machines << vm_to_be_reused
         unless appliance.save
-          logger.error appliance.errors.to_json
+          Rails.logger.error appliance.errors.to_json
         end
       else
         # TODO orders templates based on cost model
         tmpl = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type).first
         if tmpl.blank?
-          # raise error
+          appliance.state = :unsatisfied
+          Rails.logger.warn "No template for instantiating a vm for appliance #{appliance.id} was found"
         else
           VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id])
         end
