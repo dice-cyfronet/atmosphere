@@ -97,4 +97,12 @@ describe Optimizer do
 
     end
   end
+
+  context 'virtual machine is applianceless' do
+    it 'terminates unused vm' do
+      vm = create(:virtual_machine)
+      subject.run(destroyed_appliance: true)
+      expect(VirtualMachine.all).to be_blank
+    end
+  end
 end
