@@ -63,9 +63,10 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "appliance_types", ["user_id"], name: "appliance_types_user_id_fk", using: :btree
 
   create_table "appliances", force: true do |t|
-    t.integer  "appliance_set_id",                    null: false
-    t.integer  "appliance_type_id",                   null: false
-    t.integer  "appliance_configuration_instance_id", null: false
+    t.integer  "appliance_set_id",                                    null: false
+    t.integer  "appliance_type_id",                                   null: false
+    t.integer  "appliance_configuration_instance_id",                 null: false
+    t.string   "state",                               default: "new", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
