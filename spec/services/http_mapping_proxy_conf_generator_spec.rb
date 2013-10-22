@@ -30,7 +30,7 @@ describe HttpMappingProxyConfGenerator do
     p "Appliance type name: #{appl_type1.name}"
      
     # spawn appliance of type appl_type1
-    let!(:appl1) { create (:appliance, appliance_type: appl_type1)}
+    let!(:appl1) { create(:appliance, appliance_type: appl_type1)}
     p "Appliance type name: #{appl1.appliance_type.name}"
 
     

@@ -3,8 +3,13 @@ class HttpMappingProxyConfGenerator
   # Generates data structure required by ProxyConf to set up redirections
   # for all VMs running on a given CloudSite.
   # Parameterized by cloud site ID
+  
   def run(compute_site_id)
-    cs = ComputeSite.find(cloud_site_id)
+
+    puts "Hello world"
+    puts "cs id: #{compute_site_id}"
+
+    cs = ComputeSite.find(compute_site_id)
     proxy_configuration = []
     
     if cs.blank?
