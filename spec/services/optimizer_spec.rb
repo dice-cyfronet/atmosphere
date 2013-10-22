@@ -33,6 +33,10 @@ describe Optimizer do
           expect(vm.appliances).to include appl
         end
 
+        it 'sets appliance state to satisfied' do
+          pending 'Add this test in few places...'
+        end
+
         context 'max appl number equal one' do
           let(:config_inst) { create(:appliance_configuration_instance) }
           
