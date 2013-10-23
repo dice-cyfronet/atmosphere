@@ -33,8 +33,10 @@ describe Optimizer do
           expect(vm.appliances).to include appl
         end
 
-        it 'sets appliance state to satisfied' do
-          pending 'Add this test in few places...'
+        it 'sets appliance state to satisfied if vm was instantiated' do
+          appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+          appl.reload
+          expect(appl.state).to eql 'satisfied'
         end
 
         context 'max appl number equal one' do
@@ -77,12 +79,22 @@ describe Optimizer do
           expect(vm.appliances).to include(appl1, appl2)
         end
 
+        it 'sets appliance state to satisfied if vm was reused' do
+          tmpl_of_shareable_at
+          config_inst = create(:appliance_configuration_instance)
+          appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl2.reload
+          expect(appl2.state).to eql 'satisfied'
+        end
+
       end
     end
 
     context 'not shareable appliance type' do
       let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
       let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type)}
+      
       it 'instantiates a new vm although vm with given conf is already running' do
         tmpl_of_not_shareable_at
         config_inst = create(:appliance_configuration_instance)
@@ -114,6 +126,7 @@ describe Optimizer do
     
     it 'sets appliance to unsatisfied state' do
       appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
 
