@@ -1,4 +1,4 @@
-unless Air.config.exception_notification.blank?
+unless Air.config['exception_notification'].blank?
   Air::Application.config.action_mailer.delivery_method = :sendmail
   Air::Application.config.action_mailer.perform_deliveries = true
   Air::Application.config.action_mailer.raise_delivery_errors = true
