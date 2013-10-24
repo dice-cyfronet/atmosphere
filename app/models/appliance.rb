@@ -11,12 +11,16 @@
 #
 
 class Appliance < ActiveRecord::Base
+  extend Enumerize
 
   belongs_to :appliance_set
   belongs_to :appliance_type
   belongs_to :appliance_configuration_instance
 
   validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
+
+  enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
+  validates_presence_of :state
 
   has_many :http_mappings, dependent: :destroy
   has_and_belongs_to_many :virtual_machines
@@ -27,7 +31,7 @@ class Appliance < ActiveRecord::Base
   before_create :create_dev_mode_property_set, if: :development?
   after_destroy :remove_appliance_configuration_instance_if_needed
   after_destroy :optimize_destroyed_appliance
-  after_save :optimize_saved_appliance
+  after_create :optimize_saved_appliance
 
   def to_s
     "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"

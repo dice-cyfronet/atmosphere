@@ -20,3 +20,13 @@ test:
 
 production:
   <<: *defaults
+  mailer:
+    host: vph.cyfronet.pl
+  exception_notification:
+    email_prefix: "[Err Atmosphere]"
+    sender_address: '"notifier" <notifier@vph.cyfronet.pl>'
+    exception_recipients:
+      - m.kasztelnik@cyfronet.pl
+      - t.gubala@cyfronet.pl
+      - t.bartynski@cyfronet.pl
+      - p.nowakowski@cyfronet.pl

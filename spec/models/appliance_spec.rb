@@ -18,6 +18,8 @@ describe Appliance do
 
   expect_it { to belong_to :appliance_set }
   expect_it { to validate_presence_of :appliance_set }
+  expect_it { to validate_presence_of :state }
+  expect_it { to ensure_inclusion_of(:state).in_array(%w(new satisfied unsatisfied))}
 
   expect_it { to belong_to :appliance_type }
   expect_it { to validate_presence_of :appliance_type }

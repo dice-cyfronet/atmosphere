@@ -37,6 +37,9 @@ gem 'simple_form', '~>3.0.0'
 # User avatar
 gem 'gravtastic'
 
+# Sending email when 500 is thrown
+gem 'exception_notification'
+
 # Security
 gem 'devise', '~>3.0.0'
 gem 'cancan'

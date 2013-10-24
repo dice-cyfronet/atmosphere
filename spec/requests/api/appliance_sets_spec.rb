@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Api::V1::ApplianceSetsController do
   include ApiHelpers
 
+  before do
+    Optimizer.instance.stub(:run)
+  end
+
   let(:user)           { create(:developer) }
   let(:different_user) { create(:user) }
   let(:admin)          { create(:admin) }
