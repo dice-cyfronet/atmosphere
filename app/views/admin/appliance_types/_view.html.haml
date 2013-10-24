@@ -7,10 +7,10 @@
   .pull-right
     -#%button.btn.btn-success.btn-xs{hb: "action 'edit'", title: 'Edit'}
     = link_to edit_admin_appliance_type_path(@appliance_type), class: 'btn btn-success btn-xs', title: 'Edit' do
-      %i.icon-edit
+      =fa_icon 'edit'
       Edit
     = link_to admin_appliance_type_path(@appliance_type), method: :delete, class: 'btn btn-danger btn-xs', title: 'Delete' do
-      %i.icon-trash
+      =fa_icon 'trash-o'
       Delete
 
   %h5

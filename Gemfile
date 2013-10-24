@@ -37,6 +37,9 @@ gem 'simple_form', '~>3.0.0'
 # User avatar
 gem 'gravtastic'
 
+# Sending email when 500 is thrown
+gem 'exception_notification'
+
 # Security
 gem 'devise', '~>3.0.0'
 gem 'cancan'
@@ -46,7 +49,8 @@ gem 'omniauth-vph', git: 'http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.
 
 
 gem 'haml-rails'
-gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass', branch: '3'
+gem 'bootstrap-sass', '~>3.0.0.0.rc'
+
 gem 'font-awesome-rails'
 
 gem 'ember-rails'
