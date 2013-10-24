@@ -93,7 +93,7 @@ describe HttpMappingProxyConfGenerator do
       conf1 = @generator.run(cs1.id)
       p "Configuration 1: #{conf1.to_s}"         
       
-      # Doesn't work. Figure out why (the correct exception is, in fact, raise, but rspec doesn't like it for some reason.)
+      # Doesn't work. Figure out why (the correct exception is, in fact, raised, but rspec doesn't like it for some reason.)
       # expect(@generator.run(123456789)).to raise_error(Air::UnknownComputeSite)
       
       expect(conf1.length).to eql 8
