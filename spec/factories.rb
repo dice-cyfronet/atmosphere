@@ -154,4 +154,12 @@ FactoryGirl.define do
     source_template
     compute_site
   end
+  
+  factory :http_mapping do |f|
+    appliance
+    port_mapping_template
+    application_protocol "http" # Temporary value!
+    url "none"
+  end
+  
 end

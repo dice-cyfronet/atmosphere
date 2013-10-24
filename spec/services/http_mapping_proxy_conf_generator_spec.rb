@@ -12,7 +12,10 @@ describe HttpMappingProxyConfGenerator do
     end    
   end
 
+
   describe "#run" do
+
+    # TODO: Divide this into contexts
 
     # This one will have VMs assigned
     let!(:cs1) { create(:compute_site) }
@@ -27,120 +30,77 @@ describe HttpMappingProxyConfGenerator do
 
     # let's start with the simple stuff. Spawn some ApplianceTypes:
     let!(:appl_type1) { create(:appliance_type)}
-    p "Appliance type name: #{appl_type1.name}"
+    let!(:appl_type2) { create(:appliance_type, scalable: true)}
+    let!(:appl_type3a) { create(:appliance_type, shared: true)}
+    let!(:appl_type3b) { create(:appliance_type, shared: true)}
+
+    # ---appliance type 1---
+    # spawn one PMTemplate for appl_type1
+    let!(:pm_template1) { create(:port_mapping_template, appliance_type: appl_type1, application_protocol: "http_https")}
      
     # spawn appliance of type appl_type1
     let!(:appl1) { create(:appliance, appliance_type: appl_type1)}
-    p "Appliance type name: #{appl1.appliance_type.name}"
+    #p "Appliance type name: #{appl1.appliance_type.name}"
+    #p "Appliance config: #{appl1.appliance_configuration_instance.payload}"
 
+    # spawn one VM for appl1
+    let!(:vm1) { create(:virtual_machine, appliances: [appl1], compute_site: cs1, ip: "10.100.8.10")}      
+
+    # spawn one http_mapping for appl1
+    let!(:pm_a1) { create(:http_mapping, appliance: appl1, port_mapping_template: pm_template1)}
+
+    # ---appliance type 2---
+    # spawn one PMTemplate for appl_type2
+    let!(:pm_template2) { create(:port_mapping_template, appliance_type: appl_type2, application_protocol: "http_https")}
+
+    # spawn appliance of type appl_type2
+    let!(:appl2) { create(:appliance, appliance_type: appl_type2)}
+
+    # spawn two VMs for appl2 (scalable appliance)
+    let!(:vm2_1) { create(:virtual_machine, appliances: [appl2], compute_site: cs1, ip: "10.100.8.11")}
+    let!(:vm2_2) { create(:virtual_machine, appliances: [appl2], compute_site: cs1, ip: "10.100.8.12")}
+          
+    # spawn one http_mapping for appl2
+    let!(:pm_a2) { create(:http_mapping, appliance: appl2, port_mapping_template: pm_template2)}
+
+
+    # ---appliance type 3---
+    # spawn two PMTemplates for appl_types 3a and 3b
+    let!(:pm_template3a) { create(:port_mapping_template, appliance_type: appl_type3a, application_protocol: "http_https")}    
+    let!(:pm_template3b) { create(:port_mapping_template, appliance_type: appl_type3b, application_protocol: "http_https")}    
     
-    vm1 = VirtualMachine.create
-    vm1.compute_site = cs1
-     
-    appl1.virtual_machines << vm1
-      
-    
+    # spawn two appliances of type appl_type3 (3a and 3b; shared VM)
+    let!(:appl3a) { create(:appliance, appliance_type: appl_type3a)}
+    let!(:appl3b) { create(:appliance, appliance_type: appl_type3b)}
+
+    # spawn single VM for both appl3a and 3b
+    let!(:vm3) { create(:virtual_machine, appliances: [appl3a, appl3b], compute_site: cs1, ip: "10.100.8.13")}
+          
+    # spawn two http_mappings for appl3a and 3b
+    let!(:pm_a3a) { create(:http_mapping, appliance: appl3a, port_mapping_template: pm_template3a)}
+    let!(:pm_a3b) { create(:http_mapping, appliance: appl3b, port_mapping_template: pm_template3b)}
+
+
     it "generates proxy configuration" do
 
       expect(cs1).to be_an_instance_of ComputeSite
       expect(cs2).to be_an_instance_of ComputeSite
      
-
-      #expect(appl1.virtual_machines.length).to eql 1
-
+      # TODO: For some reason logger.* does not work here (i.e. nothing is written to application logs), so I'm using puts instead.
+      # This needs to be debugged.
       p "CS 1 id: #{cs1.id}"         
       
       conf1 = @generator.run(cs1.id)
       p "Configuration 1: #{conf1.to_s}"         
       
+      # Doesn't work. Figure out why (the correct exception is, in fact, raise, but rspec doesn't like it for some reason.)
+      # expect(@generator.run(123456789)).to raise_error(Air::UnknownComputeSite)
+      
+      expect(conf1.length).to eql 8
+      # TODO: Add all sorts of expects (worker list lengths, regexp path validation etc.)
+      # Ran out of time to do it myself (PN) :(
+      
     end
   end
 
-  
-
-  # context 'new appliance created' do
-# 
-    # let!(:wf) { create(:workflow_appliance_set) }
-    # let!(:wf2) { create(:workflow_appliance_set) }
-# 
-    # context 'shareable appliance type' do
-      # let!(:shareable_appl_type) { create(:shareable_appliance_type) }
-      # let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type)}
-# 
-      # context 'vm cannot be reused' do
-# 
-        # it 'instantiates a new vm if there are no vms at all' do
-          # tmpl_of_shareable_at
-          # appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
-          # vms = VirtualMachine.all
-          # expect(vms.size).to eql 1
-          # vm = vms.first
-          # expect(vm.appliances.size).to eql 1
-          # expect(vm.appliances).to include appl
-        # end
-# 
-        # context 'max appl number equal one' do
-          # let(:config_inst) { create(:appliance_configuration_instance) }
-#           
-          # before do
-            # Air.config.optimizer.stub(:max_appl_no).and_return 1
-          # end
-# 
-          # it 'instantiates a new vm if already running vm cannot accept more load' do
-            # appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-            # appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-# 
-            # vms = VirtualMachine.all
-            # expect(vms.size).to eql 2
-            # appl1.reload
-            # appl2.reload
-            # expect(appl1.virtual_machines.size).to eql 1
-            # expect(appl2.virtual_machines.size).to eql 1
-            # vm1 = appl1.virtual_machines.first
-            # vm2 = appl2.virtual_machines.first
-            # expect(vm1 == vm2).to be_false
-          # end
-        # end
-# 
-      # end
-# 
-      # context 'vm can be reused' do
-# 
-        # it 'reuses available vm' do
-          # tmpl_of_shareable_at
-          # config_inst = create(:appliance_configuration_instance)
-          # appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          # appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          # # expect(ApplianceSet.all.size).to eql 2 # WTF?
-          # vms = VirtualMachine.all
-          # expect(vms.size).to eql 1
-          # vm = vms.first
-          # expect(vm.appliances.size).to eql 2
-          # expect(vm.appliances).to include(appl1, appl2)
-        # end
-# 
-      # end
-    # end
-# 
-    # context 'not shareable appliance type' do
-      # let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-      # let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type)}
-      # it 'instantiates a new vm although vm with given conf is already running' do
-        # tmpl_of_not_shareable_at
-        # config_inst = create(:appliance_configuration_instance)
-        # appl1 = Appliance.create(appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst)
-        # appl2 = Appliance.create(appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst)
-        # vms = VirtualMachine.all
-        # expect(vms.size).to eql 2
-        # appl1.reload
-        # appl2.reload
-        # expect(appl1.virtual_machines.size).to eql 1
-        # expect(appl2.virtual_machines.size).to eql 1
-        # vm1 = appl1.virtual_machines.first
-        # vm2 = appl2.virtual_machines.first
-        # expect(vm1 == vm2).to be_false
-      # end
-# 
-    # end
-#  end
 end
