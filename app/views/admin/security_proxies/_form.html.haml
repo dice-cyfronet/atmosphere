@@ -6,6 +6,6 @@
     .form-actions
       .btn-group
         %button.btn.btn-success{id: "action-button",  type: "submit"}
-          %i.icon-edit
+          =fa_icon 'edit'
           = t('save')
       = link_to t('back'), admin_security_proxies_path, class: 'btn btn-default'
