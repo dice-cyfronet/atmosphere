@@ -49,7 +49,8 @@ gem 'omniauth-vph', git: 'http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.
 
 
 gem 'haml-rails'
-gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass', branch: '3'
+gem 'bootstrap-sass', '~>3.0.0.0.rc'
+
 gem 'font-awesome-rails'
 
 gem 'ember-rails'

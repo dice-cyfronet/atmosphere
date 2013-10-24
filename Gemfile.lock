@@ -15,14 +15,6 @@ GIT
       spork (>= 1.0rc0)
 
 GIT
-  remote: git://github.com/thomas-mcdonald/bootstrap-sass.git
-  revision: 0e88056ac5d58fb0bbd23d3fe929eac01712d964
-  branch: 3
-  specs:
-    bootstrap-sass (3.0.0.0)
-      sass (~> 3.2)
-
-GIT
   remote: http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git
   revision: ad223882124cc2d29f2c68f4f7287eb1b6ecaefe
   branch: master
@@ -75,6 +67,8 @@ GEM
       erubis (>= 2.6.6)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootstrap-sass (3.0.0.0.rc)
+      sass (~> 3.2)
     builder (3.1.4)
     cancan (1.6.10)
     celluloid (0.15.2)
@@ -352,7 +346,7 @@ DEPENDENCIES
   annotate!
   better_errors
   binding_of_caller
-  bootstrap-sass!
+  bootstrap-sass (~> 3.0.0.0.rc)
   cancan
   coffee-rails (~> 4.0.0)
   database_cleaner
