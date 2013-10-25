@@ -108,7 +108,7 @@ GEM
       execjs (>= 1.2)
       handlebars-source
       railties (>= 3.1)
-    ember-source (1.0.0)
+    ember-source (1.1.1)
       handlebars-source (= 1.0.12)
     enumerize (0.7.0)
       activesupport (>= 3.2)
@@ -352,7 +352,7 @@ DEPENDENCIES
   devise (~> 3.1.0)
   ember-data-source (= 1.0.0.beta.2)
   ember-rails
-  ember-source (~> 1.0.0)
+  ember-source (~> 1.1.0)
   enumerize
   exception_notification
   factory_girl
