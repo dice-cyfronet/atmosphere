@@ -90,10 +90,11 @@ GEM
     connection_pool (1.1.0)
     database_cleaner (1.2.0)
     debug_inspector (0.0.2)
-    devise (3.0.3)
+    devise (3.1.1)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
+      thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.4)
     dotenv (0.9.0)
@@ -348,7 +349,7 @@ DEPENDENCIES
   cancan
   coffee-rails (~> 4.0.0)
   database_cleaner
-  devise (~> 3.0.0)
+  devise (~> 3.1.0)
   ember-data-source (= 1.0.0.beta.2)
   ember-rails
   ember-source (~> 1.0.0)

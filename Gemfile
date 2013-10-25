@@ -41,7 +41,7 @@ gem 'gravtastic'
 gem 'exception_notification'
 
 # Security
-gem 'devise', '~>3.0.0'
+gem 'devise', '~>3.1.0'
 gem 'cancan'
 gem 'role_model'
 gem 'omniauth'

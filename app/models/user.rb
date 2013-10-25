@@ -28,11 +28,12 @@ class User < ActiveRecord::Base
   # :registerable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,
          :rememberable, :trackable, :recoverable,
-         :validatable, :token_authenticatable, :omniauthable
+         :validatable, :omniauthable
 
   validates :login, uniqueness: { case_sensitive: false }
 
   include LoginAndEmail
+  include TokenAuthenticatable
   include Nondeletable
 
   has_many :appliance_sets, dependent: :destroy

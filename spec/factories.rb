@@ -15,6 +15,10 @@ FactoryGirl.define do
       roles [:admin]
     end
 
+    trait :authentication_token do
+
+    end
+
     factory :developer, traits: [:developer]
     factory :admin, traits: [:admin]
   end

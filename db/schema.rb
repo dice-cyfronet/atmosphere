@@ -260,43 +260,43 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "virtual_machines", ["compute_site_id", "id_at_site"], name: "index_virtual_machines_on_compute_site_id_and_id_at_site", unique: true, using: :btree
   add_index "virtual_machines", ["virtual_machine_template_id"], name: "index_virtual_machines_on_virtual_machine_template_id", using: :btree
 
-  add_foreign_key "appliance_configuration_instances", "appliance_configuration_templates", :name => "ac_instances_ac_template_id_fk"
+  add_foreign_key "appliance_configuration_instances", "appliance_configuration_templates", name: "ac_instances_ac_template_id_fk"
 
-  add_foreign_key "appliance_configuration_templates", "appliance_types", :name => "appliance_configuration_templates_appliance_type_id_fk"
+  add_foreign_key "appliance_configuration_templates", "appliance_types", name: "appliance_configuration_templates_appliance_type_id_fk"
 
-  add_foreign_key "appliance_sets", "users", :name => "appliance_sets_user_id_fk"
+  add_foreign_key "appliance_sets", "users", name: "appliance_sets_user_id_fk"
 
-  add_foreign_key "appliance_types", "security_proxies", :name => "appliance_types_security_proxy_id_fk"
-  add_foreign_key "appliance_types", "users", :name => "appliance_types_user_id_fk"
+  add_foreign_key "appliance_types", "security_proxies", name: "appliance_types_security_proxy_id_fk"
+  add_foreign_key "appliance_types", "users", name: "appliance_types_user_id_fk"
 
-  add_foreign_key "appliances", "appliance_configuration_instances", :name => "appliances_appliance_configuration_instance_id_fk"
-  add_foreign_key "appliances", "appliance_sets", :name => "appliances_appliance_set_id_fk"
-  add_foreign_key "appliances", "appliance_types", :name => "appliances_appliance_type_id_fk"
+  add_foreign_key "appliances", "appliance_configuration_instances", name: "appliances_appliance_configuration_instance_id_fk"
+  add_foreign_key "appliances", "appliance_sets", name: "appliances_appliance_set_id_fk"
+  add_foreign_key "appliances", "appliance_types", name: "appliances_appliance_type_id_fk"
 
-  add_foreign_key "dev_mode_property_sets", "appliances", :name => "dev_mode_property_sets_appliance_id_fk"
-  add_foreign_key "dev_mode_property_sets", "security_proxies", :name => "dev_mode_property_sets_security_proxy_id_fk"
+  add_foreign_key "dev_mode_property_sets", "appliances", name: "dev_mode_property_sets_appliance_id_fk"
+  add_foreign_key "dev_mode_property_sets", "security_proxies", name: "dev_mode_property_sets_security_proxy_id_fk"
 
-  add_foreign_key "endpoints", "port_mapping_templates", :name => "endpoints_port_mapping_template_id_fk"
+  add_foreign_key "endpoints", "port_mapping_templates", name: "endpoints_port_mapping_template_id_fk"
 
-  add_foreign_key "http_mappings", "appliances", :name => "http_mappings_appliance_id_fk"
-  add_foreign_key "http_mappings", "port_mapping_templates", :name => "http_mappings_port_mapping_template_id_fk"
+  add_foreign_key "http_mappings", "appliances", name: "http_mappings_appliance_id_fk"
+  add_foreign_key "http_mappings", "port_mapping_templates", name: "http_mappings_port_mapping_template_id_fk"
 
-  add_foreign_key "port_mapping_properties", "compute_sites", :name => "port_mapping_properties_compute_site_id_fk"
-  add_foreign_key "port_mapping_properties", "port_mapping_templates", :name => "port_mapping_properties_port_mapping_template_id_fk"
+  add_foreign_key "port_mapping_properties", "compute_sites", name: "port_mapping_properties_compute_site_id_fk"
+  add_foreign_key "port_mapping_properties", "port_mapping_templates", name: "port_mapping_properties_port_mapping_template_id_fk"
 
-  add_foreign_key "port_mapping_templates", "appliance_types", :name => "port_mapping_templates_appliance_type_id_fk"
-  add_foreign_key "port_mapping_templates", "dev_mode_property_sets", :name => "port_mapping_templates_dev_mode_property_set_id_fk"
+  add_foreign_key "port_mapping_templates", "appliance_types", name: "port_mapping_templates_appliance_type_id_fk"
+  add_foreign_key "port_mapping_templates", "dev_mode_property_sets", name: "port_mapping_templates_dev_mode_property_set_id_fk"
 
-  add_foreign_key "port_mappings", "port_mapping_templates", :name => "port_mappings_port_mapping_template_id_fk"
-  add_foreign_key "port_mappings", "virtual_machines", :name => "port_mappings_virtual_machine_id_fk"
+  add_foreign_key "port_mappings", "port_mapping_templates", name: "port_mappings_port_mapping_template_id_fk"
+  add_foreign_key "port_mappings", "virtual_machines", name: "port_mappings_virtual_machine_id_fk"
 
-  add_foreign_key "user_keys", "users", :name => "user_keys_user_id_fk"
+  add_foreign_key "user_keys", "users", name: "user_keys_user_id_fk"
 
-  add_foreign_key "virtual_machine_templates", "appliance_types", :name => "virtual_machine_templates_appliance_type_id_fk"
-  add_foreign_key "virtual_machine_templates", "compute_sites", :name => "virtual_machine_templates_compute_site_id_fk"
-  add_foreign_key "virtual_machine_templates", "virtual_machines", :name => "virtual_machine_templates_virtual_machine_id_fk"
+  add_foreign_key "virtual_machine_templates", "appliance_types", name: "virtual_machine_templates_appliance_type_id_fk"
+  add_foreign_key "virtual_machine_templates", "compute_sites", name: "virtual_machine_templates_compute_site_id_fk"
+  add_foreign_key "virtual_machine_templates", "virtual_machines", name: "virtual_machine_templates_virtual_machine_id_fk"
 
-  add_foreign_key "virtual_machines", "compute_sites", :name => "virtual_machines_compute_site_id_fk"
-  add_foreign_key "virtual_machines", "virtual_machine_templates", :name => "virtual_machines_virtual_machine_template_id_fk"
+  add_foreign_key "virtual_machines", "compute_sites", name: "virtual_machines_compute_site_id_fk"
+  add_foreign_key "virtual_machines", "virtual_machine_templates", name: "virtual_machines_virtual_machine_template_id_fk"
 
 end
