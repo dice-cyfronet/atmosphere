@@ -12,10 +12,9 @@ describe HttpMappingProxyConfGenerator do
 
 
   describe "#run" do
+    let(:cs) { create(:compute_site) }
 
     context 'when no appliances' do
-      let(:cs) { create(:compute_site) }
-
       it 'returns no redirections' do
         expect(subject.run(cs)).to eq []
       end
@@ -27,7 +26,6 @@ describe HttpMappingProxyConfGenerator do
       #   |-> appl
       #     |-> vm1
       #     |-> vm2
-      let(:cs) { create(:compute_site) }
       let(:appl_type) { create(:appliance_type)}
       let(:appl) { create(:appliance, appliance_type: appl_type)}
       let!(:vm1) { create(:virtual_machine, appliances: [ appl ], compute_site: cs, ip: "10.100.8.10")}
