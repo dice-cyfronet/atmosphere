@@ -49,6 +49,14 @@ class PortMappingTemplate < ActiveRecord::Base
 
   scope :def_order, -> { order(:service_name) }
 
+  def http?
+    application_protocol.http? || application_protocol.http_https?
+  end
+
+  def https?
+    application_protocol.https? || application_protocol.http_https?
+  end
+
   private
 
   def check_only_one_belonging
