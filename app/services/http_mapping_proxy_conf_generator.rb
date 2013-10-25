@@ -13,7 +13,6 @@ class HttpMappingProxyConfGenerator
     end
 
     proxy_configuration = []
-
     appliances = Appliance.joins(:virtual_machines).where(virtual_machines: {compute_site: cs})
 
     appliances.each do |appliance|
@@ -43,10 +42,13 @@ class HttpMappingProxyConfGenerator
 
   def redirection(appliance, pmt, ips, type)
     {
-      path: "#{appliance.appliance_set.id}/#{appliance.appliance_configuration_instance.id}/#{pmt.service_name}",
+      path: path(appliance, pmt),
       workers: ips.collect { |ip| "#{ip}:#{pmt.target_port}"},
       type: type
     }
   end
 
+  def path(appliance, pmt)
+    "#{appliance.appliance_set.id}/#{appliance.appliance_configuration_instance.id}/#{pmt.service_name}"
+  end
 end
