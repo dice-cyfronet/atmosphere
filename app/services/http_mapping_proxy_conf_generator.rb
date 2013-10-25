@@ -20,8 +20,8 @@ class HttpMappingProxyConfGenerator
       ips = appliance.virtual_machines.select(:ip).collect {|vm| vm.ip}
       pm_templates = appliance.appliance_type.port_mapping_templates
       pm_templates.each do |pmt|
-        proxy_configuration << redirection(appliance, pmt, ips, :http) if pmt.http?
-        proxy_configuration << redirection(appliance, pmt, ips, :https) if pmt.https?
+        proxy_configuration << generate_redirection_and_port_mapping(appliance, pmt, ips, :http) if pmt.http?
+        proxy_configuration << generate_redirection_and_port_mapping(appliance, pmt, ips, :https) if pmt.https?
       end
     end
 
@@ -89,6 +89,17 @@ class HttpMappingProxyConfGenerator
   end # End run(compute_site_id)
 
   private
+
+  def generate_redirection_and_port_mapping(appliance, pmt, ips, type)
+    redirection = redirection(appliance, pmt, ips, type)
+    pm = appliance.http_mappings.find_or_create_by(port_mapping_template: pmt, application_protocol: type)
+    pm.url = redirection[:path]
+    unless pm.save
+      logger.error "Unable to save port mapping for #{appliance.id} appliance, #{pmt.id} port mapping because of #{pm.errors.to_json}"
+    end
+
+    redirection
+  end
 
   def redirection(appliance, pmt, ips, type)
     {
