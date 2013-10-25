@@ -50,6 +50,20 @@ describe HttpMappingProxyConfGenerator do
           subject.run(cs)
           expect(http_pmt.http_mappings.first.url).to eq path(appl, http_pmt)
         end
+
+        context 'when second appliance started' do
+          let(:appl2) { create(:appliance, appliance_type: appl_type)}
+          before {
+            vm1.appliances << appl2
+          }
+
+          it 'generates http redirections for both appliances' do
+            expect(subject.run(cs)).to eq [
+              redirection(appl, http_pmt, [vm1, vm2], :http),
+              redirection(appl2, http_pmt, [vm1], :http)
+            ]
+          end
+        end
       end
 
       context 'with https port mapping template' do
