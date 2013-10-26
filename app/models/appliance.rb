@@ -25,7 +25,7 @@ class Appliance < ActiveRecord::Base
   has_many :http_mappings, dependent: :destroy
   has_and_belongs_to_many :virtual_machines
 
-  has_one :dev_mode_property_set, dependent: :destroy
+  has_one :dev_mode_property_set, dependent: :destroy, autosave: true
   attr_readonly :dev_mode_property_set
 
   before_create :create_dev_mode_property_set, if: :development?
@@ -37,11 +37,11 @@ class Appliance < ActiveRecord::Base
     "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
   end
 
-  private
-
   def development?
     appliance_set.appliance_set_type.development?
   end
+
+  private
 
   def create_dev_mode_property_set
     self.dev_mode_property_set = DevModePropertySet.create_from(appliance_type)
