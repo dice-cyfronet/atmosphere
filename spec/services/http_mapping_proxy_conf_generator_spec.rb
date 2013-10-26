@@ -115,6 +115,75 @@ describe HttpMappingProxyConfGenerator do
         end
       end
     end
+
+    context 'when development appliance started on cloud site' do
+      # app_type
+      #   |-> http_pmt
+      let(:appl_type) { create(:appliance_type)}
+      let!(:http_pmt) { create(:port_mapping_template, appliance_type: appl_type, application_protocol: :http, service_name: 'old_name', target_port: 80)}
+
+      # appliance_set
+      # |-> appl (with pmt copied from appl_type)
+      #      |-> vm
+      let(:appliance_set) { create(:appliance_set, appliance_set_type: :development) }
+      let!(:appl) { create(:appliance, appliance_type: appl_type, appliance_set: appliance_set)}
+      let!(:vm) { create(:virtual_machine, appliances: [ appl ], compute_site: cs, ip: "10.100.8.10")}
+      let(:dev_pmt) { appl.dev_mode_property_set.port_mapping_templates.first }
+
+      it 'creates http redirection for pmt copied from appliance type' do
+        expect(subject.run(cs)).to eq [
+          redirection(appl, http_pmt, [vm], :http),
+        ]
+      end
+
+      context 'when modified copied pmt' do
+        before do
+          dev_pmt.target_port = 8080
+          dev_pmt.service_name = 'new_name'
+          dev_pmt.application_protocol = :https
+          dev_pmt.save
+        end
+
+        it 'creates http redirection using development pmt' do
+          expect(subject.run(cs)).to eq [
+            redirection(appl, dev_pmt, [vm], :https),
+          ]
+        end
+      end
+
+      context 'when new pmt added in dev mode' do
+        let!(:new_pmt) do
+          appl.dev_mode_property_set.port_mapping_templates.create(
+            target_port: 443,
+            service_name: 'somtething_secured',
+            application_protocol: :https
+          )
+        end
+
+        it 'creates https redirection for added pmt' do
+          expect(subject.run(cs)).to eq [
+            redirection(appl, dev_pmt, [vm], :http),
+            redirection(appl, new_pmt, [vm], :https),
+          ]
+        end
+
+        it 'creates new https pm' do
+          expect {
+            subject.run(cs)
+            }.to change { HttpMapping.count }.by(2)
+        end
+      end
+
+      context 'when removed pmt' do
+        before do
+          dev_pmt.destroy
+        end
+
+        it 'creates empty redirections list' do
+          expect(subject.run(cs)).to eq []
+        end
+      end
+    end
   end
 
   def redirection(appl, pmt, vms, type)

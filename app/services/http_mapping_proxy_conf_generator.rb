@@ -17,7 +17,7 @@ class HttpMappingProxyConfGenerator
 
     appliances.each do |appliance|
       ips = appliance.virtual_machines.select(:ip).collect {|vm| vm.ip}
-      pm_templates = appliance.appliance_type.port_mapping_templates
+      pm_templates = appliance.development? ? appliance.dev_mode_property_set.port_mapping_templates : appliance.appliance_type.port_mapping_templates
       pm_templates.each do |pmt|
         proxy_configuration << generate_redirection_and_port_mapping(appliance, pmt, ips, :http) if pmt.http?
         proxy_configuration << generate_redirection_and_port_mapping(appliance, pmt, ips, :https) if pmt.https?
