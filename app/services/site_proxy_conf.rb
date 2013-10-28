@@ -7,9 +7,15 @@ class SiteProxyConf
   end
 
   def generate
-    compute_site_appliances.collect do |appliance|
+    proxy_confs = compute_site_appliances.collect do |appliance|
       ApplianceProxyConf.new(appliance).generate
     end.flatten.uniq
+
+    proxy_confs
+  end
+
+  def properties
+    @compute_site.port_mapping_properties.collect { |prop| "#{prop.key} #{prop.value}" }
   end
 
   private

@@ -4,11 +4,11 @@ describe SiteProxyConf do
 
   before { Fog.mock! }
 
-  describe "#generate" do
-    let(:cs) { create(:compute_site) }
-    let(:appl_type) { create(:appliance_type)}
+  let(:cs) { create(:compute_site) }
+  subject { SiteProxyConf.new(cs.id) }
 
-    subject { SiteProxyConf.new(cs.id) }
+  describe "#generate" do
+    let(:appl_type) { create(:appliance_type)}
 
     context 'when no appliances' do
       it 'returns no redirections' do
@@ -57,6 +57,20 @@ describe SiteProxyConf do
             'appl1', 'proxy conf', 'appl2'
           ]
         end
+      end
+    end
+  end
+
+  describe '#properties' do
+    context 'when properties added to compute site' do
+      let!(:pm_prop1) { create(:port_mapping_property, key: 'k1', value: 'v1', compute_site: cs) }
+      let!(:pm_prop2) { create(:port_mapping_property, key: 'k2', value: 'v2', compute_site: cs) }
+
+      it 'generates proxy conf properties' do
+        expect(subject.properties).to eq [
+          'k1 v1',
+          'k2 v2'
+        ]
       end
     end
   end
