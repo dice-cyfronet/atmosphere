@@ -15,6 +15,8 @@ class ApplianceProxyConf
 
   def generate_redirection_and_port_mapping(pmt, ips, type)
     redirection = redirection(pmt, ips, type)
+    properties = properties(pmt)
+    redirection[:properties] = properties if properties.size > 0
     get_or_create_port_mapping(pmt, type, redirection[:path])
     redirection
   end
@@ -41,6 +43,10 @@ class ApplianceProxyConf
       workers: ips.collect { |ip| "#{ip}:#{pmt.target_port}"},
       type: type
     }
+  end
+
+  def properties(pmt)
+    pmt.port_mapping_properties.collect { |prop| prop.to_s }
   end
 
   def path(pmt)

@@ -15,7 +15,7 @@ class SiteProxyConf
   end
 
   def properties
-    @compute_site.port_mapping_properties.collect { |prop| "#{prop.key} #{prop.value}" }
+    @compute_site.port_mapping_properties.collect { |prop| prop.to_s }
   end
 
   private

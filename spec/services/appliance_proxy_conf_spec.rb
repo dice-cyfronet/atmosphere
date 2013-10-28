@@ -39,6 +39,17 @@ describe ApplianceProxyConf do
           subject.generate
           expect(http_pmt.http_mappings.first.url).to eq path(appl, http_pmt)
         end
+
+        context 'with added property' do
+          let!(:pm_prop1) { create(:pmt_property, key: 'k1', value: 'v1', port_mapping_template: http_pmt) }
+          let!(:pm_prop2) { create(:pmt_property, key: 'k2', value: 'v2', port_mapping_template: http_pmt) }
+
+          it 'generates additional properties key' do
+            redirection = redirection(appl, http_pmt, [vm1, vm2], :http)
+            redirection[:properties] = [ 'k1 v1', 'k2 v2']
+            expect(subject.generate).to eq [ redirection ]
+          end
+        end
       end
 
       context 'with https port mapping template' do
