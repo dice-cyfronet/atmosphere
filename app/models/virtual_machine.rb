@@ -14,6 +14,9 @@
 #
 
 class VirtualMachine < ActiveRecord::Base
+  # include ActiveModel::Dirty
+  # define_attribute_methods :ip
+
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
   has_many :port_mappings, dependent: :destroy
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
@@ -23,6 +26,8 @@ class VirtualMachine < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
   before_create :instantiate_vm, unless: :id_at_site
+  after_destroy :generate_proxy_conf
+  after_save :generate_proxy_conf, if: :ip_changed?
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -66,5 +71,9 @@ class VirtualMachine < ActiveRecord::Base
   def delete_in_cloud
     cloud_client = compute_site.cloud_client
     cloud_client.servers.destroy(id_at_site)
+  end
+
+  def generate_proxy_conf
+    ProxyConfWorker.new.perform(self.compute_site.id)
   end
 end
