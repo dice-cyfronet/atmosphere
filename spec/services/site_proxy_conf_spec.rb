@@ -5,7 +5,7 @@ describe SiteProxyConf do
   before { Fog.mock! }
 
   let(:cs) { create(:compute_site) }
-  subject { SiteProxyConf.new(cs.id) }
+  subject { SiteProxyConf.new(cs) }
 
   describe "#generate" do
     let(:appl_type) { create(:appliance_type)}
