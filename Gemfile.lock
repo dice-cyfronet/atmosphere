@@ -7,6 +7,14 @@ GIT
       rake (>= 0.8.7)
 
 GIT
+  remote: git://github.com/dice-cyfronet/redirus-worker.git
+  revision: 3304c38b9fbba5621b3d850457900a444fb655f1
+  branch: master
+  specs:
+    redirus-worker (0.0.1)
+      sidekiq
+
+GIT
   remote: git://github.com/sporkrb/spork-rails.git
   revision: 0dd45e59d3237b4c8f9efc215b46d9c07072a95e
   specs:
@@ -182,7 +190,7 @@ GEM
     jquery-rails (3.0.4)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
-    json (1.8.0)
+    json (1.8.1)
     launchy (2.3.0)
       addressable (~> 2.3)
     letter_opener (1.1.2)
@@ -299,8 +307,8 @@ GEM
     showdown-rails (0.0.4)
       actionpack (>= 3.1)
       railties (>= 3.1)
-    sidekiq (2.15.1)
-      celluloid (>= 0.15.1)
+    sidekiq (2.16.0)
+      celluloid (>= 0.15.2)
       connection_pool (>= 1.0.0)
       json
       redis (>= 3.0.4)
@@ -388,6 +396,7 @@ DEPENDENCIES
   rails (= 4.0.0)
   rails_best_practices
   redcarpet
+  redirus-worker!
   role_model
   rspec-rails
   sass-rails (~> 4.0.0)
