@@ -7,8 +7,14 @@ describe ProxyConfWorker do
   end
 
   describe '#perform' do
-    it 'failed when compute site is not found' do
-      expect { subject.perform('not_existing') }.to raise_error(Air::UnknownComputeSite)
+    it 'log error when compute site is not found' do
+      expect(Rails.logger).to receive(:error)
+      subject.perform('not_existing')
+    end
+
+    it 'does not generate proxy conf when compute site is not found' do
+      expect(Sidekiq::Client).to_not receive(:push)
+      subject.perform('not_existing')
     end
 
     let(:cs) { create(:compute_site) }
