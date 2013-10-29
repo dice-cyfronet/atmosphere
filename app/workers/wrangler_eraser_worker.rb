@@ -3,7 +3,7 @@ require 'wrangler'
 class WranglerEraserWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: :wrangler_eraser
+  sidekiq_options queue: :wrangler
 
   def perform
 

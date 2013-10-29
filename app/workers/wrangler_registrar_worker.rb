@@ -2,11 +2,9 @@ require 'wrangler'
 
 class WranglerRegistrarWorker
   include Sidekiq::Worker
+  include Wrangler
 
-  sidekiq_options queue: :wrangler_registrar
-
-  MIN_PORT_NO = 0
-  MAX_PORT_NO = 65535
+  sidekiq_options queue: :wrangler
 
   def perform(vm)
     return unless vm.appliance_type.port_mapping_templates and vm.ip
