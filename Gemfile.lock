@@ -159,9 +159,9 @@ GEM
       lumberjack (~> 1.0)
       pry (>= 0.9.12)
       thor (>= 0.18.1)
-    guard-rspec (4.0.3)
-      guard (>= 2.1.1)
-      rspec (~> 2.14)
+    guard-rspec (2.1.2)
+      guard (>= 1.1)
+      rspec (~> 2.11)
     guard-spork (1.5.1)
       childprocess (>= 0.2.3)
       guard (>= 1.1)
@@ -283,6 +283,9 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
+    rspec-sidekiq (0.5.1)
+      rspec (~> 2.0)
+      sidekiq (>= 2.4.0)
     ruby-hmac (0.4.0)
     ruby-progressbar (1.2.0)
     sass (3.2.12)
@@ -371,7 +374,7 @@ DEPENDENCIES
   foreman
   github-markup
   gravtastic
-  guard-rspec
+  guard-rspec (~> 2.1.1)
   guard-spork
   haml-rails
   hamlbars (~> 2.0)
@@ -392,6 +395,7 @@ DEPENDENCIES
   redirus-worker!
   role_model
   rspec-rails
+  rspec-sidekiq
   sass-rails (~> 4.0.0)
   sdoc
   settingslogic
