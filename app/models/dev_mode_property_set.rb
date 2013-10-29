@@ -47,6 +47,7 @@ class DevModePropertySet < ActiveRecord::Base
 
     dev_mode_property_set.port_mapping_templates = appliance_type.port_mapping_templates.collect do |pmt|
         copy = pmt.dup
+        copy.appliance_type = nil
         copy.endpoints = pmt.endpoints.collect(&:dup)
         copy.port_mapping_properties = pmt.port_mapping_properties.collect(&:dup)
         copy

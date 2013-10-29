@@ -24,4 +24,7 @@ class PortMappingProperty < ActiveRecord::Base
   validates_absence_of :port_mapping_template, if: 'compute_site != nil'
   validates_absence_of :compute_site, if: 'port_mapping_template != nil'
 
+  def to_s
+    "#{key} #{value}"
+  end
 end

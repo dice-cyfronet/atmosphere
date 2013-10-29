@@ -123,7 +123,43 @@ describe PortMappingTemplate do
       pmt.destroy
       expect(pmt.errors).not_to be_empty
     end
-
   end
 
+  context 'port mapping type' do
+    context 'when http application protocol' do
+      subject { create(:port_mapping_template, application_protocol: :http) }
+
+      it 'is http redirection' do
+        expect(subject.http?).to be_true
+      end
+
+      it 'is not https redirection' do
+        expect(subject.https?).to be_false
+      end
+    end
+
+    context 'when https application protocol' do
+      subject { create(:port_mapping_template, application_protocol: :https) }
+
+      it 'is not http redirection' do
+        expect(subject.http?).to be_false
+      end
+
+      it 'is https redirection' do
+        expect(subject.https?).to be_true
+      end
+    end
+
+    context 'when http_https application protocol' do
+      subject { create(:port_mapping_template, application_protocol: :http_https) }
+
+      it 'is http redirection' do
+        expect(subject.http?).to be_true
+      end
+
+      it 'is https redirection' do
+        expect(subject.https?).to be_true
+      end
+    end
+  end
 end
