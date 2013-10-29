@@ -32,8 +32,6 @@ describe Appliance do
   expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
   expect_it { to have_readonly_attribute :dev_mode_property_set }
 
-  pending 'should require zero or many VirtualMachines'
-
   context 'appliance configuration instances management' do
     before do
       Optimizer.stub(:instance).and_return(optimizer)
