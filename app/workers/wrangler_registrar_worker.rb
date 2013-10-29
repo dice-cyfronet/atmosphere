@@ -5,29 +5,31 @@ class WranglerRegistrarWorker
 
   sidekiq_options queue: :wrangler_registrar
 
-  def perform(vm)
-    return unless vm.appliance_type.port_mapping_templates
-    already_added_mapping_tmpls = vm.port_mappings ? vm.port_mappings.select {|m| m.port_mapping_template} : [] 
-    (vm.appliance_type.port_mapping_templates - already_added_mapping_tmpls).each do |pmt|
-      added_mapping_data = add(vm.ip, pmt.transport_protocol, pmt.target_port)
-      added_mapping_data[:port_mapping_template_id] = pmt.id
-      added_mapping_data[:virtual_machine_id] = vm.id
-      pm = PortMapping.create(added_mapping_data)
-    end
-  end
-  
-  # TODO refactor to call wrangler once for many redirections
+  MIN_PORT_NO = 0
+  MAX_PORT_NO = 65535
 
-  def add(ip, protocol, port)
-    dnat_client = Wrangler::Client.dnat_client
-    resp = dnat_client.post do |req|
-      req.url "/dnat/#{ip}"
+  def perform(vm)
+    return unless vm.appliance_type.port_mapping_templates and vm.ip
+    already_added_mapping_tmpls = vm.port_mappings ? vm.port_mappings.select {|m| m.port_mapping_template} : [] 
+    pmt_map = {}
+    to_add = (vm.appliance_type.port_mapping_templates.select {|e| e.application_protocol == 'none'} - already_added_mapping_tmpls).collect {|pmt|
+      if not pmt.target_port.in? MIN_PORT_NO..MAX_PORT_NO
+        Rails.logger.error "Error when trying to add redirections for VM #{vm.uuid} with IP #{vm.ip}. Requested redirection for forbidden port #{pmt.target_port}"
+        return
+      end
+      pmt_map[pmt.target_port] = pmt
+      {proto: pmt.transport_protocol, port: pmt.target_port}
+    }
+    return if to_add.blank?
+    resp = Wrangler::Client.dnat_client.post "/dnat/#{vm.ip}" do |req|
       req.headers['Content-Type'] = 'application/json'
-      req.body = JSON.generate [{proto: protocol, port: port}]
+      req.body = JSON.generate to_add
     end
-    # [{\"privIp\":\"169.1.2.3\",\"pubPort\":11921,\"proto\":\"tcp\",\"privPort\":8888,\"pubIp\":\"149.156.10.132\"}]
-    added_mapping_info = JSON.parse(resp.body).first
-    {public_ip: added_mapping_info['pubIp'], source_port: added_mapping_info['pubPort']}
+    if resp.status == 200
+      JSON.parse(resp.body).collect { |e| PortMapping.create(port_mapping_template: pmt_map[e['privPort']], virtual_machine: vm, public_ip: e['pubIp'], source_port: e['pubPort']) }
+    else
+      Rails.logger.error "Wrangler returned #{resp.status} #{resp.body} when trying to add redirections for VM #{vm.uuid} with IP #{vm.ip}. Requested redirections: #{to_add}"
+    end
   end
 
 end

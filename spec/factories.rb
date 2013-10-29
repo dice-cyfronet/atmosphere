@@ -1,8 +1,12 @@
+def rand_str(l = 4)
+  SecureRandom.hex(l)
+end
+
 FactoryGirl.define do
 
   factory :user do
     email { Faker::Internet.email }
-    login { SecureRandom.hex(4) }
+    login { rand_str }
     password '12345678'
     password_confirmation { password }
     authentication_token { login }
@@ -92,8 +96,8 @@ FactoryGirl.define do
   end
 
   factory :compute_site do |f|
-    site_id { SecureRandom.hex(4) }
-    name { SecureRandom.hex(4) }
+    site_id { rand_str }
+    name { rand_str }
     site_type 'private'
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
@@ -107,7 +111,7 @@ FactoryGirl.define do
   end
 
   factory :port_mapping_template do |f|
-    service_name { Faker::Lorem.word }
+    service_name { rand_str }
     target_port { Random.rand(9999) }
     appliance_type
   end
