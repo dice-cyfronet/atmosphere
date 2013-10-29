@@ -2,7 +2,11 @@ require 'spec_helper'
 
 describe SiteProxyConf do
 
-  before { Fog.mock! }
+  before do
+    Fog.mock!
+
+    VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
+  end
 
   let(:cs) { create(:compute_site) }
   subject { SiteProxyConf.new(cs) }
