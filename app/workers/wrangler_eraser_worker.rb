@@ -5,11 +5,7 @@ class WranglerEraserWorker
 
   sidekiq_options queue: :wrangler
 
-  def perform
-
-  end
-  
-  def remove(ip, port = nil, protocol = nil)
+  def perform(ip, port = nil, protocol = nil)
     dnat_client = Wrangler::Client.dnat_client
     resp = dnat_client.delete(build_path_for_params(ip, port, protocol))
   end
