@@ -27,7 +27,7 @@ module Api
         if @security_proxy.destroy
           render json: {}
         else
-          render_error
+          render_error @security_proxy
         end
       end
 

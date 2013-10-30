@@ -30,7 +30,7 @@ module Api
         if @appliance_type.destroy
           render json: {}
         else
-          render_error
+          render_error @appliance_type
         end
       end
 
