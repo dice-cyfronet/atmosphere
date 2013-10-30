@@ -139,6 +139,13 @@ FactoryGirl.define do
     appliance_type
   end
 
+  factory :http_mapping do
+    url  Faker::Internet.domain_name
+    application_protocol "http"
+    appliance
+    port_mapping_template
+  end
+
   factory :dev_mode_property_set do |f|
     name 'AS'
     appliance
