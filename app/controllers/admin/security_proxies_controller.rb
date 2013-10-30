@@ -18,9 +18,6 @@ class Admin::SecurityProxiesController < ApplicationController
     end
   end
 
-  def edit
-  end
-
   def update
     if @security_proxy.update_attributes(security_proxy_params)
       flash[:notice] = I18n.t('security_proxy.updated')
