@@ -27,7 +27,9 @@ class VirtualMachine < ActiveRecord::Base
 
   before_create :instantiate_vm, unless: :id_at_site
   after_destroy :generate_proxy_conf
+  after_destroy :remove_from_dnat, if: :ip?
   after_save :generate_proxy_conf, if: :ip_changed?
+  after_update :update_dnat, if: :ip_changed?
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -76,4 +78,15 @@ class VirtualMachine < ActiveRecord::Base
   def generate_proxy_conf
     ProxyConfWorker.new.perform(self.compute_site.id)
   end
+
+  def update_dnat
+    if previous_changes.include? :ip and not previous_changes[:ip].first.blank?
+    end
+    WranglerRegistrarWorker.new.async_perform(id) if ip?
+  end
+
+  def remove_from_dnat
+    WranglerEraserWorker.new.async_perform(vm_id: id)
+  end
+
 end
