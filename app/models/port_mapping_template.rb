@@ -77,19 +77,11 @@ class PortMappingTemplate < ActiveRecord::Base
 
   def generate_proxy_conf
     if http? || https?
-      affected_sites = dev_mode_property_set.blank? ? affected_sites_by_production_appliances : affected_site_by_development_appliance
+      affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
 
       affected_sites.each do |site|
         ProxyConfWorker.new.perform(site.id)
       end
     end
-  end
-
-  def affected_sites_by_production_appliances
-    ComputeSite.joins(virtual_machines: {appliances: :appliance_set}).where(appliances: {appliance_type_id: appliance_type.id}, appliance_sets: {appliance_set_type: [:workflow, :portal]})
-  end
-
-  def affected_site_by_development_appliance
-    ComputeSite.joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id})
   end
 end

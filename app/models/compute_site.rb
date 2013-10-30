@@ -30,6 +30,10 @@ class ComputeSite < ActiveRecord::Base
   has_many :virtual_machine_templates, dependent: :destroy
   has_many :port_mapping_properties, dependent: :destroy
 
+  scope :with_appliance_type, ->(appliance_type) { joins(virtual_machines: {appliances: :appliance_set}).where(appliances: {appliance_type_id: appliance_type.id}, appliance_sets: {appliance_set_type: [:workflow, :portal]}) }
+
+  scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}) }
+
   def to_s
     name
   end
