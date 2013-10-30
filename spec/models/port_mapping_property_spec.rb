@@ -45,4 +45,11 @@ describe PortMappingProperty do
     end
   end
 
+  describe '#to_s' do
+    subject { create(:port_mapping_property, key: 'key', value: 'value') }
+
+    it 'combine key and value' do
+      expect(subject.to_s).to eq 'key value'
+    end
+  end
 end

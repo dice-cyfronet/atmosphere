@@ -17,6 +17,8 @@ require 'spec_helper'
 
 describe PortMappingTemplate do
 
+  before { Fog.mock! }
+
   subject { FactoryGirl.create(:port_mapping_template) }
 
   expect_it { to be_valid }
@@ -123,7 +125,167 @@ describe PortMappingTemplate do
       pmt.destroy
       expect(pmt.errors).not_to be_empty
     end
-
   end
 
+  context 'port mapping type' do
+    context 'when http application protocol' do
+      subject { create(:port_mapping_template, application_protocol: :http) }
+
+      it 'is http redirection' do
+        expect(subject.http?).to be_true
+      end
+
+      it 'is not https redirection' do
+        expect(subject.https?).to be_false
+      end
+    end
+
+    context 'when https application protocol' do
+      subject { create(:port_mapping_template, application_protocol: :https) }
+
+      it 'is not http redirection' do
+        expect(subject.http?).to be_false
+      end
+
+      it 'is https redirection' do
+        expect(subject.https?).to be_true
+      end
+    end
+
+    context 'when http_https application protocol' do
+      subject { create(:port_mapping_template, application_protocol: :http_https) }
+
+      it 'is http redirection' do
+        expect(subject.http?).to be_true
+      end
+
+      it 'is https redirection' do
+        expect(subject.https?).to be_true
+      end
+    end
+  end
+
+  describe '#generate_proxy_conf' do
+    let(:generator) { double }
+    before do
+      ProxyConfWorker.stub(:new).and_return(generator)
+      VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
+    end
+
+    context 'when pmt is added to appliance type' do
+
+      let!(:pmt) { create(:port_mapping_template) }
+      let(:appl_type) { pmt.appliance_type }
+      let(:cs)  { create(:compute_site) }
+
+      context 'and appliance is started in production mode' do
+        let(:set)  { create(:appliance_set) }
+        let(:vm)   { create(:virtual_machine, compute_site: cs) }
+        let!(:appl) { create(:appliance, appliance_set: set, virtual_machines: [ vm ], appliance_type: appl_type) }
+
+        context 'proxy conf is generated' do
+          before do
+            expect(generator).to receive(:perform).with(cs.id)
+          end
+
+          it 'after pmt is updated' do
+            pmt.target_port = 1234
+            pmt.save
+          end
+
+          it 'after pmt is created' do
+            create(:port_mapping_template, appliance_type: appl_type)
+          end
+        end
+
+        context 'with VMs started on two compute sites' do
+          let(:cs2)  { create(:compute_site) }
+          let(:vm2)   { create(:virtual_machine, compute_site: cs2) }
+
+          before do
+            appl.virtual_machines << vm2
+            appl.save
+          end
+
+          context 'proxy conf is generated for both compute sites' do
+            before do
+              expect(generator).to receive(:perform).with(cs.id)
+              expect(generator).to receive(:perform).with(cs2.id)
+            end
+
+            it 'after pmt is updated' do
+              pmt.target_port = 1234
+              pmt.save
+            end
+
+            it 'after pmt is created' do
+              create(:port_mapping_template, appliance_type: appl_type)
+            end
+          end
+        end
+      end
+
+      context 'and appliance is started in development mode' do
+        let(:set)  { create(:dev_appliance_set) }
+        let!(:appl) { create(:appliance, appliance_set: set, appliance_type: appl_type) }
+        let(:dev_pmt) { appl.dev_mode_property_set.port_mapping_templates.first }
+        let!(:vm)   { create(:virtual_machine, compute_site: cs, appliances: [ appl ]) }
+
+        context 'proxy conf is generated' do
+          before do
+            expect(generator).to receive(:perform).with(cs.id)
+          end
+
+          it 'after development pmt is updated' do
+            dev_pmt.target_port = 321
+            dev_pmt.save
+          end
+
+          it 'after development pmt is destroyed' do
+            dev_pmt.destroy
+          end
+
+          it 'after new development pmt is created' do
+            create(:port_mapping_template, dev_mode_property_set: appl.dev_mode_property_set, appliance_type: nil)
+          end
+        end
+
+        context 'proxy conf is not generated' do
+          before do
+            expect(generator).to_not receive(:perform).with(cs.id)
+          end
+
+          it 'after pmt is updated' do
+            pmt.target_port = 1234
+            pmt.save
+          end
+
+          it 'after pmt is created' do
+            create(:port_mapping_template, appliance_type: appl_type)
+          end
+        end
+      end
+
+      context 'and no appliance is started with this pmt' do
+        context 'proxy is not generated' do
+          before do
+            expect(generator).to_not receive(:perform).with(cs.id)
+          end
+
+          it 'after pmt is updated' do
+            pmt.target_port = 1234
+            pmt.save
+          end
+
+          it 'after pmt is created' do
+            create(:port_mapping_template, appliance_type: appl_type)
+          end
+
+          it 'after pmt is deleted' do
+            pmt.destroy
+          end
+        end
+      end
+    end
+  end
 end

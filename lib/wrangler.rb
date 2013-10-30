@@ -1,5 +1,8 @@
 module Wrangler
 
+  MIN_PORT_NO = 0
+  MAX_PORT_NO = 65535
+
   class Client
     def Client.dnat_client
       conn = Faraday.new(url: Air.config.dnat.url) do |faraday|

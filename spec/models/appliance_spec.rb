@@ -32,8 +32,6 @@ describe Appliance do
   expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
   expect_it { to have_readonly_attribute :dev_mode_property_set }
 
-  pending 'should require zero or many VirtualMachines'
-
   context 'appliance configuration instances management' do
     before do
       Optimizer.stub(:instance).and_return(optimizer)
@@ -64,7 +62,7 @@ describe Appliance do
 
 
     before {
-      DevModePropertySet.stub(:create_from).and_return(DevModePropertySet.new)
+      DevModePropertySet.stub(:create_from).and_return(DevModePropertySet.new(name: 'dev'))
     }
 
     it 'creates dev mode property set if development appliance set' do
@@ -72,6 +70,12 @@ describe Appliance do
 
       expect(DevModePropertySet).to have_received(:create_from).with(appliance_type).once
       expect(appliance.dev_mode_property_set).to_not be_nil
+    end
+
+    it 'saves dev mode property set' do
+      expect {
+        create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+      }.to change { DevModePropertySet.count }.by(1)
     end
 
     context 'does not create dev mode property set' do

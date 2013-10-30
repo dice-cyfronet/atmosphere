@@ -47,6 +47,7 @@ gem 'role_model'
 gem 'omniauth'
 gem 'omniauth-vph', git: 'http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git', branch: :master
 
+gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
 gem 'haml-rails'
 gem 'bootstrap-sass', '~>3.0.0.0.rc'
@@ -105,7 +106,7 @@ group :development, :test do
   gem 'shoulda-matchers'
 
   # Guard
-  gem 'guard-rspec'
+  gem 'guard-rspec', '~>2.1.1'
   gem 'spork-rails', github: 'sporkrb/spork-rails'
   gem 'guard-spork'
   gem 'libnotify'
@@ -115,6 +116,9 @@ group :development, :test do
   gem 'database_cleaner'
 end
 
+group :test do
+  gem 'rspec-sidekiq'
+end
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

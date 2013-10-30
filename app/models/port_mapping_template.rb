@@ -34,7 +34,7 @@ class PortMappingTemplate < ActiveRecord::Base
   enumerize :transport_protocol, in: [:tcp, :udp]
 
   validates_inclusion_of :transport_protocol, in: %w(tcp udp)
-  validates_inclusion_of :application_protocol, in: %w(http https http_https), if: 'transport_protocol == "tcp"'
+  validates_inclusion_of :application_protocol, in: %w(http https http_https none), if: 'transport_protocol == "tcp"'
   validates_inclusion_of :application_protocol, in: %w(none), if: 'transport_protocol == "udp"'
 
   validates_uniqueness_of :service_name, scope: :appliance_type
@@ -46,8 +46,18 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :endpoints, dependent: :destroy
 
+  after_save :generate_proxy_conf
+  after_destroy :generate_proxy_conf
 
   scope :def_order, -> { order(:service_name) }
+
+  def http?
+    application_protocol.http? || application_protocol.http_https?
+  end
+
+  def https?
+    application_protocol.https? || application_protocol.http_https?
+  end
 
   private
 
@@ -62,6 +72,16 @@ class PortMappingTemplate < ActiveRecord::Base
     if appliance_type and appliance_type.has_dependencies?
       errors.add :base, 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
       false
+    end
+  end
+
+  def generate_proxy_conf
+    if http? || https?
+      affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
+
+      affected_sites.each do |site|
+        ProxyConfWorker.new.perform(site.id)
+      end
     end
   end
 end
