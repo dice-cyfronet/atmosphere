@@ -41,13 +41,13 @@ describe WranglerRegistrarWorker do
 
       it 'calls remote wrangler service' do
         vm = create(:virtual_machine, source_template: tmpl, ip: PRIV_IP)
-        subject.perform(vm)
+        subject.perform(vm.id)
         stubs.verify_stubbed_calls
       end
 
       it 'adds port mapping to vm when application protocol is none' do
         vm = create(:virtual_machine, source_template: tmpl, ip: PRIV_IP)
-        subject.perform(vm)
+        subject.perform(vm.id)
         vm.reload
         expect(vm.port_mappings.size).to eql 2
       end
@@ -71,7 +71,7 @@ describe WranglerRegistrarWorker do
       it 'checks HTTP status in wrangler response' do
         vm = create(:virtual_machine, source_template: tmpl, ip: PRIV_IP)
         expect(logger_mock).to receive(:error) { "Wrangler returned 500 Wrangler internal error when trying to add redirections for VM #{vm.uuid} with IP #{PRIV_IP}. Requested redirections: [{:proto=>\"tcp\", :port=>#{PRIV_PORT}}, {:proto=>\"#{PROTO}\", :port=>#{PRIV_PORT_2}}]" }
-        subject.perform(vm)
+        subject.perform(vm.id)
         stubs.verify_stubbed_calls
       end
 
@@ -79,7 +79,7 @@ describe WranglerRegistrarWorker do
         create(:port_mapping_template, target_port: INVALID_PORT_NO, application_protocol: 'none', appliance_type: appl_type)
         vm = create(:virtual_machine, source_template: tmpl, ip: PRIV_IP)
         expect(logger_mock).to receive(:error) { "Error when trying to add redirections for VM #{vm.uuid} with IP #{PRIV_IP}. Requested redirection for forbidden port #{INVALID_PORT_NO}" }
-        subject.perform(vm)
+        subject.perform(vm.id)
         # below is an ugly way of verifying that wrangler was not invoked :-)
         expect { stubs.verify_stubbed_calls }.to raise_error(RuntimeError)
       end
@@ -107,7 +107,7 @@ describe WranglerRegistrarWorker do
 
     it 'does nothing if appliance type has no port mapping templates' do
       vm = create(:virtual_machine, source_template: tmpl, ip: PRIV_IP)
-      subject.perform(vm)
+      subject.perform(vm.id)
       vm.reload
       expect(vm.port_mappings).to be_blank
       # below is an ugly way of verifying that wrangler was not invoked :-)
@@ -134,7 +134,7 @@ describe WranglerRegistrarWorker do
 
     it 'does nothing if vm has no ip' do
       vm = create(:virtual_machine, source_template: tmpl)
-      subject.perform(vm)
+      subject.perform(vm.id)
       vm.reload
       expect(vm.port_mappings).to be_blank
       # below is an ugly way of verifying that wrangler was not invoked :-)

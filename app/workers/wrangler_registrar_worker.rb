@@ -6,7 +6,8 @@ class WranglerRegistrarWorker
 
   sidekiq_options queue: :wrangler
 
-  def perform(vm)
+  def perform(vm_id)
+    vm = VirtualMachine.find vm_id
     return unless vm.appliance_type.port_mapping_templates and vm.ip
     already_added_mapping_tmpls = vm.port_mappings ? vm.port_mappings.select {|m| m.port_mapping_template} : [] 
     pmt_map = {}
