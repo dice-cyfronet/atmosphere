@@ -47,7 +47,8 @@ describe VirtualMachine do
       end
 
       it 'after VM is destroyed' do
-        vm.destroy
+        # just simulate VM deletion, no deletion on real cloud
+        vm.destroy(false)
       end
     end
 

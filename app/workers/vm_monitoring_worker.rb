@@ -23,7 +23,7 @@ class VmMonitoringWorker
       end
 
     #remove deleted templates
-    all_site_vms.each { |vm| vm.destroy }
+    all_site_vms.each { |vm| vm.destroy(false) }
     end
   end
 

@@ -41,7 +41,7 @@ describe Optimizer do
 
         context 'max appl number equal one' do
           let(:config_inst) { create(:appliance_configuration_instance) }
-          
+
           before do
             Air.config.optimizer.stub(:max_appl_no).and_return 1
           end
@@ -104,7 +104,7 @@ describe Optimizer do
     context 'not shareable appliance type' do
       let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
       let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type)}
-      
+
       it 'instantiates a new vm although vm with given conf is already running' do
         tmpl_of_not_shareable_at
         config_inst = create(:appliance_configuration_instance)
@@ -125,15 +125,23 @@ describe Optimizer do
   end
 
   context 'virtual machine is applianceless' do
+
+    let(:vm) { create(:virtual_machine) }
+
+    before do
+      servers_double = double
+      vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+      allow(servers_double).to receive(:destroy)
+    end
+
     it 'terminates unused vm' do
-      vm = create(:virtual_machine)
       subject.run(destroyed_appliance: true)
       expect(VirtualMachine.all).to be_blank
     end
   end
 
   context 'no template is available' do
-    
+
     it 'sets appliance to unsatisfied state' do
       appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
       appl.reload

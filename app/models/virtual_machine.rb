@@ -46,7 +46,7 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def destroy(delete_in_cloud = true)
-    delete_in_cloud if delete_in_cloud
+    perform_delete_in_cloud if delete_in_cloud
     super()
   end
 
@@ -68,7 +68,7 @@ class VirtualMachine < ActiveRecord::Base
     self[:state] = :booting
   end
 
-  def delete_in_cloud
+  def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
     cloud_client.servers.destroy(id_at_site)
   end
