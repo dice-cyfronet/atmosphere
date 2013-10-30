@@ -6,6 +6,7 @@ describe SiteProxyConf do
     Fog.mock!
 
     VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
+    PortMappingTemplate.any_instance.stub(:generate_proxy_conf).and_return(true)
   end
 
   let(:cs) { create(:compute_site) }

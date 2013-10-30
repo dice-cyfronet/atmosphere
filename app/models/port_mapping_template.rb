@@ -46,6 +46,8 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :endpoints, dependent: :destroy
 
+  after_save :generate_proxy_conf
+  after_destroy :generate_proxy_conf
 
   scope :def_order, -> { order(:service_name) }
 
@@ -70,6 +72,16 @@ class PortMappingTemplate < ActiveRecord::Base
     if appliance_type and appliance_type.has_dependencies?
       errors.add :base, 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
       false
+    end
+  end
+
+  def generate_proxy_conf
+    if http? || https?
+      affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
+
+      affected_sites.each do |site|
+        ProxyConfWorker.new.perform(site.id)
+      end
     end
   end
 end
