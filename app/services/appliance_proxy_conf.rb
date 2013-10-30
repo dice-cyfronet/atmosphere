@@ -30,7 +30,7 @@ class ApplianceProxyConf
   end
 
   def ips
-    @ips ||= @appliance.virtual_machines.select(:ip).collect {|vm| vm.ip}
+    @ips ||= @appliance.virtual_machines.collect(&:ip)
   end
 
   def pm_templates

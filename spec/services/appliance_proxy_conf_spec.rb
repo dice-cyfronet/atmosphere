@@ -20,9 +20,9 @@ describe ApplianceProxyConf do
       #   |-> appl
       #     |-> vm1
       #     |-> vm2
-      let(:appl) { create(:appliance, appliance_type: appl_type)}
-      let!(:vm1) { create(:virtual_machine, appliances: [ appl ], compute_site: cs, ip: "10.100.8.10")}
-      let!(:vm2) { create(:virtual_machine, appliances: [ appl ], compute_site: cs, ip: "10.100.8.11")}
+      let(:vm1) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.10")}
+      let(:vm2) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.11")}
+      let(:appl) { create(:appliance, appliance_type: appl_type, virtual_machines: [ vm1, vm2])}
 
       subject { ApplianceProxyConf.new(appl) }
 
@@ -117,8 +117,8 @@ describe ApplianceProxyConf do
       # |-> appl (with pmt copied from appl_type)
       #      |-> vm
       let(:appliance_set) { create(:appliance_set, appliance_set_type: :development) }
-      let!(:appl) { create(:appliance, appliance_type: appl_type, appliance_set: appliance_set)}
-      let!(:vm) { create(:virtual_machine, appliances: [ appl ], compute_site: cs, ip: "10.100.8.10")}
+      let(:vm) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.10")}
+      let(:appl) { create(:appliance, appliance_type: appl_type, appliance_set: appliance_set, virtual_machines: [ vm ])}
       let(:dev_pmt) { appl.dev_mode_property_set.port_mapping_templates.first }
 
       subject { ApplianceProxyConf.new(appl) }
