@@ -5,7 +5,9 @@ describe ApplianceProxyConf do
   before do
     Fog.mock!
 
+    # We want to test proxy conf generation not VM and PMT callbacks
     VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
+    PortMappingTemplate.any_instance.stub(:generate_proxy_conf).and_return(true)
   end
 
   describe '#generate' do
