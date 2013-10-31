@@ -40,6 +40,14 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :http_mapping_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id
+    actual['url'] == expected.url
+    actual['application_protocol'] == expected.application_protocol
+  end
+end
+
 RSpec::Matchers.define :config_template_eq do |expected|
   match do |actual|
     actual['id'] = expected.id

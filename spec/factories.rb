@@ -171,10 +171,10 @@ FactoryGirl.define do
   end
 
   factory :http_mapping do |f|
+    url  Faker::Internet.domain_name
+    application_protocol "http"
     appliance
     port_mapping_template
-    application_protocol "http" # Temporary value!
-    url "none"
   end
 
 end

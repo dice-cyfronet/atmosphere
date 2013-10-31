@@ -1,5 +1,5 @@
-require 'spec_helper'
 
+require 'spec_helper'
 INVALID_FACTORIES = []
 
 FactoryGirl.factories.map(&:name).each do |factory_name|
