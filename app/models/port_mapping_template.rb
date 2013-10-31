@@ -59,6 +59,16 @@ class PortMappingTemplate < ActiveRecord::Base
     application_protocol.https? || application_protocol.http_https?
   end
 
+  def generate_proxy_conf
+    if http? || https?
+      affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
+
+      affected_sites.each do |site|
+        ProxyConfWorker.new.perform(site.id)
+      end
+    end
+  end
+
   private
 
   def check_only_one_belonging
@@ -72,16 +82,6 @@ class PortMappingTemplate < ActiveRecord::Base
     if appliance_type and appliance_type.has_dependencies?
       errors.add :base, 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
       false
-    end
-  end
-
-  def generate_proxy_conf
-    if http? || https?
-      affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
-
-      affected_sites.each do |site|
-        ProxyConfWorker.new.perform(site.id)
-      end
     end
   end
 end

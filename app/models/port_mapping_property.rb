@@ -24,7 +24,16 @@ class PortMappingProperty < ActiveRecord::Base
   validates_absence_of :port_mapping_template, if: 'compute_site != nil'
   validates_absence_of :compute_site, if: 'port_mapping_template != nil'
 
+  after_save :generate_proxy_conf
+  after_destroy :generate_proxy_conf
+
   def to_s
     "#{key} #{value}"
+  end
+
+  private
+
+  def generate_proxy_conf
+    port_mapping_template.blank? ? ProxyConfWorker.new.perform(compute_site.id) : port_mapping_template.generate_proxy_conf
   end
 end
