@@ -26,6 +26,10 @@ class Ability
 
       can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
 
+      ## Http mappings
+
+      can [:read], HttpMapping, appliance: { appliance_set: { user_id: user.id } }
+
       ## Security proxies and policies
       can :create, owned_payloads
       can [:update, :destroy], owned_payloads do |item|
