@@ -33,6 +33,8 @@ class Appliance < ActiveRecord::Base
   after_destroy :optimize_destroyed_appliance
   after_create :optimize_saved_appliance
 
+  before_destroy :generate_proxy_conf
+
   def to_s
     "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
   end
@@ -59,5 +61,12 @@ class Appliance < ActiveRecord::Base
 
   def optimize_destroyed_appliance
     Optimizer.instance.run(destroyed_appliance: self)
+  end
+
+  def generate_proxy_conf
+    affected_compute_sites = ComputeSite.joins(virtual_machines: :appliances).where(appliances: {id: id})
+    affected_compute_sites.each do |cs|
+      ProxyConfWorker.new.perform(cs.id)
+    end
   end
 end

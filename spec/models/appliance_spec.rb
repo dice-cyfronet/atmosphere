@@ -94,4 +94,64 @@ describe Appliance do
       end
     end
   end
+
+  context '#generate_proxy_conf' do
+    let(:generator) { double }
+    before do
+      ProxyConfWorker.stub(:new).and_return(generator)
+      # VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
+      Optimizer.instance.stub(:run)
+    end
+
+    context 'when appliance with VM' do
+      let(:cs) { create(:compute_site) }
+      let!(:vm) { create(:virtual_machine, compute_site: cs) }
+      let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
+
+      context 'generates proxy conf' do
+        before do
+          expect(generator).to receive(:perform).with(cs.id)
+        end
+
+        it 'after appliance is destroyed' do
+          appl.destroy
+        end
+      end
+
+      context 'when second VM started on different compute site' do
+        let(:cs2) { create(:compute_site) }
+        let!(:vm2) { create(:virtual_machine, compute_site: cs2) }
+
+        before do
+          appl.virtual_machines << vm2
+          appl.save
+        end
+
+        context 'generates proxy conf for both sites' do
+          before do
+            expect(generator).to receive(:perform).with(cs.id)
+            expect(generator).to receive(:perform).with(cs2.id)
+          end
+
+          it 'after appliance is destroyed' do
+            appl.destroy
+          end
+        end
+      end
+    end
+
+    context 'when appliance without VM' do
+      let!(:appl) { create(:appliance) }
+
+      context 'does not generate proxy conf for any compute site' do
+        before do
+          expect(generator).to_not receive(:perform)
+        end
+
+        it 'after appliance is destroyed' do
+          appl.destroy
+        end
+      end
+    end
+  end
 end
