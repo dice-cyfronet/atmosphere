@@ -132,7 +132,7 @@ GEM
       multipart-post (~> 1.2.0)
     ffaker (1.20.0)
     ffi (1.9.0)
-    fog (1.16.0)
+    fog (1.17.0)
       builder
       excon (~> 0.27.0)
       formatador (~> 0.2.0)
@@ -142,7 +142,6 @@ GEM
       net-ssh (>= 2.1.3)
       nokogiri (~> 1.5)
       ruby-hmac
-      unicode (~> 0.4.4)
     font-awesome-rails (4.0.1.0)
       railties (>= 3.2, < 5.0)
     foreigner (1.6.0)
@@ -341,7 +340,9 @@ GEM
     uglifier (2.3.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
-    unicode (0.4.4)
+    unf (0.1.3)
+      unf_ext
+    unf_ext (0.0.6)
     warden (1.2.3)
       rack (>= 1.0)
     whenever (0.8.4)
@@ -368,7 +369,7 @@ DEPENDENCIES
   exception_notification
   factory_girl
   ffaker
-  fog (= 1.16.0)
+  fog (= 1.17.0)
   font-awesome-rails
   foreigner
   foreman
@@ -407,4 +408,5 @@ DEPENDENCIES
   spork-rails!
   turbolinks
   uglifier (>= 1.3.0)
+  unf
   whenever
