@@ -6,7 +6,6 @@ module Api
       respond_to :json
 
       def index
-        @http_mappings.where
         respond_with @http_mappings
       end
 

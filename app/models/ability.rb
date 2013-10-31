@@ -28,7 +28,7 @@ class Ability
 
       ## Http mappings
 
-      can [:read], HttpMapping
+      can [:read], HttpMapping, appliance: { appliance_set: { user_id: user.id } }
 
       ## Security proxies and policies
       can :create, owned_payloads
