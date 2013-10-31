@@ -64,8 +64,7 @@ class Appliance < ActiveRecord::Base
   end
 
   def generate_proxy_conf
-    affected_compute_sites = ComputeSite.joins(virtual_machines: :appliances).where(appliances: {id: id})
-    affected_compute_sites.each do |cs|
+    ComputeSite.with_appliance(self).each do |cs|
       ProxyConfWorker.new.perform(cs.id)
     end
   end
