@@ -40,7 +40,7 @@ describe VirtualMachine do
 
   describe 'proxy conf generation' do
 
-    
+
 
     let(:cs) { create(:compute_site) }
     let(:vm) { create(:virtual_machine, compute_site: cs) }
@@ -89,7 +89,7 @@ describe VirtualMachine do
     before do
       allow(generator).to receive(:perform)
     end
-    
+
 
     it 'is performed after IP was changed and is not blank' do
       expect(registrar).to receive(:async_perform)
@@ -116,8 +116,15 @@ describe VirtualMachine do
 
   describe 'DNAT unregistration' do
 
+    let(:vm) { create(:virtual_machine, ip: PRIV_IP) }
+
     before do
       allow(generator).to receive(:perform)
+
+      # we are testing dnat unregistration not cloud action, thus we can mock it
+      servers_double = double
+      vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+      allow(servers_double).to receive(:destroy)
     end
 
     it 'is performed after not blank IP was changed'
@@ -128,9 +135,9 @@ describe VirtualMachine do
 
     it 'is performed after VM is destroyed if IP was not blank' do
       expect(eraser).to receive(:async_perform)
-      create(:virtual_machine, ip: PRIV_IP).destroy
+      vm.destroy
     end
-    
+
   end
 
 end
