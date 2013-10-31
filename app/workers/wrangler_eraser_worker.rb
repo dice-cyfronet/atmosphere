@@ -48,7 +48,7 @@ class WranglerEraserWorker
     dnat_client = Wrangler::Client.dnat_client
     resp = dnat_client.delete(build_path_for_params(ip, port, protocol))
     if not resp.status == 204
-      Rails.logger.error "Wrangler returned #{HTTP_INT_ERR_CODE.to_s} when trying to remove redirections for #{build_req_params_msg(ip, port, protocol)}."
+      Rails.logger.error "Wrangler returned #{resp.status} when trying to remove redirections for #{build_req_params_msg(ip, port, protocol)}."
       return false
     end
     true
