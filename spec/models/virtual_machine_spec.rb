@@ -34,7 +34,7 @@ describe VirtualMachine do
     WranglerEraserWorker.stub(:new).and_return eraser
   end
 
-  PRIV_IP = '10.1.1.16'
+  let(:priv_ip) { '10.1.1.16' }
 
   expect_it { to have_many(:port_mappings).dependent(:destroy) }
 
@@ -54,12 +54,12 @@ describe VirtualMachine do
       end
 
       it 'after IP is updated' do
-        vm.ip = PRIV_IP
+        vm.ip = priv_ip
         vm.save
       end
 
       it 'after VM is created with IP filled' do
-        create(:virtual_machine, ip: PRIV_IP, compute_site: cs)
+        create(:virtual_machine, ip: priv_ip, compute_site: cs)
       end
 
       it 'after VM is destroyed' do
@@ -94,7 +94,7 @@ describe VirtualMachine do
     it 'is performed after IP was changed and is not blank' do
       expect(registrar).to receive(:async_perform)
       vm = create(:virtual_machine)
-      vm.ip = PRIV_IP
+      vm.ip = priv_ip
       vm.save
     end
 
@@ -107,7 +107,7 @@ describe VirtualMachine do
 
     it 'is not performed when ip is changed to blank' do
       expect(registrar).to_not receive(:async_perform)
-      vm = create(:virtual_machine, ip: PRIV_IP)
+      vm = create(:virtual_machine, ip: priv_ip)
       vm.ip = nil
       vm.save
     end
@@ -116,7 +116,7 @@ describe VirtualMachine do
 
   describe 'DNAT unregistration' do
 
-    let(:vm) { create(:virtual_machine, ip: PRIV_IP) }
+    let(:vm) { create(:virtual_machine, ip: priv_ip) }
 
     before do
       allow(generator).to receive(:perform)
