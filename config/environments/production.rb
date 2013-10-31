@@ -81,7 +81,7 @@ Air::Application.configure do
   #cors
   config.middleware.use Rack::Cors do
     allow do
-      origins '*.vph-share.eu'
+      origins '*'
       resource '/api/v1/*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
     end
   end
