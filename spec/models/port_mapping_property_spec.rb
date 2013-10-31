@@ -60,10 +60,8 @@ describe PortMappingProperty do
       let!(:prop) { create(:port_mapping_property, compute_site: cs) }
 
       context 'generates proxy conf' do
-        let(:generator) { double }
         before do
-          ProxyConfWorker.stub(:new).and_return(generator)
-          expect(generator).to receive(:perform).with(cs.id)
+          expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
         end
 
         it 'after property is edited' do

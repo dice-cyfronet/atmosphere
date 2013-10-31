@@ -65,7 +65,7 @@ class Appliance < ActiveRecord::Base
 
   def generate_proxy_conf
     ComputeSite.with_appliance(self).each do |cs|
-      ProxyConfWorker.new.perform(cs.id)
+      ProxyConfWorker.regeneration_required(cs)
     end
   end
 end

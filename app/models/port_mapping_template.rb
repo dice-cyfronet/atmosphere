@@ -64,7 +64,7 @@ class PortMappingTemplate < ActiveRecord::Base
       affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
 
       affected_sites.each do |site|
-        ProxyConfWorker.new.perform(site.id)
+        ProxyConfWorker.regeneration_required(site)
       end
     end
   end

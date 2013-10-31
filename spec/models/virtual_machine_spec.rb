@@ -19,11 +19,6 @@ describe VirtualMachine do
 
   before { Fog.mock! }
 
-  let(:generator) { double }
-  before do
-    ProxyConfWorker.stub(:new).and_return(generator)
-  end
-
   let(:registrar) { double('registrar worker')}
   before do
     WranglerRegistrarWorker.stub(:new).and_return registrar
@@ -39,16 +34,13 @@ describe VirtualMachine do
   expect_it { to have_many(:port_mappings).dependent(:destroy) }
 
   describe 'proxy conf generation' do
-
-
-
     let(:cs) { create(:compute_site) }
     let(:vm) { create(:virtual_machine, compute_site: cs) }
 
     context 'is performed' do
 
       before do
-        expect(generator).to receive(:perform).with(cs.id)
+        expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
         allow(registrar).to receive(:async_perform)
         allow(eraser).to receive(:async_perform)
       end
@@ -70,7 +62,7 @@ describe VirtualMachine do
 
     context 'is not performed' do
       before do
-        expect(generator).to_not receive(:perform)
+        expect(ProxyConfWorker).to_not receive(:regeneration_required)
       end
 
       it 'after VM is created with empty IP' do
@@ -85,12 +77,6 @@ describe VirtualMachine do
   end
 
   describe 'DNAT registration' do
-
-    before do
-      allow(generator).to receive(:perform)
-    end
-
-
     it 'is performed after IP was changed and is not blank' do
       expect(registrar).to receive(:async_perform)
       vm = create(:virtual_machine)
@@ -119,8 +105,6 @@ describe VirtualMachine do
     let(:vm) { create(:virtual_machine, ip: priv_ip) }
 
     before do
-      allow(generator).to receive(:perform)
-
       # we are testing dnat unregistration not cloud action, thus we can mock it
       servers_double = double
       vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
@@ -137,7 +121,5 @@ describe VirtualMachine do
       expect(eraser).to receive(:async_perform)
       vm.destroy
     end
-
   end
-
 end
