@@ -1,10 +1,6 @@
 module Api
   module V1
     class ApplianceConfigurationTemplatesController < Api::ApplicationController
-      # https://github.com/ryanb/cancan/issues/891
-      # https://github.com/rails/rails/commit/a6bc35c82cd58aac61608391f38fda4e034be0f7#diff-1 fixes this problem
-      # remove manual config templates loading after rails 4.0.1 is released
-      before_filter :index_templates, only: :index
       load_and_authorize_resource :appliance_configuration_template
       respond_to :json
 
@@ -35,12 +31,6 @@ module Api
       end
 
       private
-
-      def index_templates
-        if current_user
-          @appliance_configuration_templates = load_all? ? ApplianceConfigurationTemplate.all : ApplianceConfigurationTemplate.joins(:appliance_type).where("appliance_types.visibility='published' or appliance_types.user_id=?", current_user.id)
-        end
-      end
 
       def filter
         filter = {}
