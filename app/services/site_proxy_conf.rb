@@ -13,6 +13,6 @@ class SiteProxyConf
   end
 
   def properties
-    @compute_site.port_mapping_properties.collect { |prop| prop.to_s }
+    @compute_site.port_mapping_properties.collect(&:to_s)
   end
 end
