@@ -7,11 +7,9 @@ class SiteProxyConf
   end
 
   def generate
-    proxy_confs = compute_site_appliances.collect do |appliance|
+    compute_site_appliances.collect do |appliance|
       ApplianceProxyConf.new(appliance).generate
     end.flatten.uniq
-
-    proxy_confs
   end
 
   def properties
