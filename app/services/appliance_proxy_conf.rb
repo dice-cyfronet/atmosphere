@@ -4,13 +4,11 @@ class ApplianceProxyConf
   end
 
   def generate
-    appl_proxy_configuration = []
-    pm_templates.each do |pmt|
-      appl_proxy_configuration << generate_redirection_and_port_mapping(pmt, ips, :http) if pmt.http?
-      appl_proxy_configuration << generate_redirection_and_port_mapping( pmt, ips, :https) if pmt.https?
+    pm_templates.inject([]) do |tab, pmt|
+      tab << generate_redirection_and_port_mapping(pmt, ips, :http) if pmt.http?
+      tab << generate_redirection_and_port_mapping( pmt, ips, :https) if pmt.https?
+      tab
     end
-
-    appl_proxy_configuration
   end
 
   def generate_redirection_and_port_mapping(pmt, ips, type)
