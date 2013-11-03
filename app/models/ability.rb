@@ -21,7 +21,7 @@ class Ability
       can [:read], ApplianceType
       can [:update, :destroy], ApplianceType, user_id: user.id
 
-      can [:read], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id }
+      can [:read], ApplianceConfigurationTemplate, appliance_type: { user_id: user.id }
       can [:read], ApplianceConfigurationTemplate, appliance_type: { visibility: 'published' }
 
       can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
