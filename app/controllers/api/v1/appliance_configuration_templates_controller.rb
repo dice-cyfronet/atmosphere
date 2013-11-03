@@ -33,12 +33,11 @@ module Api
       private
 
       def filter
-        filter = {}
-        ApplianceConfigurationTemplate.new.attributes.keys.each do |attr|
+        ApplianceConfigurationTemplate.new.attributes.keys.inject({}) do |filter, attr|
           key = attr.to_sym
           filter[key] = params[key].to_s.split(',') if params[key]
+          filter
         end
-        filter
       end
 
       def appliance_configuration_template_params
