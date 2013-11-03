@@ -7,18 +7,12 @@ class SiteProxyConf
   end
 
   def generate
-    compute_site_appliances.collect do |appliance|
+    Appliance.started_on_site(@compute_site).collect do |appliance|
       ApplianceProxyConf.new(appliance).generate
     end.flatten.uniq
   end
 
   def properties
     @compute_site.port_mapping_properties.collect { |prop| prop.to_s }
-  end
-
-  private
-
-  def compute_site_appliances
-    Appliance.joins(:virtual_machines).where(virtual_machines: {compute_site: @compute_site})
   end
 end

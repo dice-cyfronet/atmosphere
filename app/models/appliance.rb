@@ -35,6 +35,8 @@ class Appliance < ActiveRecord::Base
 
   before_destroy :generate_proxy_conf
 
+  scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(virtual_machines: {compute_site: compute_site}) }
+
   def to_s
     "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
   end
