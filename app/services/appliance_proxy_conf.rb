@@ -44,7 +44,7 @@ class ApplianceProxyConf
   end
 
   def properties(pmt)
-    pmt.port_mapping_properties.collect { |prop| prop.to_s }
+    pmt.port_mapping_properties.collect(&:to_s)
   end
 
   def path(pmt)
