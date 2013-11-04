@@ -78,7 +78,6 @@ gem 'unf'
 #delay and scheduled jobs
 gem 'sinatra', require: nil
 gem 'sidekiq'
-gem 'whenever'
 gem 'clockwork'
 
 group :doc do
