@@ -11,14 +11,14 @@ module Clockwork
 
   every(1.minute, 'monitoring.templates') do
     ComputeSite.select(:id, :name).each do |cs|
-      Rails.logger.debug "Creating templates monitoring task for #{cs.name}"
+      Rails.logger.info "Creating templates monitoring task for #{cs.name}"
       VmTemplateMonitoringWorker.perform_async(cs.id)
     end
   end
 
   every(30.seconds, 'monitoring.vms') do
     ComputeSite.select(:id, :name).each do |cs|
-      Rails.logger.debug "Creating vms monitoring task for #{cs.name}"
+      Rails.logger.info "Creating vms monitoring task for #{cs.name}"
       VmMonitoringWorker.perform_async(cs.id)
     end
   end

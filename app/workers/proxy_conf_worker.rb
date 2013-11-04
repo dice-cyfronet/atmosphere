@@ -20,7 +20,8 @@ class ProxyConfWorker
   end
 
   def self.regenerate_proxy_confs
-    ComputeSite.where(regenerate_proxy_conf: true).each do |cs|
+    ComputeSite.select(:id, :name).where(regenerate_proxy_conf: true).each do |cs|
+      Rails.logger.info "Creating Proxy Conf regeneration task for #{cs.name}"
       perform_async(cs.id)
     end
   end
