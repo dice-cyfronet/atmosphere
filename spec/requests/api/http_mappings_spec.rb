@@ -5,8 +5,14 @@ describe Api::V1::HttpMappingsController do
   include ApiHelpers
 
   let(:user)  { create(:user) }
-  let!(:hm1) { create(:http_mapping) }
-  let!(:hm2) { create(:http_mapping) }
+
+  let(:as1) { create(:appliance_set, user: user) }
+  let(:appl1) { create(:appliance, appliance_set: as1) }
+  let!(:hm1) { create(:http_mapping, appliance: appl1) }
+
+  let(:as2) { create(:appliance_set, user: user) }
+  let(:appl2) { create(:appliance, appliance_set: as2) }
+  let!(:hm2) { create(:http_mapping, appliance: appl2) }
 
   describe 'GET /http_mappings' do
     context 'when unauthenticated' do
@@ -58,7 +64,7 @@ describe Api::V1::HttpMappingsController do
     end
   end
 
-  describe 'GET /httpmappings?appliance_id={id}' do
+  describe 'GET /http_mappings?appliance_id={id}' do
     context 'when query for exisitng appliance' do
       it 'gets the only mapping that fits the query' do
         get api("/http_mappings?appliance_id=#{hm1.appliance_id}", user)
