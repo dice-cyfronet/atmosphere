@@ -20,9 +20,11 @@ describe ApplianceProxyConf do
       #   |-> appl
       #     |-> vm1
       #     |-> vm2
+      #     |-> vm_without_ip
       let(:vm1) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.10")}
       let(:vm2) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.11")}
-      let(:appl) { create(:appliance, appliance_type: appl_type, virtual_machines: [ vm1, vm2])}
+      let(:vm_without_ip) { create(:virtual_machine, compute_site: cs, ip: nil) }
+      let(:appl) { create(:appliance, appliance_type: appl_type, virtual_machines: [ vm1, vm2, vm_without_ip])}
 
       subject { ApplianceProxyConf.new(appl) }
 
