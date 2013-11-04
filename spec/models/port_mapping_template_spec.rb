@@ -166,9 +166,7 @@ describe PortMappingTemplate do
   end
 
   describe '#generate_proxy_conf' do
-    let(:generator) { double }
     before do
-      ProxyConfWorker.stub(:new).and_return(generator)
       VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
     end
 
@@ -185,7 +183,7 @@ describe PortMappingTemplate do
 
         context 'proxy conf is generated' do
           before do
-            expect(generator).to receive(:perform).with(cs.id)
+            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
           end
 
           it 'after pmt is updated' do
@@ -209,8 +207,8 @@ describe PortMappingTemplate do
 
           context 'proxy conf is generated for both compute sites' do
             before do
-              expect(generator).to receive(:perform).with(cs.id)
-              expect(generator).to receive(:perform).with(cs2.id)
+              expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
+              expect(ProxyConfWorker).to receive(:regeneration_required).with(cs2)
             end
 
             it 'after pmt is updated' do
@@ -233,7 +231,7 @@ describe PortMappingTemplate do
 
         context 'proxy conf is generated' do
           before do
-            expect(generator).to receive(:perform).with(cs.id)
+            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
           end
 
           it 'after development pmt is updated' do
@@ -252,7 +250,7 @@ describe PortMappingTemplate do
 
         context 'proxy conf is not generated' do
           before do
-            expect(generator).to_not receive(:perform).with(cs.id)
+            expect(ProxyConfWorker).to_not receive(:regeneration_required).with(cs)
           end
 
           it 'after pmt is updated' do
@@ -269,7 +267,7 @@ describe PortMappingTemplate do
       context 'and no appliance is started with this pmt' do
         context 'proxy is not generated' do
           before do
-            expect(generator).to_not receive(:perform).with(cs.id)
+            expect(ProxyConfWorker).to_not receive(:regeneration_required).with(cs)
           end
 
           it 'after pmt is updated' do

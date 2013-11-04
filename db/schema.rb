@@ -81,11 +81,12 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id",                        null: false
+    t.string   "site_id",                                   null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",  default: "private"
+    t.string   "site_type",             default: "private"
     t.string   "technology"
+    t.boolean  "regenerate_proxy_conf", default: false
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"

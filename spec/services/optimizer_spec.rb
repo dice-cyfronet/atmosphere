@@ -89,13 +89,11 @@ describe Optimizer do
         end
 
         it 'triggers proxy regeneration if vm was reused' do
-          pcw_mock = double('proxy conf worker')
-          ProxyConfWorker.stub(:new).and_return pcw_mock
           tmpl_of_shareable_at
           config_inst = create(:appliance_configuration_instance)
           appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
           appl1.reload
-          expect(pcw_mock).to receive(:perform) { appl1.virtual_machines.first.compute_site.id }
+          expect(ProxyConfWorker).to receive(:regeneration_required).with(appl1.virtual_machines.first.compute_site)
           appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
         end
       end

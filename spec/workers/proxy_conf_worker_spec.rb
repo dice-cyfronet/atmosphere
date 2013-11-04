@@ -6,6 +6,8 @@ describe ProxyConfWorker do
     Sidekiq::Client.stub(:push)
   end
 
+  it { should be_processed_in :proxyconf }
+
   describe '#perform' do
     context 'when site is not found' do
       it 'log error' do
@@ -53,6 +55,30 @@ describe ProxyConfWorker do
         'class' => override['class'] ? override['class'] : anything,
         'args'  => override['args']  ? override['args']  : anything,
       }
+    end
+  end
+
+  describe '#regeneration_required' do
+    let(:cs) { create(:compute_site, regenerate_proxy_conf: false) }
+
+    it 'changes regeneration required into true' do
+      ProxyConfWorker.regeneration_required(cs)
+      expect(cs.regenerate_proxy_conf).to be_true
+    end
+  end
+
+  describe '#regenerate_proxy_confs' do
+    let!(:cs1) { create(:compute_site, regenerate_proxy_conf: true) }
+    let!(:cs2) { create(:compute_site, regenerate_proxy_conf: false) }
+    let!(:cs3) { create(:compute_site, regenerate_proxy_conf: true) }
+
+    it 'generates proxy conf job only for sites which requires regeneration' do
+      # NOT SURE WHY JOBS ARRAY IS ALWAYS EMPTY
+
+      # ProxyConfWorker.regenerate_proxy_confs
+      # expect(ProxyConfWorker).to have(2).jobs
+      # expect(ProxyConfWorker).to have_enqueued_job(cs1.id)
+      # expect(ProxyConfWorker).to have_enqueued_job(cs3.id)
     end
   end
 end

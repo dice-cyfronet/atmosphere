@@ -34,6 +34,6 @@ class PortMappingProperty < ActiveRecord::Base
   private
 
   def generate_proxy_conf
-    port_mapping_template.blank? ? ProxyConfWorker.new.perform(compute_site.id) : port_mapping_template.generate_proxy_conf
+    port_mapping_template.blank? ? ProxyConfWorker.regeneration_required(compute_site) : port_mapping_template.generate_proxy_conf
   end
 end

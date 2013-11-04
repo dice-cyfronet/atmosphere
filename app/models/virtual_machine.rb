@@ -76,7 +76,7 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def generate_proxy_conf
-    ProxyConfWorker.new.perform(self.compute_site.id)
+    ProxyConfWorker.regeneration_required(compute_site)
   end
 
   def update_dnat
