@@ -44,7 +44,7 @@ Parameters:
 }
 ```
 
-## Add new appliance to appliance set
+## <a name="post"></a> Add new appliance to appliance set
 
 ```
 POST /appliances

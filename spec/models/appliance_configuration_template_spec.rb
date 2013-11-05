@@ -35,4 +35,17 @@ describe ApplianceConfigurationTemplate do
       expect(new_ac_template).to_not be_valid
     end
   end
+
+  describe '#parameters' do
+    let(:dynamic_ac_template) { create(:appliance_configuration_template, payload: 'dynamic #{a} #{b} #{c}') }
+    let(:static_ac_template) { create(:appliance_configuration_template, payload: 'static') }
+
+    it 'returns parameters for dynamic configuration' do
+      expect(dynamic_ac_template.parameters).to eq ['a', 'b', 'c']
+    end
+
+    it 'returns empty table for static configuration' do
+      expect(static_ac_template.parameters).to eq []
+    end
+  end
 end

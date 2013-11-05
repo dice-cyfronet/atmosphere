@@ -3,6 +3,8 @@
 Get list of all available appliance configuration templates. By available appliance configuration templates we understand configuration templates from all appliance types belonging to the user, plus all configuration templates from `published` appliance types. Admin is able to browse information about all appliance types configuration templates by setting flag `all` into `true`. Additionally there is possibility to limit amount of returned appliance configuration templates by defining filters.
 
 
+Appliance configuration template can contains `static` or `dynamic` payload. List of dynamic variable names are available in `properties` table. While starting new appliance type user can inject values of the properties (see [adding new appliance into appliance set](appliances#post) section for more details).
+
 ```
 GET /appliance_configuration_templates
 ```
@@ -13,7 +15,8 @@ GET /appliance_configuration_templates
     {
       "id": 1,
       "name": "Foobar appliance configuration template",
-      "payload": "Fobar appliance configuration template payload",
+      "payload": "Fobar appliance configuration template payload without dynamic payload",
+      "properties": []
       "appliance_type_id": 2
     }, {
       ...
@@ -39,7 +42,8 @@ Parameters:
   "appliance_configuration_template": {
     "id": 1,
     "name": "Foobar appliance configuration template",
-    "payload": "Fobar appliance configuration template payload",
+    "payload": "Fobar appliance configuration template payload with #{dynamic} #{payload}",
+    "properties": ["dynamic", "payload"]
     "appliance_type_id": 2
   }
 }

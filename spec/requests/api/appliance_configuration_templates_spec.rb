@@ -80,6 +80,15 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
         expect(response.status).to eq 403
       end
     end
+
+    context 'dynamic configuration' do
+      let!(:dynamic_act) { create(:appliance_configuration_template, payload: '#{a} #{b} #{c}') }
+
+      it 'returns information about parameters' do
+        get api("/appliance_configuration_templates/#{dynamic_act.id}", admin)
+        expect(act_response['parameters']).to eq ['a', 'b', 'c']
+      end
+    end
   end
 
   context 'POST /appliance_configuration_templates' do
