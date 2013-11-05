@@ -7,6 +7,8 @@ class ApplianceProxyConf
     ips.empty? ? [] : generate_proxy_conf
   end
 
+  private
+
   def generate_proxy_conf
     pm_templates.inject([]) do |tab, pmt|
       tab << generate_redirection_and_port_mapping(pmt, :http) if pmt.http?
