@@ -15,9 +15,9 @@ describe VmMonitoringWorker do
 
     let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', compute_site: cyfronet_folsom, state: :active) }
 
-    let(:vm1_data) { vm '1', 'vm1', :active }
-    let(:vm2_data) { vm '2', 'vm2', :booting }
-    let(:vm3_data) { vm '3', 'vm3', :error }
+    let(:vm1_data) { vm('1', 'vm1', :active, '10.100.1.1') }
+    let(:vm2_data) { vm('2', 'vm2', :booting, '10.100.1.2') }
+    let(:vm3_data) { vm('3', 'vm3', :error, '10.100.1.3') }
 
     before do
       data = cyfronet_folsom.cloud_client.data
@@ -35,16 +35,26 @@ describe VmMonitoringWorker do
         }.to change{ VirtualMachine.count }.by(3)
       end
 
-      it 'creates new VMs and set details' do
-        subject.perform(cyfronet_folsom.id)
+      context 'with vms details' do
+        before do
+          subject.perform(cyfronet_folsom.id)
+        end
 
-        vm1 = VirtualMachine.find_by(id_at_site: '1')
-        vm2 = VirtualMachine.find_by(id_at_site: '2')
-        vm3 = VirtualMachine.find_by(id_at_site: '3')
+        let(:vm1) { VirtualMachine.find_by(id_at_site: '1') }
+        let(:vm2) { VirtualMachine.find_by(id_at_site: '2') }
+        let(:vm3) { VirtualMachine.find_by(id_at_site: '3') }
 
-        expect(vm1).to vm_fog_data_equals vm1_data, ubuntu
-        expect(vm2).to vm_fog_data_equals vm2_data, ubuntu
-        expect(vm3).to vm_fog_data_equals vm3_data, ubuntu
+        it 'creates new VMs and set details' do
+          expect(vm1).to vm_fog_data_equals vm1_data, ubuntu
+          expect(vm2).to vm_fog_data_equals vm2_data, ubuntu
+          expect(vm3).to vm_fog_data_equals vm3_data, ubuntu
+        end
+
+        it 'sets IP only when active or error VM state' do
+          expect(vm1.ip).to eq '10.100.1.1'
+          expect(vm2.ip).to be_nil
+          expect(vm3.ip).to eq '10.100.1.3'
+        end
       end
     end
 
@@ -81,10 +91,10 @@ describe VmMonitoringWorker do
     end
   end
 
-  def vm(id, name, status)
+  def vm(id, name, status, addr='10.100.8.18')
     {
       "id" => id,
-      "addresses" => {"private"=>[{"version"=>4, "addr"=>"10.100.8.18"}]},
+      "addresses" => {"private"=>[{"version"=>4, "addr"=>addr}]},
       "image" => {
         "id" => "ubuntu",
         "links" => [

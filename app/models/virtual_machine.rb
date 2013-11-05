@@ -82,11 +82,11 @@ class VirtualMachine < ActiveRecord::Base
   def update_dnat
     if previous_changes.include? :ip and not previous_changes[:ip].first.blank?
     end
-    WranglerRegistrarWorker.new.async_perform(id) if ip?
+    WranglerRegistrarWorker.perform_async(id) if ip?
   end
 
   def remove_from_dnat
-    WranglerEraserWorker.new.async_perform(vm_id: id)
+    WranglerEraserWorker.perform_async(vm_id: id)
   end
 
 end

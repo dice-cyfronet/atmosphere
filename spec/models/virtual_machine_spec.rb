@@ -19,16 +19,6 @@ describe VirtualMachine do
 
   before { Fog.mock! }
 
-  let(:registrar) { double('registrar worker')}
-  before do
-    WranglerRegistrarWorker.stub(:new).and_return registrar
-  end
-
-  let(:eraser) { double('eraser worker')}
-  before do
-    WranglerEraserWorker.stub(:new).and_return eraser
-  end
-
   let(:priv_ip) { '10.1.1.16' }
 
   expect_it { to have_many(:port_mappings).dependent(:destroy) }
@@ -41,8 +31,8 @@ describe VirtualMachine do
 
       before do
         expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-        allow(registrar).to receive(:async_perform)
-        allow(eraser).to receive(:async_perform)
+        allow(WranglerRegistrarWorker).to receive(:perform_async)
+        allow(WranglerEraserWorker).to receive(:perform_async)
       end
 
       it 'after IP is updated' do
@@ -78,26 +68,29 @@ describe VirtualMachine do
 
   describe 'DNAT registration' do
     it 'is performed after IP was changed and is not blank' do
-      expect(registrar).to receive(:async_perform)
+      expect(WranglerRegistrarWorker).to receive(:perform_async)
       vm = create(:virtual_machine)
       vm.ip = priv_ip
       vm.save
     end
 
-    it 'is not performed when attribute other than ip is updated' do
-      expect(registrar).to_not receive(:async_perform)
-      vm = create(:virtual_machine)
-      vm.name = 'so much changed'
-      vm.save
-    end
+    context 'is not performed' do
+      before do
+        expect(WranglerRegistrarWorker).to_not receive(:perform_async)
+      end
 
-    it 'is not performed when ip is changed to blank' do
-      expect(registrar).to_not receive(:async_perform)
-      vm = create(:virtual_machine, ip: priv_ip)
-      vm.ip = nil
-      vm.save
-    end
+      it 'is not performed when attribute other than ip is updated' do
+        vm = create(:virtual_machine)
+        vm.name = 'so much changed'
+        vm.save
+      end
 
+      it 'is not performed when ip is changed to blank' do
+        vm = create(:virtual_machine, ip: priv_ip)
+        vm.ip = nil
+        vm.save
+      end
+    end
   end
 
   describe 'DNAT unregistration' do
@@ -118,7 +111,7 @@ describe VirtualMachine do
     it 'is not performed after VM with blank IP was destroyed'
 
     it 'is performed after VM is destroyed if IP was not blank' do
-      expect(eraser).to receive(:async_perform)
+      expect(WranglerEraserWorker).to receive(:perform_async)
       vm.destroy
     end
   end
