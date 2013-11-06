@@ -59,6 +59,7 @@ Air::Application.routes.draw do
         resources :appliances, only: [:index, :create]
       end
       resources :appliances, only: [:index, :show, :create, :destroy]
+      resources :virtual_machines, only: [:index, :show]
       json_resources :users
       resources :user_keys, only: [:index, :show, :create, :destroy]
 

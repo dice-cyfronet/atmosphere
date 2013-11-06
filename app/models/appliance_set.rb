@@ -28,6 +28,8 @@ class ApplianceSet < ActiveRecord::Base
 
   has_many :appliances, dependent: :destroy
 
+  scope :with_vm, ->(virtual_machine) { joins(appliances: :virtual_machines).where(virtual_machines: {id: virtual_machine.id}) }
+
   def production?
     not appliance_set_type.development?
   end

@@ -77,6 +77,20 @@ RSpec::Matchers.define :user_key_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :vm_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id
+    actual['id_at_site'] == expected.id_at_site
+    actual['name'] == expected.name
+    actual['state'] == expected.state.to_s
+    actual['ip'] == expected.ip
+    actual['compute_site_id'] == expected.compute_site_id
+    # admin
+    # actual['virtual_machine_template_id'] == expected.virtual_machine_template_id
+    # actual['appliance_ids'] == TODO
+  end
+end
+
 RSpec::Matchers.define :be_updated_by do |expected|
   match do |actual|
     actual.name == expected[:name] if expected[:name]
