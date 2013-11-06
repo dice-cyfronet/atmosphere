@@ -34,6 +34,12 @@ describe Api::V1::VirtualMachinesController do
         expect(vms_response[0]).to vm_eq vm1
         expect(vms_response[1]).to vm_eq vm2
       end
+
+      it 'returns vms specific for given appliance' do
+        get api("/virtual_machines?appliance_id=#{appl2.id}", user)
+        expect(vms_response.size).to eq 1
+        expect(vms_response[0]).to vm_eq vm2
+      end
     end
 
     context 'when authenticated as admin' do
