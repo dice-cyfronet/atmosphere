@@ -7,6 +7,8 @@ class Ability
     if user
       if user.has_role? :developer
         can :create, ApplianceSet, appliance_set_type: 'development'
+        can [:read], ApplianceType, visible_for: 'developer'
+        can [:read], ApplianceConfigurationTemplate, appliance_type: { visible_for: 'developer' }
       end
 
       ## Appliance sets
@@ -18,16 +20,16 @@ class Ability
       can [:read, :create, :destroy], Appliance, appliance_set: { user_id: user.id }
 
       ## Appliance types
-      can [:read], ApplianceType
+      can [:read], ApplianceType, visible_for: 'all'
+      can [:read], ApplianceType, user_id: user.id
       can [:update, :destroy], ApplianceType, user_id: user.id
 
       can [:read], ApplianceConfigurationTemplate, appliance_type: { user_id: user.id }
-      can [:read], ApplianceConfigurationTemplate, appliance_type: { visibility: 'published' }
+      can [:read], ApplianceConfigurationTemplate, appliance_type: { visible_for: 'all' }
 
       can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
 
       ## Http mappings
-
       can [:read], HttpMapping, appliance: { appliance_set: { user_id: user.id } }
 
       ## Security proxies and policies

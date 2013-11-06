@@ -3,15 +3,15 @@ App.ApplianceType = DS.Model.extend
   description:       DS.attr('string')
   shared:            DS.attr('boolean')
   scalable:          DS.attr('boolean')
-  visibility:        DS.attr('string')
+  visible_for:       DS.attr('string')
   preference_cpu:    DS.attr('string')
   preference_memory: DS.attr('string')
   preference_disk:   DS.attr('string')
   author:            DS.belongsTo('user')
 
   published: (->
-    @get('visibility') == 'published'
-  ).property 'visibility'
+    @get('visible_for') == 'all'
+  ).property 'visible_for'
 
   author_name: (->
     if @get('author') == null

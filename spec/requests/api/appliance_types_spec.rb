@@ -10,7 +10,7 @@ describe Api::V1::ApplianceTypesController do
   let(:security_proxy) { create(:security_proxy) }
 
   let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy) }
-  let!(:at2) { create(:appliance_type) }
+  let!(:at2) { create(:appliance_type, visible_for: :all) }
 
   describe 'GET /appliance_types' do
     context 'when unauthenticated' do
@@ -74,7 +74,7 @@ describe Api::V1::ApplianceTypesController do
         description: 'new description',
         shared: true,
         scalable: true,
-        visibility: :published,
+        visible_for: :all,
         preference_cpu: 10.0,
         preference_memory: 1024,
         preference_disk: 10240,

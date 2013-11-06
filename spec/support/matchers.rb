@@ -28,7 +28,7 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
     actual['description'] == expected.description
     actual['shared'] == expected.shared
     actual['scalable'] == expected.scalable
-    actual['visibility'] == expected.visibility
+    actual['visible_for'] == expected.visible_for
 
     actual['preference_cpu'] == expected.preference_cpu
     actual['preference_memory'] == expected.preference_memory
@@ -83,7 +83,7 @@ RSpec::Matchers.define :be_updated_by do |expected|
     actual.description == expected[:description] if expected[:description]
     actual.shared == expected[:shared] if expected[:shared]
     actual.scalable == expected[:scalable] if expected[:scalable]
-    actual.visibility == expected[:visibility] if expected[:visibility]
+    actual.visible_for == expected[:visible_for] if expected[:visible_for]
     actual.preference_cpu == expected[:preference_cpu] if expected[:preference_cpu]
     actual.preference_memory == expected[:preference_memory] if expected[:preference_memory]
     actual.preference_disk == expected[:preference_disk] if expected[:preference_disk]
