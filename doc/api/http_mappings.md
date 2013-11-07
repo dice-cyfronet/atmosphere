@@ -1,6 +1,6 @@
 ## List http mappings
 
-Get a list of http mappings
+Get a list of http mappings. A regular user only is allowed to see the the appliances related to their own appliances.
 
 ```
 GET /http_mappings
