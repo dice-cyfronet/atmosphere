@@ -6,8 +6,8 @@
     %label{for: "description"} Description
     =hb "view Ember.TextArea valueBinding='description' class='form-control' rows='2'"
   .form-group
-    %label{for: "visibility"} Visibility
-    =hb "view Ember.Select contentBinding='visibilities' valueBinding='visibility'"
+    %label{for: "visible_for"} Visibility
+    =hb "view Ember.Select contentBinding='visibilities' valueBinding='visible_for'"
     %label{for: "description"} Author
     =hb "view Ember.Select contentBinding='users' optionLabelPath='content.login' optionValuePath='content.id' prompt='Pick an owner' selectionBinding='author'"
     .pull-right

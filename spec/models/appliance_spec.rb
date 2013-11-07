@@ -96,10 +96,7 @@ describe Appliance do
   end
 
   context '#generate_proxy_conf' do
-    let(:generator) { double }
     before do
-      ProxyConfWorker.stub(:new).and_return(generator)
-      # VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
       Optimizer.instance.stub(:run)
     end
 
@@ -110,7 +107,7 @@ describe Appliance do
 
       context 'generates proxy conf' do
         before do
-          expect(generator).to receive(:perform).with(cs.id)
+          expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
         end
 
         it 'after appliance is destroyed' do
@@ -129,8 +126,8 @@ describe Appliance do
 
         context 'generates proxy conf for both sites' do
           before do
-            expect(generator).to receive(:perform).with(cs.id)
-            expect(generator).to receive(:perform).with(cs2.id)
+            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
+            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs2)
           end
 
           it 'after appliance is destroyed' do
@@ -145,7 +142,7 @@ describe Appliance do
 
       context 'does not generate proxy conf for any compute site' do
         before do
-          expect(generator).to_not receive(:perform)
+          expect(ProxyConfWorker).to_not receive(:regeneration_required)
         end
 
         it 'after appliance is destroyed' do

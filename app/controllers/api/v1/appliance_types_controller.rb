@@ -37,7 +37,7 @@ module Api
       private
 
       def appliance_type_params
-        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visibility, :author, :preference_cpu, :preference_memory, :preference_disk, :security_proxy)
+        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_for, :author, :preference_cpu, :preference_memory, :preference_disk, :security_proxy)
       end
     end
   end

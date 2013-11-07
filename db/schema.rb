@@ -44,11 +44,11 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
 
   create_table "appliance_types", force: true do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                null: false
     t.text     "description"
-    t.boolean  "shared",            default: false,         null: false
-    t.boolean  "scalable",          default: false,         null: false
-    t.string   "visibility",        default: "unpublished", null: false
+    t.boolean  "shared",            default: false,   null: false
+    t.boolean  "scalable",          default: false,   null: false
+    t.string   "visible_for",       default: "owner", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
@@ -81,11 +81,12 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id",                        null: false
+    t.string   "site_id",                                   null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",  default: "private"
+    t.string   "site_type",             default: "private"
     t.string   "technology"
+    t.boolean  "regenerate_proxy_conf", default: false
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"

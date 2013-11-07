@@ -10,6 +10,7 @@
 #
 
 class ApplianceConfigurationInstance < ActiveRecord::Base
+  include ParamsRegexpable
 
   belongs_to :appliance_configuration_template
 
@@ -19,15 +20,5 @@ class ApplianceConfigurationInstance < ActiveRecord::Base
     self.payload = raw_payload.gsub(/#{param_regexp}/) do |param_name|
           params[param_name[param_range]]
         end
-  end
-
-  private
-
-  def param_range
-    @param_range ||= eval(Air.config.config_param.range)
-  end
-
-  def param_regexp
-    Air.config.config_param.regexp
   end
 end

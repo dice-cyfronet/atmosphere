@@ -14,17 +14,19 @@ describe ApplianceProxyConf do
     let(:cs) { create(:compute_site) }
     let(:appl_type) { create(:appliance_type)}
 
+    subject { ApplianceProxyConf.new(appl) }
+
     context 'when production appliance started on cloud site' do
       # cs
       # |-> appl_type
       #   |-> appl
       #     |-> vm1
       #     |-> vm2
+      #     |-> vm_without_ip
       let(:vm1) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.10")}
       let(:vm2) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.11")}
-      let(:appl) { create(:appliance, appliance_type: appl_type, virtual_machines: [ vm1, vm2])}
-
-      subject { ApplianceProxyConf.new(appl) }
+      let(:vm_without_ip) { create(:virtual_machine, compute_site: cs, ip: nil) }
+      let(:appl) { create(:appliance, appliance_type: appl_type, virtual_machines: [ vm1, vm2, vm_without_ip])}
 
       context 'with http port mapping template' do
         let!(:http_pmt) { create(:port_mapping_template, appliance_type: appl_type, application_protocol: :http)}
@@ -108,6 +110,31 @@ describe ApplianceProxyConf do
       end
     end
 
+    context 'when vm assigned to appliance has blank IP' do
+      # cs
+      # |-> appl_type
+      #   |-> appl
+      #     |-> vm_without_ip
+      let(:vm_without_ip) { create(:virtual_machine, compute_site: cs, ip: nil) }
+      let(:appl) { create(:appliance, appliance_type: appl_type, virtual_machines: [ vm_without_ip])}
+
+      context 'with http pmt' do
+        let!(:http_pmt) { create(:port_mapping_template, appliance_type: appl_type, application_protocol: :http)}
+
+        it 'does not include this redirection into redirections list' do
+          expect(subject.generate).to eq []
+        end
+      end
+
+      context 'with https pmt' do
+        let!(:http_pmt) { create(:port_mapping_template, appliance_type: appl_type, application_protocol: :https)}
+      end
+
+      context 'with http_https pmt' do
+        let!(:http_pmt) { create(:port_mapping_template, appliance_type: appl_type, application_protocol: :http_https)}
+      end
+    end
+
     context 'when development appliance started on cloud site' do
       # app_type
       #   |-> http_pmt
@@ -120,8 +147,6 @@ describe ApplianceProxyConf do
       let(:vm) { create(:virtual_machine, compute_site: cs, ip: "10.100.8.10")}
       let(:appl) { create(:appliance, appliance_type: appl_type, appliance_set: appliance_set, virtual_machines: [ vm ])}
       let(:dev_pmt) { appl.dev_mode_property_set.port_mapping_templates.first }
-
-      subject { ApplianceProxyConf.new(appl) }
 
       it 'creates http redirection for pmt copied from appliance type' do
         expect(subject.generate).to eq [

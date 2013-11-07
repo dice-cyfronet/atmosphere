@@ -21,7 +21,7 @@ class Optimizer
         unless appliance.save
           Rails.logger.error appliance.errors.to_json
         end
-        ProxyConfWorker.new.perform(vm_to_be_reused.compute_site.id)
+        ProxyConfWorker.regeneration_required(vm_to_be_reused.compute_site)
       else
         # TODO orders templates based on cost model
         tmpl = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type).first

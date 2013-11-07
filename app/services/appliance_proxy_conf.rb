@@ -4,15 +4,21 @@ class ApplianceProxyConf
   end
 
   def generate
+    ips.empty? ? [] : generate_proxy_conf
+  end
+
+  private
+
+  def generate_proxy_conf
     pm_templates.inject([]) do |tab, pmt|
-      tab << generate_redirection_and_port_mapping(pmt, ips, :http) if pmt.http?
-      tab << generate_redirection_and_port_mapping( pmt, ips, :https) if pmt.https?
+      tab << generate_redirection_and_port_mapping(pmt, :http) if pmt.http?
+      tab << generate_redirection_and_port_mapping( pmt, :https) if pmt.https?
       tab
     end
   end
 
-  def generate_redirection_and_port_mapping(pmt, ips, type)
-    redirection = redirection(pmt, ips, type)
+  def generate_redirection_and_port_mapping(pmt, type)
+    redirection = redirection(pmt, type)
     properties = properties(pmt)
     redirection[:properties] = properties if properties.size > 0
     get_or_create_port_mapping(pmt, type, redirection[:path])
@@ -28,14 +34,14 @@ class ApplianceProxyConf
   end
 
   def ips
-    @ips ||= @appliance.virtual_machines.collect(&:ip)
+    @ips ||= @appliance.virtual_machines.collect(&:ip).reject(&:blank?)
   end
 
   def pm_templates
     @appliance.development? ? @appliance.dev_mode_property_set.port_mapping_templates : @appliance.appliance_type.port_mapping_templates
   end
 
-  def redirection(pmt, ips, type)
+  def redirection(pmt, type)
     {
       path: path(pmt),
       workers: ips.collect { |ip| "#{ip}:#{pmt.target_port}"},

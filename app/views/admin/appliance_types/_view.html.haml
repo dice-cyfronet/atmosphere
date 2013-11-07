@@ -14,10 +14,12 @@
       Delete
 
   %h5
-    - if @appliance_type.visibility == 'published'
-      %span.label.label-success Published
+    - if @appliance_type.visible_for == 'owner'
+      %span.label.label-primary Only for owner
+    - elsif @appliance_type.visible_for == 'developer'
+      %span.label.label-warning Only for developers
     - else
-      %span.label.label-warning Unpublished
+      %span.label.label-success For all
     - if @appliance_type.shared
       %span.label.label-info Shared
     - if @appliance_type.scalable

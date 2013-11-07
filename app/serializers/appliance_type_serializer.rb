@@ -1,7 +1,7 @@
 class ApplianceTypeSerializer < ActiveModel::Serializer
   embed :ids
 
-  attributes :id, :name, :description, :shared, :scalable, :visibility
+  attributes :id, :name, :description, :shared, :scalable, :visible_for
   attributes :preference_cpu, :preference_memory, :preference_disk
 
   has_one :author, key: :author
