@@ -45,6 +45,8 @@ RSpec::Matchers.define :http_mapping_eq do |expected|
     actual['id'] == expected.id
     actual['url'] == expected.url
     actual['application_protocol'] == expected.application_protocol
+    actual['appliance_id'] == expected.appliance_id
+    actual['port_mapping_template_id'] == expected.port_mapping_template_id
   end
 end
 
