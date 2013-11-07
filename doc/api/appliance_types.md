@@ -58,7 +58,7 @@ Parameters:
 }
 ```
 
-The `visible_for` parameter distinguish when such appliance type can be used. Allowed values are as follow:
+<a name="visible_for"></a> The `visible_for` parameter distinguish when such appliance type can be used. Allowed values are as follow:
 
 + `owner` - Appliance Type can be started in `development` and `production` mode but only by the Appliance Type `owner` (and `admin`). This kind of Appliance Types are only visible for the Appliance Type `owner` (and `admin`, when `all` flag is set to `true`)
 + `all` - Appliance Type can be started in `development` and `production` mode by `all` users

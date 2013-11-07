@@ -72,6 +72,12 @@ Parameters:
 + `appliance_set_id` (required) - The ID of appliance set into which appliance will be added
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
 
+---
+
+Not all appliance types can be added into all appliance sets. For details please take a look at [Appliance Type `visible_for` parameter description](appliance_types#visible_for). E.g. user is able to start Appliance Type with `visible_for` param set to `owner` only when he/she is  an owner of this Appliance Type, otherwise `403` (Forbidden) will be returned and no Appliance will be added into Appliance Set.
+
+---
+
 ## Delete appliance
 
 Delete user appliance. You need to be an appliance owner (or admin) do delete it.
