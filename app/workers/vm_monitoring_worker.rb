@@ -20,8 +20,4 @@ class VmMonitoringWorker
     #remove deleted VMs without calling cloud callbacks
     all_site_vms.each { |vm| vm.destroy(false) }
   end
-
-  def error(message)
-    Rails.logger.error "MONITORING: #{message}"
-  end
 end

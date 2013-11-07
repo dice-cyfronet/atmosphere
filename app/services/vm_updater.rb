@@ -4,8 +4,6 @@ class VmUpdater
     @server = server
   end
 
-  attr_reader :site, :server
-
   def update
     vm.source_template = source_template
     vm.name = server.name
@@ -18,6 +16,10 @@ class VmUpdater
 
     vm
   end
+
+  private
+
+  attr_reader :site, :server
 
   def vm
     @vm ||= site.virtual_machines.find_or_initialize_by(id_at_site: server.id)
@@ -33,5 +35,9 @@ class VmUpdater
 
   def update_ips
     vm.ip = server.addresses['private'].first['addr'] if server.addresses
+  end
+
+  def error(message)
+    Rails.logger.error "MONITORING: #{message}"
   end
 end
