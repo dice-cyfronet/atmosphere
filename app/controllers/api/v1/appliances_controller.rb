@@ -21,6 +21,9 @@ module Api
       def create
         @appliance_set.transaction do
           @appliance.appliance_type = config_template.appliance_type
+
+          raise CanCan::AccessDenied if cannot_create_appliance?
+
           @appliance.appliance_configuration_instance = configuration_instance
           @appliance.save!
           render json: @appliance, status: :created
@@ -36,6 +39,17 @@ module Api
       end
 
       private
+
+      def cannot_create_appliance?
+        type = @appliance.appliance_type
+        visible_for = type.visible_for
+
+        case visible_for.to_sym
+          when :owner     then @appliance.appliance_set.user != type.author
+          when :developer then !@appliance.appliance_set.appliance_set_type.development?
+          else false
+        end
+      end
 
       def unify_appliance_set_id
         params[:appliance_set_id] ||= params[:appliance][:appliance_set_id] if params[:appliance]
