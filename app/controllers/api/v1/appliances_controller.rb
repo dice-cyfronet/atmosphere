@@ -3,9 +3,7 @@ module Api
     class AppliancesController < Api::ApplicationController
       before_filter :unify_appliance_set_id, only: :create
       load_resource :appliance_set, only: :create
-      load_resource :appliance_set, only: :index, if: :in_set_context?
       before_filter :create_appliance, only: :create
-      before_filter :index_appliances, only: :index
       load_and_authorize_resource :appliance
       before_filter :check_for_conflict!, only: :create
       respond_to :json
@@ -87,20 +85,6 @@ module Api
 
       def config_params
         params[:appliance][:params] || {}
-      end
-
-      def index_appliances
-        authorize! :show, @appliance_set if @appliance_set
-
-        if current_user
-          if load_all? and not in_set_context?
-            @appliances = Appliance.all
-          else
-            as_where = {user_id: current_user.id}
-            as_where[:id] = params[:appliance_set_id] if params[:appliance_set_id]
-            @appliances = Appliance.joins(:appliance_set).where(appliance_sets: as_where)
-          end
-        end
       end
 
       def in_set_context?

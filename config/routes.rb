@@ -55,9 +55,7 @@ Air::Application.routes.draw do
       json_resources :appliance_types
       json_resources :appliance_configuration_templates
       json_resources :http_mappings
-      resources :appliance_sets, only: [:index, :show, :create, :update, :destroy] do
-        resources :appliances, only: [:index, :create]
-      end
+      json_resources :appliance_sets
       resources :appliances, only: [:index, :show, :create, :destroy]
       resources :virtual_machines, only: [:index, :show]
       json_resources :users

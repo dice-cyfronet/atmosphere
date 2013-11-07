@@ -189,97 +189,11 @@ describe Api::V1::ApplianceSetsController do
     end
   end
 
-  describe 'GET /appliance_sets/{id}/appliances' do
-    let!(:appliance1) { create(:appliance, appliance_set: portal_set) }
-    let!(:appliance2) { create(:appliance, appliance_set: portal_set) }
-    let!(:other_set_appliance) { create(:appliance, appliance_set: workflow1_set) }
-    let!(:other_user_set) { create(:appliance_set) }
-
-    context 'when unauthenticated' do
-      it 'returns 401 Unauthorized error' do
-        get api("/appliance_sets/#{portal_set.id}/appliances")
-        expect(response.status).to eq 401
-      end
-    end
-
-    context 'when authenticated as user' do
-      it 'returns 200 on success' do
-        get api("/appliance_sets/#{portal_set.id}/appliances", user)
-        expect(response.status).to eq 200
-      end
-
-      it 'returns appliances belonging to appliance set' do
-        get api("/appliance_sets/#{portal_set.id}/appliances", user)
-        expect(appliances_response).to be_an Array
-        expect(appliances_response.size).to eq 2
-
-        expect(appliances_response[0]).to appliance_eq appliance1
-        expect(appliances_response[1]).to appliance_eq appliance2
-      end
-
-      it 'returns 401 Forbidden when getting appliances from not owned appliance set' do
-        get api("/appliance_sets/#{other_user_set.id}/appliances", user)
-        expect(response.status).to eq 403
-      end
-    end
-
-    context 'when authenticated as admin' do
-      it 'returns appliances belonging to other user appliance set' do
-        get api("/appliance_sets/#{other_user_set.id}/appliances", admin)
-        expect(response.status).to eq 200
-      end
-    end
-  end
-
-  describe 'POST /appliance_sets/{id}/appliances' do
-    context 'when unauthenticated' do
-      it 'returns 401 Unauthorized error' do
-        post api("/appliance_sets/#{portal_set.id}/appliances")
-        expect(response.status).to eq 401
-      end
-    end
-
-    context 'when authenticated as user' do
-      let(:static_config) { create(:static_config_template) }
-      let(:static_request_body) do
-        {
-          appliance: {
-            configuration_template_id: static_config.id
-          }
-        }
-      end
-
-      it 'returns 201 Created on success' do
-        post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
-        expect(response.status).to eq 201
-      end
-
-      context 'with static config' do
-        it 'creates config instance' do
-          expect {
-            post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
-          }.to change { ApplianceConfigurationInstance.count}.by(1)
-        end
-
-        it 'creates new appliance' do
-          expect {
-            post api("/appliance_sets/#{portal_set.id}/appliances", user), static_request_body
-          }.to change { Appliance.count}.by(1)
-        end
-      end
-    end
-  end
-
-
   def ases_response
     json_response['appliance_sets']
   end
 
   def as_response
     json_response['appliance_set']
-  end
-
-  def appliances_response
-    json_response['appliances']
   end
 end
