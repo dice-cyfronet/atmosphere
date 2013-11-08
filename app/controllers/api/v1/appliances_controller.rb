@@ -1,13 +1,15 @@
 module Api
   module V1
     class AppliancesController < Api::ApplicationController
+      include Filterable
+
       before_filter :create_appliance, only: :create
       load_and_authorize_resource :appliance
       before_filter :check_for_conflict!, only: :create
       respond_to :json
 
       def index
-        respond_with @appliances
+        respond_with @appliances.where(filter)
       end
 
       def show

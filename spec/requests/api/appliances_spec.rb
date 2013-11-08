@@ -39,6 +39,17 @@ describe Api::V1::AppliancesController do
         expect(appliances_response[0]).to appliance_eq user_appliance1
         expect(appliances_response[1]).to appliance_eq user_appliance2
       end
+
+      context 'search' do
+        let(:second_user_as) { create(:appliance_set, user: user) }
+        let!(:second_as_appliance) { create(:appliance, appliance_set: second_user_as) }
+
+        it 'returns only appliances belonging to select appliance set' do
+          get api("/appliances?appliance_set_id=#{second_user_as.id}", user)
+          expect(appliances_response.size).to eq 1
+          expect(appliances_response[0]).to appliance_eq second_as_appliance
+        end
+      end
     end
 
     context 'when authenticated as admin' do
