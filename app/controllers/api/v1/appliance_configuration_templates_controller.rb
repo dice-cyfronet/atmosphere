@@ -1,6 +1,8 @@
 module Api
   module V1
     class ApplianceConfigurationTemplatesController < Api::ApplicationController
+      include Filterable
+
       load_and_authorize_resource :appliance_configuration_template
       respond_to :json
 
@@ -31,14 +33,6 @@ module Api
       end
 
       private
-
-      def filter
-        ApplianceConfigurationTemplate.new.attributes.keys.inject({}) do |filter, attr|
-          key = attr.to_sym
-          filter[key] = params[key].to_s.split(',') if params[key]
-          filter
-        end
-      end
 
       def appliance_configuration_template_params
         params.require(:appliance_configuration_template).permit(:name, :payload, :appliance_type_id)

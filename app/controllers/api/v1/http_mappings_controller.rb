@@ -1,24 +1,18 @@
 module Api
   module V1
     class HttpMappingsController < Api::ApplicationController
+      include Filterable
+
       load_and_authorize_resource :http_mapping
-      before_filter :find_by_appliance_id, only: :index
       respond_to :json
 
       def index
-        respond_with @http_mappings
+        respond_with @http_mappings.where(filter)
       end
 
       def show
         respond_with @http_mapping
       end
-
-      def find_by_appliance_id
-        unless params[:appliance_id].blank?
-          @http_mappings = @http_mappings.where appliance_id: params[:appliance_id]
-        end
-      end
-
     end
   end
 end
