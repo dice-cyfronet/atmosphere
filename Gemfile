@@ -50,7 +50,7 @@ gem 'omniauth-vph', git: 'http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.
 gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
 gem 'haml-rails'
-gem 'bootstrap-sass', '~>3.0.1.0.rc'
+gem 'bootstrap-sass', '~>3.0'
 
 gem 'font-awesome-rails'
 
