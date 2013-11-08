@@ -52,6 +52,7 @@ Air::Application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
+      resources :compute_sites, only: [:index, :show]
       json_resources :appliance_types
       json_resources :appliance_configuration_templates
       json_resources :http_mappings

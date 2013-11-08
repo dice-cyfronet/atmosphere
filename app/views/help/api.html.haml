@@ -8,7 +8,7 @@
     %hr
 
     #ul.nav.nav-pills.nav-stacked
-      - %w(README appliance_types appliance_configuration_templates appliance_sets appliances http_mappings virtual_machines user_keys security_proxies security_policies).each do |file|
+      - %w(README compute_sites appliance_types appliance_configuration_templates appliance_sets appliances http_mappings virtual_machines user_keys security_proxies security_policies).each do |file|
         = nav_tab :category, file do
           = link_to file.titleize, help_api_file_path(file)
   .col-md-10

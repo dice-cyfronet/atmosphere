@@ -126,3 +126,27 @@ RSpec::Matchers.define :vm_fog_data_equals do |fog_vm_data, template|
     actual.source_template == template
   end
 end
+
+RSpec::Matchers.define :compute_site_basic_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['site_id'] == expected.site_id &&
+    actual['name'] == expected.name &&
+    actual['location'] == expected.location &&
+    actual['site_type'] == expected.site_type &&
+    actual['technology'] == expected.technology &&
+    actual['config'] == nil
+  end
+end
+
+RSpec::Matchers.define :compute_site_full_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['site_id'] == expected.site_id &&
+    actual['name'] == expected.name &&
+    actual['location'] == expected.location &&
+    actual['site_type'] == expected.site_type &&
+    actual['technology'] == expected.technology &&
+    actual['config'] == expected.config
+  end
+end

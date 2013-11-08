@@ -27,6 +27,8 @@ class Ability
   end
 
   def initialize_normal_user_roles(user)
+    can :read, ComputeSite
+
     ## Appliance sets
     can :create, ApplianceSet, appliance_set_type: 'portal'
     can :create, ApplianceSet, appliance_set_type: 'workflow'
