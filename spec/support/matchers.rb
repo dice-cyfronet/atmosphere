@@ -50,6 +50,16 @@ RSpec::Matchers.define :http_mapping_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :port_mapping_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['public_ip'] == expected.public_ip &&
+    actual['source_port'] == expected.source_port &&
+    actual['port_mapping_template_id'] == expected.port_mapping_template.id &&
+    actual['virtual_machine_id'] == expected.virtual_machine.id
+  end
+end
+
 RSpec::Matchers.define :config_template_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&

@@ -56,8 +56,12 @@ class Ability
       ApplianceSet.with_vm(vm).where(user_id: user.id).count > 0
     end
 
-    ## Http mappings
+    ## Mappings
     can [:read], HttpMapping, appliance: { appliance_set: { user_id: user.id } }
+    can :index, PortMapping, virtual_machine: { appliances: { appliance_set: { user_id: user.id } } }
+    can :show, PortMapping do |pm|
+      ApplianceSet.with_vm(pm.virtual_machine).where(user_id: user.id).count > 0
+    end
 
     ## Security proxies and policies
     can :create, owned_payloads
