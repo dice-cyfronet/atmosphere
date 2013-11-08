@@ -32,6 +32,10 @@ Get all details of a compute site.
 GET /compute_sites/:id
 ```
 
+Parameters:
+
++ `id` (required) - The ID of a compute site.
+
 ```json
 {
   "compute_sites":
