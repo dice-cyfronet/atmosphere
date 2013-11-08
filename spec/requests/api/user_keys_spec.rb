@@ -6,8 +6,8 @@ describe Api::V1::UserKeysController do
   let(:user)  { create(:user) }
   let(:admin) { create(:admin) }
 
-  let!(:user_key1) { create(:user_key, user: user) }
-  let!(:user_key2) { create(:user_key, user: user) }
+  let!(:user_key1) { create(:user_key, user: user, name: 'first') }
+  let!(:user_key2) { create(:user_key, user: user, name: 'second') }
   let!(:other_user_key) { create(:user_key) }
   let!(:admin_key) { create(:user_key, user: admin) }
 
