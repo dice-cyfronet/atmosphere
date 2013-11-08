@@ -43,11 +43,6 @@ describe Api::V1::ApplianceSetsController do
         expect(ases_response[3]).to appliance_set_eq development_set
       end
 
-      it 'returns all sets for admin with all flag set to true' do
-        get api('/appliance_sets?all=true', admin)
-        expect(ases_response.size).to eq 5
-      end
-
       context 'search' do
         it 'returns only workflow appliance sets' do
           get api('/appliance_sets?appliance_set_type=workflow', user)
@@ -55,6 +50,13 @@ describe Api::V1::ApplianceSetsController do
           expect(ases_response[0]).to appliance_set_eq workflow1_set
           expect(ases_response[1]).to appliance_set_eq workflow2_set
         end
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'returns all sets for admin with all flag set to true' do
+        get api('/appliance_sets?all=true', admin)
+        expect(ases_response.size).to eq 5
       end
     end
   end
