@@ -33,6 +33,14 @@ describe Api::V1::UserKeysController do
         expect(user_keys_response[0]).to user_key_eq user_key1
         expect(user_keys_response[1]).to user_key_eq user_key2
       end
+
+      context 'search' do
+        it 'returns key with given name' do
+          get api("/user_keys?name=#{user_key1.name}", user)
+          expect(user_keys_response.size).to eq 1
+          expect(user_keys_response[0]).to user_key_eq user_key1
+        end
+      end
     end
 
     context 'when authenticated as admin' do

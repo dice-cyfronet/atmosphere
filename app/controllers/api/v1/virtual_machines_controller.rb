@@ -15,8 +15,11 @@ module Api
       private
 
       def filter
+        filter = super
         appliance_id = params[:appliance_id]
-        appliance_id.blank? ? {} : {appliances: {id: appliance_id}}
+        filter[:appliances] = {id: appliance_id} unless appliance_id.blank?
+
+        filter
       end
     end
   end

@@ -1,8 +1,6 @@
 module Api
   module V1
     class AppliancesController < Api::ApplicationController
-      include Filterable
-
       before_filter :create_appliance, only: :create
       load_and_authorize_resource :appliance
       before_filter :check_for_conflict!, only: :create

@@ -6,7 +6,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @security_policies
+        respond_with @security_policies.where(filter)
       end
 
       def show

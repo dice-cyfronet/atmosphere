@@ -47,6 +47,15 @@ describe Api::V1::ApplianceSetsController do
         get api('/appliance_sets?all=true', admin)
         expect(ases_response.size).to eq 5
       end
+
+      context 'search' do
+        it 'returns only workflow appliance sets' do
+          get api('/appliance_sets?appliance_set_type=workflow', user)
+          expect(ases_response.size).to eq 2
+          expect(ases_response[0]).to appliance_set_eq workflow1_set
+          expect(ases_response[1]).to appliance_set_eq workflow2_set
+        end
+      end
     end
   end
 

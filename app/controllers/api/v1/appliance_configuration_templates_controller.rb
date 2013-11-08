@@ -1,8 +1,6 @@
 module Api
   module V1
     class ApplianceConfigurationTemplatesController < Api::ApplicationController
-      include Filterable
-
       load_and_authorize_resource :appliance_configuration_template
       respond_to :json
 

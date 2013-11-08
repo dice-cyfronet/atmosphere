@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @appliance_types
+        respond_with @appliance_types.where(filter)
       end
 
       def show

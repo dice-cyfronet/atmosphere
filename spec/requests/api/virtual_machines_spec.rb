@@ -35,10 +35,18 @@ describe Api::V1::VirtualMachinesController do
         expect(vms_response[1]).to vm_eq vm2
       end
 
-      it 'returns vms specific for given appliance' do
-        get api("/virtual_machines?appliance_id=#{appl2.id}", user)
-        expect(vms_response.size).to eq 1
-        expect(vms_response[0]).to vm_eq vm2
+      context 'search' do
+        it 'returns vms specific for given appliance' do
+          get api("/virtual_machines?appliance_id=#{appl2.id}", user)
+          expect(vms_response.size).to eq 1
+          expect(vms_response[0]).to vm_eq vm2
+        end
+
+        it 'returns only vms started on selected compute site' do
+          get api("/virtual_machines?compute_site_id=#{vm1.compute_site.id}", user)
+          expect(vms_response.size).to eq 1
+          expect(vms_response[0]).to vm_eq vm1
+        end
       end
     end
 

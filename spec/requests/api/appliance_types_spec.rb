@@ -43,7 +43,18 @@ describe Api::V1::ApplianceTypesController do
         expect(ats_response[0]).to appliance_type_eq at2
       end
 
-      pending 'search'
+      context 'search' do
+        let!(:second_user_at) { create(:appliance_type, visible_for: :all, author: user) }
+
+        it 'returns only appliance types created by the user' do
+          get api("/appliance_types?user_id=#{user.id}", user)
+          expect(ats_response.size).to eq 2
+
+          expect(ats_response[0]).to appliance_type_eq at1
+          expect(ats_response[1]).to appliance_type_eq second_user_at
+        end
+      end
+
       pending 'pagination'
     end
 

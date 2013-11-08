@@ -6,7 +6,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @security_proxies
+        respond_with @security_proxies.where(filter)
       end
 
       def show

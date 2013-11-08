@@ -6,6 +6,7 @@ module Api
     check_authorization
 
     include CancanStrongParams
+    include Filterable
 
     rescue_from CanCan::AccessDenied do |exception|
       if current_user.nil?
