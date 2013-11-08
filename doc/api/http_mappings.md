@@ -30,7 +30,7 @@ GET /http_mappings/:id
 ```
 Parameters:
 
-+ `id` (required) - The ID on a http mapping
++ `id` (required) - The ID of a http mapping
 
 ```json
 {
