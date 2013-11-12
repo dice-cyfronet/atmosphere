@@ -41,14 +41,14 @@ class ComputeSite < ActiveRecord::Base
   end
 
   def cloud_client
-    Air.cloud_clients[self.site_id] || register_cloud_client
+    Air.get_cloud_client(self.site_id) || register_cloud_client
   end
 
   private
   def register_cloud_client
     cloud_site_conf = JSON.parse(self.config).symbolize_keys
     client = Fog::Compute.new(cloud_site_conf)
-    Air.cloud_clients[self.site_id] = client
+    Air.register_cloud_client(self.site_id, client)
     client
   end
 
