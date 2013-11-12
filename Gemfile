@@ -3,8 +3,10 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.1'
 
-# Use mysql as the database for Active Record ...
-gem 'mysql2'
+# Supported DBs
+gem 'mysql2', group: :mysql
+gem 'pg', group: :postgres
+
 # ... and provide means for referential integrity ...
 gem 'foreigner'
 # ... with some sugar over string enumerables
