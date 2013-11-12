@@ -5,8 +5,12 @@ class VmTemplateMonitoringWorker
   sidekiq_options :retry => false
 
   def perform(site_id)
-    site = ComputeSite.find(site_id)
-    update_images(site, site.cloud_client.images)
+    begin
+      site = ComputeSite.find(site_id)
+      update_images(site, site.cloud_client.images)
+    rescue Excon::Errors::HTTPStatusError => e
+      Rails.logger.error "Unable to perform Templates monitoring job: #{e}"
+    end
   end
 
   private

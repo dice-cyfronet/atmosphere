@@ -5,8 +5,12 @@ class VmMonitoringWorker
   sidekiq_options :retry => false
 
   def perform(site_id)
-    site = ComputeSite.find(site_id)
-    update_vms(site, site.cloud_client.servers)
+    begin
+      site = ComputeSite.find(site_id)
+      update_vms(site, site.cloud_client.servers)
+    rescue Excon::Errors::HTTPStatusError => e
+      Rails.logger.error "Unable to perform VMs monitoring job: #{e}"
+    end
   end
 
   private

@@ -86,6 +86,23 @@ describe VmTemplateMonitoringWorker do
         }.to change{ VirtualMachineTemplate.count }.by(-1)
       end
     end
+
+    context 'when fog error occurs' do
+      let(:cloud_client) { double }
+      let(:logger) { double }
+
+      before do
+        Rails.stub(:logger).and_return(logger)
+        expect(logger).to receive(:error)
+
+        ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
+        allow(cloud_client).to receive(:images).and_raise(Excon::Errors::Unauthorized.new 'error')
+      end
+
+      it 'logs error into rails logs' do
+        subject.perform(cyfronet_folsom.id)
+      end
+    end
   end
 
   def image(id, name, status)
