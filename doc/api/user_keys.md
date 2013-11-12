@@ -22,7 +22,7 @@ GET /user_keys
 }
 ```
 
-## Details of an user key
+## Details of a user key
 
 ```
 GET /user_keys/:id
@@ -30,7 +30,7 @@ GET /user_keys/:id
 
 Parameters:
 
-+ `id` (required) - The ID of an user key
++ `id` (required) - The ID of a user key
 
 ```json
 {
@@ -76,4 +76,4 @@ DELETE /user_keys/:id
 
 Parameters:
 
-+ `id` (required) - The ID of an user key
++ `id` (required) - The ID of a user key
