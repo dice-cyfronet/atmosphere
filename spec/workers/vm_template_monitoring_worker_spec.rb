@@ -10,6 +10,7 @@ describe VmTemplateMonitoringWorker do
     end
 
     it { should be_retryable false }
+    it { should be_processed_in :monitoring }
   end
 
   context 'updating cloud site images' do

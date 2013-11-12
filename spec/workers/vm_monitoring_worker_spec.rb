@@ -11,6 +11,7 @@ describe VmMonitoringWorker do
     end
 
     it { should be_retryable false }
+    it { should be_processed_in :monitoring }
   end
 
   context 'updating cloud site virtual machines' do
