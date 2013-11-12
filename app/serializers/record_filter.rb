@@ -9,11 +9,14 @@ module RecordFilter
     end
 
     def page_with_options(options)
-      page = options.scope_with_filters.paginate(
+      if options.page?
+        options.scope_with_filters.paginate(
           page: options.page,
           per_page: options.page_size
-      )
-      page
+        )
+      else
+        options.scope_with_filters
+      end
     end
 
     def serializable_filters
@@ -30,7 +33,6 @@ module RecordFilter
     def filterable_by
       filters = [self.model_class.primary_key.to_sym]
       filters += self.model_class.reflect_on_all_associations(:belongs_to).map(&:foreign_key).map(&:to_sym)
-
       filters += @serializable_filters if @serializable_filters
       filters.uniq
     end

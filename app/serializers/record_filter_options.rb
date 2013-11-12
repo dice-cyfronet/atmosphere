@@ -6,7 +6,7 @@ class RecordFilterOptions
     params.symbolize_keys! if params.respond_to?(:symbolize_keys!)
 
     @page = 1
-    @page_size = DEFAULT_PAGE_SIZE #RestPack::Serializer.config.page_size
+    @page_size = nil;
     @includes = []
     @filters = filters_from_params(params, serializer)
     @serializer = serializer
@@ -17,6 +17,10 @@ class RecordFilterOptions
     @page = params[:page].to_i if params[:page]
     @page_size = params[:page_size].to_i if params[:page_size]
     @includes = params[:includes].split(',').map(&:to_sym) if params[:includes]
+  end
+
+  def page?
+    @page_size.nil?
   end
 
   def scope_with_filters
@@ -30,10 +34,6 @@ class RecordFilterOptions
     end
 
     @scope.where(scope_filter)
-  end
-
-  def default_page_size?
-    @page_size == DEFAULT_PAGE_SIZE #RestPack::Serializer.config.page_size
   end
 
   def filters_as_url_params
