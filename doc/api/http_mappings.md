@@ -1,6 +1,6 @@
 ## List http mappings
 
-Get a list of http mappings. A regular user is allowed to see only http mappings related to their own appliances. Administrator is able to see all http mappings by adding flag `all` set to `true`.
+Get a list of http mappings. A regular user is allowed to see only http mappings related to their own appliances. Administrator is able to see all http mappings by adding query parameter `all` set to `true`.
 
 ```
 GET /http_mappings
