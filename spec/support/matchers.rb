@@ -49,6 +49,16 @@ RSpec::Matchers.define :config_template_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :port_mapping_template_eq do |expected|
+  match do |actual|
+    actual['id'] = expected.id
+    actual['transport_protocol'] = expected.transport_protocol
+    actual['application_protocol'] = expected.application_protocol
+    actual['service_name'] = expected.service_name
+    actual['target_port'] = expected.target_port
+    (actual['appliance_type_id'] = expected.appliance_type.id) or (actual['dev_mode_property_set_id'] = expected.dev_mode_property_set.id)
+  end
+end
 
 RSpec::Matchers.define :appliance_eq do |expected|
   match do |actual|
