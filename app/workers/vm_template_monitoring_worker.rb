@@ -2,6 +2,7 @@ class VmTemplateMonitoringWorker
   include Sidekiq::Worker
 
   sidekiq_options queue: :monitoring
+  sidekiq_options :retry => false
 
   def perform(site_id)
     site = ComputeSite.find(site_id)

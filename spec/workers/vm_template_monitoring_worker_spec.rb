@@ -8,6 +8,8 @@ describe VmTemplateMonitoringWorker do
     it 'responds to #perform' do
       expect(subject).to respond_to(:perform)
     end
+
+    it { should be_retryable false }
   end
 
   context 'updating cloud site images' do
