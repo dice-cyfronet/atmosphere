@@ -25,6 +25,7 @@ module Api
     end
 
     rescue_from Air::Conflict do |exception|
+      log_user_action "record conflict #{exception}"
       render json: {message: exception}, status: :conflict
     end
 
@@ -34,7 +35,8 @@ module Api
 
     protected
     def render_error(model_obj)
-        render json: model_obj.errors, status: :unprocessable_entity
+      log_user_action "record invalid #{model_obj.errors.to_json}"
+      render json: model_obj.errors, status: :unprocessable_entity
     end
 
     def load_all?
@@ -46,6 +48,10 @@ module Api
     end
 
     private
+
+    def log_user_action msg
+      Air.action_logger.info "[#{current_user.login}] #{msg}"
+    end
 
     def current_ability
       @current_ability ||= Ability.new(current_user, load_admin_abilities?)

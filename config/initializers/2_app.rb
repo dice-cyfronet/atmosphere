@@ -10,4 +10,8 @@ module Air
   def self.cloud_clients
     @@cloud_clients
   end
+
+  def self.action_logger
+    @@action_logger ||= Logger.new(Rails.root.join('log', 'user_actions.log'))
+  end
 end
