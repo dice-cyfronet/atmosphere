@@ -5,12 +5,13 @@ module Api
       respond_to :json
 
       def index
-        respond_with @http_mappings.where(filter)
+        respond_with HttpMappingSerializer.page(params, @http_mappings)
       end
 
       def show
         respond_with @http_mapping
       end
+
     end
   end
 end

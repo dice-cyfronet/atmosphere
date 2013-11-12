@@ -347,6 +347,7 @@ GEM
     unf_ext (0.0.6)
     warden (1.2.3)
       rack (>= 1.0)
+    will_paginate (3.0.5)
 
 PLATFORMS
   ruby
@@ -409,3 +410,4 @@ DEPENDENCIES
   turbolinks
   uglifier (>= 1.3.0)
   unf
+  will_paginate (~> 3.0.5)

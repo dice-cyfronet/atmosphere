@@ -46,6 +46,28 @@ describe Api::V1::HttpMappingsController do
         expect(hms_response[0]).to http_mapping_eq hm_a
       end
     end
+
+    context 'when filter params speciffied' do
+      let(:user_a)  { create(:user) }
+      let(:as_a) { create(:appliance_set, user: user_a) }
+      let(:appl_a) { create(:appliance, appliance_set: as_a) }
+      let(:appl_a2) { create(:appliance, appliance_set: as_a) }
+      let!(:hm_a) { create(:http_mapping, appliance: appl_a) }
+      let!(:hm_a2) { create(:http_mapping, appliance: appl_a2) }
+      it 'finds only mapping with requested id' do
+        get api("/http_mappings?id=#{hm_a2.id}", user_a)
+        expect(hms_response).to be_an Array
+
+        expect(hms_response.size).to eq 1
+        expect(hms_response[0]).to http_mapping_eq hm_a2
+      end
+      it 'gets only its mappings' do
+        get api("/http_mappings?appliance_id=#{appl_a.id}", user_a)
+        expect(hms_response).to be_an Array
+        expect(hms_response.size).to eq 1
+        expect(hms_response[0]).to http_mapping_eq hm_a
+      end
+    end
   end
 
   describe 'GET /http_mappings/{id}' do

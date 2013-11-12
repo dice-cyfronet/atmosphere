@@ -60,6 +60,7 @@ gem 'ember-data-source', '1.0.0.beta.2'
 gem 'handlebars-source', '~> 1.0.12'
 gem 'hamlbars', '~> 2.0'
 gem "active_model_serializers"
+gem 'will_paginate', '~> 3.0.5'
 
 #markdown in js
 gem 'showdown-rails'
