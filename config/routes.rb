@@ -55,6 +55,7 @@ Air::Application.routes.draw do
       resources :compute_sites, only: [:index, :show]
       json_resources :appliance_types
       json_resources :appliance_configuration_templates
+      resources :appliance_configuration_instances, only: [:index, :show]
       resources :http_mappings, only: [:index, :show]
       resources :port_mappings, only: [:index, :show]
       json_resources :appliance_sets
