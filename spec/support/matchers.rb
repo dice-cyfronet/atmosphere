@@ -112,7 +112,19 @@ RSpec::Matchers.define :port_mapping_template_eq do |expected|
     (actual['application_protocol'] == expected.application_protocol) &&
     (actual['service_name'] == expected.service_name) &&
     (actual['target_port'] == expected.target_port) &&
-    ((actual['appliance_type_id'] = expected.appliance_type.id) or (actual['dev_mode_property_set_id'] = expected.dev_mode_property_set.id))
+    ((expected.appliance_type && (actual['appliance_type_id'] == expected.appliance_type_id)) or
+     (expected.dev_mode_property_set && (actual['dev_mode_property_set_id'] == expected.dev_mode_property_set.id)))
+  end
+end
+
+RSpec::Matchers.define :be_updated_by_port_mapping_template do |expected|
+  match do |actual|
+    (actual['transport_protocol'] == expected[:transport_protocol] || expected[:transport_protocol].blank?) &&
+    (actual['application_protocol'] == expected[:application_protocol] || expected[:application_protocol].blank?) &&
+    (actual['service_name'] == expected[:service_name] || expected[:service_name].blank?) &&
+    (actual['target_port'] == expected[:target_port] || expected[:target_port].blank?) &&
+    ((actual['appliance_type_id'] == expected[:appliance_type_id]) or (actual['dev_mode_property_set_id'] == expected[:dev_mode_property_set_id]) or
+     (expected[:appliance_type_id].blank? && expected[:dev_mode_property_set_id].blank?))
   end
 end
 
