@@ -161,7 +161,7 @@ RSpec::Matchers.define :vm_eq do |expected|
   end
 end
 
-RSpec::Matchers.define :be_updated_by do |expected|
+RSpec::Matchers.define :at_be_updated_by do |expected|
   match do |actual|
     (actual.name == expected[:name] || expected[:name].blank?) &&
     (actual.description == expected[:description] || expected[:description].blank?) &&

@@ -92,7 +92,26 @@ describe ComputeSite do
       subject.name = 'modified name'
       subject.save
     end
-
   end
 
+  context '#with_appliance scope' do
+    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
+    let!(:vm) { create(:virtual_machine, compute_site: compute_site) }
+    let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
+
+    it 'loads not readonly compute sites' do
+      ComputeSite.with_appliance(appl).each do |cs|
+        expect(cs.readonly?).to be_false
+      end
+    end
+
+    it 'allows to update compute site parameters' do
+      ComputeSite.with_appliance(appl).each do |cs|
+        cs.update(regenerate_proxy_conf: true)
+      end
+
+      compute_site.reload
+      expect(compute_site.regenerate_proxy_conf).to be_true
+    end
+  end
 end

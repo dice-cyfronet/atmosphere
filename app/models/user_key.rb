@@ -21,6 +21,8 @@ class UserKey < ActiveRecord::Base
   attr_readonly :name, :public_key, :fingerprint
   before_create :generate_fingerprint, :import_to_clouds
   before_destroy :delete_in_clouds
+  
+  has_many :appliances
   belongs_to :user
 
   #def name=(name)
@@ -52,12 +54,14 @@ class UserKey < ActiveRecord::Base
   end
 
   def import_to_clouds
-    ComputeSite.all.each do |cs|
-      cloud_client = cs.cloud_client
-      logger.debug "Importing key #{name} to #{cs.name}"
-      cloud_client.import_key_pair(name, public_key)
-      logger.info "Imported key #{name} to #{cs.name}"
-    end
+    ComputeSite.all.each {|cs| import_to_cloud(cs)}
+  end
+
+  def import_to_cloud(cs)
+    cloud_client = cs.cloud_client
+    logger.debug "Importing key #{name} to #{cs.name}"
+    cloud_client.import_key_pair(name, public_key)
+    logger.info "Imported key #{name} to #{cs.name}"
   end
 
   def delete_in_clouds
