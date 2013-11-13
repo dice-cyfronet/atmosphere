@@ -14,6 +14,7 @@
 #
 
 class VirtualMachine < ActiveRecord::Base
+
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
   has_many :port_mappings, dependent: :destroy
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
@@ -23,6 +24,10 @@ class VirtualMachine < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
 
   before_create :instantiate_vm, unless: :id_at_site
+  after_destroy :generate_proxy_conf
+  after_destroy :remove_from_dnat, if: :ip?
+  after_save :generate_proxy_conf, if: :ip_changed?
+  after_update :update_dnat, if: :ip_changed?
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -41,7 +46,7 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def destroy(delete_in_cloud = true)
-    delete_in_cloud if delete_in_cloud
+    perform_delete_in_cloud if delete_in_cloud
     super()
   end
 
@@ -63,8 +68,24 @@ class VirtualMachine < ActiveRecord::Base
     self[:state] = :booting
   end
 
-  def delete_in_cloud
+  def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
     cloud_client.servers.destroy(id_at_site)
   end
+
+  def generate_proxy_conf
+    ProxyConfWorker.regeneration_required(compute_site)
+  end
+
+  def update_dnat
+    if not ip_was.blank?
+      WranglerEraserWorker.perform_async(vm_id: id)
+    end
+    WranglerRegistrarWorker.perform_async(id) if ip?
+  end
+
+  def remove_from_dnat
+    WranglerEraserWorker.perform_async(vm_id: id)
+  end
+
 end

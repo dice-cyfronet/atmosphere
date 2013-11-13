@@ -5,12 +5,14 @@ describe Api::V1::ApplianceTypesController do
 
   let(:user)           { create(:user) }
   let(:different_user) { create(:user) }
+  let(:developer)      { create(:developer) }
   let(:admin)          { create(:admin) }
 
   let(:security_proxy) { create(:security_proxy) }
 
   let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy) }
-  let!(:at2) { create(:appliance_type) }
+  let!(:at2) { create(:appliance_type, visible_for: :all) }
+  let!(:dev_at) { create(:appliance_type, visible_for: :developer) }
 
   describe 'GET /appliance_types' do
     context 'when unauthenticated' do
@@ -26,7 +28,7 @@ describe Api::V1::ApplianceTypesController do
         expect(response.status).to eq 200
       end
 
-      it 'returns appliance types' do
+      it 'returns appliance types (all and owned)' do
         get api('/appliance_types', user)
         expect(ats_response).to be_an Array
         expect(ats_response.size).to eq 2
@@ -35,8 +37,44 @@ describe Api::V1::ApplianceTypesController do
         expect(ats_response[1]).to appliance_type_eq at2
       end
 
-      pending 'search'
+      it 'does not returns not owned appliance types' do
+        get api('/appliance_types', different_user)
+        expect(ats_response.size).to eq 1
+        expect(ats_response[0]).to appliance_type_eq at2
+      end
+
+      context 'search' do
+        let!(:second_user_at) { create(:appliance_type, visible_for: :all, author: user) }
+
+        it 'returns only appliance types created by the user' do
+          get api("/appliance_types?user_id=#{user.id}", user)
+          expect(ats_response.size).to eq 2
+
+          expect(ats_response[0]).to appliance_type_eq at1
+          expect(ats_response[1]).to appliance_type_eq second_user_at
+        end
+      end
+
       pending 'pagination'
+    end
+
+    context 'when authenticated as developer' do
+      it 'returns appliance types (all and for developers)' do
+        get api('/appliance_types', developer)
+        expect(ats_response.size).to eq 2
+        expect(ats_response[0]).to appliance_type_eq at2
+        expect(ats_response[1]).to appliance_type_eq dev_at
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'returns all available appliance types (owned, not owned, all, for developers) when all flag is set to true' do
+        get api('/appliance_types?all=true', admin)
+        expect(ats_response.size).to eq 3
+        expect(ats_response[0]).to appliance_type_eq at1
+        expect(ats_response[1]).to appliance_type_eq at2
+        expect(ats_response[2]).to appliance_type_eq dev_at
+      end
     end
   end
 
@@ -74,7 +112,7 @@ describe Api::V1::ApplianceTypesController do
         description: 'new description',
         shared: true,
         scalable: true,
-        visibility: :published,
+        visible_for: :all,
         preference_cpu: 10.0,
         preference_memory: 1024,
         preference_disk: 10240,

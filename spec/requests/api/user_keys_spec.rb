@@ -6,8 +6,8 @@ describe Api::V1::UserKeysController do
   let(:user)  { create(:user) }
   let(:admin) { create(:admin) }
 
-  let!(:user_key1) { create(:user_key, user: user) }
-  let!(:user_key2) { create(:user_key, user: user) }
+  let!(:user_key1) { create(:user_key, user: user, name: 'first') }
+  let!(:user_key2) { create(:user_key, user: user, name: 'second') }
   let!(:other_user_key) { create(:user_key) }
   let!(:admin_key) { create(:user_key, user: admin) }
 
@@ -32,6 +32,14 @@ describe Api::V1::UserKeysController do
 
         expect(user_keys_response[0]).to user_key_eq user_key1
         expect(user_keys_response[1]).to user_key_eq user_key2
+      end
+
+      context 'search' do
+        it 'returns key with given name' do
+          get api("/user_keys?name=#{user_key1.name}", user)
+          expect(user_keys_response.size).to eq 1
+          expect(user_keys_response[0]).to user_key_eq user_key1
+        end
       end
     end
 

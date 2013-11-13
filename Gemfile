@@ -1,10 +1,12 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0'
+gem 'rails', '4.0.1'
 
-# Use mysql as the database for Active Record ...
-gem 'mysql2'
+# Supported DBs
+gem 'mysql2', group: :mysql
+gem 'pg', group: :postgres
+
 # ... and provide means for referential integrity ...
 gem 'foreigner'
 # ... with some sugar over string enumerables
@@ -37,24 +39,30 @@ gem 'simple_form', '~>3.0.0'
 # User avatar
 gem 'gravtastic'
 
+# Sending email when 500 is thrown
+gem 'exception_notification'
+
 # Security
-gem 'devise', '~>3.0.0'
+gem 'devise', '~>3.1.0'
 gem 'cancan'
 gem 'role_model'
 gem 'omniauth'
 gem 'omniauth-vph', git: 'http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git', branch: :master
 
+gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
 gem 'haml-rails'
-gem 'bootstrap-sass', github: 'thomas-mcdonald/bootstrap-sass', branch: '3'
+gem 'bootstrap-sass', '~>3.0'
+
 gem 'font-awesome-rails'
 
 gem 'ember-rails'
-gem 'ember-source', '~> 1.0.0'
+gem 'ember-source', '~> 1.1.0'
 gem 'ember-data-source', '1.0.0.beta.2'
 gem 'handlebars-source', '~> 1.0.12'
 gem 'hamlbars', '~> 2.0'
 gem "active_model_serializers"
+gem 'will_paginate', '~> 3.0.5'
 
 #markdown in js
 gem 'showdown-rails'
@@ -67,12 +75,13 @@ gem 'redcarpet'
 gem 'github-markup', require: 'github/markup'
 
 # cloud client lib
-gem 'fog'
+gem 'fog', '~>1.18'
+gem 'unf'
 
 #delay and scheduled jobs
 gem 'sinatra', require: nil
 gem 'sidekiq'
-gem 'whenever'
+gem 'clockwork'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -80,7 +89,7 @@ group :doc do
 end
 
 group :development do
-  gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
+  gem 'annotate', github: 'ctran/annotate_models'
   gem 'quiet_assets'
   gem 'letter_opener'
   # gem 'rack-mini-profiler'
@@ -101,8 +110,8 @@ group :development, :test do
   gem 'shoulda-matchers'
 
   # Guard
-  gem 'guard-rspec'
-  gem 'spork-rails', git: 'https://github.com/sporkrb/spork-rails.git'
+  gem 'guard-rspec', '~>3.0.2'
+  gem 'spork-rails', github: 'sporkrb/spork-rails'
   gem 'guard-spork'
   gem 'libnotify'
 
@@ -111,12 +120,17 @@ group :development, :test do
   gem 'database_cleaner'
 end
 
+group :test do
+  gem 'rspec-sidekiq'
+end
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Use unicorn as the app server
 # gem 'unicorn'
+
+gem 'puma'
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development

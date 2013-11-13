@@ -1,8 +1,12 @@
 module Api
   class ApplicationController < ActionController::Base
     protect_from_forgery with: :null_session
+
+    before_filter :authenticate_user_from_token!
     check_authorization
+
     include CancanStrongParams
+    include Filterable
 
     rescue_from CanCan::AccessDenied do |exception|
       if current_user.nil?
@@ -21,6 +25,7 @@ module Api
     end
 
     rescue_from Air::Conflict do |exception|
+      log_user_action "record conflict #{exception}"
       render json: {message: exception}, status: :conflict
     end
 
@@ -30,7 +35,8 @@ module Api
 
     protected
     def render_error(model_obj)
-        render json: model_obj.errors, status: :unprocessable_entity
+      log_user_action "record invalid #{model_obj.errors.to_json}"
+      render json: model_obj.errors, status: :unprocessable_entity
     end
 
     def load_all?
@@ -43,6 +49,10 @@ module Api
 
     private
 
+    def log_user_action msg
+      Air.action_logger.info "[#{current_user.login}] #{msg}"
+    end
+
     def current_ability
       @current_ability ||= Ability.new(current_user, load_admin_abilities?)
     end
@@ -53,6 +63,19 @@ module Api
 
     def to_boolean(s)
       !!(s =~ /^(true|yes|1)$/i)
+    end
+
+    def authenticate_user_from_token!
+      user_token = params[Devise.token_authentication_key].presence
+      user = user_token && User.find_by(authentication_token: user_token)
+
+      if user
+        # Notice we are passing store false, so the user is not
+        # actually stored in the session and a token is needed
+        # for every request. If you want the token to work as a
+        # sign in token, you can simply remove store: false.
+        sign_in user, store: false
+      end
     end
   end
 end

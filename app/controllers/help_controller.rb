@@ -6,6 +6,8 @@ class HelpController < ApplicationController
   end
 
   def api
+    authenticate_user!
+
     @category = params[:category]
     @category = "README" if @category.blank?
 

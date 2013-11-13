@@ -18,8 +18,8 @@
       - form_id = (request[:action] == 'new' ? '#new_port_mapping_template' : "#edit_port_mapping_template_#{pmt.id}")
 
       = button_tag class: 'btn btn-success btn-xs', onclick: "$('#{form_id}').submit()" do
-        %i.icon-save
+        =fa_icon 'save'
 
       = link_to [:admin, @appliance_type, PortMappingTemplate], remote: true,
           class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#port-mapping-templates'} do
-        %i.icon-undo
+        =fa_icon 'undo'

@@ -15,15 +15,15 @@
       %li
         %a
           %div.hide.turbolink-spinner
-            %i.icon-refresh.icon-spin
+            =fa_icon 'refresh spin'
             = t 'loading'
       - if user_signed_in?
         = nav_link controller: :help do
           = link_to help_path, class: "has_bottom_tooltip", title: t('help.title') do
-            %i.icon-question
+            =fa_icon 'question'
         = nav_link controller: :profiles do
-          = link_to profile_path, class: "has_bottom_tooltip", title: t('profiles.title') do
-            = image_tag current_user.gravatar_url(:size => 20)
+          = link_to profile_path, class: "has_bottom_tooltip avatar", title: t('profiles.title') do
+            = image_tag current_user.gravatar_url(:size => 26)
         %li
           = link_to destroy_user_session_path, class: "has_bottom_tooltip", title: t('logout'), method: :delete do
-            %i.icon-signout
+            =fa_icon 'sign-out'

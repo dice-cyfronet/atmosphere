@@ -6,9 +6,9 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
   let(:user)  { create(:user) }
   let(:admin) { create(:admin) }
 
-  let(:at1) { create(:appliance_type, author: user, visibility: :unpublished) }
-  let(:at2) { create(:appliance_type, visibility: :published) }
-  let(:at3) { create(:appliance_type, visibility: :unpublished) }
+  let(:at1) { create(:appliance_type, author: user, visible_for: :owner) }
+  let(:at2) { create(:appliance_type, visible_for: :all) }
+  let(:at3) { create(:appliance_type, visible_for: :owner) }
 
   let!(:at1_config_tpl1) { create(:appliance_configuration_template, appliance_type: at1) }
   let!(:at1_config_tpl2) { create(:appliance_configuration_template, appliance_type: at1) }
@@ -78,6 +78,15 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
       it 'returns 403 Forbidden when accessing unpublished not owned appliance configuration template' do
         get api("/appliance_configuration_templates/#{at3_config_tpl.id}", user)
         expect(response.status).to eq 403
+      end
+    end
+
+    context 'dynamic configuration' do
+      let!(:dynamic_act) { create(:appliance_configuration_template, payload: '#{a} #{b} #{c}') }
+
+      it 'returns information about parameters' do
+        get api("/appliance_configuration_templates/#{dynamic_act.id}", admin)
+        expect(act_response['parameters']).to eq ['a', 'b', 'c']
       end
     end
   end

@@ -6,10 +6,13 @@ describe Api::V1::AppliancesController do
   let(:optimizer) {double}
 
   let(:user)  { create(:user) }
+  let(:other_user) { create(:user) }
   let(:admin) { create(:admin) }
+  let(:developer) { create(:developer) }
+
 
   let(:user_as) { create(:appliance_set, user: user) }
-  let(:other_user_as) { create(:appliance_set) }
+  let(:other_user_as) { create(:appliance_set, user: other_user) }
 
   let!(:user_appliance1) { create(:appliance, appliance_set: user_as) }
   let!(:user_appliance2) { create(:appliance, appliance_set: user_as) }
@@ -35,6 +38,17 @@ describe Api::V1::AppliancesController do
         expect(appliances_response.size).to eq 2
         expect(appliances_response[0]).to appliance_eq user_appliance1
         expect(appliances_response[1]).to appliance_eq user_appliance2
+      end
+
+      context 'search' do
+        let(:second_user_as) { create(:appliance_set, user: user) }
+        let!(:second_as_appliance) { create(:appliance, appliance_set: second_user_as) }
+
+        it 'returns only appliances belonging to select appliance set' do
+          get api("/appliances?appliance_set_id=#{second_user_as.id}", user)
+          expect(appliances_response.size).to eq 1
+          expect(appliances_response[0]).to appliance_eq second_as_appliance
+        end
       end
     end
 
@@ -89,17 +103,12 @@ describe Api::V1::AppliancesController do
 
   describe 'POST /appliances' do
     let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
-    let!(:development_set) { create(:appliance_set, user: user, appliance_set_type: :development)}
+    let!(:development_set) { create(:appliance_set, user: developer, appliance_set_type: :development)}
 
-    let(:static_config) { create(:static_config_template) }
-    let(:static_request_body) do
-      {
-        appliance: {
-          configuration_template_id: static_config.id,
-          appliance_set_id: portal_set.id
-        }
-      }
-    end
+    let!(:public_at) { create(:appliance_type, visible_for: :all) }
+
+    let(:static_config) { create(:static_config_template, appliance_type: public_at) }
+    let(:static_request_body) { start_request(static_config, portal_set) }
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -113,6 +122,7 @@ describe Api::V1::AppliancesController do
         Optimizer.stub(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
+
       it 'returns 201 Created on success' do
         post api("/appliances", user), static_request_body
         expect(response.status).to eq 201
@@ -139,7 +149,7 @@ describe Api::V1::AppliancesController do
       end
 
       context 'with dynamic configuration' do
-        let(:dynamic_config) { create(:appliance_configuration_template, payload: 'dynamic config #{param1} #{param2} #{param3}') }
+        let(:dynamic_config) { create(:appliance_configuration_template, appliance_type: public_at, payload: 'dynamic config #{param1} #{param2} #{param3}') }
         let(:dynamic_request_body) do
           {
             appliance: {
@@ -216,6 +226,36 @@ describe Api::V1::AppliancesController do
         end
       end
     end
+
+    context 'with private appliance type (visible_for: owner)' do
+      let(:private_at) { create(:appliance_type, author: user, visible_for: :owner) }
+      let(:private_at_config) { create(:static_config_template, appliance_type: private_at) }
+
+      it 'allows to start appliance type by its author' do
+        post api("/appliances", user), start_request(private_at_config, portal_set)
+        expect(response.status).to eq 201
+      end
+
+      it 'does not allow to start appliance by other user' do
+        post api("/appliances", other_user), start_request(private_at_config, other_user_as)
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'with development appliance type (visible_for: developer)' do
+      let(:development_at) { create(:appliance_type, visible_for: :developer) }
+      let(:development_at_config) { create(:static_config_template, appliance_type: development_at) }
+
+      it 'allows to start in development mode' do
+        post api("/appliances", developer), start_request(development_at_config, development_set)
+        expect(response.status).to eq 201
+      end
+
+      it 'does not allow to start in production mode' do
+        post api("/appliances", user), start_request(development_at_config, portal_set)
+        expect(response.status).to eq 403
+      end
+    end
   end
 
   context 'DELETE /appliances/{id}' do
@@ -266,5 +306,14 @@ describe Api::V1::AppliancesController do
 
   def appliances_response
     json_response['appliances']
+  end
+
+  def start_request(at_config, appliance_set)
+    {
+      appliance: {
+        configuration_template_id: at_config.id,
+        appliance_set_id: appliance_set.id
+      }
+    }
   end
 end

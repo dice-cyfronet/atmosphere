@@ -6,7 +6,7 @@ class CreateApplianceTypes < ActiveRecord::Migration
       t.text :description
       t.boolean :shared,                null: false, default: false
       t.boolean :scalable,              null: false, default: false
-      t.string :visibility,             null: false, default: 'unpublished'
+      t.string :visible_for,         null: false, default: 'owner'
 
       # Incorporated from the old AppliancePreferences model
       t.float :preference_cpu

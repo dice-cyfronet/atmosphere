@@ -7,7 +7,7 @@
 #  description       :text
 #  shared            :boolean          default(FALSE), not null
 #  scalable          :boolean          default(FALSE), not null
-#  visibility        :string(255)      default("unpublished"), not null
+#  visible_for       :string(255)      default("owner"), not null
 #  preference_cpu    :float
 #  preference_memory :integer
 #  preference_disk   :integer
@@ -23,12 +23,12 @@ class ApplianceType < ActiveRecord::Base
   belongs_to :security_proxy
   belongs_to :author, class_name: 'User', foreign_key: 'user_id'
 
-  validates_presence_of :name, :visibility
+  validates_presence_of :name, :visible_for
   validates_uniqueness_of :name
 
-  enumerize :visibility, in: [:unpublished, :published]
+  enumerize :visible_for, in: [:owner, :developer, :all]
 
-  validates :visibility, inclusion: %w(unpublished published)
+  validates :visible_for, inclusion: %w(owner developer all)
   validates :shared, inclusion: [true, false]
   validates :scalable, inclusion: [true, false]
 

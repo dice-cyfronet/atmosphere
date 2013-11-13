@@ -6,6 +6,7 @@ class CreateComputeSites < ActiveRecord::Migration
       t.string :location
       t.string :site_type, default: 'private'
       t.string :technology
+      t.boolean :regenerate_proxy_conf, default: false
 
       # a JSON string with cloud site specific configuration
       t.text :config

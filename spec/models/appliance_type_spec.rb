@@ -7,7 +7,7 @@
 #  description       :text
 #  shared            :boolean          default(FALSE), not null
 #  scalable          :boolean          default(FALSE), not null
-#  visibility        :string(255)      default("unpublished"), not null
+#  visible_for       :string(255)      default("owner"), not null
 #  preference_cpu    :float
 #  preference_memory :integer
 #  preference_disk   :integer
@@ -26,11 +26,11 @@ describe ApplianceType do
   expect_it { to be_valid }
 
   expect_it { to validate_presence_of :name }
-  expect_it { to validate_presence_of :visibility }
+  expect_it { to validate_presence_of :visible_for }
 
   expect_it { to validate_uniqueness_of :name }
 
-  expect_it { to ensure_inclusion_of(:visibility).in_array(%w(unpublished published)) }
+  expect_it { to ensure_inclusion_of(:visible_for).in_array(%w(owner developer all)) }
 
   expect_it { to have_db_index(:name).unique(true) }
 
@@ -41,7 +41,7 @@ describe ApplianceType do
 
 
   it 'should set proper default values' do
-    expect(subject.visibility).to eql 'unpublished'
+    expect(subject.visible_for).to eql 'owner'
     expect(subject.shared).to eql false
     expect(subject.scalable).to eql false
   end

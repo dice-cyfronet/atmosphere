@@ -4,6 +4,10 @@ defaults: &defaults
     enabled: true
     host: 'http://jump.vph-share.eu'
     roles_map: {cloudadmin: 'admin', developer: 'developer'}
+  dnat:
+    url: 'http://10.10.10.10:8888'
+    user: 'user'
+    password: 'password'
   #sidekiq:
   #  url: redis://localhost:6379
   #  namespace: air
@@ -20,3 +24,13 @@ test:
 
 production:
   <<: *defaults
+  mailer:
+    host: vph.cyfronet.pl
+  exception_notification:
+    email_prefix: "[Err Atmosphere]"
+    sender_address: '"notifier" <notifier@vph.cyfronet.pl>'
+    exception_recipients:
+      - m.kasztelnik@cyfronet.pl
+      - t.gubala@cyfronet.pl
+      - t.bartynski@cyfronet.pl
+      - p.nowakowski@cyfronet.pl

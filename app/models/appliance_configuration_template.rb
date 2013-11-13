@@ -11,6 +11,7 @@
 #
 
 class ApplianceConfigurationTemplate < ActiveRecord::Base
+  include ParamsRegexpable
 
   belongs_to :appliance_type
 
@@ -19,4 +20,7 @@ class ApplianceConfigurationTemplate < ActiveRecord::Base
 
   has_many :appliance_configuration_instances, dependent: :nullify
 
+  def parameters
+    payload.blank? ? [] : payload.scan(/#{param_regexp}/).collect { |raw_param| raw_param[param_range] }
+  end
 end

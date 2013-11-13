@@ -64,4 +64,35 @@ describe ComputeSite do
       expect(invalid).to be_invalid
     end
   end
+
+  context 'compute site is updated' do
+
+    it 'recreates cloud client if configuration was updated' do
+      Fog::Compute.stub(:new)
+      expect(Fog::Compute).to receive(:new)
+      subject.config = '{}'
+      subject.save
+    end
+
+    it 'registers newly created cloud client in Air container if configuration was updated' do
+      Fog::Compute.stub(:new)
+      expect(Air).to receive(:register_cloud_client)
+      subject.config = '{}'
+      subject.save
+    end
+
+    it 'does not recreate cloud client if other attribute was updated' do
+      expect(Fog::Compute).to_not receive(:new)
+      subject.name = 'modified name'
+      subject.save
+    end
+
+    it 'does not register cloud client in Air container if other attribute was updated' do
+      expect(Air).to_not receive(:register_cloud_client)
+      subject.name = 'modified name'
+      subject.save
+    end
+
+  end
+
 end

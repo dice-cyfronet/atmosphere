@@ -4,9 +4,13 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# Ignore InteliJ
+/.idea
+
 # Ignore bundler config.
 /.bundle
 /.secret
+/.devise_secret
 /config/air.yml
 
 # Ignore database config.
@@ -14,6 +18,8 @@
 
 # Ignore cloud credentials config
 /config/initializers/cloud_credentials.rb
+
+/config/puma.rb
 
 # Ignore all logfiles and tempfiles.
 /log/*.log

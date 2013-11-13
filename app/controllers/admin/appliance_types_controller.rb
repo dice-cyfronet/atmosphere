@@ -57,7 +57,7 @@ class Admin::ApplianceTypesController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def appliance_type_params
       params.require(:appliance_type).permit(
-        :name, :description, :visibility, :shared, :scalable, :user_id,
+        :name, :description, :visible_for, :shared, :scalable, :user_id,
         :preference_memory, :preference_disk,  :preference_cpu)
     end
 end

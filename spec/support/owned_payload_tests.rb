@@ -21,6 +21,15 @@ module OwnedPayloadTests
         expect(payloads_response[0]).to owned_payload_eq owned_payload1
         expect(payloads_response[1]).to owned_payload_eq owned_payload2
       end
+
+      context 'search' do
+        it 'returns payload with given name' do
+          get api("/#{owned_payload_path}?name=#{owned_payload1.name}")
+          expect(payloads_response.size).to eq 1
+
+          expect(payloads_response[0]).to owned_payload_eq owned_payload1
+        end
+      end
     end
 
     describe "GET /owned_payload_path/{id}" do

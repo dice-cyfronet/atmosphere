@@ -50,6 +50,9 @@ Spork.prefork do
   end
 
   FactoryGirl.find_definitions
+
+  # Mock fog for all tests
+  Fog.mock!
 end
 
 RSpec::Core::MemoizedHelpers.module_eval do

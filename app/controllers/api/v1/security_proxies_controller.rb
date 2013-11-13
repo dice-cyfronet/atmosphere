@@ -6,7 +6,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @security_proxies
+        respond_with @security_proxies.where(filter)
       end
 
       def show
@@ -14,20 +14,26 @@ module Api
       end
 
       def create
+        log_user_action 'create new security proxy'
         @security_proxy.save!
         render json: @security_proxy, serializer: SecurityProxySerializer, status: :created
+        log_user_action "security proxy created: #{@security_proxy.to_json}"
       end
 
       def update
+        log_user_action "update security proxy #{@security_proxy.id}"
         @security_proxy.update_attributes!(params[:security_proxy])
         render json: @security_proxy, serializer: SecurityProxySerializer
+        log_user_action "security proxy updated: #{@security_proxy.to_json}"
       end
 
       def destroy
+        log_user_action "destroy security proxy #{@security_proxy.id}"
         if @security_proxy.destroy
           render json: {}
+          log_user_action "security proxy #{@security_proxy.id} destroyed"
         else
-          render_error
+          render_error @security_proxy
         end
       end
 

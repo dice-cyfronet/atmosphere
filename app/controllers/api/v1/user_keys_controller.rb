@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @user_keys
+        respond_with @user_keys.where(filter)
       end
 
       def show
@@ -13,14 +13,18 @@ module Api
       end
 
       def create
+        log_user_action 'create new user key'
         @user_key.user = current_user
         @user_key.save!
         render json: @user_key, status: :created
+        log_user_action "user key created #{@user_key.to_json}"
       end
 
       def destroy
+        log_user_action "destroy user key #{@user_key.id}"
         if @user_key.destroy
           render json: {}
+          log_user_action "user key #{@user_key.id} destroyed"
         else
           render_error @user_key
         end

@@ -20,7 +20,7 @@ GET /security_proxies
 }
 ```
 
-## Details of an security proxy
+## Details of a security proxy
 
 Get all details of a security proxy.
 
@@ -91,4 +91,4 @@ GET /security_proxies/:name/payload
 
 Parameters:
 
-+ `name` (required) - The name of an security proxy (can include `/`)
++ `name` (required) - The name of a security proxy (can include `/`)

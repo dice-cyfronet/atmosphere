@@ -22,6 +22,7 @@
 #
 
 require 'spec_helper'
+require Rails.root.join("spec/shared_examples/token_authenticatable.rb")
 
 describe User do
   expect_it { to have_many(:appliance_sets).dependent(:destroy) }
@@ -29,6 +30,8 @@ describe User do
   expect_it { to have_many :appliance_types }
   expect_it { to have_and_belong_to_many :security_proxies }
   expect_it { to have_and_belong_to_many :security_policies }
+
+  it_behaves_like 'token_authenticatable'
 
   describe '#generate_password' do
     before { subject.generate_password }

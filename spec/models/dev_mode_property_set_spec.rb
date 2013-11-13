@@ -74,6 +74,12 @@ describe DevModePropertySet do
       expect(target.port_mapping_templates.size).to eq 2
     end
 
+    it 'setting relation between appliance type and port_mappings copy relations into null' do
+      target = DevModePropertySet.create_from(appliance_type)
+      expect(target.port_mapping_templates[0].appliance_type).to be_nil
+      expect(target.port_mapping_templates[1].appliance_type).to be_nil
+    end
+
     it 'copying port_mapping endpoints' do
       target = DevModePropertySet.create_from(appliance_type)
       expect(target.port_mapping_templates[0].endpoints.size).to eq 2

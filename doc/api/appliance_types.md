@@ -15,7 +15,7 @@ GET /appliance_types
       "description": "Foobar Appliance Type description",
       "shared": false,
       "scalable": true,
-      "visibility": "published",
+      "visible_for": "owner",
       "preference_cpu": 1.0,
       "preference_memory": 1024,
       "preference_disk": 10240,
@@ -48,7 +48,7 @@ Parameters:
     "description": "Foobar Appliance Type description",
     "shared": false,
     "scalable": true,
-    "visibility": "published",
+    "visible_for": "all",
     "preference_cpu": 1.0,
     "preference_memory": 1024,
     "preference_disk": 10240,
@@ -57,6 +57,12 @@ Parameters:
   }
 }
 ```
+
+<a name="visible_for"></a> The `visible_for` parameter distinguish when such appliance type can be used. Allowed values are as follow:
+
++ `owner` - Appliance Type can be started in `development` and `production` mode but only by the Appliance Type `owner` (and `admin`). This kind of Appliance Types are only visible for the Appliance Type `owner` (and `admin`, when `all` flag is set to `true`)
++ `all` - Appliance Type can be started in `development` and `production` mode by `all` users
++ `developer` - Appliance Types with this type are only visible for the users with `developer` role (and `admin`) and they can be started only in `development` mode.
 
 ## Create new appliance type
 

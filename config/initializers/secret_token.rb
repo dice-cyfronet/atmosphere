@@ -5,8 +5,8 @@ require 'securerandom'
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
 
-def find_secure_token
-  token_file = Rails.root.join('.secret')
+def find_secure_token(file_name='.secret')
+  token_file = Rails.root.join(file_name)
   if File.exist? token_file
     # Use the existing token.
     File.read(token_file).chomp
@@ -18,4 +18,5 @@ def find_secure_token
   end
 end
 
-Air::Application.config.secret_key_base = find_secure_token
+Air::Application.config.secret_key_base = find_secure_token('.secret')
+Devise.setup { |config| config.secret_key = find_secure_token('.devise_secret') }
