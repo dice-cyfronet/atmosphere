@@ -2,13 +2,13 @@
   .col-md-2
     %h2
       = link_to help_path, class: 'btn btn-default btn-xs' do
-        %i.icon-angle-left
+        =fa_icon 'angle-left'
         = t 'help.back'
       %span.pull-right API
     %hr
 
     #ul.nav.nav-pills.nav-stacked
-      - %w(README appliance_types appliance_configuration_templates appliance_sets appliances user_keys security_proxies security_policies).each do |file|
+      - %w(README compute_sites appliance_types port_mapping_templates appliance_configuration_templates appliance_sets appliances appliance_configuration_instances http_mappings virtual_machines port_mappings user_keys security_proxies security_policies).each do |file|
         = nav_tab :category, file do
           = link_to file.titleize, help_api_file_path(file)
   .col-md-10
