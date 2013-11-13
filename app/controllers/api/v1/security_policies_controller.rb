@@ -14,18 +14,24 @@ module Api
       end
 
       def create
+        log_user_action 'create new security policy'
         @security_policy.save!
         render json: @security_policy, serializer: SecurityPolicySerializer, status: :created
+        log_user_action "security policy created: #{@security_policy.to_json}"
       end
 
       def update
+        log_user_action "update security policy #{@security_policy.id}"
         @security_policy.update_attributes!(params[:security_policy])
         render json: @security_policy, serializer: SecurityPolicySerializer
+        log_user_action "security policy updated: #{@security_policy.to_json}"
       end
 
       def destroy
+        log_user_action "destroy security policy #{@security_policy.id}"
         if @security_policy.destroy
           render json: {}
+          log_user_action "security policy #{@security_policy.id} destroyed"
         else
           render_error @security_policy
         end

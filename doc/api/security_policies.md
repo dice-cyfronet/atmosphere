@@ -20,7 +20,7 @@ GET /security_policies
 }
 ```
 
-## Details of an security policy
+## Details of a security policy
 
 Get all details of a security policy.
 
@@ -91,4 +91,4 @@ GET /security_policies/:name/payload
 
 Parameters:
 
-+ `name` (required) - The name of an security policy (can include `/`)
++ `name` (required) - The name of a security policy (can include `/`)

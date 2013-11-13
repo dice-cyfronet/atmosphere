@@ -15,6 +15,7 @@ module Api
       end
 
       def create
+        log_user_action 'create new appliance'
         @appliance.transaction do
           @appliance.appliance_type = config_template.appliance_type
 
@@ -23,12 +24,15 @@ module Api
           @appliance.appliance_configuration_instance = configuration_instance
           @appliance.save!
           render json: @appliance, status: :created
+          log_user_action "appliance created: #{@appliance.to_json}"
         end
       end
 
       def destroy
+        log_user_action "destroy appliance #{@appliance.id}"
         if @appliance.destroy
           render json: {}
+          log_user_action "appliance #{@appliance.id} destroyed"
         else
           render_error @appliance
         end

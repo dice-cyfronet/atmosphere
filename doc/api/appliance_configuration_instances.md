@@ -23,7 +23,7 @@ GET /appliance_configuration_instances
 
 To browse only appliance configruation instances assigned into an appliance add `appliance_id` query param with appliance `id` (e.g. `/appliance_configuration_instances?appliance_id=1`).
 
-## Details of a appliance configuration instance
+## Details of an appliance configuration instance
 
 Get all details of an appliance configuration instance.
 
@@ -32,7 +32,7 @@ GET /appliance_configuration_instances/:id
 ```
 Parameters:
 
-+ `id` (required) - The ID of a appliance configuration instance
++ `id` (required) - The ID of an appliance configuration instance
 
 ```json
 {
