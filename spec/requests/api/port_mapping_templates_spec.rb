@@ -94,6 +94,17 @@ describe Api::V1::PortMappingTemplatesController do
       }
     end
 
+    let(:wrong_port_mapping_template_request) do
+      {
+        port_mapping_template: {
+          transport_protocol: 'tcp',
+          application_protocol: 'wrong',
+          service_name: 'rdesktop',
+          target_port: 33
+        }
+      }
+    end
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         post api("/appliance_types/#{at1.id}/port_mapping_templates")
@@ -121,6 +132,11 @@ describe Api::V1::PortMappingTemplatesController do
         expect(pmt_response['service_name']).to eq 'rdesktop'
         expect(pmt_response['target_port']).to eq 3389
         expect(pmt_response['appliance_type_id']).to eq at1.id
+      end
+
+      it 'returns 422 when transport and application protocols are wrong' do
+        post api("/appliance_types/#{at1.id}/port_mapping_templates", user), wrong_port_mapping_template_request
+        expect(response.status).to eq 422
       end
 
       it 'returns 403 Forbidden when creating port mapping template for not owned appliance type' do
