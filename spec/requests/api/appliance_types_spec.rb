@@ -137,7 +137,7 @@ describe Api::V1::ApplianceTypesController do
         put api("/appliance_types/#{at1.id}", user), update_json
         updated_at = ApplianceType.find(at1.id)
 
-        expect(updated_at).to be_updated_by update_json[:appliance_type]
+        expect(updated_at).to at_be_updated_by update_json[:appliance_type]
         expect(at_response).to appliance_type_eq updated_at
       end
 
