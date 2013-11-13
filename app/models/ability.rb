@@ -48,8 +48,11 @@ class Ability
 
     can :read, ApplianceConfigurationTemplate, appliance_type: { user_id: user.id }
     can :read, ApplianceConfigurationTemplate, appliance_type: { visible_for: 'all' }
-
     can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
+
+    can :read, PortMappingTemplate, appliance_type: { user_id: user.id }
+    can :read, PortMappingTemplate, appliance_type: { visible_for: 'all' }
+    can [:create, :update, :destroy], PortMappingTemplate, appliance_type: {user_id: user.id}
 
     ## Virtual Machines
     can :index, VirtualMachine, appliances: { appliance_set: { user_id: user.id } }
