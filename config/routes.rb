@@ -54,10 +54,9 @@ Air::Application.routes.draw do
     namespace :v1 do
       resources :compute_sites, only: [:index, :show]
       resources :appliance_types do
-        resources :port_mapping_templates do
-          resources :endpoints
-        end
+        resources :port_mapping_templates
       end
+      json_resources :endpoints
       json_resources :appliance_configuration_templates
       resources :appliance_configuration_instances, only: [:index, :show]
       resources :http_mappings, only: [:index, :show]

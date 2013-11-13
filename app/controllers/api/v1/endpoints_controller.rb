@@ -2,15 +2,12 @@ module Api
   module V1
     class EndpointsController < Api::ApplicationController
 
-      load_and_authorize_resource :appliance_type
-      load_and_authorize_resource :port_mapping_template, through: :appliance_type
-      load_and_authorize_resource :endpoint, through: :port_mapping_template
-      #load_and_authorize_resource :appliance_type
-      #load_and_authorize_resource :port_mapping_template, through: :appliance_type
+      load_and_authorize_resource :port_mapping_template, except: [:show, :create, :update, :destroy]
+      load_and_authorize_resource :endpoint
       respond_to :json
 
       def index
-        respond_with @endpoints
+        respond_with @endpoints.where(filter)
       end
 
       def show
@@ -18,19 +15,24 @@ module Api
       end
 
       def create
+        log_user_action 'create new endpoint'
         @endpoint.save!
         render json: @endpoint, serializer: EndpointSerializer, status: :created
+        log_user_action "endpoint created: #{@endpoint.to_json}"
       end
 
       def update
-        update_params = endpoint_params
-        @endpoint.update_attributes!(update_params)
+        log_user_action "update endpoint #{@endpoint.id}"
+        @endpoint.update_attributes!(endpoint_params)
         render json: @endpoint, serializer: EndpointSerializer
+        log_user_action "endpoint updated: #{@endpoint.to_json}"
       end
 
       def destroy
+        log_user_action "destroy endpoint #{@endpoint.id}"
         if @endpoint.destroy
           render json: {}
+          log_user_action "endpoint #{@endpoint.id} destroyed"
         else
           render_error @endpoint
         end
@@ -39,7 +41,7 @@ module Api
       private
 
       def endpoint_params
-        params.require(:endpoint).permit(:endpoint_type, :description, :descriptor)
+        params.require(:endpoint).permit(:endpoint_type, :description, :descriptor, :port_mapping_template_id)
       end
 
     end # of EndpointsController
