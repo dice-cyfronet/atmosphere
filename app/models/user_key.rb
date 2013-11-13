@@ -19,7 +19,7 @@ class UserKey < ActiveRecord::Base
   validates_presence_of :name, :public_key, :user
   validates_uniqueness_of :name, :scope => :user_id
   attr_readonly :name, :public_key, :fingerprint
-  before_create :generate_fingerprint, :import_to_clouds
+  before_create :generate_fingerprint#, :import_to_clouds
   before_destroy :delete_in_clouds
   
   has_many :appliances
@@ -35,7 +35,6 @@ class UserKey < ActiveRecord::Base
     "#{user.login}-#{name}"
   end
 
-  private
   def generate_fingerprint
     logger.info "Generating fingerprint for #{public_key}"
     return unless self.public_key    
@@ -62,17 +61,21 @@ class UserKey < ActiveRecord::Base
 
   def import_to_cloud(cs)
     cloud_client = cs.cloud_client
-    logger.debug "Importing key #{name} to #{cs.name}"
-    cloud_client.import_key_pair(name, public_key)
-    logger.info "Imported key #{name} to #{cs.name}"
+    logger.debug "Importing key #{id_at_site} to #{cs.name}"
+    begin
+      cloud_client.import_key_pair(id_at_site, public_key)
+    rescue Excon::Errors::Conflict, Fog::Compute::AWS::Error
+      logger.info $!
+    end
+    logger.info "Imported key #{id_at_site} to #{cs.name}"
   end
 
   def delete_in_clouds
     ComputeSite.all.each do |cs|
       cloud_client = cs.cloud_client
-      logger.debug "Deleting key #{name} from #{cs.name}"
-      cloud_client.delete_key_pair(name)
-      logger.info "Deleted key #{name} from #{cs.name}"
+      logger.debug "Deleting key #{id_at_site} from #{cs.name}"
+      cloud_client.delete_key_pair(id_at_site)
+      logger.info "Deleted key #{id_at_site} from #{cs.name}"
     end
   end
 end
