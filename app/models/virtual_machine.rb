@@ -60,6 +60,8 @@ class VirtualMachine < ActiveRecord::Base
     unless appliances.blank?
       user_data = appliances.first.appliance_configuration_instance.payload
       servers_params[:user_data] = user_data if user_data
+      user_key = appliances.first.user_key
+      servers_params[:key_name] = user_key.id_at_site if user_key
     end
     server = cloud_client.servers.create(servers_params)
     logger.info "instantiated #{server.id}"

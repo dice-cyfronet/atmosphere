@@ -141,37 +141,57 @@ describe VirtualMachine do
 
   context 'initital configuration' do
 
-    it 'injects initial configuration'
+
 
   end
 
-  context 'development mode' do
 
-    context 'keys' do
-    
-      VM_NAME = 'key-tester'
-      FLAVOR_REF = 1
+  context 'keys' do
+  
+    VM_NAME = 'key-tester'
+    FLAVOR_REF = 1
 
-      it 'injects user key in dev mode if key is defined' do
-        appl = create(:appl_dev_mode, user_key: create(:user_key))
-        init_conf = create(:appliance_configuration_instance)
-        cloud_client = double('cloud client')
-        servers = double('servers')
-        server = double('server')
-        tmpl = create(:virtual_machine_template)
-        Fog::Compute.stub(:new).and_return(cloud_client)
-        expect(cloud_client).to receive(:servers).and_return(servers)
-        server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload}
-        expect(servers).to receive(:create).with(server_params).and_return(server)
-        expect(server).to receive(:id).twice.and_return 1
-        create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
-        
-      end
+    let(:cloud_client) { double('cloud client') }
+    let(:servers) { double('servers') }
+    let(:server) { double('server') }
 
-      it 'does not inject user key in dev mode if key is undefined'
-
-      it 'does not inject user key in prod mode'
-
+    before do
+      opt = double('optimizer')
+      allow(opt).to receive (:run)
+      Optimizer.stub(:instance).and_return(opt)
+      Fog::Compute.stub(:new).and_return(cloud_client)
     end
+
+    let(:init_conf) { create(:appliance_configuration_instance) }
+    let(:tmpl) { create(:virtual_machine_template) }
+
+    it 'injects user key if key is defined' do
+      expect(cloud_client).to receive(:servers).and_return(servers)
+      key = create(:user_key)
+      appl = create(:appl_dev_mode, user_key: key)
+      server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload, key_name: key.id_at_site}
+      expect(servers).to receive(:create).with(server_params).and_return(server)
+      expect(server).to receive(:id).twice.and_return 1
+      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)  
+    end
+
+    it 'does not inject user key if key is undefined' do
+      expect(cloud_client).to receive(:servers).and_return(servers)
+      appl = create(:appl_dev_mode)
+      server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload}
+      expect(servers).to receive(:create).with(server_params).and_return(server)
+      expect(server).to receive(:id).twice.and_return 1
+      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
+    end
+
+    it 'injects initial configuration' do
+      expect(cloud_client).to receive(:servers).and_return(servers)
+      appl = create(:appl_dev_mode)
+      server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload}
+      expect(servers).to receive(:create).with(server_params).and_return(server)
+      expect(server).to receive(:id).twice.and_return 1
+      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
+    end
+
   end
 end
