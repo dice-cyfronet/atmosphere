@@ -46,6 +46,7 @@ class Ability
     can :read, ApplianceType, user_id: user.id
     can [:update, :destroy], ApplianceType, user_id: user.id
 
+    ## Elements of Appliance Types
     can :read, ApplianceConfigurationTemplate, appliance_type: { user_id: user.id }
     can :read, ApplianceConfigurationTemplate, appliance_type: { visible_for: 'all' }
     can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
@@ -53,6 +54,10 @@ class Ability
     can :read, PortMappingTemplate, appliance_type: { user_id: user.id }
     can :read, PortMappingTemplate, appliance_type: { visible_for: 'all' }
     can [:create, :update, :destroy], PortMappingTemplate, appliance_type: {user_id: user.id}
+
+    can :read, Endpoint, port_mapping_template: { appliance_type: { user_id: user.id } }
+    can :read, Endpoint, port_mapping_template: { appliance_type: { visible_for: 'all' } }
+    can [:create, :update, :destroy], Endpoint, port_mapping_template: { appliance_type: {user_id: user.id} }
 
     ## Virtual Machines
     can :index, VirtualMachine, appliances: { appliance_set: { user_id: user.id } }

@@ -120,11 +120,30 @@ end
 RSpec::Matchers.define :be_updated_by_port_mapping_template do |expected|
   match do |actual|
     (actual['transport_protocol'] == expected[:transport_protocol] || expected[:transport_protocol].blank?) &&
-    (actual['application_protocol'] == expected[:application_protocol] || expected[:application_protocol].blank?) &&
-    (actual['service_name'] == expected[:service_name] || expected[:service_name].blank?) &&
-    (actual['target_port'] == expected[:target_port] || expected[:target_port].blank?) &&
-    ((actual['appliance_type_id'] == expected[:appliance_type_id]) or (actual['dev_mode_property_set_id'] == expected[:dev_mode_property_set_id]) or
-     (expected[:appliance_type_id].blank? && expected[:dev_mode_property_set_id].blank?))
+        (actual['application_protocol'] == expected[:application_protocol] || expected[:application_protocol].blank?) &&
+        (actual['service_name'] == expected[:service_name] || expected[:service_name].blank?) &&
+        (actual['target_port'] == expected[:target_port] || expected[:target_port].blank?) &&
+        ((actual['appliance_type_id'] == expected[:appliance_type_id]) or (actual['dev_mode_property_set_id'] == expected[:dev_mode_property_set_id]) or
+            (expected[:appliance_type_id].blank? && expected[:dev_mode_property_set_id].blank?))
+  end
+end
+
+RSpec::Matchers.define :endpoint_eq do |expected|
+  match do |actual|
+    (actual['id'] == expected.id) &&
+    (actual['description'] == expected.description) &&
+    (actual['descriptor'] == expected.descriptor) &&
+    (actual['endpoint_type'] == expected.endpoint_type) &&
+    (actual['port_mapping_template_id'] == expected.port_mapping_template_id)
+  end
+end
+
+RSpec::Matchers.define :be_updated_by_endpoint do |expected|
+  match do |actual|
+    (actual['description'] == expected[:description] || expected[:description].blank?) &&
+    (actual['descriptor'] == expected[:descriptor] || expected[:descriptor].blank?) &&
+    (actual['endpoint_type'] == expected[:endpoint_type] || expected[:endpoint_type].blank?) &&
+    (actual['port_mapping_template_id'] == expected[:port_mapping_template_id] || expected[:port_mapping_template_id].blank?)
   end
 end
 
