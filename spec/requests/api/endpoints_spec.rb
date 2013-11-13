@@ -38,7 +38,6 @@ describe Api::V1::EndpointsController do
 
       it 'returns owned endpoints' do
         get api("/endpoints?port_mapping_template_id=#{pmt1.id}", user)
-        #p json_response
         expect(es_response).to be_an Array
         expect(es_response.size).to eq 1
         expect(es_response[0]).to endpoint_eq e1
@@ -46,7 +45,10 @@ describe Api::V1::EndpointsController do
 
       it 'returns public endpoints' do
         get api("/endpoints?port_mapping_template_id=#{pmt2.id}", user)
-        #p json_response
+        expect(es_response).to be_an Array
+        expect(es_response.size).to eq 1
+        expect(es_response[0]).to endpoint_eq e2
+        get api("/endpoints?port_mapping_template_id=#{pmt2.id}", different_user)
         expect(es_response).to be_an Array
         expect(es_response.size).to eq 1
         expect(es_response[0]).to endpoint_eq e2

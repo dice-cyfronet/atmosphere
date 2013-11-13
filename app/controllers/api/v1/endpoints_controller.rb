@@ -2,7 +2,7 @@ module Api
   module V1
     class EndpointsController < Api::ApplicationController
 
-      load_and_authorize_resource :port_mapping_template, except: [:show, :create, :update, :destroy]
+      load_and_authorize_resource :port_mapping_template, only: [:index]
       load_and_authorize_resource :endpoint
       respond_to :json
 
