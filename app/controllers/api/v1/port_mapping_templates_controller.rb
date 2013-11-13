@@ -2,11 +2,8 @@ module Api
   module V1
     class PortMappingTemplatesController < Api::ApplicationController
 
-      #load_resource :appliance_type
       load_and_authorize_resource :appliance_type
       load_and_authorize_resource :port_mapping_template, through: :appliance_type
-      #load_and_authorize_resource :port_mapping_template
-      #load_resource :port_mapping_template, through: :appliance_type
       respond_to :json
 
       def index
