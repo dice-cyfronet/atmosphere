@@ -14,8 +14,6 @@
 #
 
 class VirtualMachine < ActiveRecord::Base
-  # include ActiveModel::Dirty
-  # define_attribute_methods :ip
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
   has_many :port_mappings, dependent: :destroy
@@ -80,7 +78,8 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def update_dnat
-    if previous_changes.include? :ip and not previous_changes[:ip].first.blank?
+    if not ip_was.blank?
+      WranglerEraserWorker.perform_async(vm_id: id)
     end
     WranglerRegistrarWorker.perform_async(id) if ip?
   end
