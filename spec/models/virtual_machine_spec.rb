@@ -184,10 +184,19 @@ describe VirtualMachine do
       create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
     end
 
-    it 'injects initial configuration' do
+    it 'injects initial configuration if payload not blank' do
       expect(cloud_client).to receive(:servers).and_return(servers)
       appl = create(:appl_dev_mode)
       server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload}
+      expect(servers).to receive(:create).with(server_params).and_return(server)
+      expect(server).to receive(:id).twice.and_return 1
+      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
+    end
+
+    it 'does not inject initial configuration if payload is blank' do
+      expect(cloud_client).to receive(:servers).and_return(servers)
+      appl = create(:appl_dev_mode, appliance_configuration_instance: ApplianceConfigurationInstance.create())
+      server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site}
       expect(servers).to receive(:create).with(server_params).and_return(server)
       expect(server).to receive(:id).twice.and_return 1
       create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
