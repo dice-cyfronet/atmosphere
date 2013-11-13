@@ -96,23 +96,46 @@ describe VirtualMachine do
   describe 'DNAT unregistration' do
 
     let(:vm) { create(:virtual_machine, ip: priv_ip) }
+    let(:vm_ipless) { create(:virtual_machine) }
 
     before do
       # we are testing dnat unregistration not cloud action, thus we can mock it
       servers_double = double
       vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+      vm_ipless.compute_site.cloud_client.stub(:servers).and_return(servers_double)
       allow(servers_double).to receive(:destroy)
     end
 
-    it 'is performed after not blank IP was changed'
+    context 'is performed' do
+      before do
+        expect(WranglerEraserWorker).to receive(:perform_async)
+      end
+      it 'is performed after not blank IP was changed' do
+        vm.ip = '8.8.8.8'
+        vm.save
+      end
 
-    it 'is not performed after blank IP was changed'
-
-    it 'is not performed after VM with blank IP was destroyed'
-
-    it 'is performed after VM is destroyed if IP was not blank' do
-      expect(WranglerEraserWorker).to receive(:perform_async)
-      vm.destroy
+      it 'is performed after VM is destroyed if IP was not blank' do
+        vm.destroy
+      end
     end
+
+    context 'is not performed' do
+
+      before do
+        expect(WranglerEraserWorker).to_not receive(:perform_async)
+      end
+
+      it 'is not performed after blank IP was changed' do
+        vm_ipless.ip = '8.8.8.8'
+        vm_ipless.save
+      end
+
+      it 'is not performed after VM with blank IP was destroyed' do
+        vm_ipless.destroy
+      end
+    
+    end
+    
   end
 end

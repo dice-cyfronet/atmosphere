@@ -13,18 +13,24 @@ module Api
       end
 
       def create
+        log_user_action 'create new appliance configuration template'
         @appliance_configuration_template.save!
         render json: @appliance_configuration_template, status: :created
+        log_user_action "appliance configuration template created: #{@appliance_configuration_template.to_json}"
       end
 
       def update
+        log_user_action 'update appliance configuration template'
         @appliance_configuration_template.update_attributes!(update_params)
         render json: @appliance_configuration_template
+        log_user_action "appliance configuration template updated: #{@appliance_configuration_template.to_json}"
       end
 
       def destroy
+        log_user_action "destroy appliance configuration template #{@appliance_configuration_template.id}"
         if @appliance_configuration_template.destroy
           render json: {}
+          log_user_action "appliance configuration template #{@appliance_configuration_template.id} destroyed"
         else
           render_error @appliance_configuration_template
         end
