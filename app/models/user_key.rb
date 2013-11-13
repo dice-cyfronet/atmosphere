@@ -31,6 +31,9 @@ class UserKey < ActiveRecord::Base
     #write_attribute(:name, name)
   #end
 
+  def id_at_site
+    "#{user.login}-#{name}"
+  end
 
   private
   def generate_fingerprint
