@@ -34,9 +34,15 @@ describe UserKey do
 
   it 'should import key to cloud site' do
     subject.name
+    ComputeSite.all.each { |cs| subject.import_to_cloud(cs) }
     ComputeSite.all.each do |cs|
-      keypair = cs.cloud_client.key_pairs.select{|k| k.name == subject.name}.first
-      expect(keypair.name).to eq(subject.name)
+      keypair = cs.cloud_client.key_pairs.select{|k| k.name == subject.id_at_site}.first
+      expect(keypair.name).to eq(subject.id_at_site)
     end
+  end
+
+  it 'should not raise error if key is imported twice' do
+    subject.name
+    ComputeSite.all.each { |cs| subject.import_to_cloud(cs); subject.import_to_cloud(cs) }
   end
 end
