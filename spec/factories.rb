@@ -74,6 +74,18 @@ FactoryGirl.define do
     factory :not_shareable_appliance_type, traits: [:not_shareable]
   end
 
+  factory :appliance do |f|
+    appliance_set
+    appliance_configuration_instance
+    appliance_type
+
+    trait :dev_mode do
+      appliance_set { create(:dev_appliance_set) }
+    end
+
+    factory :appl_dev_mode, traits: [:dev_mode]
+  end
+
   factory :security_proxy do |f|
     name 'security/proxy'
     payload { Faker::Lorem.words(10).join(' ') }
@@ -142,12 +154,6 @@ FactoryGirl.define do
 
   factory :appliance_configuration_instance do |f|
     payload { Faker::Lorem.words(10).join(' ') }
-  end
-
-  factory :appliance do |f|
-    appliance_set
-    appliance_configuration_instance
-    appliance_type
   end
 
   factory :dev_mode_property_set do |f|
