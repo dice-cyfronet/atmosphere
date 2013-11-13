@@ -43,6 +43,26 @@ end
 RSpec::Matchers.define :http_mapping_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
+        actual['url'] == expected.url &&
+        actual['application_protocol'] == expected.application_protocol &&
+        actual['appliance_id'] == expected.appliance_id &&
+        actual['port_mapping_template_id'] == expected.port_mapping_template_id
+  end
+end
+
+RSpec::Matchers.define :port_mapping_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+        actual['public_ip'] == expected.public_ip &&
+        actual['source_port'] == expected.source_port &&
+        actual['port_mapping_template_id'] == expected.port_mapping_template.id &&
+        actual['virtual_machine_id'] == expected.virtual_machine.id
+  end
+end
+
+RSpec::Matchers.define :http_mapping_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
     actual['url'] == expected.url &&
     actual['application_protocol'] == expected.application_protocol &&
     actual['appliance_id'] == expected.appliance_id &&
@@ -72,8 +92,39 @@ end
 RSpec::Matchers.define :config_instance_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
+        actual['payload'] == expected.payload &&
+        actual['appliance_configuration_template_id'] == expected.appliance_configuration_template.id
+  end
+end
+
+RSpec::Matchers.define :config_instance_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
     actual['payload'] == expected.payload &&
     actual['appliance_configuration_template_id'] == expected.appliance_configuration_template.id
+  end
+end
+
+RSpec::Matchers.define :port_mapping_template_eq do |expected|
+  match do |actual|
+    (actual['id'] == expected.id) &&
+    (actual['transport_protocol'] == expected.transport_protocol) &&
+    (actual['application_protocol'] == expected.application_protocol) &&
+    (actual['service_name'] == expected.service_name) &&
+    (actual['target_port'] == expected.target_port) &&
+    ((expected.appliance_type && (actual['appliance_type_id'] == expected.appliance_type_id)) or
+     (expected.dev_mode_property_set && (actual['dev_mode_property_set_id'] == expected.dev_mode_property_set.id)))
+  end
+end
+
+RSpec::Matchers.define :be_updated_by_port_mapping_template do |expected|
+  match do |actual|
+    (actual['transport_protocol'] == expected[:transport_protocol] || expected[:transport_protocol].blank?) &&
+    (actual['application_protocol'] == expected[:application_protocol] || expected[:application_protocol].blank?) &&
+    (actual['service_name'] == expected[:service_name] || expected[:service_name].blank?) &&
+    (actual['target_port'] == expected[:target_port] || expected[:target_port].blank?) &&
+    ((actual['appliance_type_id'] == expected[:appliance_type_id]) or (actual['dev_mode_property_set_id'] == expected[:dev_mode_property_set_id]) or
+     (expected[:appliance_type_id].blank? && expected[:dev_mode_property_set_id].blank?))
   end
 end
 
