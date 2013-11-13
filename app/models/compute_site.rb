@@ -36,6 +36,8 @@ class ComputeSite < ActiveRecord::Base
 
   scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}) }
 
+  after_update :register_cloud_client, if: :config_changed?
+
   def to_s
     name
   end
