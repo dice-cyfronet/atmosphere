@@ -64,7 +64,7 @@ class UserKey < ActiveRecord::Base
     logger.debug "Importing key #{id_at_site} to #{cs.name}"
     begin
       cloud_client.import_key_pair(id_at_site, public_key)
-    rescue
+    rescue Excon::Errors::Conflict, Fog::Compute::AWS::Error
       logger.info $!
     end
     logger.info "Imported key #{id_at_site} to #{cs.name}"
