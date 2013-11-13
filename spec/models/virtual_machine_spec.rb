@@ -146,7 +146,7 @@ describe VirtualMachine do
   end
 
 
-  context 'keys' do
+  context 'injecting' do
   
     VM_NAME = 'key-tester'
     FLAVOR_REF = 1
@@ -165,8 +165,19 @@ describe VirtualMachine do
     let(:init_conf) { create(:appliance_configuration_instance) }
     let(:tmpl) { create(:virtual_machine_template) }
 
+    it 'imports user key to compute site' do
+      allow(cloud_client).to receive(:servers).and_return(servers)
+      allow(servers).to receive(:create).and_return(server)
+      allow(server).to receive(:id).twice.and_return 1
+      key = create(:user_key)
+      expect(cloud_client).to receive(:import_key_pair).with(key.id_at_site, key.public_key)
+      appl = create(:appl_dev_mode, user_key: key)
+      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
+    end
+
     it 'injects user key if key is defined' do
       expect(cloud_client).to receive(:servers).and_return(servers)
+      allow(cloud_client).to receive(:import_key_pair)
       key = create(:user_key)
       appl = create(:appl_dev_mode, user_key: key)
       server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload, key_name: key.id_at_site}
