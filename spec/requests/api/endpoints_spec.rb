@@ -23,14 +23,14 @@ describe Api::V1::EndpointsController do
       end
     end
 
-    context 'when authenticated as wrong user' do
+    context 'when authenticated as not owner and not admin' do
       it 'returns 403 Forbidden error' do
         get api("/endpoints?port_mapping_template_id=#{pmt1.id}", different_user)
         expect(response.status).to eq 403
       end
     end
 
-    context 'when authenticated as user' do
+    context 'when authenticated as owner' do
       it 'returns 200 Success' do
         get api("/endpoints?port_mapping_template_id=#{pmt1.id}", user)
         expect(response.status).to eq 200
@@ -65,7 +65,24 @@ describe Api::V1::EndpointsController do
       end
     end
 
-    context 'when authenticated as user' do
+    context 'when authenticated as not owner and not admin' do
+      it 'returns 403 Forbidden error for not public resources' do
+        get api("/endpoints/#{e1.id}", different_user)
+        expect(response.status).to eq 403
+      end
+
+      it 'returns 200 Success for public resources' do
+        get api("/endpoints/#{e2.id}", different_user)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns chosen public endpoint' do
+        get api("/endpoints/#{e2.id}", different_user)
+        expect(e_response).to endpoint_eq e2
+      end
+    end
+
+    context 'when authenticated as owner' do
       it 'returns 200 Success' do
         get api("/endpoints/#{e1.id}", user)
         expect(response.status).to eq 200
@@ -81,11 +98,6 @@ describe Api::V1::EndpointsController do
         expect(e_response).to endpoint_eq e2
         get api("/endpoints/#{e2.id}", different_user)
         expect(e_response).to endpoint_eq e2
-      end
-
-      it 'refuses chosen not owned and not public endpoint' do
-        get api("/endpoints/#{e1.id}", different_user)
-        expect(response.status).to eq 403
       end
 
       it 'returns 404 Not Found when endpoint is not found' do
@@ -135,7 +147,7 @@ describe Api::V1::EndpointsController do
       end
     end
 
-    context 'when authenticated as user' do
+    context 'when authenticated as owner' do
       it 'returns 201 Created on success' do
         post api("/endpoints", user), new_request
         expect(response.status).to eq 201
@@ -203,7 +215,7 @@ describe Api::V1::EndpointsController do
       end
     end
 
-    context 'when authenticated as user' do
+    context 'when authenticated as owner' do
       it 'returns 200 Success' do
         put api("/endpoints/#{e1.id}", user), update_json
         expect(response.status).to eq 200
@@ -251,7 +263,7 @@ describe Api::V1::EndpointsController do
       end
     end
 
-    context 'when authenticated as user' do
+    context 'when authenticated as owner' do
       it 'returns 200 Success' do
         delete api("/endpoints/#{e1.id}", user)
         expect(response.status).to eq 200

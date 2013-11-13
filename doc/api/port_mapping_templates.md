@@ -1,10 +1,9 @@
 ## List Port Mapping Templates
 
-Get a list of Port Mapping Templates defined for a given Appliance Type. The context of a specific Appliance Type
-is required.
+Get a list of Port Mapping Templates defined for a given Appliance Type.
 
 ```
-GET /appliance_types/:appliance_type_id/port_mapping_templates
+GET /port_mapping_templates
 ```
 
 Parameters:
@@ -34,12 +33,11 @@ Parameters:
 Get the full JSON document about a given Port Mapping Template.
 
 ```
-GET /appliance_types/:appliance_type_id/port_mapping_templates/:id
+GET /port_mapping_templates/:id
 ```
 
 Parameters:
 
-+ `appliance_type_id` (required) - The ID of the Appliance Type in question
 + `id` (required) - The ID of the Port Mapping Template you are interested in
 
 ```json
@@ -49,7 +47,7 @@ Parameters:
   "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
   "service_name": "rdesktop",
   "target_port": 3389,
-  "appliance_type_id": 5 (should equal the :appliance_type_id parameter)
+  "appliance_type_id": 5
 }
 ```
 
@@ -60,7 +58,7 @@ Creates a new Port Mapping Template. Requires a specific parameter set to be pas
 Template attributes.
 
 ```
-POST /appliance_types/:appliance_type_id/port_mapping_templates
+POST /port_mapping_templates
 ```
 
 Parameters:
@@ -77,15 +75,13 @@ In case of successful Port Mapping Template creation, returns the JSON object wi
 ## Update a Port Mapping Template
 
 Updates the given Port Mapping Template. You need to be an Appliance Type owner (or an admin) do edit this entity.
-Request parameters are the same as for `GET`ting a single Port Mapping Template.
 
 ```
-PUT /appliance_types/:appliance_type_id/port_mapping_templates/:id
+PUT /port_mapping_templates/:id
 ```
 
 Parameters:
 
-+ `appliance_type_id` (required) - The ID of the parent Appliance Type in question
 + `id` (required) - The ID of the Port Mapping Template to be updated
 + All other parameters are optional and are the same as for the `POST` creation method
 
@@ -98,10 +94,9 @@ the application and transport protocol constraints when updating these values.
 Deletes chosen Port Mapping Template. User deleting a Port Mapping Template has to be its owner or an admin.
 
 ```
-DELETE /appliance_types/:appliance_type_id/port_mapping_templates/:id
+DELETE /port_mapping_templates/:id
 ```
 
 Parameters:
 
-+ `appliance_type_id` (required) - The ID of the parent Appliance Type in question
 + `id` (required) - The ID of the Port Mapping Template to be deleted
