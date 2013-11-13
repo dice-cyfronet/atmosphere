@@ -38,7 +38,7 @@ Parameters:
 
 ```json
 {
-  "compute_sites":
+  "compute_site":
   {
     "id": 1,
     "site_id":"cyfronet-folsom",
