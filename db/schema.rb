@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   create_table "appliances", force: true do |t|
     t.integer  "appliance_set_id",                                    null: false
     t.integer  "appliance_type_id",                                   null: false
+    t.integer  "user_key_id"
     t.integer  "appliance_configuration_instance_id",                 null: false
     t.string   "state",                               default: "new", null: false
     t.datetime "created_at"
@@ -74,6 +75,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "appliances", ["appliance_configuration_instance_id"], name: "appliances_appliance_configuration_instance_id_fk", using: :btree
   add_index "appliances", ["appliance_set_id"], name: "appliances_appliance_set_id_fk", using: :btree
   add_index "appliances", ["appliance_type_id"], name: "appliances_appliance_type_id_fk", using: :btree
+  add_index "appliances", ["user_key_id"], name: "appliances_user_key_id_fk", using: :btree
 
   create_table "appliances_virtual_machines", force: true do |t|
     t.integer "virtual_machine_id"
@@ -273,6 +275,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_foreign_key "appliances", "appliance_configuration_instances", name: "appliances_appliance_configuration_instance_id_fk"
   add_foreign_key "appliances", "appliance_sets", name: "appliances_appliance_set_id_fk"
   add_foreign_key "appliances", "appliance_types", name: "appliances_appliance_type_id_fk"
+  add_foreign_key "appliances", "user_keys", name: "appliances_user_key_id_fk"
 
   add_foreign_key "dev_mode_property_sets", "appliances", name: "dev_mode_property_sets_appliance_id_fk"
   add_foreign_key "dev_mode_property_sets", "security_proxies", name: "dev_mode_property_sets_security_proxy_id_fk"

@@ -21,6 +21,8 @@ class UserKey < ActiveRecord::Base
   attr_readonly :name, :public_key, :fingerprint
   before_create :generate_fingerprint, :import_to_clouds
   before_destroy :delete_in_clouds
+  
+  has_many :appliances
   belongs_to :user
 
   #def name=(name)

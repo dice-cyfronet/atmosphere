@@ -16,6 +16,7 @@ class Appliance < ActiveRecord::Base
   belongs_to :appliance_set
   belongs_to :appliance_type
   belongs_to :appliance_configuration_instance
+  belongs_to :user_key
 
   validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
 
