@@ -122,7 +122,6 @@ describe VirtualMachine do
 
     context 'is not performed' do
 
-      
       before do
         expect(WranglerEraserWorker).to_not receive(:perform_async)
       end
