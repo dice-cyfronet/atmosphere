@@ -173,7 +173,7 @@ describe Api::V1::PortMappingTemplatesController do
         expect(response.status).to eq 200
       end
 
-      it 'updates appliance type' do
+      it 'updates port mapping template' do
         old_target_port = pmt1.target_port
         old_appliance_type_id = pmt1.appliance_type.id
         put api("/appliance_types/#{at1.id}/port_mapping_templates/#{pmt1.id}", user), update_json
