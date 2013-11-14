@@ -156,6 +156,35 @@ RSpec::Matchers.define :appliance_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :dev_props_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['appliance_id'] == expected.appliance.id &&
+    actual['name'] == expected.name &&
+    actual['description'] == expected.description &&
+    actual['shared'] == expected.shared &&
+    actual['scalable'] == expected.scalable &&
+    actual['preference_cpu'] == expected.preference_cpu &&
+    actual['preference_memory'] == expected.preference_memory &&
+    actual['preference_disk'] == expected.preference_disk &&
+    (!expected.security_proxy || actual['security_proxy_id'] == expected.security_proxy.id) &&
+    actual['port_mapping_template_ids'] == expected.port_mapping_templates.collect(&:id)
+  end
+end
+
+RSpec::Matchers.define :dev_props_be_updated_by do |expected|
+  match do |actual|
+    (actual.name == expected[:name] || expected[:name].blank?) &&
+    (actual.description == expected[:description] || expected[:description].blank?) &&
+    (actual.shared == expected[:shared] || expected[:shared].blank?)  &&
+    (actual.scalable == expected[:scalable] || expected[:scalable].blank?)  &&
+    (actual.preference_cpu == expected[:preference_cpu] || expected[:preference_cpu].blank?)  &&
+    (actual.preference_memory == expected[:preference_memory] || expected[:preference_memory].blank?)  &&
+    (actual.preference_disk == expected[:preference_disk] || expected[:preference_disk].blank?)  &&
+    (expected[:security_proxy_id].blank? || actual.security_proxy.id == expected[:security_proxy_id])
+  end
+end
+
 RSpec::Matchers.define :user_key_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
