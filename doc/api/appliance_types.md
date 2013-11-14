@@ -19,8 +19,8 @@ GET /appliance_types
       "preference_cpu": 1.0,
       "preference_memory": 1024,
       "preference_disk": 10240,
-      "author": 1,
-      "security_proxy": 1
+      "author_id": 1,
+      "security_proxy_id": 1
     }, {
       ...
     }
@@ -52,8 +52,8 @@ Parameters:
     "preference_cpu": 1.0,
     "preference_memory": 1024,
     "preference_disk": 10240,
-    "author": 1,
-    "security_proxy": 1
+    "author_id": 1,
+    "security_proxy_id": 1
   }
 }
 ```
@@ -82,8 +82,8 @@ Parameters:
 + `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type.
 + `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type.
 + `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type.
-+ `author` (optional) - appliance type author id.
-+ `security_proxy` (optional) - security proxy configuration id used by this appliance type.
++ `author_id` (optional) - appliance type author id.
++ `security_proxy_id` (optional) - security proxy configuration id used by this appliance type.
 
 ## Update appliance type
 

@@ -116,8 +116,8 @@ describe Api::V1::ApplianceTypesController do
         preference_cpu: 10.0,
         preference_memory: 1024,
         preference_disk: 10240,
-        security_proxy: different_security_proxy.id,
-        author: different_user.id
+        security_proxy_id: different_security_proxy.id,
+        author_id: different_user.id
     }} end
 
     context 'when unauthenticated' do

@@ -35,8 +35,8 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
     actual['preference_disk'] == expected.preference_disk &&
 
     #links
-    actual['author'] == expected.user_id &&
-    actual['security_proxy'] == expected.security_proxy_id
+    actual['author_id'] == expected.user_id &&
+    actual['security_proxy_id'] == expected.security_proxy_id
   end
 end
 
@@ -219,8 +219,8 @@ RSpec::Matchers.define :at_be_updated_by do |expected|
     (actual.preference_cpu == expected[:preference_cpu] || expected[:preference_cpu].blank?)  &&
     (actual.preference_memory == expected[:preference_memory] || expected[:preference_memory].blank?)  &&
     (actual.preference_disk == expected[:preference_disk] || expected[:preference_disk].blank?)  &&
-    (actual.security_proxy.id == expected[:security_proxy] || expected[:security_proxy].blank?)  &&
-    (actual.author.id == expected[:author] || expected[:author].blank?)
+    (expected[:security_proxy_id].blank? || actual.security_proxy.id == expected[:security_proxy_id])  &&
+    (actual.author.id == expected[:author_id] || expected[:author_id].blank?)
   end
 end
 
