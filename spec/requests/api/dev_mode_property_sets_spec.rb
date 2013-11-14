@@ -39,8 +39,6 @@ describe Api::V1::DevModePropertySetsController do
         expect(dev_props_response.size).to eq 2
         expect(dev_props_response[0]).to dev_props_eq appl1.dev_mode_property_set
         expect(dev_props_response[1]).to dev_props_eq appl2.dev_mode_property_set
-
-        puts ">>> #{json_response}"
       end
     end
 
