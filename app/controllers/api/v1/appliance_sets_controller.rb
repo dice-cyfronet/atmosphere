@@ -6,7 +6,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @appliance_sets.where(filter)
+        respond_with @appliance_sets.where(filter).order(:id)
       end
 
       def show

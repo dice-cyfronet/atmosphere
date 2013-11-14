@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @appliance_configuration_instances.where(filter).uniq
+        respond_with @appliance_configuration_instances.where(filter).order(:id).uniq
       end
 
       def show

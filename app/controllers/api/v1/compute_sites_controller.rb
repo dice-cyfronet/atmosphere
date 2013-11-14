@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @compute_sites.where(filter)
+        respond_with @compute_sites.where(filter).order(:id)
       end
 
       def show

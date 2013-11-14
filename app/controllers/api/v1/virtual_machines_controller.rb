@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @virtual_machines.where(filter).distinct
+        respond_with @virtual_machines.where(filter).order(:id).distinct
       end
 
       def show

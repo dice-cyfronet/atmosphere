@@ -7,7 +7,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @appliances.where(filter)
+        respond_with @appliances.where(filter).order(:id)
       end
 
       def show
