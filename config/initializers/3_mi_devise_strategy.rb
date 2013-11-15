@@ -42,7 +42,7 @@ module Devise
       end
 
       def mi_ticket
-        params[:mi_ticket]
+        params[:mi_ticket] || request.headers['MI-TICKET']
       end
     end
   end
