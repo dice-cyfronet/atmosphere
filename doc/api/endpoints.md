@@ -18,6 +18,7 @@ Parameters:
       "description": "some descriptive text",
       "descriptor": "<xml>structured_text_for_machine_use</xml>" (e.g., a WSDL document),
       "endpoint_type": one of "rest", "ws" or "webapp",
+      "invocation_path": "app/invocation/path",
       "port_mapping_template_id": 5 (should equal the :port_mapping_template_id parameter)
     }, {
       ...
@@ -45,6 +46,7 @@ Parameters:
   "description": "some descriptive text",
   "descriptor": "<xml>structured_text_for_machine_use</xml>" (e.g., a WSDL document),
   "endpoint_type": one of "rest", "ws" or "webapp",
+  "invocation_path": "app/invocation/path",
   "port_mapping_template_id": 5
 }
 ```
@@ -64,6 +66,7 @@ Parameters:
 + `description` (optional) - Textual, human-readable description what is available on that port
 + `descriptor` (optional) - Machine-readable document that describes the service available on that port
 + `endpoint_type` (required) - One of "rest", "ws" or "webapp"
++ `invocation_path` (required) - Application invocation path
 
 In case of successful Endpoint creation, returns the JSON object with the details of the created entity.
 

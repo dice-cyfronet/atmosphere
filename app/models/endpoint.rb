@@ -19,7 +19,7 @@ class Endpoint < ActiveRecord::Base
   enumerize :endpoint_type, in: [:ws, :rest, :webapp]
   validates :endpoint_type, inclusion: %w(ws rest webapp)
 
-  validates_presence_of :port_mapping_template
+  validates_presence_of :port_mapping_template, :invocation_path
 
   scope :def_order, -> { order(:description) }
 

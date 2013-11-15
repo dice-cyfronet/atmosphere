@@ -23,5 +23,6 @@ describe Endpoint do
 
   expect_it { to belong_to :port_mapping_template }
   expect_it { to validate_presence_of :port_mapping_template }
+  expect_it { to validate_presence_of :invocation_path }
 
 end

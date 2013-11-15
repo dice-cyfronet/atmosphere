@@ -124,6 +124,7 @@ describe Api::V1::EndpointsController do
           description: 'some human description',
           descriptor: '<heavy xml="document">here</heavy>',
           endpoint_type: 'rest',
+          invocation_path: 'invocation_path',
           port_mapping_template_id: pmt1.id
         }
       }
@@ -135,6 +136,7 @@ describe Api::V1::EndpointsController do
           description: 'some human description',
           descriptor: '<heavy xml="document">here</heavy>',
           endpoint_type: 'wrong type',
+          invocation_path: 'invocation_path',
           port_mapping_template_id: pmt1.id
         }
       }

@@ -5,6 +5,7 @@ class CreateEndpoints < ActiveRecord::Migration
       # The below should force MySQL to use MEDIUMTEXT or LONGTEXT
       t.text :descriptor,                     limit: 16777215
       t.string :endpoint_type,                null: false, default: 'ws'
+      t.string :invocation_path,              null: false
 
       t.references :port_mapping_template,    null: false
 
