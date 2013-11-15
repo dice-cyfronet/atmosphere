@@ -2,9 +2,9 @@
 
 # AIR API
 
-All API requests require authentication (if not stated different). You need to pass a `private_token` parameter by url or header.
+All API requests require authentication (if not stated different). You need to pass a `private_token` or `mi_ticket` parameter by url or header.
 
-If no, or an invalid, `private_token` is provided then an error message will be returned with status code 401:
+If no, or an invalid, `private_token` or `mi_ticket` is provided then an error message will be returned with status code 401:
 
 ```json
 {
@@ -18,6 +18,14 @@ Example of a valid API request:
 
 ```
 GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg
+GET http://example.com/api/v1/appliance_sets?mi_ticket=fd342hac4a=
+```
+
+Example for a valid API request using curl and authentication via header:
+
+```
+curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://example.com/api/v1/appliance_sets
+curl --header "MI-TICKET: fd342hac4a=s" http://example.com/api/v1/appliance_sets
 ```
 
 ## Status codes
