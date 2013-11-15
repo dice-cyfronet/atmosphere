@@ -66,7 +66,6 @@ module Api
     end
 
     def authenticate_user_from_token!
-      user_token = params[Devise.token_authentication_key].presence
       user = user_token && User.find_by(authentication_token: user_token)
 
       if user
@@ -76,6 +75,14 @@ module Api
         # sign in token, you can simply remove store: false.
         sign_in user, store: false
       end
+    end
+
+    def user_token
+      params[Devise.token_authentication_key].presence || request.headers[header_user_token_key].presence
+    end
+
+    def header_user_token_key
+      Devise.token_authentication_key.to_s.upcase.gsub(/_/, '-')
     end
   end
 end
