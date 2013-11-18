@@ -45,9 +45,9 @@ describe ComputeSite do
     end
 
     context 'aws' do
-      subject { FactoryGirl.create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}') }
+      let(:aws) { FactoryGirl.create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}') }
       it 'returns appropriate cloud client for aws' do
-        expect(subject.cloud_client).to be_an_instance_of(Fog::Compute::AWS::Mock)
+        expect(aws.cloud_client).to be_an_instance_of(Fog::Compute::AWS::Mock)
       end
     end
   end
