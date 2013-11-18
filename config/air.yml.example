@@ -16,6 +16,9 @@ defaults: &defaults
   #  regexp: '#{\w*}'
   #  range: '2..-2'
 
+  #token_authentication_key: private_token
+  #mi_authentication_key: mi_ticket
+
 development:
   <<: *defaults
 

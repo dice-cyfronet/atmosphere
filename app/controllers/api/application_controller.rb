@@ -78,11 +78,11 @@ module Api
     end
 
     def user_token
-      params[Devise.token_authentication_key].presence || request.headers[header_user_token_key].presence
+      params[Air.config.token_authentication_key].presence || request.headers[header_user_token_key].presence
     end
 
     def header_user_token_key
-      Devise.token_authentication_key.to_s.upcase.gsub(/_/, '-')
+      Air.config.token_authentication_key.to_s.upcase.gsub(/_/, '-')
     end
   end
 end

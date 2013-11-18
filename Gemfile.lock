@@ -100,7 +100,7 @@ GEM
     connection_pool (1.1.0)
     database_cleaner (1.2.0)
     debug_inspector (0.0.2)
-    devise (3.1.2)
+    devise (3.2.1)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
@@ -363,7 +363,7 @@ DEPENDENCIES
   clockwork
   coffee-rails (~> 4.0.0)
   database_cleaner
-  devise (~> 3.1.0)
+  devise (~> 3.2)
   ember-data-source (= 1.0.0.beta.2)
   ember-rails
   ember-source (~> 1.1.0)

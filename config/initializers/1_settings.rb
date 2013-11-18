@@ -16,4 +16,7 @@ class Settings < Settingslogic
 
   Settings['optimizer'] ||= Settings.new({})
   Settings.optimizer['max_appl_no'] ||= 5
+
+  Settings['token_authentication_key'] ||= 'private_token'
+  Settings['mi_authentication_key']    ||= 'mi_ticket'
 end
