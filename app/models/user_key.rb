@@ -74,7 +74,11 @@ class UserKey < ActiveRecord::Base
     ComputeSite.all.each do |cs|
       cloud_client = cs.cloud_client
       logger.debug "Deleting key #{id_at_site} from #{cs.name}"
-      cloud_client.delete_key_pair(id_at_site)
+      # ignore key not found errors because it is possible that key was never imported to compute site
+      begin
+        cloud_client.delete_key_pair(id_at_site)
+      rescue Fog::Compute::OpenStack::NotFound
+      end
       logger.info "Deleted key #{id_at_site} from #{cs.name}"
     end
   end

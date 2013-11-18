@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.text     "description"
     t.text     "descriptor",               limit: 16777215
     t.string   "endpoint_type",                             default: "ws", null: false
+    t.string   "invocation_path",                                          null: false
     t.integer  "port_mapping_template_id",                                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"

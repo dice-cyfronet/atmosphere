@@ -107,7 +107,7 @@ FactoryGirl.define do
     factory :static_config_template, traits: [:static]
   end
 
-  factory :compute_site do |f|
+  factory :compute_site, aliases: [:openstack_compute_site] do |f|
     site_id { rand_str }
     name { rand_str }
     site_type 'private'
