@@ -42,11 +42,7 @@ module Devise
       end
 
       def mi_ticket
-        params[Air.config.mi_authentication_key] || request.headers[header_mi_ticket_key]
-      end
-
-      def header_mi_ticket_key
-        Air.config.mi_authentication_key.to_s.upcase.gsub(/_/, '-')
+        params[Air.config.mi_authentication_key] || request.headers[Air.config.header_mi_authentication_key]
       end
     end
   end

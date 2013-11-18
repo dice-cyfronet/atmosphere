@@ -78,11 +78,7 @@ module Api
     end
 
     def user_token
-      params[Air.config.token_authentication_key].presence || request.headers[header_user_token_key].presence
-    end
-
-    def header_user_token_key
-      Air.config.token_authentication_key.to_s.upcase.gsub(/_/, '-')
+      params[Air.config.token_authentication_key].presence || request.headers[Air.config.header_token_authentication_key].presence
     end
   end
 end

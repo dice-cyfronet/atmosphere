@@ -2,6 +2,22 @@ class Settings < Settingslogic
   source "#{Rails.root}/config/air.yml"
   namespace Rails.env
 
+  class << self
+    def header_token_authentication_key
+      to_header_key(token_authentication_key)
+    end
+
+    def header_mi_authentication_key
+      to_header_key(mi_authentication_key)
+    end
+
+    private
+
+    def to_header_key(key)
+      key.upcase.gsub(/_/, '-')
+    end
+  end
+
 
   Settings['config_param'] ||= Settingslogic.new({})
   Settings.config_param['regexp'] ||= '#{\w*}'
