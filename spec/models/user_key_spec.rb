@@ -45,4 +45,12 @@ describe UserKey do
     subject.name
     ComputeSite.all.each { |cs| subject.import_to_cloud(cs); subject.import_to_cloud(cs) }
   end
+
+  # there is no need for equivalent test for amazon because AWS does not raise error when trying to deleting key that was not imported
+  it 'should handle key not error when deleting key from openstack cloud site' do
+    cs = create(:openstack_compute_site)
+    cs.cloud_client.stub(:delete_key_pair).and_raise(Fog::Compute::OpenStack::NotFound.new)
+    subject.destroy
+  end
+
 end
