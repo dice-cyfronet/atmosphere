@@ -163,6 +163,57 @@ describe Api::V1::ApplianceTypesController do
     end
   end
 
+  describe 'POST /appliance_types' do
+
+    let(:new_at_name) { 'the newest appliance type ever' }
+    let(:at_req_body) { {appliance_type: {name: new_at_name}} }
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        post api("/appliance_types/"), at_req_body
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user without developer role' do
+      it 'returns 403 Forbidden error' do
+        post api("/appliance_types/", user), at_req_body
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'when authenticated as developer' do
+
+      it 'returns 201 Created' do
+        post api("/appliance_types/", developer), at_req_body
+        expect(response.status).to eq 201
+      end
+
+      it 'creates new appliance type' do
+        expect {
+          post api("/appliance_types/", developer), at_req_body
+          expect(at_response['name']).to eq new_at_name
+          expect(at_response['description']).to be_nil
+          expect(at_response['shared']).to be_false
+          expect(at_response['scalable']).to be_false
+          expect(at_response['visible_for']).to eq 'owner'
+        }.to change { ApplianceType.count }.by(1)
+      end
+
+      it 'saves developer\'s virtual machine as template when creating new appliance type'
+
+      it 'does not allow to save virtual machine that does not belong to this developer when creating new appliance type'
+
+      it 'merges attributes from dev mode property set of given appliance with those provided in request parameters'
+
+    end
+
+    context 'when authenticated as admin' do
+
+    end
+
+  end
+
   describe 'DELETE /appliance_types/:id' do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
