@@ -47,10 +47,18 @@ describe UserKey do
   end
 
   # there is no need for equivalent test for amazon because AWS does not raise error when trying to deleting key that was not imported
-  it 'should handle key not error when deleting key from openstack cloud site' do
+  it 'should handle key not found error when deleting key from openstack cloud site' do
     cs = create(:openstack_compute_site)
     cs.cloud_client.stub(:delete_key_pair).and_raise(Fog::Compute::OpenStack::NotFound.new)
     subject.destroy
+  end
+
+  it 'saving user key with invalid public key should fail' do
+    user_key = build(:user_key, public_key: 'so invalid public key!!')
+    saved = user_key.save
+    expect(saved).to be_false
+    errors = user_key.errors.messages
+    expect(errors).to eql({public_key: ["Provided public key is invalid"]})
   end
 
 end

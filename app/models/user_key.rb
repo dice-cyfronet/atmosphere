@@ -19,17 +19,11 @@ class UserKey < ActiveRecord::Base
   validates_presence_of :name, :public_key, :user
   validates_uniqueness_of :name, :scope => :user_id
   attr_readonly :name, :public_key, :fingerprint
-  before_create :generate_fingerprint#, :import_to_clouds
+  validate :generate_fingerprint, unless: :persisted?
   before_destroy :delete_in_clouds
   
   has_many :appliances
   belongs_to :user
-
-  #def name=(name)
-    #raise 'Attribute :name has already been set and cannot be modified' unless name.blank?
-    #logger.info 'Setting name'
-    #write_attribute(:name, name)
-  #end
 
   def id_at_site
     "#{user.login}-#{name}"
@@ -45,14 +39,20 @@ class UserKey < ActiveRecord::Base
       output = nil
       IO.popen("ssh-keygen -lf #{file.path}") {|out|
         output = out.read
+        logger.info "Output #{output}"
       }
-      if output
+      if output.include? 'is not a public key file'
+        logger.error "Provided public key #{public_key} is invalid"
+        #raise Air::InvalidPublicKey
+        self.errors.add(:public_key, 'Provided public key is invalid')
+      elsif output
         logger.info output
         fprint = output.gsub(FINGER_PRINT_RE).first
+        logger.info "Fingerprint #{fprint}"
+        write_attribute(:fingerprint, fprint)
       end
     end
-    logger.info "Fingerprint #{fprint}"
-    write_attribute(:fingerprint, fprint)
+    
   end
 
   def import_to_clouds
