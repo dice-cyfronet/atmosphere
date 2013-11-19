@@ -129,6 +129,30 @@ describe Api::V1::UserKeysController do
         expect(added_user_key.name).to eq new_key_request[:user_key][:name]
         expect(added_user_key.public_key).to eq new_key_request[:user_key][:public_key]
       end
+
+      it 'returns 402 Unprocessable Entity status if public key is not provided' do
+        invalid_user_key_req = {
+          user_key: {
+            name: 'my invalid public key'
+          }
+        }
+        post api("/user_keys", user), invalid_user_key_req
+        expect(response.status).to eq 422
+        expect(response.body).to eq '{"public_key":["can\'t be blank"]}'
+      end
+
+      it 'returns 402 Unprocessable Entity status if invalid public key is provided' do
+        invalid_user_key_req = {
+          user_key: {
+            name: 'my invalid public key',
+            public_key: 'so invalid public key!!'
+          }
+        }
+        post api("/user_keys", user), invalid_user_key_req
+        expect(response.status).to eq 422
+        expect(response.body).to eq '{"public_key":["is invalid"]}'
+      end
+
     end
   end
 
