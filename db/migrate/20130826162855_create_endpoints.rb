@@ -1,6 +1,7 @@
 class CreateEndpoints < ActiveRecord::Migration
   def change
     create_table :endpoints do |t|
+      t.string :name,                         null: false
       t.text :description
       # The below should force MySQL to use MEDIUMTEXT or LONGTEXT
       t.text :descriptor,                     limit: 16777215

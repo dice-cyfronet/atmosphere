@@ -15,6 +15,7 @@ Parameters:
   "endpoints": [
     {
       "id": 1,
+      "name": "name of the endpoint",
       "description": "some descriptive text",
       "descriptor": "<xml>structured_text_for_machine_use</xml>" (e.g., a WSDL document),
       "endpoint_type": one of "rest", "ws" or "webapp",
@@ -43,6 +44,7 @@ Parameters:
 ```json
 {
   "id": 1 (should equal the :id parameter),
+  "name": "name of the endpoint",
   "description": "some descriptive text",
   "descriptor": "<xml>structured_text_for_machine_use</xml>" (e.g., a WSDL document),
   "endpoint_type": one of "rest", "ws" or "webapp",
@@ -63,6 +65,7 @@ POST /endpoints
 Parameters:
 
 + `port_mapping_template_id` (required) - The ID of the Port Mapping Template which should acquire the new Endpoint
++ `name` (required) - Short name of the endpoint meaning and purpose
 + `description` (optional) - Textual, human-readable description what is available on that port
 + `descriptor` (optional) - Machine-readable document that describes the service available on that port
 + `endpoint_type` (required) - One of "rest", "ws" or "webapp"

@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   end
 
   create_table "endpoints", force: true do |t|
+    t.string   "name",                                                     null: false
     t.text     "description"
     t.text     "descriptor"
     t.string   "endpoint_type",            default: "ws", null: false

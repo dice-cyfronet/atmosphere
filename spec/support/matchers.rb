@@ -131,6 +131,7 @@ end
 RSpec::Matchers.define :endpoint_eq do |expected|
   match do |actual|
     (actual['id'] == expected.id) &&
+    (actual['name'] == expected.name) &&
     (actual['description'] == expected.description) &&
     (actual['descriptor'] == expected.descriptor) &&
     (actual['endpoint_type'] == expected.endpoint_type) &&
@@ -141,6 +142,7 @@ end
 
 RSpec::Matchers.define :be_updated_by_endpoint do |expected|
   match do |actual|
+    (actual['name'] == expected[:name] || expected[:name].blank?) &&
     (actual['description'] == expected[:description] || expected[:description].blank?) &&
     (actual['descriptor'] == expected[:descriptor] || expected[:descriptor].blank?) &&
     (actual['endpoint_type'] == expected[:endpoint_type] || expected[:endpoint_type].blank?) &&
