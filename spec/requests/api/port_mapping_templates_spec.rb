@@ -6,12 +6,18 @@ describe Api::V1::PortMappingTemplatesController do
   let(:user)           { create(:user) }
   let(:different_user) { create(:user) }
   let(:admin)          { create(:admin) }
+  let(:developer) { create(:developer) }
 
   let(:security_proxy) { create(:security_proxy) }
   let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy) }
   let!(:at2) { create(:appliance_type, author: user, visible_for: 'all') }
   let!(:pmt1) { create(:port_mapping_template, appliance_type: at1) }
   let!(:pmt2) { create(:port_mapping_template, appliance_type: at2) }
+
+  let(:as) { create(:dev_appliance_set, user: developer) }
+  let!(:appl1) { create(:appliance, appliance_set: as) }
+  let!(:pmt3) { create(:dev_port_mapping_template, dev_mode_property_set: appl1.dev_mode_property_set, appliance_type: nil) }
+
 
   describe 'GET /port_mapping_templates' do
     context 'when unauthenticated' do
@@ -25,6 +31,8 @@ describe Api::V1::PortMappingTemplatesController do
       it 'returns 403 Forbidden error' do
         get api("/port_mapping_templates?appliance_type_id=#{at1.id}", different_user)
         expect(response.status).to eq 403
+        get api("/port_mapping_templates?dev_mode_property_set_id=#{appl1.dev_mode_property_set.id}", different_user)
+        expect(response.status).to eq 403
       end
     end
 
@@ -32,13 +40,22 @@ describe Api::V1::PortMappingTemplatesController do
       it 'returns 200 Success' do
         get api("/port_mapping_templates?appliance_type_id=#{at1.id}", user)
         expect(response.status).to eq 200
+        get api("/port_mapping_templates?dev_mode_property_set_id=#{appl1.dev_mode_property_set.id}", developer)
+        expect(response.status).to eq 200
       end
 
-      it 'returns owned port mapping templates' do
+      it 'returns port mapping templates for owned appliance type' do
         get api("/port_mapping_templates?appliance_type_id=#{at1.id}", user)
         expect(pmts_response).to be_an Array
         expect(pmts_response.size).to eq 1
         expect(pmts_response[0]).to port_mapping_template_eq pmt1
+      end
+
+      it 'returns port mapping templates for owned appliance' do
+        get api("/port_mapping_templates?dev_mode_property_set_id=#{appl1.dev_mode_property_set.id}", developer)
+        expect(pmts_response).to be_an Array
+        expect(pmts_response.size).to eq 1
+        expect(pmts_response[0]).to port_mapping_template_eq pmt3
       end
 
       it 'returns public port mapping templates' do
@@ -112,6 +129,18 @@ describe Api::V1::PortMappingTemplatesController do
       }
     end
 
+    let(:new_dev_port_mapping_template_request) do
+      {
+        port_mapping_template: {
+          transport_protocol: 'tcp',
+          application_protocol: 'http',
+          service_name: 'rdesktop',
+          target_port: 3389,
+          dev_mode_property_set_id: appl1.dev_mode_property_set.id
+        }
+      }
+    end
+
     let(:wrong_port_mapping_template_request) do
       {
         port_mapping_template: {
@@ -135,6 +164,8 @@ describe Api::V1::PortMappingTemplatesController do
       it 'returns 403 Forbidden when creating port mapping template for not owned appliance type' do
         post api("/port_mapping_templates", different_user), new_port_mapping_template_request
         expect(response.status).to eq 403
+        post api("/port_mapping_templates", different_user), new_dev_port_mapping_template_request
+        expect(response.status).to eq 403
       end
 
       it 'does not create new port mapping template for not owned appliance type' do
@@ -148,11 +179,19 @@ describe Api::V1::PortMappingTemplatesController do
       it 'returns 201 Created on success' do
         post api("/port_mapping_templates", user), new_port_mapping_template_request
         expect(response.status).to eq 201
+        post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
+        expect(response.status).to eq 201
       end
 
       it 'creates new port mapping template' do
         expect {
           post api("/port_mapping_templates", user), new_port_mapping_template_request
+        }.to change { PortMappingTemplate.count }.by(1)
+      end
+
+      it 'creates new development mode port mapping template' do
+        expect {
+          post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
         }.to change { PortMappingTemplate.count }.by(1)
       end
 
@@ -164,6 +203,16 @@ describe Api::V1::PortMappingTemplatesController do
         expect(pmt_response['service_name']).to eq 'rdesktop'
         expect(pmt_response['target_port']).to eq 3389
         expect(pmt_response['appliance_type_id']).to eq at1.id
+      end
+
+      it 'creates new development mode port mapping template with correct attribute values' do
+        post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
+        expect(pmt_response['id']).to_not be_nil
+        expect(pmt_response['transport_protocol']).to eq 'tcp'
+        expect(pmt_response['application_protocol']).to eq 'http'
+        expect(pmt_response['service_name']).to eq 'rdesktop'
+        expect(pmt_response['target_port']).to eq 3389
+        expect(pmt_response['dev_mode_property_set_id']).to eq appl1.dev_mode_property_set.id
       end
 
       it 'returns 422 when transport and application protocols are wrong' do

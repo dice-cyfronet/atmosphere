@@ -2,8 +2,9 @@ module Api
   module V1
     class PortMappingTemplatesController < Api::ApplicationController
 
-      load_and_authorize_resource :appliance_type, only: [:index]
-      load_and_authorize_resource :port_mapping_template#, through: :appliance_type
+      before_filter :find_port_mapping_templates, only: :index
+      load_and_authorize_resource :port_mapping_template, except: :index
+      authorize_resource :port_mapping_template, only: :index
       respond_to :json
 
       def index
@@ -41,9 +42,21 @@ module Api
 
       private
 
+      def find_port_mapping_templates
+        if params[:appliance_type_id]
+          @appliance_type = ApplianceType.find(params[:appliance_type_id])
+          @port_mapping_templates = PortMappingTemplate.where(appliance_type: @appliance_type)
+          authorize!(:index, @appliance_type)
+        else
+          @dev_mode_property_set = DevModePropertySet.find(params[:dev_mode_property_set_id])
+          @port_mapping_templates = PortMappingTemplate.where(dev_mode_property_set: @dev_mode_property_set)
+          authorize!(:index, @dev_mode_property_set.appliance.appliance_set)
+        end
+      end
+
       def port_mapping_template_params
         params.require(:port_mapping_template).permit(
-            :service_name, :target_port, :transport_protocol, :application_protocol, :appliance_type_id)
+            :service_name, :target_port, :transport_protocol, :application_protocol, :appliance_type_id, :dev_mode_property_set_id)
       end
 
     end # of PortMappingTemplatesController

@@ -1,14 +1,16 @@
 ## List Port Mapping Templates
 
-Get a list of Port Mapping Templates defined for a given Appliance Type.
+Get a list of Port Mapping Templates defined for a given Appliance Type (or a given Dev Mode Property Set, when
+used in the development mode).
 
 ```
 GET /port_mapping_templates
 ```
 
-Parameters:
+Parameters (one of the following is required):
 
-+ `appliance_type_id` (required) - The ID of the appliance type which Port Mapping Templates you'd like to get
++ `appliance_type_id` - The ID of the appliance type which Port Mapping Templates you'd like to get
++ `dev_mode_property_set_id` - The ID of the Development Mode Property Set of an Appliance, which Port Mapping Templates you'd like to get
 
 ```json
 {
@@ -19,7 +21,8 @@ Parameters:
       "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
       "service_name": "rdesktop",
       "target_port": 3389,
-      "appliance_type_id": 5 (should equal the :appliance_type_id parameter)
+      "appliance_type_id": 5 or nil (should equal the :appliance_type_id parameter)
+      "dev_mode_property_set_id": 5 or nil (should equal the :dev_mode_property_set_id parameter)
     }, {
       ...
     }
@@ -47,7 +50,8 @@ Parameters:
   "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
   "service_name": "rdesktop",
   "target_port": 3389,
-  "appliance_type_id": 5
+  "appliance_type_id": 5 or nil,
+  "dev_mode_property_set_id": 5 or nil
 }
 ```
 
@@ -61,9 +65,10 @@ Template attributes.
 POST /port_mapping_templates
 ```
 
-Parameters:
+Parameters (one of the first two is required):
 
-+ `appliance_type_id` (required) - The ID of the Appliance Type which should acquire the new port mapping template
++ `appliance_type_id` - The ID of the Appliance Type which should acquire the new port mapping template
++ `dev_mode_property_set_id` - The ID of the Dev Mode Property Set which should acquire the new port mapping template
 + `transport_protocol` (required) - What transport protocol the port operates, the value should be either "tcp" or "udp"
 + `application_protocol` (required) - If using TCP transport protocol, choose one of "http", "https", "http_https". Use "none" for UDP
 + `service_name` (required) - Some kind of descriptive name for the service operating on that port
@@ -75,6 +80,7 @@ In case of successful Port Mapping Template creation, returns the JSON object wi
 ## Update a Port Mapping Template
 
 Updates the given Port Mapping Template. You need to be an Appliance Type owner (or an admin) do edit this entity.
+In case of the development mode use, you need to be the owner of the Appliance Set being run.
 
 ```
 PUT /port_mapping_templates/:id
