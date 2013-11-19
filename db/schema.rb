@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "dev_mode_property_sets", ["security_proxy_id"], name: "dev_mode_property_sets_security_proxy_id_fk", using: :btree
 
   create_table "endpoints", force: true do |t|
+    t.string   "name",                                                     null: false
     t.text     "description"
     t.text     "descriptor",               limit: 16777215
     t.string   "endpoint_type",                             default: "ws", null: false

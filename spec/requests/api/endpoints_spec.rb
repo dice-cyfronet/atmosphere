@@ -121,6 +121,7 @@ describe Api::V1::EndpointsController do
     let(:new_request) do
       {
         endpoint: {
+          name: 'Endpoint name',
           description: 'some human description',
           descriptor: '<heavy xml="document">here</heavy>',
           endpoint_type: 'rest',
@@ -133,6 +134,7 @@ describe Api::V1::EndpointsController do
     let(:wrong_request) do
       {
         endpoint: {
+          name: 'Endpoint name',
           description: 'some human description',
           descriptor: '<heavy xml="document">here</heavy>',
           endpoint_type: 'wrong type',
@@ -164,6 +166,7 @@ describe Api::V1::EndpointsController do
       it 'creates new endpoint with correct attribute values' do
         post api("/endpoints", user), new_request
         expect(e_response['id']).to_not be_nil
+        expect(e_response['name']).to eq 'Endpoint name'
         expect(e_response['description']).to eq 'some human description'
         expect(e_response['descriptor']).to eq '<heavy xml="document">here</heavy>'
         expect(e_response['endpoint_type']).to eq 'rest'

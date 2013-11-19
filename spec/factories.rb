@@ -143,6 +143,7 @@ FactoryGirl.define do
   end
 
   factory :endpoint do |f|
+    name { rand_str }
     port_mapping_template
     invocation_path { rand_str }
   end

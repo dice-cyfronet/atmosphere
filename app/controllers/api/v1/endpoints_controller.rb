@@ -41,7 +41,7 @@ module Api
       private
 
       def endpoint_params
-        params.require(:endpoint).permit(:endpoint_type, :description, :descriptor, :invocation_path, :port_mapping_template_id)
+        params.require(:endpoint).permit(:name, :endpoint_type, :description, :descriptor, :invocation_path, :port_mapping_template_id)
       end
 
     end # of EndpointsController
