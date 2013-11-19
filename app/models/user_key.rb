@@ -44,7 +44,7 @@ class UserKey < ActiveRecord::Base
       if output.include? 'is not a public key file'
         logger.error "Provided public key #{public_key} is invalid"
         #raise Air::InvalidPublicKey
-        self.errors.add(:public_key, 'Provided public key is invalid')
+        self.errors.add(:public_key, 'is invalid')
       elsif output
         logger.info output
         fprint = output.gsub(FINGER_PRINT_RE).first

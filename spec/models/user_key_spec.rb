@@ -58,7 +58,7 @@ describe UserKey do
     saved = user_key.save
     expect(saved).to be_false
     errors = user_key.errors.messages
-    expect(errors).to eql({public_key: ["Provided public key is invalid"]})
+    expect(errors).to eql({public_key: ["is invalid"]})
   end
 
 end
