@@ -13,6 +13,8 @@ class VmTemplateMonitoringWorker
     end
   end
 
+  # For AWS it is necessary to filter images while listing them: imgs=cloud_client.describe_images({'Owner'=>'take this number from AWS console'})
+
   private
 
   def update_images(site, images)
