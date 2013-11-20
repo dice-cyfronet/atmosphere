@@ -1,7 +1,8 @@
 module Api
   module V1
     class ApplianceTypesController < Api::ApplicationController
-      load_and_authorize_resource :appliance_type
+      load_and_authorize_resource :appliance_type, except: :create
+      authorize_resource :appliance_type, only: :create
       respond_to :json
 
       def index
@@ -14,6 +15,23 @@ module Api
 
       def create
         log_user_action 'create new appliance type'
+        appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
+        new_at_params = {}
+        if appl
+          if appl.appliance_set.user_id != current_user.id and not current_user.admin?
+            raise CanCan::AccessDenied
+          end
+          if appl.dev_mode_property_set
+            new_at_params = appl.dev_mode_property_set.attributes
+            new_at_params.delete('id')
+            new_at_params.delete('created_at')
+            new_at_params.delete('updated_at')
+          end
+        end
+        new_at_params.merge!(appliance_type_params)
+        new_at_params.delete('appliance_id')
+        @appliance_type = ApplianceType.new(new_at_params)
+        # save vm as tmpl
         @appliance_type.save!
         render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         log_user_action "appliance type created: #{@appliance_type.to_json}"
@@ -22,6 +40,7 @@ module Api
       def update
         log_user_action "update appliance type #{@appliance_type.id}"
         update_params = appliance_type_params
+        update_params.delete 'appliance_id'
         author_id = update_params.delete(:author_id)
         update_params[:author] = User.find(author_id) if author_id
 
@@ -43,7 +62,7 @@ module Api
       private
 
       def appliance_type_params
-        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_for, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id)
+        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_for, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id, :appliance_id)
       end
     end
   end

@@ -165,8 +165,19 @@ describe Api::V1::ApplianceTypesController do
 
   describe 'POST /appliance_types' do
 
+    before do
+      Fog.mock!
+      Optimizer.instance.stub(:run)
+    end
+
+    DEV_PROPS_NAME = 'Name from dev props'
+    DEV_PROPS_DESC = 'Description from dev props'
+
+    let(:appl_set) { create(:dev_appliance_set, user: developer) }
+    let(:appl) { create(:appl_dev_mode, appliance_set: appl_set) }
     let(:new_at_name) { 'the newest appliance type ever' }
     let(:at_req_body) { {appliance_type: {name: new_at_name}} }
+    let(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -200,15 +211,45 @@ describe Api::V1::ApplianceTypesController do
         }.to change { ApplianceType.count }.by(1)
       end
 
-      it 'saves developer\'s virtual machine as template when creating new appliance type'
+      context 'appliance id is provided in request' do
+        
+        it 'saves developer\'s virtual machine as template when creating new appliance type'
 
-      it 'does not allow to save virtual machine that does not belong to this developer when creating new appliance type'
+        it 'does not allow to save virtual machine that does not belong to this developer when creating new appliance type'
 
-      it 'merges attributes from dev mode property set of given appliance with those provided in request parameters'
+        it 'merges attributes from dev mode property set of given appliance with those provided in request parameters' do
+          appl.dev_mode_property_set.name = DEV_PROPS_NAME
+          appl.dev_mode_property_set.description = DEV_PROPS_DESC
+          appl.save
+          post api('/appliance_types/', developer), req_with_appl_id_body
+          created_at = ApplianceType.find(at_response['id'])
+          expect(created_at.name).to eq new_at_name
+          expect(created_at.description).to eq DEV_PROPS_DESC
+        end
+
+        it 'returns error if appliance with given id does not exist' do
+          req = {appliance_type: {name: new_at_name, appliance_id: 1111111}}
+          post api('/appliance_types/', developer), req
+          expect(response.status).to eq 404
+          expect(response.body).to eq '{"message":"Record not found"}'
+        end
+
+        it 'returns error if appliance with given id does not belong to user' do
+          user = create(:developer)
+          post api('/appliance_types/', user), req_with_appl_id_body
+          expect(response.status).to eq 403
+          expect(response.body).to eq '{"message":"403 Forbidden"}'
+        end
+      end
 
     end
 
     context 'when authenticated as admin' do
+
+      it 'allows to create new appliance even if given appliance is not owned by user' do
+        post api('/appliance_types/', admin), req_with_appl_id_body
+        expect(response.status).to eq 201
+      end
 
     end
 
