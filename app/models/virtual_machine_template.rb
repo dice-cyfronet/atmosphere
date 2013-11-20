@@ -36,6 +36,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
     vm_template.compute_site = cs
     vm_template.state = :saving
     vm_template.save
+    vm_template
   end
 
   def destroy(delete_in_cloud = true)

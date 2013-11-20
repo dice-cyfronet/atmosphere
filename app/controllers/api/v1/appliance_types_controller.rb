@@ -17,8 +17,9 @@ module Api
         log_user_action 'create new appliance type'
         appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
         new_at_params = {}
+        tmpl = nil
         if appl
-          if appl.appliance_set.user_id != current_user.id and not current_user.admin?
+          if ((appl.appliance_set.user_id != current_user.id or appl.appliance_set.appliance_set_type != 'development') and not current_user.admin?)
             raise CanCan::AccessDenied
           end
           if appl.dev_mode_property_set
@@ -27,11 +28,13 @@ module Api
             new_at_params.delete('created_at')
             new_at_params.delete('updated_at')
           end
+          vm = appl.virtual_machines.first
+          tmpl = VirtualMachineTemplate.create_from_vm(vm) if vm
         end
         new_at_params.merge!(appliance_type_params)
         new_at_params.delete('appliance_id')
         @appliance_type = ApplianceType.new(new_at_params)
-        # save vm as tmpl
+        @appliance_type.virtual_machine_templates << tmpl if tmpl
         @appliance_type.save!
         render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         log_user_action "appliance type created: #{@appliance_type.to_json}"

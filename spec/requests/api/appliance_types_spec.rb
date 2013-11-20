@@ -212,10 +212,6 @@ describe Api::V1::ApplianceTypesController do
       end
 
       context 'appliance id is provided in request' do
-        
-        it 'saves developer\'s virtual machine as template when creating new appliance type'
-
-        it 'does not allow to save virtual machine that does not belong to this developer when creating new appliance type'
 
         it 'merges attributes from dev mode property set of given appliance with those provided in request parameters' do
           appl.dev_mode_property_set.name = DEV_PROPS_NAME
@@ -239,6 +235,29 @@ describe Api::V1::ApplianceTypesController do
           post api('/appliance_types/', user), req_with_appl_id_body
           expect(response.status).to eq 403
           expect(response.body).to eq '{"message":"403 Forbidden"}'
+        end
+
+        it 'returns error if appliance is not on dev mode' do
+          wf_appl_set = create(:workflow_appliance_set)
+          appl = create(:appliance, appliance_set: wf_appl_set)
+          post api('/appliance_types/', developer), {appliance_type: {name: new_at_name, appliance_id: appl.id}}
+          expect(response.status).to eq 403
+          expect(response.body).to eq '{"message":"403 Forbidden"}'
+        end
+
+        it 'saves developer\'s virtual machine as template when creating new appliance type' do
+          cloud_client = double('cloud client')
+          expect(cloud_client).to receive(:save_template).and_return(99)
+          Fog::Compute.stub(:new).and_return cloud_client
+          vm = create(:virtual_machine)
+          appl.virtual_machines << vm
+          expect(vm.saved_templates.size).to eq 0
+          expect { post api('/appliance_types/', developer), req_with_appl_id_body }.to change { VirtualMachineTemplate.count }.by(1)
+          vm.reload
+          expect(vm.saved_templates.size).to eq 1
+          tmpl = vm.saved_templates.first
+          expect(tmpl.state).to eq 'saving'
+          expect(tmpl.appliance_type_id).to eq at_response['id']
         end
       end
 
