@@ -19,9 +19,10 @@ module Api
         new_at_params = {}
         tmpl = nil
         if appl
-          if ((appl.appliance_set.user_id != current_user.id or appl.appliance_set.appliance_set_type != 'development') and not current_user.admin?)
-            raise CanCan::AccessDenied
-          end
+          #if ((appl.appliance_set.user_id != current_user.id or appl.appliance_set.appliance_set_type != 'development') and not current_user.admin?)
+          #  raise CanCan::AccessDenied
+          #end
+          authorize!(:save_vm_as_tmpl, appl)
           if appl.dev_mode_property_set
             new_at_params = appl.dev_mode_property_set.attributes
             new_at_params.delete('id')
