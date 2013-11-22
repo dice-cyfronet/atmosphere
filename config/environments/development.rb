@@ -39,6 +39,4 @@ Air::Application.configure do
       resource '/api/v1/*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
     end
   end
-
-  config.ember.variant = :development
 end

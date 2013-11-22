@@ -65,10 +65,6 @@ GEM
     arel (4.0.1)
     atomic (1.1.14)
     awesome_print (1.2.0)
-    barber (0.4.2)
-      ember-source
-      execjs
-      handlebars-source
     bcrypt-ruby (3.1.2)
     better_errors (1.0.1)
       coderay (>= 1.0.0)
@@ -108,19 +104,6 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     dotenv (0.9.0)
-    ember-data-source (1.0.0.beta.2)
-      ember-source
-    ember-rails (0.14.0)
-      active_model_serializers
-      barber (>= 0.4.1)
-      ember-data-source
-      ember-source
-      execjs (>= 1.2)
-      handlebars-source
-      jquery-rails (>= 1.0.17)
-      railties (>= 3.1)
-    ember-source (1.1.2)
-      handlebars-source (= 1.0.12)
     enumerize (0.7.0)
       activesupport (>= 3.2)
     erubis (2.7.0)
@@ -175,12 +158,6 @@ GEM
       activesupport (>= 3.1, < 4.1)
       haml (>= 3.1, < 4.1)
       railties (>= 3.1, < 4.1)
-    hamlbars (2.0.1)
-      execjs (>= 1.2)
-      haml
-      sprockets
-      tilt
-    handlebars-source (1.0.12)
     hashie (2.0.5)
     hike (1.2.3)
     i18n (0.6.5)
@@ -364,9 +341,6 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   database_cleaner
   devise (~> 3.2)
-  ember-data-source (= 1.0.0.beta.2)
-  ember-rails
-  ember-source (~> 1.1.0)
   enumerize
   exception_notification
   factory_girl
@@ -380,8 +354,6 @@ DEPENDENCIES
   guard-rspec (~> 3.0.2)
   guard-spork
   haml-rails
-  hamlbars (~> 2.0)
-  handlebars-source (~> 1.0.12)
   jquery-rails
   letter_opener
   libnotify
