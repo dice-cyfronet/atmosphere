@@ -4,7 +4,7 @@
 #
 #  id                       :integer          not null, primary key
 #  description              :text
-#  descriptor               :text(16777215)
+#  descriptor               :text
 #  endpoint_type            :string(255)      default("ws"), not null
 #  port_mapping_template_id :integer          not null
 #  created_at               :datetime

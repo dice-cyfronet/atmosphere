@@ -2,19 +2,16 @@
 #
 # Table name: compute_sites
 #
-#  id              :integer          not null, primary key
-#  site_id         :string(255)      not null
-#  name            :string(255)
-#  location        :string(255)
-#  site_type       :string(255)      default("private")
-#  technology      :string(255)
-#  username        :string(255)
-#  api_key         :string(255)
-#  auth_method     :string(255)
-#  auth_url        :string(255)
-#  authtenant_name :string(255)
-#  created_at      :datetime
-#  updated_at      :datetime
+#  id                    :integer          not null, primary key
+#  site_id               :string(255)      not null
+#  name                  :string(255)
+#  location              :string(255)
+#  site_type             :string(255)      default("private")
+#  technology            :string(255)
+#  regenerate_proxy_conf :boolean          default(FALSE)
+#  config                :text
+#  created_at            :datetime
+#  updated_at            :datetime
 #
 
 class ComputeSite < ActiveRecord::Base

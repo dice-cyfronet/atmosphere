@@ -5,9 +5,11 @@
 #  id                                  :integer          not null, primary key
 #  appliance_set_id                    :integer          not null
 #  appliance_type_id                   :integer          not null
+#  user_key_id                         :integer
+#  appliance_configuration_instance_id :integer          not null
+#  state                               :string(255)      default("new"), not null
 #  created_at                          :datetime
 #  updated_at                          :datetime
-#  appliance_configuration_instance_id :integer          not null
 #
 
 class Appliance < ActiveRecord::Base
