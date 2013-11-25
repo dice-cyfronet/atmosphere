@@ -21,7 +21,7 @@ module Api
     end
 
     rescue_from ActionController::ParameterMissing do |exception|
-      render json: {message: exception.to_s}, status: :bad_request
+      render json: {message: exception.to_s}, status: :unprocessable_entity
     end
 
     rescue_from Air::Conflict do |exception|
