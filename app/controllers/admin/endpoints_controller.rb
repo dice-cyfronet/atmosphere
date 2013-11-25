@@ -46,8 +46,7 @@ class Admin::EndpointsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def endpoint_params
-    params.require(:endpoint).permit(
-      :description, :descriptor, :endpoint_type, :port_mapping_template_id)
+    params.require(:endpoint).permit(:name, :endpoint_type, :description, :descriptor, :invocation_path, :port_mapping_template_id)
   end
 
   # Set a simple flash-like message for the user and show the PMTs index
