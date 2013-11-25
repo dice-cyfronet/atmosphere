@@ -104,6 +104,33 @@ describe Api::V1::ApplianceTypesController do
     end
   end
 
+  describe 'active property' do
+    context 'when not virtual machine template assigned into appliance type' do
+      it 'returns AT with active flag set to false' do
+        get api("/appliance_types/#{at1.id}", user)
+        expect(at_response['active']).to eq false
+      end
+    end
+
+    context 'when virtual machine template with state other than active assigned into appliance type' do
+      let!(:vmt) { create(:virtual_machine_template, state: :saving, appliance_type: at1) }
+
+      it 'returns AT with active flag set to false' do
+        get api("/appliance_types/#{at1.id}", user)
+        expect(at_response['active']).to eq false
+      end
+    end
+
+    context 'when virtual machine template with active state assigned into appliance type' do
+      let!(:vmt) { create(:virtual_machine_template, state: :active, appliance_type: at1) }
+
+      it 'returns AT with active flag set to false' do
+        get api("/appliance_types/#{at1.id}", user)
+        expect(at_response['active']).to be_true
+      end
+    end
+  end
+
   describe 'PUT /appliance_types/:id' do
     let(:different_security_proxy) { create(:security_proxy, name: 'different/one') }
 
