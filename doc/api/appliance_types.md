@@ -20,7 +20,8 @@ GET /appliance_types
       "preference_memory": 1024,
       "preference_disk": 10240,
       "author_id": 1,
-      "security_proxy_id": 1
+      "security_proxy_id": 1,
+      "active": true
     }, {
       ...
     }
@@ -53,10 +54,13 @@ Parameters:
     "preference_memory": 1024,
     "preference_disk": 10240,
     "author_id": 1,
-    "security_proxy_id": 1
+    "security_proxy_id": 1,
+    active: false
   }
 }
 ```
+
+The `active` parameters set to true means that this `appliance type` is connected with one or more `virtual machine templates` and there is possible to spawn `appliance` from this appliance type. This parameter is read only.
 
 <a name="visible_for"></a> The `visible_for` parameter distinguish when such appliance type can be used. Allowed values are as follow:
 
