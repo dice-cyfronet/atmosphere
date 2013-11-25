@@ -45,8 +45,8 @@ class Ability
     end
 
     ## Appliance types
-    can :read, ApplianceType, visible_for: 'all'
-    can :read, ApplianceType, user_id: user.id
+    can [:read, :endpoint_payload], ApplianceType, visible_for: 'all'
+    can [:read, :endpoint_payload], ApplianceType, user_id: user.id
     can [:update, :destroy], ApplianceType, user_id: user.id
 
     ## Elements of Appliance Types

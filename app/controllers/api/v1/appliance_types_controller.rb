@@ -63,6 +63,10 @@ module Api
         end
       end
 
+      def endpoint_payload
+        render text: Endpoint.at_endpoint(@appliance_type, params[:service_name], params[:invocation_path]).take!.descriptor
+      end
+
       private
 
       def appliance_type_params

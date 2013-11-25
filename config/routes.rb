@@ -53,7 +53,10 @@ Air::Application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       resources :compute_sites, only: [:index, :show]
+
       json_resources :appliance_types
+      get 'appliance_types/:id/endpoints/:service_name/:invocation_path' => 'appliance_types#endpoint_payload', as: 'appliance_types_endpoint_payload', constraints: {invocation_path: /#{OwnedPayloable.name_regex}/}, defaults: {format: :text}
+
       json_resources :port_mapping_templates
       json_resources :endpoints
       json_resources :appliance_configuration_templates

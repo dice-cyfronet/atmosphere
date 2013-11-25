@@ -23,4 +23,5 @@ class Endpoint < ActiveRecord::Base
 
   scope :def_order, -> { order(:description) }
 
+  scope :at_endpoint, ->(at, service_name, invocation_path) { joins(:port_mapping_template).where(invocation_path: invocation_path, port_mapping_templates: {service_name: service_name, appliance_type_id: at.id}) }
 end

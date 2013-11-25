@@ -113,3 +113,15 @@ DELETE /appliance_types/:id
 Parameters:
 
 + `id` (required) - The ID of an appliance type
+
+## Get appliance type endpoint payload
+
+Method used by Taverna to include appliance type endpoint descriptor (WSDL or WADL) into Taverna workbench.
+
+```
+GET /appliance_types/:id/endpoints/:service_name/:invocation_path
+```
+
++ `id` (required) - The ID of an appliance type
++ `service_name` (required) - Port mapping template service name correlated with endpoint
++ `invocation_path` (required) - Endpoint invocation path

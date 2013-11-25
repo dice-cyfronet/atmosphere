@@ -92,7 +92,7 @@ describe Api::V1::ApplianceTypesController do
         expect(response.status).to eq 200
       end
 
-      it 'returns appliance types' do
+      it 'returns appliance type' do
         get api("/appliance_types/#{at1.id}", user)
         expect(at_response).to appliance_type_eq at1
       end
@@ -332,6 +332,42 @@ describe Api::V1::ApplianceTypesController do
           delete api("/appliance_types/#{at1.id}", different_user)
           expect(response.status).to eq 403
         }.to change { ApplianceType.count }.by(0)
+      end
+    end
+  end
+
+  describe 'GET /appliance_types/:id/endpoints/:service_name/:invocation_path' do
+
+    let(:pmt) { create(:port_mapping_template, appliance_type: at1) }
+    let(:endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt) }
+    let(:endpoint_descriptor_path) { "/appliance_types/#{at1.id}/endpoints/#{pmt.service_name}/#{endpoint.invocation_path}" }
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        get api(endpoint_descriptor_path)
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 Success' do
+        get api(endpoint_descriptor_path, user)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns endpoint descriptor' do
+        get api(endpoint_descriptor_path, user)
+        expect(response.body).to eq endpoint.descriptor
+      end
+
+      it 'return 404 Not Found when endpoint does not exist' do
+        get api("#{endpoint_descriptor_path}/not/existing", user)
+        expect(response.status).to eq 404
+      end
+
+      it 'returns 403 Forbidden when user has not right to see appliance type' do
+        get api(endpoint_descriptor_path, different_user)
+        expect(response.status).to eq 403
       end
     end
   end
