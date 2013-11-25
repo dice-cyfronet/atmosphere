@@ -204,7 +204,7 @@ describe Api::V1::ApplianceTypesController do
     let(:appl) { create(:appl_dev_mode, appliance_set: appl_set) }
     let(:new_at_name) { 'the newest appliance type ever' }
     let(:at_req_body) { {appliance_type: {name: new_at_name}} }
-    let(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
+    let!(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -222,20 +222,26 @@ describe Api::V1::ApplianceTypesController do
 
     context 'when authenticated as developer' do
 
-      it 'returns 201 Created' do
+      it 'returns 422 error if appliance id is not provided' do
         post api("/appliance_types/", developer), at_req_body
+        expect(response.status).to eq 422
+      end
+
+      it 'returns 201 Created' do
+        post api("/appliance_types/", developer), req_with_appl_id_body
         expect(response.status).to eq 201
       end
 
       it 'creates new appliance type' do
         expect {
-          post api("/appliance_types/", developer), at_req_body
+          post api("/appliance_types/", developer), req_with_appl_id_body
           expect(at_response['name']).to eq new_at_name
           expect(at_response['description']).to be_nil
           expect(at_response['shared']).to be_false
           expect(at_response['scalable']).to be_false
           expect(at_response['visible_for']).to eq 'owner'
         }.to change { ApplianceType.count }.by(1)
+
       end
 
       context 'appliance id is provided in request' do
@@ -294,6 +300,11 @@ describe Api::V1::ApplianceTypesController do
 
       it 'allows to create new appliance even if given appliance is not owned by user' do
         post api('/appliance_types/', admin), req_with_appl_id_body
+        expect(response.status).to eq 201
+      end
+
+      it 'allows to create new appliance even if appliance id is not provided' do
+        post api('/appliance_types/', admin), at_req_body
         expect(response.status).to eq 201
       end
 

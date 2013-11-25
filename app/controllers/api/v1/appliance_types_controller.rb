@@ -31,6 +31,10 @@ module Api
           end
           vm = appl.virtual_machines.first
           tmpl = VirtualMachineTemplate.create_from_vm(vm) if vm
+        else
+          unless current_user.admin?
+            raise ActionController::ParameterMissing.new('appliance_id parameter is missing')#ActionController::ParameterMissing
+          end  
         end
         new_at_params.merge!(appliance_type_params)
         new_at_params.delete('appliance_id')
