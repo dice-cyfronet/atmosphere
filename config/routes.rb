@@ -64,7 +64,13 @@ Air::Application.routes.draw do
       resources :http_mappings, only: [:index, :show]
       resources :port_mappings, only: [:index, :show]
       json_resources :appliance_sets
-      resources :appliances, only: [:index, :show, :create, :destroy]
+
+      resources :appliances, only: [:index, :show, :create, :destroy] do
+        member do
+          get :endpoints
+        end
+      end
+
       resources :dev_mode_property_sets, only: [:index, :show, :update]
       resources :virtual_machines, only: [:index, :show]
       json_resources :users

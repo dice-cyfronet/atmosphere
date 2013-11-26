@@ -38,6 +38,20 @@ module Api
         end
       end
 
+      def endpoints
+        endpoints = Endpoint.appl_endpoints(@appliance).collect do |endpoint|
+          {
+            id: endpoint.id,
+            type: endpoint.endpoint_type,
+            urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.id).collect do |mapping|
+              "#{mapping.url}/#{endpoint.invocation_path}"
+            end
+          }
+        end
+
+        render json: { endpoints: endpoints }
+      end
+
       private
 
       def cannot_create_appliance?

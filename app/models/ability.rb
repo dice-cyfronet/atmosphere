@@ -38,7 +38,7 @@ class Ability
     can [:read, :update, :destroy], ApplianceSet, user_id: user.id
 
     ## Appliances
-    can [:read, :create, :destroy], Appliance, appliance_set: { user_id: user.id }
+    can [:read, :create, :destroy, :endpoints], Appliance, appliance_set: { user_id: user.id }
     can :index, ApplianceConfigurationInstance, appliances: { appliance_set: { user_id: user.id } }
     can :show, ApplianceConfigurationInstance do |conf_instance|
       ApplianceSet.joins(:appliances).where(appliances: {appliance_configuration_instance_id: conf_instance.id}, user_id: user.id).count > 0
