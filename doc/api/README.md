@@ -53,12 +53,3 @@ Return values:
 * `409 Conflict` - A conflicting resource already exists, e.g. creating a appliance type with a name that already exists
 * `422 Unprocessable Entity` - A required attribute of the API request is missing or in wrong format, e.g. the name of an appliance type is not given
 * `500 Server Error` - While handling the request something went wrong on the server side
-
-## Contents
-
-+ [Appliance Types](api/appliance_types)
-+ [Appliance Sets](api/appliance_sets)
-+ [Appliancs](api/appliances)
-+ [User Keys](api/user_keys)
-+ [Security Proxies](api/security_proxies)
-+ [Security Policies](api/security_policies)
