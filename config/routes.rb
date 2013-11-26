@@ -59,6 +59,7 @@ Air::Application.routes.draw do
 
       json_resources :port_mapping_templates
       json_resources :endpoints
+      json_resources :port_mapping_properties
       json_resources :appliance_configuration_templates
       resources :appliance_configuration_instances, only: [:index, :show]
       resources :http_mappings, only: [:index, :show]

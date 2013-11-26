@@ -128,6 +128,26 @@ RSpec::Matchers.define :be_updated_by_port_mapping_template do |expected|
   end
 end
 
+RSpec::Matchers.define :port_mapping_property_eq do |expected|
+  match do |actual|
+    (actual['id'] == expected.id) &&
+    (actual['key'] == expected.key) &&
+    (actual['value'] == expected.value) &&
+    ((expected.port_mapping_template && (actual['port_mapping_template_id'] == expected.port_mapping_template_id)) or
+        (expected.compute_site && (actual['compute_site_id'] == expected.compute_site.id)))
+  end
+end
+
+RSpec::Matchers.define :be_updated_by_port_mapping_property do |expected|
+  match do |actual|
+    (actual['key'] == expected[:key] || expected[:key].blank?) &&
+    (actual['value'] == expected[:value] || expected[:value].blank?) &&
+    ((actual['port_mapping_template_id'] == expected[:port_mapping_template_id]) or
+        (actual['compute_site_id'] == expected[:compute_site_id]) or
+        (expected[:port_mapping_template_id].blank? && expected[:compute_site_id].blank?))
+  end
+end
+
 RSpec::Matchers.define :endpoint_eq do |expected|
   match do |actual|
     (actual['id'] == expected.id) &&

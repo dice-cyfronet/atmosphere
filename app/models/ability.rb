@@ -63,6 +63,10 @@ class Ability
     can :read, Endpoint, port_mapping_template: { appliance_type: { visible_for: 'all' } }
     can [:create, :update, :destroy], Endpoint, port_mapping_template: { appliance_type: {user_id: user.id} }
 
+    can :read, PortMappingProperty, port_mapping_template: { appliance_type: { user_id: user.id } }
+    can :read, PortMappingProperty, port_mapping_template: { appliance_type: { visible_for: 'all' } }
+    can [:create, :update, :destroy], PortMappingProperty, port_mapping_template: { appliance_type: {user_id: user.id} }
+
     ## Virtual Machines
     can :index, VirtualMachine, appliances: { appliance_set: { user_id: user.id } }
 
