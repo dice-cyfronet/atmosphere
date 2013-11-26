@@ -260,7 +260,7 @@ describe Api::V1::EndpointsController do
   end
 
 
-  describe 'DELETE /appliance_types/:appliance_type_id/port_mapping_templates/:port_mapping_template_id/endpoints/:id' do
+  describe 'DELETE /endpoints/:id' do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         delete api("/endpoints/#{e1.id}")
