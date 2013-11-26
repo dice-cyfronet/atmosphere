@@ -1,15 +1,17 @@
 - pmt = @port_mapping_template
 
 %tr(data-endpoint-id="#{@endpoint.id}")
-  %td(colspan=3)
+  %td(colspan=5)
     = simple_form_for [:admin, pmt.appliance_type, pmt, @endpoint], remote: true,
         data: {target: '#endpoints'},
         html: {class: 'form-inline'},
         defaults: {label_html: {class: 'sr-only'}, input_html: {class: 'input-sm'}} do |f|
       - if request[:action] == 'new'
         = f.input :port_mapping_template_id, as: :hidden, input_html: {value: pmt.id}
+      = f.input :name, include_blank: false
       = f.input :description, input_html: {cols: 40}
       = f.input :descriptor, input_html: {cols: 40}
+      = f.input :invocation_path, include_blank: false
       = f.input :endpoint_type, include_blank: false
 
   %td

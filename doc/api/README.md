@@ -25,7 +25,7 @@ Example for a valid API request using curl and authentication via header:
 
 ```
 curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://example.com/api/v1/appliance_sets
-curl --header "MI-TICKET: fd342hac4a=s" http://example.com/api/v1/appliance_sets
+curl --header "MI-TICKET: fd342hac4a=" http://example.com/api/v1/appliance_sets
 ```
 
 ## Status codes

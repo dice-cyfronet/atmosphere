@@ -89,3 +89,33 @@ DELETE /appliances/:id
 Parameters:
 
 + `id` (required) - The ID of an appliance
+
+## Get appliance endpoints
+
+Get information about all endpoints registered into appliance. Http mappings generation is done in asynchronous way (once per 5s), thus information about endpoints will appear after http redirections into started virtual machine(s) are established.
+
+```
+GET /appliances/:id/endpoints
+```
+
+Parameters:
+
++ `id` (required) - The ID of an appliance
+
+```json
+{
+  endpoints: [
+    {
+      id: 1,
+      type: "ws", "rest" or "webapp",
+      urls: [
+        "http://http.redirection",
+        "https://https.redirection",
+        ...
+      ]
+    }, {
+      ...
+    }
+  ]
+}
+```

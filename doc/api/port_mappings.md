@@ -13,7 +13,7 @@ GET /port_mappings
       "id": 1,
       "public_ip": "10.100.1.23",
       "source_port": 1234,
-      "appliance_id": 1,
+      "virtual_machine_id": 1,
       "port_mapping_template_id": 1
     }, {
       ...
@@ -39,7 +39,7 @@ Parameters:
     "id": 1,
     "public_ip": "10.100.1.23",
     "source_port": 1234,
-    "appliance_id": 1,
+    "virtual_machine_id": 1,
     "port_mapping_template_id": 1
   }
 }

@@ -101,6 +101,49 @@ describe Api::V1::AppliancesController do
     end
   end
 
+  describe 'GET /appliances/{id}/endpoints' do
+
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        get api("/appliances/#{user_appliance1.id}/endpoints")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      let(:at) { create(:appliance_type) }
+      let(:pmt1) { create(:port_mapping_template, appliance_type: at, transport_protocol: :tcp, application_protocol: :http_https) }
+      let(:pmt2) { create(:port_mapping_template, appliance_type: at, transport_protocol: :tcp, application_protocol: :http) }
+
+      let!(:pmt1_endpoint)  { create(:endpoint, port_mapping_template: pmt1, endpoint_type: :webapp, invocation_path: 'e1') }
+      let!(:pmt2_endpoint1) { create(:endpoint, port_mapping_template: pmt2, endpoint_type: :ws, invocation_path: 'e2') }
+      let!(:pmt2_endpoint2) { create(:endpoint, port_mapping_template: pmt2, endpoint_type: :rest, invocation_path: 'e3') }
+
+
+      let(:appl) { create(:appliance, appliance_type: at, appliance_set: user_as) }
+      let!(:http_mapping1) { create(:http_mapping, appliance: appl, application_protocol: :http, port_mapping_template: pmt1, url: 'url1') }
+      let!(:http_mapping2) { create(:http_mapping, appliance: appl, application_protocol: :https, port_mapping_template: pmt1, url: 'url2') }
+      let!(:http_mapping3) { create(:http_mapping, appliance: appl, application_protocol: :http, port_mapping_template: pmt2, url: 'url3') }
+
+      it 'returns 200 on success' do
+        get api("/appliances/#{appl.id}/endpoints", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns endpoints details' do
+        get api("/appliances/#{appl.id}/endpoints", user)
+        expect(endpoints_response).to be_an Array
+        expect(endpoints_response.size).to eq 3
+        sorted_endpoints = endpoints_response.sort { |x,y| x['id'] <=> y['id'] }
+
+        expect(sorted_endpoints[0]).to appl_endpoint_eq pmt1_endpoint, ['url1/e1', 'url2/e1']
+        expect(sorted_endpoints[1]).to appl_endpoint_eq pmt2_endpoint1, ['url3/e2']
+        expect(sorted_endpoints[2]).to appl_endpoint_eq pmt2_endpoint2, ['url3/e3']
+      end
+    end
+  end
+
   describe 'POST /appliances' do
     let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
     let!(:development_set) { create(:appliance_set, user: developer, appliance_set_type: :development)}
@@ -306,6 +349,10 @@ describe Api::V1::AppliancesController do
 
   def appliances_response
     json_response['appliances']
+  end
+
+  def endpoints_response
+    json_response['endpoints']
   end
 
   def start_request(at_config, appliance_set)
