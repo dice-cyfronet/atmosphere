@@ -98,6 +98,10 @@ Get information about all endpoints registered into appliance. Http mappings gen
 GET /appliances/:id/endpoints
 ```
 
+Parameters:
+
++ `id` (required) - The ID of an appliance
+
 ```json
 {
   endpoints: [
