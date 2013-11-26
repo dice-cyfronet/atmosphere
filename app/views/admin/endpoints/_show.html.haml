@@ -2,8 +2,10 @@
 - pmt = endpoint.port_mapping_template
 
 %tr(data-endpoint-id="#{endpoint.id}")
+  %td= endpoint.name
   %td= endpoint.description
   %td= endpoint.descriptor
+  %td= endpoint.invocation_path
   %td= t "enumerize.endpoint_type.#{endpoint.endpoint_type}"
   %td
 
