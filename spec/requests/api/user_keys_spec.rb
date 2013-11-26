@@ -111,6 +111,15 @@ describe Api::V1::UserKeysController do
         }
       end
 
+      let(:new_upload_key_request) do
+        {
+          user_key: {
+            name: 'new_uploaded_user_key',
+            public_key: fixture_file_upload('spec/testing_user_public.key', 'plain/txt')
+          }
+        }
+      end
+
       it 'returns 201 Created on success' do
         post api("/user_keys", user), new_key_request
         expect(response.status).to eq 201
@@ -122,12 +131,26 @@ describe Api::V1::UserKeysController do
         }.to change { UserKey.count }.by(1)
       end
 
+      it 'uploades new user key from file' do
+        expect {
+          post api("/user_keys", user), new_upload_key_request
+        }.to change { UserKey.count }.by(1)
+      end
+
       it 'adds new user key and generate fingerprint' do
         post api("/user_keys", user), new_key_request
         added_user_key = UserKey.find(user_key_response['id'])
         expect(added_user_key.fingerprint).to eq user_key1.fingerprint
         expect(added_user_key.name).to eq new_key_request[:user_key][:name]
         expect(added_user_key.public_key).to eq new_key_request[:user_key][:public_key]
+      end
+
+      it 'uploads new user key and generate fingerprint' do
+        post api("/user_keys", user), new_upload_key_request
+        added_user_key = UserKey.find(user_key_response['id'])
+        expect(added_user_key.fingerprint).to eq user_key1.fingerprint
+        expect(added_user_key.name).to eq new_upload_key_request[:user_key][:name]
+        expect(added_user_key.public_key).to eq File.read('spec/testing_user_public.key')
       end
 
       it 'returns 402 Unprocessable Entity status if public key is not provided' do

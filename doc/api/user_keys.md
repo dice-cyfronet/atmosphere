@@ -64,7 +64,8 @@ POST /user_keys
 Parameters:
 
 + `name` (required) - User key name
-+ `public_key` - Public key payload
++ `public_key` - Public key payload or the uploaded user file with the contents of the key inside it
+
 
 ## Delete user key
 

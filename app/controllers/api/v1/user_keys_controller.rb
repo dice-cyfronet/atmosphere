@@ -14,6 +14,10 @@ module Api
 
       def create
         log_user_action 'create new user key'
+        if params[:user_key][:public_key].is_a? ActionDispatch::Http::UploadedFile
+          log_user_action 'the public user key was uploaded with a file'
+          @user_key.public_key = params[:user_key][:public_key].read
+        end
         @user_key.user = current_user
         @user_key.save!
         render json: @user_key, status: :created
