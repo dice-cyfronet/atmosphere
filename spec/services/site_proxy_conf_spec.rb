@@ -9,7 +9,7 @@ describe SiteProxyConf do
     PortMappingTemplate.any_instance.stub(:generate_proxy_conf).and_return(true)
   end
 
-  let(:cs) { create(:compute_site) }
+  let(:cs) { create(:compute_site, http_proxy_url: 'http', https_proxy_url: 'https') }
   subject { SiteProxyConf.new(cs) }
 
   describe "#generate" do
@@ -30,10 +30,10 @@ describe SiteProxyConf do
       let!(:vm1) { create(:virtual_machine, appliances: [ appl1 ], compute_site: cs, ip: "10.100.8.10")}
       let(:appl1_proxy_conf) { double }
 
-      before {
-        expect(ApplianceProxyConf).to receive(:new).with(appl1).and_return(appl1_proxy_conf)
+      before do
+        expect(ApplianceProxyConf).to receive(:new).with(appl1, 'http', 'https').and_return(appl1_proxy_conf)
         expect(appl1_proxy_conf).to receive(:generate).and_return(['appl1', 'proxy conf'])
-      }
+      end
 
       it 'genrates appliance proxy conf' do
         expect(subject.generate).to eq [
@@ -52,10 +52,10 @@ describe SiteProxyConf do
         let!(:vm2) { create(:virtual_machine, appliances: [ appl2 ], compute_site: cs, ip: "10.100.8.11")}
         let(:appl2_proxy_conf) { double }
 
-        before {
-          expect(ApplianceProxyConf).to receive(:new).with(appl2).and_return(appl2_proxy_conf)
+        before do
+          expect(ApplianceProxyConf).to receive(:new).with(appl2, 'http', 'https').and_return(appl2_proxy_conf)
           expect(appl2_proxy_conf).to receive(:generate).and_return(['appl2'])
-        }
+        end
 
         it 'generates proxy conf for all site appliances' do
           expect(subject.generate).to eq [

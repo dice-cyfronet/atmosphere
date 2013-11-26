@@ -1,6 +1,8 @@
 class ApplianceProxyConf
-  def initialize(appliance)
+  def initialize(appliance, http_proxy_url, https_proxy_url)
     @appliance = appliance
+    @http_proxy_url = http_proxy_url
+    @https_proxy_url = https_proxy_url
   end
 
   def generate
@@ -21,8 +23,16 @@ class ApplianceProxyConf
     redirection = redirection(pmt, type)
     properties = properties(pmt)
     redirection[:properties] = properties if properties.size > 0
-    get_or_create_port_mapping(pmt, type, redirection[:path])
+    get_or_create_port_mapping(pmt, type, full_path(type, redirection[:path]))
     redirection
+  end
+
+  def full_path(type, postfix)
+    "#{proxy_url(type)}/#{postfix}"
+  end
+
+  def proxy_url(type)
+    type == :http ? @http_proxy_url : @https_proxy_url
   end
 
   def get_or_create_port_mapping(pmt, type, path)
