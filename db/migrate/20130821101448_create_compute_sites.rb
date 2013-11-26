@@ -8,6 +8,9 @@ class CreateComputeSites < ActiveRecord::Migration
       t.string :technology
       t.boolean :regenerate_proxy_conf, default: false
 
+      t.string :http_proxy_url
+      t.string :https_proxy_url
+
       # a JSON string with cloud site specific configuration
       t.text :config
 

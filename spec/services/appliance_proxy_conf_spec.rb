@@ -14,7 +14,7 @@ describe ApplianceProxyConf do
     let(:cs) { create(:compute_site) }
     let(:appl_type) { create(:appliance_type)}
 
-    subject { ApplianceProxyConf.new(appl) }
+    subject { ApplianceProxyConf.new(appl, 'http', 'https') }
 
     context 'when production appliance started on cloud site' do
       # cs
@@ -45,7 +45,7 @@ describe ApplianceProxyConf do
 
         it 'sets port mapping url' do
           subject.generate
-          expect(http_pmt.http_mappings.first.url).to eq path(appl, http_pmt)
+          expect(http_pmt.http_mappings.first.url).to eq "http/#{path(appl, http_pmt)}"
         end
 
         context 'with added property' do
@@ -73,6 +73,11 @@ describe ApplianceProxyConf do
           expect {
             subject.generate
           }.to change { HttpMapping.count }.by(1)
+        end
+
+        it 'sets port mapping url' do
+          subject.generate
+          expect(https_pmt.http_mappings.first.url).to eq "https/#{path(appl, https_pmt)}"
         end
       end
 
@@ -104,7 +109,7 @@ describe ApplianceProxyConf do
           it 'updates port mapping url if needed' do
             subject.generate
             port_mapping.reload
-            expect(port_mapping.url).to eq path(appl, http_https_pmt)
+            expect(port_mapping.url).to eq "http/#{path(appl, http_https_pmt)}"
           end
         end
       end

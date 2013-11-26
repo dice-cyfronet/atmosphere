@@ -85,6 +85,8 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.string   "site_type",             default: "private"
     t.string   "technology"
     t.boolean  "regenerate_proxy_conf", default: false
+    t.string   "http_proxy_url"
+    t.string   "https_proxy_url"
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
