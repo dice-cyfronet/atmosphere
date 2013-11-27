@@ -30,6 +30,7 @@ class Ability
   end
 
   def initialize_normal_user_roles(user)
+    can :read, User
     can :read, ComputeSite
 
     ## Appliance sets

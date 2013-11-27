@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @users
+        respond_with @users.order(:id)
       end
 
       def show

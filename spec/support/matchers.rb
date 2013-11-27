@@ -297,3 +297,22 @@ RSpec::Matchers.define :appl_endpoint_eq do |endpoint, urls|
     (actual['urls'] - urls).blank?
   end
 end
+
+RSpec::Matchers.define :user_basic_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['login'] == expected.login &&
+    actual['full_name'] == expected.full_name &&
+    actual.keys.size == 3
+  end
+end
+
+RSpec::Matchers.define :user_full_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['login'] == expected.login &&
+    actual['full_name'] == expected.full_name &&
+    actual['email'] == expected.email &&
+    actual['roles'] == expected.roles.to_a.collect(&:to_s)
+  end
+end
