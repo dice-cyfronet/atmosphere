@@ -323,6 +323,34 @@ describe Api::V1::EndpointsController do
         expect(response.status).to eq 403
       end
     end
+
+    context 'when authenticated as developer' do
+      it 'returns 200 Success' do
+        put api("/endpoints/#{e3.id}", developer), update_json
+        expect(response.status).to eq 200
+      end
+
+      it 'returns 403 when updated by not the user who develops given endpoint' do
+        put api("/endpoints/#{e3.id}", user), update_json
+        expect(response.status).to eq 403
+      end
+
+      it 'updates development endpoint' do
+        old_endpoint_type = e3.endpoint_type
+        old_port_mapping_template_id = e3.port_mapping_template_id
+        put api("/endpoints/#{e3.id}", developer), update_json
+        updated_e = Endpoint.find(e3.id)
+
+        expect(updated_e).to be_updated_by_endpoint update_json[:endpoint]
+        expect(e_response).to endpoint_eq updated_e
+        expect(updated_e.id).to_not be_nil
+        expect(updated_e.id).to eq e3.id
+        expect(updated_e['description']).to eq 'some human description'
+        expect(updated_e['descriptor']).to eq 'nothing'
+        expect(updated_e['endpoint_type']).to eq old_endpoint_type
+        expect(updated_e['port_mapping_template_id']).to eq old_port_mapping_template_id
+      end
+    end
   end
 
 
@@ -357,6 +385,26 @@ describe Api::V1::EndpointsController do
           delete api("/endpoints/#{e1.id}", different_user)
           expect(response.status).to eq 403
         }.to change { Endpoint.count }.by(0)
+      end
+    end
+
+    context 'when authenticated as developer' do
+      it 'returns 200 Success' do
+        delete api("/endpoints/#{e3.id}", developer)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns 403 when deleted by not the user who develops given endpoint' do
+        expect {
+          delete api("/endpoints/#{e3.id}", user)
+          expect(response.status).to eq 403
+        }.to change { Endpoint.count }.by(0)
+      end
+
+      it 'deletes development endpoint' do
+        expect {
+          delete api("/endpoints/#{e3.id}", developer)
+        }.to change { Endpoint.count }.by(-1)
       end
     end
   end
