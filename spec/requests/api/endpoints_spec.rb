@@ -6,6 +6,7 @@ describe Api::V1::EndpointsController do
   let(:user)           { create(:user) }
   let(:different_user) { create(:user) }
   let(:admin)          { create(:admin) }
+  let(:developer) { create(:developer) }
 
   let(:security_proxy) { create(:security_proxy) }
   let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy, visible_for: 'owner') }
@@ -14,6 +15,12 @@ describe Api::V1::EndpointsController do
   let!(:pmt2) { create(:port_mapping_template, appliance_type: at2) }
   let!(:e1) { create(:endpoint, port_mapping_template: pmt1) }
   let!(:e2) { create(:endpoint, port_mapping_template: pmt2) }
+
+  let(:as) { create(:dev_appliance_set, user: developer) }
+  let!(:appl1) { create(:appliance, appliance_set: as) }
+  let!(:pmt3) { create(:dev_port_mapping_template, dev_mode_property_set: appl1.dev_mode_property_set, appliance_type: nil) }
+  let!(:e3) { create(:endpoint, port_mapping_template: pmt3) }
+
 
   describe 'GET /endpoints' do
     context 'when unauthenticated' do
@@ -52,6 +59,27 @@ describe Api::V1::EndpointsController do
         expect(es_response).to be_an Array
         expect(es_response.size).to eq 1
         expect(es_response[0]).to endpoint_eq e2
+      end
+
+      # TODO - FIXME - when properly dealt with abilities
+      #it 'returns all public endpoints' do
+      #  get api("/endpoints", user)
+      #  expect(es_response).to be_an Array
+      #  expect(es_response.size).to eq 2
+      #end
+    end
+
+    context 'when authenticated as developer' do
+      it 'returns 200 Success' do
+        get api("/endpoints?port_mapping_template_id=#{pmt3.id}", developer)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns owned endpoints in development' do
+        get api("/endpoints?port_mapping_template_id=#{pmt3.id}", developer)
+        expect(es_response).to be_an Array
+        expect(es_response.size).to eq 1
+        expect(es_response[0]).to endpoint_eq e3
       end
     end
   end
@@ -114,6 +142,18 @@ describe Api::V1::EndpointsController do
         expect(e_response).to endpoint_eq e2
       end
     end
+
+    context 'when authenticated as developer' do
+      it 'returns 200 Success' do
+        get api("/endpoints/#{e3.id}", developer)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns owned endpoints in development' do
+        get api("/endpoints/#{e3.id}", developer)
+        expect(e_response).to endpoint_eq e3
+      end
+    end
   end
 
 
@@ -127,6 +167,19 @@ describe Api::V1::EndpointsController do
           endpoint_type: 'rest',
           invocation_path: 'invocation_path',
           port_mapping_template_id: pmt1.id
+        }
+      }
+    end
+
+    let(:new_dev_request) do
+      {
+        endpoint: {
+          name: 'Development Endpoint name',
+          description: 'some human description',
+          descriptor: '',
+          endpoint_type: 'rest',
+          invocation_path: 'dev_invocation_path',
+          port_mapping_template_id: pmt3.id
         }
       }
     end
@@ -199,6 +252,19 @@ describe Api::V1::EndpointsController do
       end
     end
 
+    context 'when authenticated as developer' do
+      it 'returns 201 Success' do
+        post api("/endpoints", developer), new_dev_request
+        expect(response.status).to eq 201
+      end
+
+      it 'creates new development endpoint' do
+        expect {
+          post api("/endpoints", developer), new_dev_request
+          expect(response.status).to eq 201
+        }.to change { Endpoint.count }.by(1)
+      end
+    end
   end
 
 
