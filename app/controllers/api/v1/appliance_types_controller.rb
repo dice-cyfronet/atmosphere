@@ -34,12 +34,13 @@ module Api
         else
           unless current_user.admin?
             raise ActionController::ParameterMissing.new('appliance_id parameter is missing')#ActionController::ParameterMissing
-          end  
+          end
         end
         new_at_params.merge!(appliance_type_params)
         new_at_params.delete('appliance_id')
         @appliance_type = ApplianceType.new(new_at_params)
         @appliance_type.virtual_machine_templates << tmpl if tmpl
+        @appliance_type.author = current_user if @appliance_type.author.blank?
         @appliance_type.save!
         render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         log_user_action "appliance type created: #{@appliance_type.to_json}"

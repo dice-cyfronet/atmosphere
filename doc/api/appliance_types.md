@@ -78,16 +78,20 @@ POST /appliance_types
 
 Parameters:
 
-+ `name` (required) - New appliance type
++ `appliance_id` (required) - Appliance id started in development mode which will be used as a source for this appliance type.
+
+All parameters presented bellow will overwrite parameters defined in `Dev Mode Property Set` correlated with source `Appliance`:
+
++ `name` (optional) - New appliance type name (required if `appliance_id` it empty)
 + `description` (optional) - New appliance type description
-+ `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared amoung many users.
-+ `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scalled up or down.
-+ `visiblity` (required) - `unpublished` - appliance type can be used only in appliance sets started in development mode / `published` - appliance type is production ready.
-+ `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type.
-+ `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type.
-+ `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type.
-+ `author_id` (optional) - appliance type author id.
-+ `security_proxy_id` (optional) - security proxy configuration id used by this appliance type.
++ `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared amoung many users
++ `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scalled up or down
++ `visible_for` (optional) - `owner` - default - appliance type can be used only by appliance type owner (in both development and production modes) / `developer` - appliance type can be started only in development mode / `all` - appliance type is production ready - it can be started in both development and production mode by everyone
++ `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type
++ `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type
++ `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type
++ `author_id` (optional) - appliance type author id. If this value is not set than current user is set as an new `Appliance Type` owner.
++ `security_proxy_id` (optional) - security proxy configuration id used by this appliance type
 
 ## Update appliance type
 

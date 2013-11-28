@@ -241,7 +241,11 @@ describe Api::V1::ApplianceTypesController do
           expect(at_response['scalable']).to be_false
           expect(at_response['visible_for']).to eq 'owner'
         }.to change { ApplianceType.count }.by(1)
+      end
 
+      it 'sets current user when no other given' do
+        post api("/appliance_types/", developer), req_with_appl_id_body
+        expect(at_response['author_id']).to eq developer.id
       end
 
       context 'appliance id is provided in request' do
