@@ -41,13 +41,20 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def appliance_type
-    return source_template.appliance_type if source_template
+    return appliances.first.appliance_type if appliances.first
     return nil
   end
 
   def destroy(delete_in_cloud = true)
     perform_delete_in_cloud if delete_in_cloud
     super()
+  end
+
+  def update_dnat
+    unless ip_was.blank?
+      WranglerEraserWorker.perform_async(vm_id: id)
+    end
+    WranglerRegistrarWorker.perform_async(id) if ip?
   end
 
   private
@@ -80,13 +87,6 @@ class VirtualMachine < ActiveRecord::Base
 
   def generate_proxy_conf
     ProxyConfWorker.regeneration_required(compute_site)
-  end
-
-  def update_dnat
-    unless ip_was.blank?
-      WranglerEraserWorker.perform_async(vm_id: id)
-    end
-    WranglerRegistrarWorker.perform_async(id) if ip?
   end
 
   def remove_from_dnat

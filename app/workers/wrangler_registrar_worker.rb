@@ -8,10 +8,16 @@ class WranglerRegistrarWorker
 
   def perform(vm_id)
     vm = VirtualMachine.find vm_id
-    return unless vm.appliance_type.port_mapping_templates and vm.ip
+    pmts = nil
+    if (vm.appliances.first and vm.appliances.first.development?)
+      pmts = vm.appliances.first.dev_mode_property_set.port_mapping_templates
+    else
+      pmts = vm.appliance_type.port_mapping_templates if vm.appliance_type
+    end
+    return unless pmts and vm.ip
     already_added_mapping_tmpls = vm.port_mappings ? vm.port_mappings.select {|m| m.port_mapping_template} : [] 
     pmt_map = {}
-    to_add = (vm.appliance_type.port_mapping_templates.select {|e| e.application_protocol.none?} - already_added_mapping_tmpls).collect {|pmt|
+    to_add = (pmts.select {|e| e.application_protocol.none?} - already_added_mapping_tmpls).collect {|pmt|
       if not pmt.target_port.in? MIN_PORT_NO..MAX_PORT_NO
         Rails.logger.error "Error when trying to add redirections for VM #{vm.uuid} with IP #{vm.ip}. Requested redirection for forbidden port #{pmt.target_port}"
         return
