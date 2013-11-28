@@ -47,6 +47,7 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :endpoints, dependent: :destroy
 
   after_save :generate_proxy_conf
+  after_save :update_dnat
   after_destroy :generate_proxy_conf
 
   scope :def_order, -> { order(:service_name) }
@@ -84,4 +85,14 @@ class PortMappingTemplate < ActiveRecord::Base
       false
     end
   end
+
+  def update_dnat
+    if appliance_type
+      appliance_type.appliances.each {|appl| appl.virtual_machines.each {|vm| vm.update_dnat} }
+    elsif dev_mode_property_set
+      dev_mode_property_set.appliance.virtual_machines.each {|vm| vm.update_dnat}
+    end
+
+  end
+
 end

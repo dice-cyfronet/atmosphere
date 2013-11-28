@@ -165,6 +165,31 @@ describe PortMappingTemplate do
     end
   end
 
+  describe 'update dnat' do
+
+    before do
+      Optimizer.instance.stub(:run)
+    end
+
+    it 'updates DNAT of production vms with port mappings associated to changed port mapping template' do
+      vm = create(:virtual_machine, ip: '10.1.1.1')
+      WranglerRegistrarWorker.stub(:perform_async)
+      expect(WranglerRegistrarWorker).to receive(:perform_async).with(vm.id)
+      appl = create(:appliance, virtual_machines: [vm])
+      pmt = create(:port_mapping_template, appliance_type:appl.appliance_type)
+    end
+
+    it 'updates DNAT of development vms with port mappings associated to changed port mapping template' do
+      vm = create(:virtual_machine, ip: '10.1.1.1')
+      WranglerRegistrarWorker.stub(:perform_async)
+      expect(WranglerRegistrarWorker).to receive(:perform_async).with(vm.id)
+      appl = create(:appl_dev_mode, virtual_machines: [vm])
+      dev_mode_prop_set = create(:dev_mode_property_set, appliance: appl)
+      pmt = create(:dev_port_mapping_template, dev_mode_property_set: dev_mode_prop_set)
+    end
+
+  end
+
   describe '#generate_proxy_conf' do
     before do
       VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
