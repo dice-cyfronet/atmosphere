@@ -201,10 +201,10 @@ describe Api::V1::ApplianceTypesController do
     DEV_PROPS_DESC = 'Description from dev props'
 
     let(:appl_set) { create(:dev_appliance_set, user: developer) }
-    let(:appl) { create(:appl_dev_mode, appliance_set: appl_set) }
+    let!(:appl) { create(:appl_dev_mode, appliance_set: appl_set) }
     let(:new_at_name) { 'the newest appliance type ever' }
     let(:at_req_body) { {appliance_type: {name: new_at_name}} }
-    let!(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
+    let(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
