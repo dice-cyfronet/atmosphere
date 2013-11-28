@@ -205,6 +205,7 @@ describe Api::V1::ApplianceTypesController do
     let(:new_at_name) { 'the newest appliance type ever' }
     let(:at_req_body) { {appliance_type: {name: new_at_name}} }
     let(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
+    let(:create_req_for_different_user) { {appliance_type: { appliance_id: appl.id, author_id: different_user.id, name: 'name123' }} }
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -241,6 +242,11 @@ describe Api::V1::ApplianceTypesController do
           expect(at_response['scalable']).to be_false
           expect(at_response['visible_for']).to eq 'owner'
         }.to change { ApplianceType.count }.by(1)
+      end
+
+      it 'creates new appliance type with owner set to other user' do
+        post api("/appliance_types/", developer), create_req_for_different_user
+        expect(at_response['author_id']).to eq different_user.id
       end
 
       it 'sets current user when no other given' do

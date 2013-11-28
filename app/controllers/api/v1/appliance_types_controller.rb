@@ -38,6 +38,7 @@ module Api
         end
         new_at_params.merge!(appliance_type_params)
         new_at_params.delete('appliance_id')
+        new_at_params['user_id'] = new_at_params.delete('author_id')
         @appliance_type = ApplianceType.new(new_at_params)
         @appliance_type.virtual_machine_templates << tmpl if tmpl
         @appliance_type.author = current_user if @appliance_type.author.blank?
