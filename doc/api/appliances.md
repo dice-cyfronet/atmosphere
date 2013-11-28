@@ -55,8 +55,9 @@ Add new appliance to the appliance set
 ```json
 {
   "appliance": {
-      "configuration_template_id": 1,
       "appliance_set_id": 2,
+      "user_key_id": 1, #only in development mode
+      "configuration_template_id": 1,
       "params": {
         "param1": "param value",
         "param2": "another param",
@@ -68,8 +69,9 @@ Add new appliance to the appliance set
 
 Parameters:
 
-+ `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `appliance_set_id` (required) - The ID of appliance set into which appliance will be added
++ `user_key_id` (optional) - User key id. User key will be rejested for appliances started in production mode
++ `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
 
 ---

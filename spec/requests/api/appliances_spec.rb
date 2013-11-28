@@ -153,6 +153,17 @@ describe Api::V1::AppliancesController do
     let(:static_config) { create(:static_config_template, appliance_type: public_at) }
     let(:static_request_body) { start_request(static_config, portal_set) }
 
+    let(:development_set) { create(:appliance_set, user: developer, appliance_set_type: :development)}
+
+    let(:static_dev_request_body) do
+      {
+        appliance: {
+          configuration_template_id: static_config.id,
+          appliance_set_id: development_set.id
+        }
+      }
+    end
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         post api("appliances"), static_request_body
@@ -250,20 +261,11 @@ describe Api::V1::AppliancesController do
         end
 
         context 'when development appliance set' do
-          let(:development_set) { create(:appliance_set, user: user, appliance_set_type: :development)}
           let!(:existing_appliance) { create(:appliance, appliance_configuration_instance: config_instance, appliance_set: development_set) }
-          let(:static_request_body) do
-            {
-              appliance: {
-                configuration_template_id: static_config.id,
-                appliance_set_id: development_set.id
-              }
-            }
-          end
 
           it 'creates second appliance with the same configuration instance' do
             expect(optimizer).to receive(:run).once
-            post api("/appliances", user), static_request_body
+            post api("/appliances", developer), static_dev_request_body
             expect(response.status).to eq 201
           end
         end
@@ -297,6 +299,30 @@ describe Api::V1::AppliancesController do
       it 'does not allow to start in production mode' do
         post api("/appliances", user), start_request(development_at_config, portal_set)
         expect(response.status).to eq 403
+      end
+    end
+
+    context 'user keys' do
+      context 'when in production mode' do
+        let(:user_key) { create(:user_key, user: user) }
+
+        it 'skips user key for started appliance' do
+          post api("/appliances", user), user_key_request(static_request_body, user_key)
+
+          created_appliance = Appliance.find(appliance_response['id'])
+          expect(created_appliance.user_key).to be_nil
+        end
+      end
+
+      context 'when in development mode' do
+        let(:developer_key) { create(:user_key, user: developer) }
+
+        it 'injects user key for started appliance' do
+          post api("/appliances", developer), user_key_request(static_dev_request_body, developer_key)
+
+          created_appliance = Appliance.find(appliance_response['id'])
+          expect(created_appliance.user_key).to eq developer_key
+        end
       end
     end
   end
@@ -341,6 +367,12 @@ describe Api::V1::AppliancesController do
         }.to change { Appliance.count }.by(-1)
       end
     end
+  end
+
+  def user_key_request(original_request, key)
+    request = original_request
+    request[:appliance][:user_key_id] = key.id
+    request
   end
 
   def appliance_response
