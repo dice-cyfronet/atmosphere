@@ -70,9 +70,10 @@ module Api
       end
 
       def create_params
-        set_id = params.require(:appliance).permit(:appliance_set_id)[:appliance_set_id]
+        appl_params = params.require(:appliance)
+        prod_params = appl_params.permit(:appliance_set_id, :name)
 
-        ApplianceSet.find(set_id).production? ? params.require(:appliance).permit(:appliance_set_id) : params.require(:appliance).permit(:appliance_set_id, :user_key_id)
+        ApplianceSet.find(prod_params[:appliance_set_id]).production? ? prod_params : appl_params.permit(:appliance_set_id, :user_key_id, :name)
       end
 
       def check_for_conflict!

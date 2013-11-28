@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.integer  "user_key_id"
     t.integer  "appliance_configuration_instance_id",                 null: false
     t.string   "state",                               default: "new", null: false
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

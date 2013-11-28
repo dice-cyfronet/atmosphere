@@ -200,6 +200,12 @@ describe Api::V1::AppliancesController do
           config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
           expect(config_instance.payload).to eq config_instance.appliance_configuration_template.payload
         end
+
+        it 'sets appliance name' do
+          post api("/appliances", user), static_request_body
+          created_appliance = Appliance.find(appliance_response['id'])
+          expect(created_appliance.name).to eq static_request_body[:appliance][:name]
+        end
       end
 
       context 'with dynamic configuration' do
@@ -391,7 +397,8 @@ describe Api::V1::AppliancesController do
     {
       appliance: {
         configuration_template_id: at_config.id,
-        appliance_set_id: appliance_set.id
+        appliance_set_id: appliance_set.id,
+        name: 'my_name'
       }
     }
   end

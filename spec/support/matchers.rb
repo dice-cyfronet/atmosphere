@@ -173,6 +173,7 @@ end
 RSpec::Matchers.define :appliance_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
+    actual['name'] == expected.name &&
     actual['appliance_set_id'] == expected.appliance_set_id &&
     actual['appliance_type_id'] == expected.appliance_type_id &&
     actual['appliance_configuration_instance_id'] == expected.appliance_configuration_instance_id

@@ -7,6 +7,7 @@ class CreateAppliances < ActiveRecord::Migration
 
       t.references :appliance_configuration_instance, null: false
       t.string :state, default: 'new', null: false
+      t.string :name
 
       t.timestamps
     end

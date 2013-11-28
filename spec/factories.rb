@@ -78,6 +78,7 @@ FactoryGirl.define do
     appliance_set
     appliance_configuration_instance
     appliance_type
+    name { rand_str }
 
     trait :dev_mode do
       appliance_set { create(:dev_appliance_set) }
