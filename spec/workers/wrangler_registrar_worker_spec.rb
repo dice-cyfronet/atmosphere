@@ -55,7 +55,6 @@ describe WranglerRegistrarWorker do
     let!(:port_mapping_tmpl) { create(:port_mapping_template, target_port: priv_port, application_protocol: 'none', appliance_type: appl_type) }
     let!(:port_mapping_tmpl_2) { create(:port_mapping_template, target_port: priv_port_2, application_protocol: 'none', appliance_type: appl_type) }
     let!(:port_mapping_tmpl_3) { create(:port_mapping_template, target_port: priv_port_3, application_protocol: 'http', appliance_type: appl_type) }
-    #let!(:tmpl) { create(:source_template, appliance_type: appl_type) }
     let(:appl) { create(:appliance, appliance_type: appl_type) }
 
     context 'using wrangler client' do
@@ -125,7 +124,6 @@ describe WranglerRegistrarWorker do
   context 'appliance type does not have any port mapping templates' do
     let!(:appl_type) { create(:filled_appliance_type) }
     let(:appl) { create(:appliance, appliance_type: appl_type) }
-    #let!(:tmpl) { create(:source_template, appliance_type: appl_type) }
 
     stubs = nil
     before do
