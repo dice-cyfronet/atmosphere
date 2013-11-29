@@ -66,7 +66,7 @@ Air::Application.routes.draw do
       resources :port_mappings, only: [:index, :show]
       json_resources :appliance_sets
 
-      resources :appliances, only: [:index, :show, :create, :destroy] do
+      resources :appliances do
         member do
           get :endpoints
         end

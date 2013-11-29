@@ -84,6 +84,28 @@ Not all appliance types can be added into all appliance sets. For details please
 
 ---
 
+## Update appliance name
+
+Updates appliance name.
+
+```
+PUT /appliances/:id
+```
+
+Parameters:
+
++ `id` (required) - The ID of the Appliance to be updated
+
+```json
+{
+  "appliance": {
+      "name": "appliance name"
+    }
+}
+```
+
+As a response full information about appliance is returned.
+
 ## Delete appliance
 
 Delete user appliance. You need to be an appliance owner (or admin) do delete it.

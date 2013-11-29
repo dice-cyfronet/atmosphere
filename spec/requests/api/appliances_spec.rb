@@ -68,7 +68,7 @@ describe Api::V1::AppliancesController do
     end
   end
 
-  describe 'GET /appliances/{id}' do
+  describe 'GET /appliances/:id' do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         get api("/appliances/#{user_appliance1.id}")
@@ -101,7 +101,7 @@ describe Api::V1::AppliancesController do
     end
   end
 
-  describe 'GET /appliances/{id}/endpoints' do
+  describe 'GET /appliances/:id/endpoints' do
 
 
     context 'when unauthenticated' do
@@ -333,7 +333,37 @@ describe Api::V1::AppliancesController do
     end
   end
 
-  context 'DELETE /appliances/{id}' do
+  describe 'PUT /appliances/:id' do
+    let(:update_request) { { appliance: { name: 'updated name' } } }
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        put api("/appliances/#{user_appliance1.id}"), update_request
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 Created on success' do
+        put api("/appliances/#{user_appliance1.id}", user), update_request
+        expect(response.status).to eq 200
+      end
+
+      it 'updates appliance name' do
+        put api("/appliances/#{user_appliance1.id}", user), update_request
+        user_appliance1.reload
+        expect(user_appliance1.name).to eq update_request[:appliance][:name]
+      end
+
+      it 'returns information about updated appliance' do
+        put api("/appliances/#{user_appliance1.id}", user), update_request
+        user_appliance1.reload
+        expect(appliance_response).to appliance_eq user_appliance1
+      end
+    end
+  end
+
+  context 'DELETE /appliances/:id' do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         delete api("/appliances/#{user_appliance1.id}")
@@ -342,7 +372,7 @@ describe Api::V1::AppliancesController do
     end
 
     context 'when authenticated as user' do
-      it 'returns 201 Created on success' do
+      it 'returns 200 Created on success' do
         delete api("/appliances/#{user_appliance1.id}", user)
         expect(response.status).to eq 200
       end

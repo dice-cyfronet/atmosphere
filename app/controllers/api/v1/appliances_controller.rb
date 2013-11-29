@@ -28,6 +28,13 @@ module Api
         end
       end
 
+      def update
+        log_user_action "update appliance #{@appliance.id} name"
+        @appliance.update_attributes!(update_params)
+        render json: @appliance
+        log_user_action "appliance name updated: #{@appliance_type.to_json}"
+      end
+
       def destroy
         log_user_action "destroy appliance #{@appliance.id}"
         if @appliance.destroy
@@ -53,6 +60,10 @@ module Api
       end
 
       private
+
+      def update_params
+        params.require(:appliance).permit(:name)
+      end
 
       def cannot_create_appliance?
         type = @appliance.appliance_type
