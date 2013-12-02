@@ -15,7 +15,7 @@ class WranglerRegistrarWorker
       pmts = vm.appliance_type.port_mapping_templates if vm.appliance_type
     end
     return unless pmts and vm.ip
-    already_added_mapping_tmpls = vm.port_mappings ? vm.port_mappings.select {|m| m.port_mapping_template} : [] 
+    already_added_mapping_tmpls = vm.port_mappings ? vm.port_mappings.collect {|m| m.port_mapping_template} : []
     pmt_map = {}
     to_add = (pmts.select {|e| e.application_protocol.none?} - already_added_mapping_tmpls).collect {|pmt|
       if not pmt.target_port.in? MIN_PORT_NO..MAX_PORT_NO
