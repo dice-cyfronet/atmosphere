@@ -69,6 +69,7 @@ describe WranglerRegistrarWorker do
         builder.adapter :test, stubs
       end
       Wrangler::Client.stub(:dnat_client).and_return stubbed_dnat_client
+      vm.stub(:update_dnat)
       pmt_1 = create(:port_mapping_template, target_port: priv_port, appliance_type: vm.appliance_type, application_protocol: :none)
       pm = create(:port_mapping, virtual_machine: vm, port_mapping_template: pmt_1)
       pmt_2 = create(:port_mapping_template, target_port: priv_port_2, appliance_type: vm.appliance_type, application_protocol: :none)
