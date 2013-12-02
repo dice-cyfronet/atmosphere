@@ -165,28 +165,38 @@ describe PortMappingTemplate do
     end
   end
 
-  describe 'update dnat' do
+  describe 'adds port mapping using dnat wrangler when pmt is created' do
 
     before do
       Optimizer.instance.stub(:run)
     end
+    let(:priv_ip) { '10.1.1.1' }
+    #let(:pub_ip) { '149.156.9.5' }
+    let(:proto) { 'tcp' }
+    let(:priv_port) { 8080 }
+    let(:appliance) { create(:appliance)}
+    let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
 
-    it 'updates DNAT of production vms with port mappings associated to changed port mapping template' do
-      vm = create(:virtual_machine, ip: '10.1.1.1')
+    it 'calls wrangler registrar worker for production vms vms with port mappings associated to created port mapping template' do
       WranglerRegistrarWorker.stub(:perform_async)
       expect(WranglerRegistrarWorker).to receive(:perform_async).with(vm.id)
       appl = create(:appliance, virtual_machines: [vm])
       pmt = create(:port_mapping_template, appliance_type:appl.appliance_type)
     end
 
-    it 'updates DNAT of development vms with port mappings associated to changed port mapping template' do
-      vm = create(:virtual_machine, ip: '10.1.1.1')
+    it 'calls wrangler registrar worker for development vms with port mappings associated to created port mapping template' do
       WranglerRegistrarWorker.stub(:perform_async)
       expect(WranglerRegistrarWorker).to receive(:perform_async).with(vm.id)
       appl = create(:appl_dev_mode, virtual_machines: [vm])
       dev_mode_prop_set = create(:dev_mode_property_set, appliance: appl)
       pmt = create(:dev_port_mapping_template, dev_mode_property_set: dev_mode_prop_set)
     end
+
+    it 'creates new port mapping for each vm'
+
+  end
+
+  describe 'updates port mappings if port mapping template target port is changed' do
 
   end
 
