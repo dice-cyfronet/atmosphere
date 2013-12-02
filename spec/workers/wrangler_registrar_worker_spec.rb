@@ -49,6 +49,38 @@ describe WranglerRegistrarWorker do
 
   end
 
+  context 'vm already has one port mapping and a new port mapping template is added' do
+    before do
+      Optimizer.instance.stub(:run)
+    end
+    let(:priv_ip) { '10.1.1.1' }
+    #let(:pub_ip) { '149.156.9.5' }
+    let(:proto) { 'tcp' }
+    let(:priv_port) { 8080 }
+    let(:priv_port_2) { 9999 }
+    let(:appliance) { create(:appliance)}
+    let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
+
+    it 'adds second port mapping' do
+      stubs = Faraday::Adapter::Test::Stubs.new do |stub|
+        stub.post("/dnat/#{priv_ip}", JSON.generate([{proto: proto, port: priv_port_2}])) {[200, {}, "[{\"privIp\":\"#{priv_ip}\",\"pubPort\":#{pub_port},\"proto\":\"#{proto}\",\"privPort\":#{priv_port_2},\"pubIp\":\"#{pub_ip}\"}]"]}
+      end
+      stubbed_dnat_client = Faraday.new do |builder|
+        builder.adapter :test, stubs
+      end
+      Wrangler::Client.stub(:dnat_client).and_return stubbed_dnat_client
+      pmt_1 = create(:port_mapping_template, target_port: priv_port, appliance_type: vm.appliance_type, application_protocol: :none)
+      pm = create(:port_mapping, virtual_machine: vm, port_mapping_template: pmt_1)
+      pmt_2 = create(:port_mapping_template, target_port: priv_port_2, appliance_type: vm.appliance_type, application_protocol: :none)
+      expect {
+        subject.perform(vm.id)
+      }.to change {PortMapping.count}.by 1
+      expect(PortMapping.count).to eq 2
+      expect(PortMappingTemplate.count).to eq 2
+    end
+
+  end
+
   context 'appliance type has three port mapping templates among which one is http and must not be added to wrangler' do
 
     let!(:appl_type) { create(:filled_appliance_type) }
