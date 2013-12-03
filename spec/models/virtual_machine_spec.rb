@@ -152,10 +152,16 @@ describe VirtualMachine do
     end
 
     context 'update' do
-      it 'creates DNAT update job' do
+      it 'creates DNAT update job if vm has ip' do
         expect(WranglerMappingUpdaterWorker).to receive(:perform_async)
         pmt = create(:port_mapping_template)
         vm.update_mapping(pmt)
+      end
+
+      it 'does not create DNAT update job if vm does not have an ip' do
+        expect(WranglerMappingUpdaterWorker).to_not receive(:perform_async)
+        pmt = create(:port_mapping_template)
+        vm_ipless.update_mapping(pmt)
       end
     end
   end

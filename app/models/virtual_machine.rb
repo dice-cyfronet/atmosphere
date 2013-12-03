@@ -52,7 +52,7 @@ class VirtualMachine < ActiveRecord::Base
 
   # Removes redirection from DNAT for a port mapping associated with given pmt and add mapping again. Should be used when port mapping template target port was changed.
   def update_mapping(pmt)
-    WranglerMappingUpdaterWorker.perform_async(id, pmt.id)
+    WranglerMappingUpdaterWorker.perform_async(id, pmt.id) if ip
   end
 
   # Deletes all dnat redirections and then adds. Use it when IP of the vm has changed and existing redirection would not work any way.
