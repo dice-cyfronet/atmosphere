@@ -27,7 +27,7 @@ class WranglerEraserWorker
 
   private
   def build_req_params_msg(ip, port, protocol)
-    "IP #{ip}{', port ' + port.to_s if port}#{', protocol ' + protocol if protocol}"
+    "IP #{ip}#{', port ' + port.to_s if port}#{', protocol ' + protocol if protocol}"
   end
 
   def remove_all_for_vm(vm)

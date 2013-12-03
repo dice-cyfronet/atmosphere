@@ -44,7 +44,7 @@ describe WranglerEraserWorker do
     end
 
     it 'logs error if wrangler returns non 204 status' do
-      expect(logger_mock).to receive(:error) { "Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}." }
+      expect(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}.")
       vm = create(:virtual_machine, ip: priv_ip)
       subject.perform(vm_id: vm.id)
     end
