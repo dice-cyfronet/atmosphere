@@ -25,9 +25,9 @@ class VirtualMachine < ActiveRecord::Base
 
   before_create :instantiate_vm, unless: :id_at_site
   after_destroy :generate_proxy_conf
-  after_destroy :remove_from_dnat, if: :ip?
+  after_destroy :delete_dnat, if: :ip?
   after_save :generate_proxy_conf, if: :ip_changed?
-  after_update :update_dnat, if: :ip_changed?
+  after_update :regenerate_dnat, if: :ip_changed?
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -50,11 +50,30 @@ class VirtualMachine < ActiveRecord::Base
     super()
   end
 
-  def update_dnat
-    unless ip_was.blank?
-      WranglerEraserWorker.perform_async(vm_id: id)
+  # Removes redirection from DNAT for a port mapping associated with given pmt and add mapping again. Should be used when port mapping template target port was changed.
+  def update_mapping(pmt)
+    WranglerMappingUpdaterWorker.perform_async(id, pmt.id)
+  end
+
+  # Deletes all dnat redirections and then adds. Use it when IP of the vm has changed and existing redirection would not work any way.
+  def regenerate_dnat
+    if ip_was
+      if ip
+        WranglerRegeneratorWorker.perform_async(id)
+      else
+        delete_dnat
+      end
+    else
+      add_dnat
     end
+  end
+
+  def add_dnat
     WranglerRegistrarWorker.perform_async(id) if ip?
+  end
+
+  def delete_dnat
+    WranglerEraserWorker.perform_async(vm_id: id)
   end
 
   private
@@ -87,10 +106,6 @@ class VirtualMachine < ActiveRecord::Base
 
   def generate_proxy_conf
     ProxyConfWorker.regeneration_required(compute_site)
-  end
-
-  def remove_from_dnat
-    WranglerEraserWorker.perform_async(vm_id: id)
   end
 
 end

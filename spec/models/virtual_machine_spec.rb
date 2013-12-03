@@ -66,77 +66,98 @@ describe VirtualMachine do
     end
   end
 
-  describe 'DNAT registration' do
-    it 'is performed after IP was changed and is not blank' do
-      expect(WranglerRegistrarWorker).to receive(:perform_async)
-      vm = create(:virtual_machine)
-      vm.ip = priv_ip
-      vm.save
-    end
-
-    context 'is not performed' do
-      before do
-        expect(WranglerRegistrarWorker).to_not receive(:perform_async)
-      end
-
-      it 'is not performed when attribute other than ip is updated' do
-        vm = create(:virtual_machine)
-        vm.name = 'so much changed'
-        vm.save
-      end
-
-      it 'is not performed when ip is changed to blank' do
-        vm = create(:virtual_machine, ip: priv_ip)
-        vm.ip = nil
-        vm.save
-      end
-    end
-  end
-
-  describe 'DNAT unregistration' do
-
-    let(:vm) { create(:virtual_machine, ip: priv_ip) }
+  context 'DNAT' do
     let(:vm_ipless) { create(:virtual_machine) }
+    let(:vm) { create(:virtual_machine, ip: priv_ip) }
 
-    before do
-      # we are testing dnat unregistration not cloud action, thus we can mock it
-      servers_double = double
-      vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
-      vm_ipless.compute_site.cloud_client.stub(:servers).and_return(servers_double)
-      allow(servers_double).to receive(:destroy)
-    end
-
-    context 'is performed' do
-      before do
-        expect(WranglerEraserWorker).to receive(:perform_async)
-      end
-      it 'is performed after not blank IP was changed' do
-        vm.ip = '8.8.8.8'
-        vm.save
-      end
-
-      it 'is performed after VM is destroyed if IP was not blank' do
-        vm.destroy
-      end
-    end
-
-    context 'is not performed' do
-
-      before do
-        expect(WranglerEraserWorker).to_not receive(:perform_async)
-      end
-
-      it 'is not performed after blank IP was changed' do
-        vm_ipless.ip = '8.8.8.8'
+    context 'registration' do
+      it 'is performed after IP was changed and is not blank' do
+        expect(WranglerRegistrarWorker).to receive(:perform_async)
+        vm_ipless.ip = priv_ip
         vm_ipless.save
+      end 
+    end
+
+    describe 'unregistration' do
+
+      before do
+        # we are testing dnat unregistration not cloud action, thus we can mock it
+        servers_double = double
+        vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+        vm_ipless.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+        allow(servers_double).to receive(:destroy)
       end
 
-      it 'is not performed after VM with blank IP was destroyed' do
-        vm_ipless.destroy
+      context 'is performed' do
+        before do
+          expect(WranglerEraserWorker).to receive(:perform_async)
+        end
+
+        it 'after VM is destroyed if IP was not blank' do
+          vm.destroy
+        end
+
+        it 'if VM ip was updated from non-blank value to blank' do
+          vm.ip = nil
+          vm.save
+        end
       end
-    
+
+      context 'is not performed' do
+
+        before do
+          expect(WranglerEraserWorker).to_not receive(:perform_async)
+        end
+
+        it 'is not performed after VM with blank IP was destroyed' do
+          vm_ipless.destroy
+        end
+      
+      end
+      
     end
-    
+
+    context 'regeneration' do
+      context 'is not performed' do
+        
+        before do
+          expect(WranglerRegeneratorWorker).to_not receive(:perform_async)
+        end
+
+        it 'after blank IP was changed' do
+          vm_ipless.ip = '8.8.8.8'
+          vm_ipless.save
+        end
+
+        it 'when attribute other than ip is updated' do
+          vm = create(:virtual_machine)
+          vm.name = 'so much changed'
+          vm.save
+        end
+
+        it 'performed when ip is changed to blank' do
+          vm = create(:virtual_machine, ip: priv_ip)
+          vm.ip = nil
+          vm.save
+        end
+      end
+
+      context 'is performed' do
+        it 'after not blank IP was changed' do
+          expect(WranglerRegeneratorWorker).to receive(:perform_async)
+          vm.ip = '8.8.8.8'
+          vm.save
+        end
+      end
+    end
+
+    context 'update' do
+      it 'creates DNAT update job' do
+        expect(WranglerMappingUpdaterWorker).to receive(:perform_async)
+        pmt = create(:port_mapping_template)
+        vm.update_mapping(pmt)
+      end
+    end
   end
 
   context 'initital configuration' do
