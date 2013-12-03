@@ -58,7 +58,7 @@ describe WranglerRegistrarWorker do
     let(:proto) { 'tcp' }
     let(:priv_port) { 8080 }
     let(:priv_port_2) { 9999 }
-    let(:appliance) { create(:appliance)}
+    let(:appliance) { create(:appliance) }
     let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
 
     it 'adds second port mapping' do
@@ -134,7 +134,7 @@ describe WranglerRegistrarWorker do
 
       it 'checks HTTP status in wrangler response' do
         vm = create(:virtual_machine, ip: priv_ip, appliances: [appl])
-        expect(logger_mock).to receive(:error) { "Wrangler returned 500 Wrangler internal error when trying to add redirections for VM #{vm.uuid} with IP #{priv_ip}. Requested redirections: [{:proto=>\"tcp\", :port=>#{priv_port}}, {:proto=>\"#{proto}\", :port=>#{priv_port_2}}]" }
+        expect(logger_mock).to receive(:error).with("Wrangler returned 500 Wrangler internal error when trying to add redirections for VM #{vm.uuid} with IP #{priv_ip}. Requested redirections: [{:proto=>\"tcp\", :port=>#{priv_port}}, {:proto=>\"#{proto}\", :port=>#{priv_port_2}}]")
         subject.perform(vm.id)
         stubs.verify_stubbed_calls
       end
@@ -142,7 +142,7 @@ describe WranglerRegistrarWorker do
       it 'logs error and does nothing for invalid port number' do
         create(:port_mapping_template, target_port: invalid_port_no, application_protocol: 'none', appliance_type: appl_type)
         vm = create(:virtual_machine, ip: priv_ip, appliances: [appl])
-        expect(logger_mock).to receive(:error) { "Error when trying to add redirections for VM #{vm.uuid} with IP #{priv_ip}. Requested redirection for forbidden port #{invalid_port_no}" }
+        expect(logger_mock).to receive(:error).with("Error when trying to add redirections for VM #{vm.uuid} with IP #{priv_ip}. Requested redirection for forbidden port #{invalid_port_no}")
         subject.perform(vm.id)
         # below is an ugly way of verifying that wrangler was not invoked :-)
         expect { stubs.verify_stubbed_calls }.to raise_error(RuntimeError)
