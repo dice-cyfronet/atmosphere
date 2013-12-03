@@ -32,8 +32,6 @@ Air::Application.configure do
   # Open sent mails in browser
   config.action_mailer.delivery_method = :letter_opener
 
-  config.i18n.enforce_available_locales= true
-
   #cors
   config.middleware.use Rack::Cors do
     allow do
