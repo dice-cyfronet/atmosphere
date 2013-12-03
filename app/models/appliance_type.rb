@@ -53,7 +53,9 @@ class ApplianceType < ActiveRecord::Base
   end
 
   def has_dependencies?
-    virtual_machine_templates.present? or appliances.present?
+    # TODO temporary removing this check for PN request
+    #virtual_machine_templates.present? or
+    appliances.present?
   end
 
   def author_name
