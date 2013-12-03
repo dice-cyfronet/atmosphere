@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @users.order(:id)
+        respond_with @users.where(filter).order(:id)
       end
 
       def show
