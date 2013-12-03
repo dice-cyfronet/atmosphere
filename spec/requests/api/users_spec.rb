@@ -40,6 +40,14 @@ describe Api::V1::UsersController do
         expect(users_response[2]).to user_full_eq admin
       end
     end
+
+    context 'search' do
+      it 'searches using login' do
+        get api("/users?login=#{user.login}", user)
+        expect(users_response.size).to eq 1
+        expect(users_response[0]).to user_basic_eq user
+      end
+    end
   end
 
   describe 'GET /users/:id' do
