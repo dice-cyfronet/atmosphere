@@ -78,6 +78,8 @@ Air::Application.configure do
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
+  config.i18n.enforce_available_locales= true
+
   #cors
   config.middleware.use Rack::Cors do
     allow do

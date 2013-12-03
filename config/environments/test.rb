@@ -36,4 +36,6 @@ Air::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  config.i18n.enforce_available_locales= true
 end
