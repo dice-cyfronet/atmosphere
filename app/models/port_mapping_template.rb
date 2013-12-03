@@ -88,9 +88,9 @@ class PortMappingTemplate < ActiveRecord::Base
 
   def update_dnat
     if appliance_type
-      appliance_type.appliances.each {|appl| appl.virtual_machines.each {|vm| vm.update_dnat} }
+      appliance_type.appliances.each {|appl| appl.virtual_machines.each {|vm| vm.update_mapping(self)} }
     elsif dev_mode_property_set
-      dev_mode_property_set.appliance.virtual_machines.each {|vm| vm.update_dnat}
+      dev_mode_property_set.appliance.virtual_machines.each {|vm| vm.update_mapping(self)}
     end
 
   end
