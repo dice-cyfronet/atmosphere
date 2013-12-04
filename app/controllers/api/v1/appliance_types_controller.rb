@@ -75,6 +75,13 @@ module Api
 
       private
 
+      def filter
+        filter = super
+        author_id = params[:author_id]
+        filter[:user_id] = author_id unless author_id.blank?
+        filter
+      end
+
       def appliance_type_params
         params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_for, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id, :appliance_id)
       end
