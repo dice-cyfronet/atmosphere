@@ -32,14 +32,14 @@ class WranglerEraserWorker
 
   def remove_all_for_vm(vm)
     if remove(vm.ip)
-      vm.port_mappings.destroy_all
+      vm.port_mappings.delete_all
     end
   end
 
   def remove_selected_port_mappings(port_mappings)
     port_mappings.each do |pm|
       if remove(pm.virtual_machine.ip, pm.port_mapping_template.target_port, pm.port_mapping_template.transport_protocol)
-        pm.destroy
+        pm.delete
       end
     end
   end

@@ -7,6 +7,10 @@ describe WranglerEraserWorker do
   let(:priv_port_2)       { 7777 }
   let(:protocol)          { 'tcp' }
   let(:http_int_err_code) { 500 }
+  before do
+    wrg = double('wrangler')
+    DnatWrangler.stub(:instance).and_return wrg
+  end
 
   context 'building appropriate path for Wragler request' do
 
