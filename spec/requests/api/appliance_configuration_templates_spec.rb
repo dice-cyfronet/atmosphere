@@ -54,6 +54,16 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
         expect(acts_response.size).to eq 4
       end
     end
+
+    context 'search' do
+      it 'returns configuration assigned only to specific appliance_type' do
+        get api("/appliance_configuration_templates?appliance_type_id=#{at1.id}", user)
+        expect(acts_response.size).to eq 2
+
+        expect(acts_response[0]).to config_template_eq at1_config_tpl1
+        expect(acts_response[1]).to config_template_eq at1_config_tpl2
+      end
+    end
   end
 
   describe 'GET /appliance_configuration_templates/{id}' do
