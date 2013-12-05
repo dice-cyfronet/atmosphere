@@ -57,13 +57,20 @@ describe Api::V1::ApplianceTypesController do
         context 'using active flag' do
           before do
             create(:virtual_machine_template, state: :active, appliance_type: at1)
-            create(:appliance_type, visible_for: :all)
+            inactive_at = create(:appliance_type, visible_for: :all)
+            create(:virtual_machine_template, state: :saving, appliance_type: inactive_at)
           end
 
           it 'returns only active types' do
             get api("/appliance_types?active=true", user)
             expect(ats_response.size).to eq 1
             expect(ats_response[0]).to appliance_type_eq at1
+          end
+
+          it 'returns only inactive types' do
+            get api("/appliance_types?active=false", user)
+            expect(ats_response.size).to eq 2
+            expect(ats_response[0]).to appliance_type_eq at2
           end
         end
       end
