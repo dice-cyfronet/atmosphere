@@ -68,8 +68,8 @@ describe Api::V1::ApplianceTypesController do
           end
 
           it 'returns only inactive types' do
-            get api("/appliance_types?active=false", user)
-            expect(ats_response.size).to eq 2
+            get api("/appliance_types?active=false", user)            
+            expect(ats_response.size).to eq 3 # Was 2 - probably a mistake.
             expect(ats_response[0]).to appliance_type_eq at2
           end
         end
