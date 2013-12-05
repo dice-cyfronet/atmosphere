@@ -43,6 +43,8 @@ class ApplianceType < ActiveRecord::Base
 
 
   scope :def_order, -> { order(:name) }
+  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
+  scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
 
   def destroy(force = false)
     if !force and has_dependencies?

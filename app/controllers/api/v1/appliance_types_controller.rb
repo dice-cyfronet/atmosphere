@@ -80,13 +80,7 @@ module Api
       def process_active_query
         active = params[:active]
         unless active.blank?
-          if active == "true" # Was: if active then...  (author attempted to use string value as boolean)
-            where_query = { virtual_machine_templates: {state: :active} }
-            @appliance_types = @appliance_types.joins(:virtual_machine_templates).where(where_query)
-          else            
-            #@appliance_types = @appliance_types.joins("LEFT OUTER JOIN virtual_machine_templates ON virtual_machine_templates.appliance_type_id = appliance_types.id").where("virtual_machine_templates.state <> 'active' OR virtual_machine_templates.state IS NULL")
-            @appliance_types = @appliance_types.where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')")
-          end
+          @appliance_types = to_boolean(active) ? @appliance_types.active : @appliance_types.inactive
         end
       end
 
