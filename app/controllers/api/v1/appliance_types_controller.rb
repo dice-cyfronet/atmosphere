@@ -6,6 +6,8 @@ module Api
       respond_to :json
 
       def index
+        process_active_query
+
         respond_with @appliance_types.where(filter).order(:id)
       end
 
@@ -74,6 +76,18 @@ module Api
       end
 
       private
+
+      def process_active_query
+        active = params[:active]
+        unless active.blank?
+          if active
+            where_query = { virtual_machine_templates: {state: :active} }
+            @appliance_types = @appliance_types.joins(:virtual_machine_templates).where(where_query)
+          else
+            # TODO
+          end
+        end
+      end
 
       def filter
         filter = super

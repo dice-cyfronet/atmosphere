@@ -53,6 +53,19 @@ describe Api::V1::ApplianceTypesController do
           expect(ats_response[0]).to appliance_type_eq at1
           expect(ats_response[1]).to appliance_type_eq second_user_at
         end
+
+        context 'using active flag' do
+          before do
+            create(:virtual_machine_template, state: :active, appliance_type: at1)
+            create(:appliance_type, visible_for: :all)
+          end
+
+          it 'returns only active types' do
+            get api("/appliance_types?active=true", user)
+            expect(ats_response.size).to eq 1
+            expect(ats_response[0]).to appliance_type_eq at1
+          end
+        end
       end
 
       pending 'pagination'
