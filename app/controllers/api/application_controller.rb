@@ -47,6 +47,10 @@ module Api
       current_user and current_user.has_role? :admin
     end
 
+    def to_boolean(s)
+      !!(s =~ /^(true|yes|1)$/i)
+    end
+
     private
 
     def log_user_action msg
@@ -59,10 +63,6 @@ module Api
 
     def load_admin_abilities?
       params[:action] != 'index' or to_boolean(params[:all])
-    end
-
-    def to_boolean(s)
-      !!(s =~ /^(true|yes|1)$/i)
     end
 
     def authenticate_user_from_token!

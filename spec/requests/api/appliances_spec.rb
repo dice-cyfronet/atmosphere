@@ -10,7 +10,6 @@ describe Api::V1::AppliancesController do
   let(:admin) { create(:admin) }
   let(:developer) { create(:developer) }
 
-
   let(:user_as) { create(:appliance_set, user: user) }
   let(:other_user_as) { create(:appliance_set, user: other_user) }
 

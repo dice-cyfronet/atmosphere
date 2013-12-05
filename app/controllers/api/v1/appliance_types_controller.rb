@@ -6,6 +6,8 @@ module Api
       respond_to :json
 
       def index
+        process_active_query
+
         respond_with @appliance_types.where(filter).order(:id)
       end
 
@@ -74,6 +76,13 @@ module Api
       end
 
       private
+
+      def process_active_query
+        active = params[:active]
+        unless active.blank?
+          @appliance_types = to_boolean(active) ? @appliance_types.active : @appliance_types.inactive
+        end
+      end
 
       def filter
         filter = super
