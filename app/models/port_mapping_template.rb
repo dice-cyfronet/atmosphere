@@ -46,6 +46,8 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :endpoints, dependent: :destroy
 
+  before_validation :strip_service_name
+
   after_save :generate_proxy_conf
   after_create :add_port_mappings_to_associated_vms
   after_update :update_port_mappings, if: :target_port_changed?
@@ -104,4 +106,7 @@ class PortMappingTemplate < ActiveRecord::Base
     }
   end
 
+  def strip_service_name
+    self.service_name.strip! if self.service_name
+  end
 end

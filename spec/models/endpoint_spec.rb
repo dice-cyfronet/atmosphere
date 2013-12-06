@@ -26,4 +26,13 @@ describe Endpoint do
   expect_it { to validate_presence_of :invocation_path }
   expect_it { to validate_presence_of :name }
 
+  describe '#invocation_path' do
+    context 'with spaces at the beginning and at the end' do
+      subject { create(:endpoint, invocation_path: ' with spaces ') }
+
+      it 'removes spaces on save' do
+        expect(subject.invocation_path).to eq 'with spaces'
+      end
+    end
+  end
 end
