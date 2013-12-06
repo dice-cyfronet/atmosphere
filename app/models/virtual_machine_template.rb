@@ -20,6 +20,8 @@ class VirtualMachineTemplate < ActiveRecord::Base
   belongs_to :appliance_type
   validates_presence_of :id_at_site, :name, :state, :compute_site_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
+  before_update :release_source_vm, if: :state_changed? 
+  after_update :destroy_source_vm, if: :state_changed?
 
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
@@ -45,6 +47,20 @@ class VirtualMachineTemplate < ActiveRecord::Base
   end
 
   private
+
+  def release_source_vm
+    if state != 'saving' and state != :saving
+      self.source_vm = nil
+    end
+  end
+
+  def destroy_source_vm
+    return unless virtual_machine_id_was
+    if state != 'saving' and state != :saving
+      vm = VirtualMachine.find(virtual_machine_id_was)
+      vm.destroy if vm.appliances.blank?
+    end
+  end
 
   def save_template_in_cloud
     logger.info "Saving template"
