@@ -16,7 +16,7 @@
 class VirtualMachine < ActiveRecord::Base
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
-  has_many :port_mappings, dependent: :destroy
+  has_many :port_mappings, dependent: :delete_all
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
   has_and_belongs_to_many :appliances
@@ -50,30 +50,32 @@ class VirtualMachine < ActiveRecord::Base
     super()
   end
 
-  # Removes redirection from DNAT for a port mapping associated with given pmt and add mapping again. Should be used when port mapping template target port was changed.
-  def update_mapping(pmt)
-    WranglerMappingUpdaterWorker.perform_async(id, pmt.id) if ip
-  end
-
   # Deletes all dnat redirections and then adds. Use it when IP of the vm has changed and existing redirection would not work any way.
   def regenerate_dnat
     if ip_was
-      if ip
-        WranglerRegeneratorWorker.perform_async(id)
-      else
-        delete_dnat
+      if delete_dnat
+        port_mappings.delete_all
       end
-    else
-      add_dnat
     end
+    add_dnat if ip
   end
 
   def add_dnat
-    WranglerRegistrarWorker.perform_async(id) if ip?
+    return unless ip?
+    pmts = nil
+    if (appliances.first and appliances.first.development?)
+      pmts = appliances.first.dev_mode_property_set.port_mapping_templates
+    else
+      pmts = appliance_type.port_mapping_templates if appliance_type
+    end
+    return unless pmts
+    already_added_mapping_tmpls = port_mappings ? port_mappings.collect {|m| m.port_mapping_template} : []
+    to_add = pmts.select {|pmt| pmt.application_protocol.none?} - already_added_mapping_tmpls
+    DnatWrangler.instance.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
   end
 
   def delete_dnat
-    WranglerEraserWorker.perform_async(vm_id: id)
+    DnatWrangler.instance.remove_dnat_for_vm(self)
   end
 
   private

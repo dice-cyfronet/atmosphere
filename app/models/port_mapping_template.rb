@@ -47,7 +47,8 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :endpoints, dependent: :destroy
 
   after_save :generate_proxy_conf
-  after_save :update_dnat
+  after_create :add_port_mappings_to_associated_vms
+  after_update :update_port_mappings, if: :target_port_changed?
   after_destroy :generate_proxy_conf
 
   scope :def_order, -> { order(:service_name) }
@@ -86,13 +87,21 @@ class PortMappingTemplate < ActiveRecord::Base
     end
   end
 
-  def update_dnat
+  def add_port_mappings_to_associated_vms
     if appliance_type
-      appliance_type.appliances.each {|appl| appl.virtual_machines.each {|vm| vm.update_mapping(self)} }
+      appliance_type.appliances.each {|appl| appl.virtual_machines.each {|vm| vm.add_dnat} }
     elsif dev_mode_property_set
-      dev_mode_property_set.appliance.virtual_machines.each {|vm| vm.update_mapping(self)}
+      dev_mode_property_set.appliance.virtual_machines.each {|vm| vm.add_dnat}
     end
+  end
 
+  def update_port_mappings
+    port_mappings.each {|pm|
+      # TODO handle Wrangler errors
+      DnatWrangler.instance.remove(pm.virtual_machine.ip, target_port_was)
+      added_mapping_attrs = DnatWrangler.instance.add_dnat_for_vm(pm.virtual_machine, [self])
+      pm.update_attributes(added_mapping_attrs)
+    }
   end
 
 end

@@ -20,8 +20,10 @@ describe VirtualMachine do
   before { Fog.mock! }
 
   let(:priv_ip) { '10.1.1.16' }
+  let(:public_ip) { '149.156.10.145' }
+  let(:public_port) { 23457 }
 
-  expect_it { to have_many(:port_mappings).dependent(:destroy) }
+  expect_it { to have_many(:port_mappings).dependent(:delete_all) }
 
   describe 'proxy conf generation' do
     let(:cs) { create(:compute_site) }
@@ -31,8 +33,7 @@ describe VirtualMachine do
 
       before do
         expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-        allow(WranglerRegistrarWorker).to receive(:perform_async)
-        allow(WranglerEraserWorker).to receive(:perform_async)
+        vm.stub(:regenerate_dnat)
       end
 
       it 'after IP is updated' do
@@ -67,15 +68,31 @@ describe VirtualMachine do
   end
 
   context 'DNAT' do
-    let(:vm_ipless) { create(:virtual_machine) }
-    let(:vm) { create(:virtual_machine, ip: priv_ip) }
+    let(:appliance) { create(:appliance) }
+    let(:vm_ipless) { create(:virtual_machine, appliances: [appliance]) }
+    let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
+    let(:priv_port) { 8888 }
+    let(:priv_port_2) { 7070 }
+    let!(:pmt_1) { create(:port_mapping_template, target_port: priv_port, appliance_type: vm_ipless.appliance_type, application_protocol: :none) }
+    let(:wrg) { double('wrangler') }
+
+    before do 
+      DnatWrangler.stub(:instance).and_return(wrg)
+    end
 
     context 'registration' do
       it 'is performed after IP was changed and is not blank' do
-        expect(WranglerRegistrarWorker).to receive(:perform_async)
+        expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([])
         vm_ipless.ip = priv_ip
         vm_ipless.save
-      end 
+      end
+
+      it 'creates new port mapping after IP was changed and is not blank' do
+        expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([{port_mapping_template: pmt_1, virtual_machine: vm_ipless, public_ip: public_ip, source_port: public_port}])
+        vm_ipless.ip = priv_ip
+        expect { vm_ipless.save }.to change {PortMapping.count}.by 1
+      end
+
     end
 
     describe 'unregistration' do
@@ -89,25 +106,42 @@ describe VirtualMachine do
       end
 
       context 'is performed' do
-        before do
-          expect(WranglerEraserWorker).to receive(:perform_async)
-        end
+        context 'wrangler service is called' do
+          before do
+            expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+          end
 
-        it 'after VM is destroyed if IP was not blank' do
-          vm.destroy
-        end
+          it 'after VM is destroyed if IP was not blank' do
+            vm.destroy
+          end
 
-        it 'if VM ip was updated from non-blank value to blank' do
-          vm.ip = nil
-          vm.save
+          it 'if VM ip was updated from non-blank value to blank' do
+            vm.ip = nil
+            vm.save
+          end
+        end
+        context 'removes port mappings from DB' do
+          before do
+            allow(wrg).to receive(:remove_dnat_for_vm).with(vm).and_return(true)
+          end
+
+          it 'after VM is destroyed if IP was not blank' do
+            create(:port_mapping, virtual_machine: vm)
+            create(:port_mapping, virtual_machine: vm)
+            expect { vm.destroy }.to change {PortMapping.count}.by -2
+          end
+
+          it 'if VM ip was updated from non-blank value to blank' do
+            vm.ip = nil
+            create(:port_mapping, virtual_machine: vm)
+            create(:port_mapping, virtual_machine: vm)
+            expect { vm.save }.to change {PortMapping.count}.by -2
+          end
+
         end
       end
 
       context 'is not performed' do
-
-        before do
-          expect(WranglerEraserWorker).to_not receive(:perform_async)
-        end
 
         it 'is not performed after VM with blank IP was destroyed' do
           vm_ipless.destroy
@@ -118,52 +152,41 @@ describe VirtualMachine do
     end
 
     context 'regeneration' do
-      context 'is not performed' do
-        
-        before do
-          expect(WranglerRegeneratorWorker).to_not receive(:perform_async)
-        end
 
-        it 'after blank IP was changed' do
+      it 'deletes dnat if ip is changed to blank' do
+          vm = create(:virtual_machine, ip: priv_ip)
+          expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+          vm.ip = nil
+          vm.save
+      end
+
+      it 'adds dnat if blank IP was changed to not blank' do
+          expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([])
           vm_ipless.ip = '8.8.8.8'
           vm_ipless.save
-        end
+      end
 
+      context 'is not performed' do
+        
         it 'when attribute other than ip is updated' do
           vm = create(:virtual_machine)
           vm.name = 'so much changed'
           vm.save
         end
 
-        it 'performed when ip is changed to blank' do
-          vm = create(:virtual_machine, ip: priv_ip)
-          vm.ip = nil
-          vm.save
-        end
+        
       end
 
       context 'is performed' do
         it 'after not blank IP was changed' do
-          expect(WranglerRegeneratorWorker).to receive(:perform_async)
+          expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+          expect(wrg).to receive(:add_dnat_for_vm).with(vm, [pmt_1]).and_return([])
           vm.ip = '8.8.8.8'
           vm.save
         end
       end
     end
 
-    context 'update' do
-      it 'creates DNAT update job if vm has ip' do
-        expect(WranglerMappingUpdaterWorker).to receive(:perform_async)
-        pmt = create(:port_mapping_template)
-        vm.update_mapping(pmt)
-      end
-
-      it 'does not create DNAT update job if vm does not have an ip' do
-        expect(WranglerMappingUpdaterWorker).to_not receive(:perform_async)
-        pmt = create(:port_mapping_template)
-        vm_ipless.update_mapping(pmt)
-      end
-    end
   end
 
   context 'initital configuration' do

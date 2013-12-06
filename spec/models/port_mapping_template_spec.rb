@@ -47,7 +47,7 @@ describe PortMappingTemplate do
   end
 
   expect_it { to have_many :http_mappings }
-  expect_it { to have_many :port_mappings }
+  expect_it { to have_many(:port_mappings).dependent(:destroy) }
   expect_it { to have_many(:port_mapping_properties).dependent(:destroy) }
   expect_it { to have_many(:endpoints).dependent(:destroy) }
 
@@ -165,38 +165,59 @@ describe PortMappingTemplate do
     end
   end
 
-  describe 'adds port mapping using dnat wrangler when pmt is created' do
+  context 'port mappings' do
 
     before do
-      Optimizer.instance.stub(:run)
+     # VirtualMachine.any_instance.stub(:add_dnat)
+     DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([])
     end
+
+    let(:public_ip) { '149.156.10.135' }
+    let(:public_port_1) { 34567 }
+    let(:public_port_2) { 8765 }
     let(:priv_ip) { '10.1.1.1' }
-    #let(:pub_ip) { '149.156.9.5' }
-    let(:proto) { 'tcp' }
-    let(:priv_port) { 8080 }
     let(:appliance) { create(:appliance)}
-    let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
+    let!(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
+    let(:pmt) { create(:port_mapping_template, appliance_type:appliance.appliance_type, application_protocol: :none) }
+    let(:pm_1) { create(:port_mapping, port_mapping_template: pmt, virtual_machine: vm) }
+    let(:pm_2) { create(:port_mapping, port_mapping_template: pmt, virtual_machine: vm) }
 
-    it 'calls wrangler registrar worker for production vms vms with port mappings associated to created port mapping template' do
-      WranglerRegistrarWorker.stub(:perform_async)
-      expect(WranglerRegistrarWorker).to receive(:perform_async).with(vm.id)
-      appl = create(:appliance, virtual_machines: [vm])
-      pmt = create(:port_mapping_template, appliance_type:appl.appliance_type)
+    context 'adds port mapping using dnat wrangler when pmt is created' do
+      let(:wrg) { double('wrangler') }
+      before do
+        Optimizer.instance.stub(:run)
+        DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([{port_mapping_template: PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
+      end
+      let(:proto) { 'tcp' }
+      let(:priv_port) { 8080 }
+      
+
+      it 'calls Wrangler to add port mappings to production vms associated to created port mapping template' do
+        expect(DnatWrangler.instance).to receive(:add_dnat_for_vm)
+        pmt = create(:port_mapping_template, appliance_type:appliance.appliance_type, application_protocol: :none)
+      end
+
+      it 'adds port mappings to development vms associated to created port mapping template' do
+        expect(vm).to receive(:add_dnat)
+        appl = create(:appl_dev_mode, virtual_machines: [vm])
+        dev_mode_prop_set = create(:dev_mode_property_set, appliance: appl)
+        pmt = create(:dev_port_mapping_template, dev_mode_property_set: dev_mode_prop_set)
+      end
+
     end
 
-    it 'calls wrangler registrar worker for development vms with port mappings associated to created port mapping template' do
-      WranglerRegistrarWorker.stub(:perform_async)
-      expect(WranglerRegistrarWorker).to receive(:perform_async).with(vm.id)
-      appl = create(:appl_dev_mode, virtual_machines: [vm])
-      dev_mode_prop_set = create(:dev_mode_property_set, appliance: appl)
-      pmt = create(:dev_port_mapping_template, dev_mode_property_set: dev_mode_prop_set)
+    describe 'port mapping template is updated' do
+      it 'creates mapping update jobs for each port mapping if target port changed' do        
+        DnatWrangler.instance.stub(:remove)
+        DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([], [])#([{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}], [{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_2}])
+        pmt.update_attribute(:target_port, 7777)
+      end
+
+      it 'does not create mapping update jobs if target port was not changed' do
+        expect(DnatWrangler).to_not receive(:remove)
+        pmt.update_attribute(:service_name, 'new service name')
+      end
     end
-
-    it 'creates new port mapping for each vm'
-
-  end
-
-  describe 'updates port mappings if port mapping template target port is changed' do
 
   end
 

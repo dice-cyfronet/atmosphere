@@ -20,4 +20,11 @@ class PortMapping < ActiveRecord::Base
 
   validates :source_port, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
+  before_destroy :delete_dnat
+
+  private
+  def delete_dnat
+    DnatWrangler.instance.remove_port_mapping(self)
+  end
+
 end

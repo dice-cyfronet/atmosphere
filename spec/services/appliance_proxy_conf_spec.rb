@@ -7,6 +7,7 @@ describe ApplianceProxyConf do
 
     # We want to test proxy conf generation not VM and PMT callbacks
     VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
+    VirtualMachine.any_instance.stub(:add_dnat).and_return(true)
     PortMappingTemplate.any_instance.stub(:generate_proxy_conf).and_return(true)
   end
 
