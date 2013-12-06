@@ -383,12 +383,13 @@ describe Api::V1::ApplianceTypesController do
     let(:endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt) }
     let(:endpoint_descriptor_path) { "/appliance_types/#{at1.id}/endpoints/#{pmt.service_name}/#{endpoint.invocation_path}" }
 
-    context 'when unauthenticated' do
-      it 'returns 401 Unauthorized error' do
-        get api(endpoint_descriptor_path)
-        expect(response.status).to eq 401
-      end
-    end
+    # just for Ernesto tests we made it public
+    # context 'when unauthenticated' do
+    #   it 'returns 401 Unauthorized error' do
+    #     get api(endpoint_descriptor_path)
+    #     expect(response.status).to eq 401
+    #   end
+    # end
 
     context 'when authenticated as user' do
       it 'returns 200 Success' do
@@ -406,10 +407,11 @@ describe Api::V1::ApplianceTypesController do
         expect(response.status).to eq 404
       end
 
-      it 'returns 403 Forbidden when user has not right to see appliance type' do
-        get api(endpoint_descriptor_path, different_user)
-        expect(response.status).to eq 403
-      end
+      # just for Ernesto tests we made it public
+      # it 'returns 403 Forbidden when user has not right to see appliance type' do
+      #   get api(endpoint_descriptor_path, different_user)
+      #   expect(response.status).to eq 403
+      # end
     end
   end
 
