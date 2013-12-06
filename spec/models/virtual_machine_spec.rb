@@ -22,12 +22,36 @@ describe VirtualMachine do
   let(:priv_ip) { '10.1.1.16' }
   let(:public_ip) { '149.156.10.145' }
   let(:public_port) { 23457 }
+  let(:cs) { create(:compute_site) }
+  let(:vm) { create(:virtual_machine, compute_site: cs) }
 
   expect_it { to have_many(:port_mappings).dependent(:delete_all) }
 
+  context 'destruction' do
+    let(:cc_mock) { double('cloud client mock') }
+    let(:servers_mock) { double('servers') }
+    before do
+      cc_mock.stub(:servers).and_return(servers_mock)
+    end
+    
+    it 'is not performed if it is being saved as template' do
+      create(:virtual_machine_template, source_vm: vm, state: :saving)
+      expect(servers_mock).to_not receive(:destroy)
+      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      vm.destroy(true)
+    end
+
+    it 'is performed if vm does not have saved templates' do
+      expect(servers_mock).to receive(:destroy).with(vm.id_at_site)
+      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      vm.destroy(true)
+    end
+
+
+
+  end
+
   describe 'proxy conf generation' do
-    let(:cs) { create(:compute_site) }
-    let(:vm) { create(:virtual_machine, compute_site: cs) }
 
     context 'is performed' do
 

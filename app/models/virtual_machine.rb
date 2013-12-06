@@ -46,6 +46,7 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def destroy(delete_in_cloud = true)
+    saved_templates.each {|t| return if t.state == 'saving'}
     perform_delete_in_cloud if delete_in_cloud
     super()
   end
