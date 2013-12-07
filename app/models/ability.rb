@@ -16,9 +16,6 @@ class Ability
     ### Anonymous user abilities
     user ||= User.new
     can [:read, :payload], owned_payloads
-
-    # just for Ernesto tests
-    can :endpoint_payload, ApplianceType
   end
 
   private
