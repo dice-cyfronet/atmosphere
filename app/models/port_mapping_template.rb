@@ -43,8 +43,8 @@ class PortMappingTemplate < ActiveRecord::Base
 
   has_many :http_mappings, dependent: :destroy
   has_many :port_mappings, dependent: :destroy
-  has_many :port_mapping_properties, dependent: :destroy
-  has_many :endpoints, dependent: :destroy
+  has_many :port_mapping_properties, dependent: :destroy, autosave: true
+  has_many :endpoints, dependent: :destroy, autosave: true
 
   before_validation :strip_service_name
 

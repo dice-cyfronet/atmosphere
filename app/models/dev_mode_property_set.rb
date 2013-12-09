@@ -31,7 +31,7 @@ class DevModePropertySet < ActiveRecord::Base
   belongs_to :appliance
   validates_presence_of :appliance
 
-  has_many :port_mapping_templates, dependent: :destroy
+  has_many :port_mapping_templates, dependent: :destroy, autosave: true
 
   def self.create_from(appliance_type)
     dev_mode_property_set = DevModePropertySet.new(
