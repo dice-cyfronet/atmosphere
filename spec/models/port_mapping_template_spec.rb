@@ -54,8 +54,8 @@ describe PortMappingTemplate do
   expect_it { to validate_numericality_of :target_port }
   expect_it { should_not allow_value(-1).for(:target_port) }
 
-  expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id) }
-  expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id) }
+  expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id, :dev_mode_property_set_id) }
+  expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id, :dev_mode_property_set_id) }
 
   expect_it { to belong_to :appliance_type }
   expect_it { to belong_to :dev_mode_property_set }
