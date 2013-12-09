@@ -42,11 +42,13 @@ class DnatWrangler
 
   def remove(ip, port = nil, protocol = nil)
     dnat_client = Wrangler::Client.dnat_client
-    resp = dnat_client.delete(build_path_for_params(ip, port, protocol))
+    path = build_path_for_params(ip, port, protocol)
+    resp = dnat_client.delete(path)
     if not resp.status == 204
       Rails.logger.error "Wrangler returned #{resp.status} when trying to remove redirections for #{build_req_params_msg(ip, port, protocol)}."
       return false
     end
+    Rails.logger.info "[Wrangler] Deleted DNAT for #{path}"
     true
   end
 
