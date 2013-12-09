@@ -105,7 +105,7 @@ group :development, :test do
   gem 'shoulda-matchers'
 
   # Guard
-  gem 'guard-rspec', '~>3.0.2'
+  gem 'guard-rspec'
   gem 'spork-rails', github: 'sporkrb/spork-rails'
   gem 'guard-spork'
   gem 'libnotify'
