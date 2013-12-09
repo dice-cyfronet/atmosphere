@@ -22,12 +22,12 @@ class DnatWrangler
     to_add = pmts.collect {|pmt|
       if not pmt.target_port.in? MIN_PORT_NO..MAX_PORT_NO
         Rails.logger.error "Error when trying to add redirections for VM #{vm.uuid} with IP #{vm.ip}. Requested redirection for forbidden port #{pmt.target_port}"
-        return
+        return []
       end
       pmt_map[pmt.target_port] = pmt
       {proto: pmt.transport_protocol, port: pmt.target_port}
     }
-    return if to_add.blank? or not vm.ip?
+    return [] if to_add.blank? or not vm.ip?
     resp = Wrangler::Client.dnat_client.post "/dnat/#{vm.ip}" do |req|
       req.headers['Content-Type'] = 'application/json'
       req.body = JSON.generate to_add
@@ -51,7 +51,7 @@ class DnatWrangler
   end
 
   private
-  
+
   def build_req_params_msg(ip, port, protocol)
     "IP #{ip}#{', port ' + port.to_s if port}#{', protocol ' + protocol if protocol}"
   end
