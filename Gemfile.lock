@@ -23,7 +23,7 @@ GIT
       spork (>= 1.0rc0)
 
 GIT
-  remote: http://dev.cyfronet.pl/gitlab/atmosphere/omniauth-vph.git
+  remote: http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git
   revision: ad223882124cc2d29f2c68f4f7287eb1b6ecaefe
   branch: master
   specs:

@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.string   "http_proxy_url"
     t.string   "https_proxy_url"
     t.text     "config"
+    t.text     "template_filters"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

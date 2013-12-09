@@ -7,7 +7,8 @@ class VmTemplateMonitoringWorker
   def perform(site_id)
     begin
       site = ComputeSite.find(site_id)
-      update_images(site, site.cloud_client.images)
+      filters = site.template_filters ? JSON.parse(site.template_filters) : nil
+      update_images(site, site.cloud_client.images.all(filters))
     rescue Excon::Errors::HTTPStatusError => e
       Rails.logger.error "Unable to perform Templates monitoring job: #{e}"
     end
