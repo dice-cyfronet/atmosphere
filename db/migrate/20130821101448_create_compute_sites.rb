@@ -14,6 +14,9 @@ class CreateComputeSites < ActiveRecord::Migration
       # a JSON string with cloud site specific configuration
       t.text :config
 
+      # a JSON string with a hash of filters used when getting templates from compute site.
+      t.text :template_filters
+
       t.timestamps
     end
   end
