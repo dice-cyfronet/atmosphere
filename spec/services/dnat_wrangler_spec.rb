@@ -74,46 +74,63 @@ describe DnatWrangler do
 
   end
 
-  context 'using wrangler client' do
+  context 'when removing DNAT' do
 
-    stubs = nil
-    before do
-      stubs = Faraday::Adapter::Test::Stubs.new do |stub|
-        stub.delete("/dnat/#{priv_ip}") {[204, {}, nil]}
-        stub.delete("/dnat/#{priv_ip}/#{priv_port.to_s}/#{protocol}") {[204, {}, nil]}
-        stub.delete("/dnat/#{priv_ip}/#{priv_port_2.to_s}/#{protocol}") {[204, {}, nil]}
+    context 'using wrangler client' do
+
+      stubs = nil
+      before do
+        stubs = Faraday::Adapter::Test::Stubs.new do |stub|
+          stub.delete("/dnat/#{priv_ip}") {[204, {}, nil]}
+          stub.delete("/dnat/#{priv_ip}/#{priv_port.to_s}/#{protocol}") {[204, {}, nil]}
+          stub.delete("/dnat/#{priv_ip}/#{priv_port_2.to_s}/#{protocol}") {[204, {}, nil]}
+        end
+        stubbed_dnat_client = Faraday.new do |builder|
+          builder.adapter :test, stubs
+        end
+        Wrangler::Client.stub(:dnat_client).and_return stubbed_dnat_client
       end
-      stubbed_dnat_client = Faraday.new do |builder|
-        builder.adapter :test, stubs
+
+      it 'calls remote wrangler service for vm' do
+        subject.remove_dnat_for_vm(vm)
+        subject.remove_port_mapping(pm)
+        subject.remove_port_mapping(pm2)
+        stubs.verify_stubbed_calls
       end
-      Wrangler::Client.stub(:dnat_client).and_return stubbed_dnat_client
     end
 
-    it 'calls remote wrangler service for vm' do
-      subject.remove_dnat_for_vm(vm)
-      subject.remove_port_mapping(pm)
-      subject.remove_port_mapping(pm2)
-      stubs.verify_stubbed_calls
+    context 'does not call remote wrangler service' do
+
+      stubs = nil
+      before do
+        stubs = Faraday::Adapter::Test::Stubs.new
+        stubbed_dnat_client = Faraday.new do |builder|
+          builder.adapter :test, stubs
+        end
+        Wrangler::Client.stub(:dnat_client).and_return stubbed_dnat_client
+      end
+
+      it 'if vm does not have an IP' do      
+        subject.remove_dnat_for_vm(vm_ipless)
+      end
+
+      it 'if vm does not have port mappings'  do
+        subject.remove_dnat_for_vm(vm_mappingless)
+      end
+
     end
+
   end
 
-  context 'does not call remote wrangler service' do
-
-    stubs = nil
-    before do
-      stubs = Faraday::Adapter::Test::Stubs.new
-      stubbed_dnat_client = Faraday.new do |builder|
-        builder.adapter :test, stubs
+  context 'when adding DNAT' do
+    context 'returns empty array' do
+      it 'for a vm without ip' do
+        expect(subject.add_dnat_for_vm(vm_ipless, [pmt])).to match_array []
       end
-      Wrangler::Client.stub(:dnat_client).and_return stubbed_dnat_client
-    end
 
-    it 'if vm does not have an IP' do      
-      subject.remove_dnat_for_vm(vm_ipless)
-    end
-
-    it 'if vm does not have port mappings'  do
-      subject.remove_dnat_for_vm(vm_mappingless)
+      it 'for empty port maping templates array' do
+        expect(subject.add_dnat_for_vm(vm, [])).to match_array []
+      end
     end
 
   end
