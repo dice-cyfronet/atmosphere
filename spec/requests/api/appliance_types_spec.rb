@@ -379,35 +379,44 @@ describe Api::V1::ApplianceTypesController do
 
   describe 'GET /appliance_types/:id/endpoints/:service_name/:invocation_path' do
 
-    let(:pmt) { create(:port_mapping_template, appliance_type: at1) }
-    let(:endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt) }
-    let(:endpoint_descriptor_path) { "/appliance_types/#{at1.id}/endpoints/#{pmt.service_name}/#{endpoint.invocation_path}" }
+    let(:pmt_at1) { create(:port_mapping_template, appliance_type: at1) }
+    let(:endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at1) }
+    let(:owner_endpoint_descriptor_path) { "/appliance_types/#{at1.id}/endpoints/#{pmt_at1.service_name}/#{endpoint.invocation_path}" }
+
+    let(:pmt_at2) { create(:port_mapping_template, appliance_type: at2) }
+    let(:endpoint2) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at2) }
+    let(:public_endpoint_descriptor_path) { "/appliance_types/#{at2.id}/endpoints/#{pmt_at2.service_name}/#{endpoint2.invocation_path}" }
 
     context 'when unauthenticated' do
-      it 'returns 401 Unauthorized error' do
-        get api(endpoint_descriptor_path)
+      it 'returns 401 Unauthorized error for not visible for all appliance types' do
+        get api(owner_endpoint_descriptor_path)
         expect(response.status).to eq 401
+      end
+
+      it 'returns 200 Success' do
+        get api(public_endpoint_descriptor_path)
+        expect(response.status).to eq 200
       end
     end
 
     context 'when authenticated as user' do
       it 'returns 200 Success' do
-        get api(endpoint_descriptor_path, user)
+        get api(owner_endpoint_descriptor_path, user)
         expect(response.status).to eq 200
       end
 
       it 'returns endpoint descriptor' do
-        get api(endpoint_descriptor_path, user)
+        get api(owner_endpoint_descriptor_path, user)
         expect(response.body).to eq endpoint.descriptor
       end
 
       it 'return 404 Not Found when endpoint does not exist' do
-        get api("#{endpoint_descriptor_path}/not/existing", user)
+        get api("#{owner_endpoint_descriptor_path}/not/existing", user)
         expect(response.status).to eq 404
       end
 
       it 'returns 403 Forbidden when user has not right to see appliance type' do
-        get api(endpoint_descriptor_path, different_user)
+        get api(owner_endpoint_descriptor_path, different_user)
         expect(response.status).to eq 403
       end
     end

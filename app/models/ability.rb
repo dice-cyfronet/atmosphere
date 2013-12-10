@@ -16,6 +16,7 @@ class Ability
     ### Anonymous user abilities
     user ||= User.new
     can [:read, :payload], owned_payloads
+    can [:endpoint_payload], ApplianceType, visible_for: 'all'
   end
 
   private

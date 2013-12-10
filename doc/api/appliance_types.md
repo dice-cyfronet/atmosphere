@@ -122,6 +122,8 @@ Parameters:
 
 Method used by Taverna to include appliance type endpoint descriptor (WSDL or WADL) into Taverna workbench.
 
+When user credentials are empty this method will return success only for Appliance Types with `visible_for` set to `all`. If user credentials are available than user is able to get endpoint payload for Appliance Types with `visible_for` set to `owner` or `developer` (if user is a developer).
+
 ```
 GET /appliance_types/:id/endpoints/:service_name/:invocation_path
 ```
