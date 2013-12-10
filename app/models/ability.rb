@@ -17,6 +17,7 @@ class Ability
     user ||= User.new
     can [:read, :payload], owned_payloads
     can [:endpoint_payload], ApplianceType, visible_for: 'all'
+    can :descriptor, Endpoint, port_mapping_template: { appliance_type: { visible_for: 'all' } }
   end
 
   private
@@ -61,7 +62,7 @@ class Ability
     can [:create, :update, :destroy], PortMappingTemplate, appliance_type: {user_id: user.id}
     can [:read, :create, :update, :destroy], PortMappingTemplate, dev_mode_property_set: { appliance: { appliance_set: { user_id: user.id } } }
 
-    can :read, Endpoint, port_mapping_template: { appliance_type: { user_id: user.id } }
+    can [:read, :descriptor], Endpoint, port_mapping_template: { appliance_type: { user_id: user.id } }
     can :read, Endpoint, port_mapping_template: { appliance_type: { visible_for: 'all' } }
     can [:create, :update, :destroy], Endpoint, port_mapping_template: { appliance_type: {user_id: user.id} }
     can [:read, :create, :update, :destroy], Endpoint, port_mapping_template: { dev_mode_property_set: { appliance: { appliance_set: { user_id: user.id } } } }

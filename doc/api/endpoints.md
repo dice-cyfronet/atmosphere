@@ -102,3 +102,15 @@ DELETE /endpoints/:id
 Parameters:
 
 + `id` (required) - The ID of the Endpoint to be deleted
+
+## Get endpoint descriptor
+
+Method used by Taverna to include endpoint descriptor (WSDL or WADL) into Taverna workbench.
+
+When user credentials are empty this method will return success only for Appliance Types with `visible_for` set to `all` endpoints. If user credentials are available than user is able to get endpoint descriptor for Appliance Types with `visible_for` set to `owner` or `developer` (if user is a developer).
+
+```
+GET /endpoints/:id/descriptor
+```
+
++ `id` (required) - The ID of an endpoint

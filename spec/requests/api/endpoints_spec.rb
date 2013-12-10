@@ -409,6 +409,50 @@ describe Api::V1::EndpointsController do
     end
   end
 
+  describe 'GET /endpoints/:id/descriptor' do
+    let(:at1) { create(:appliance_type, visible_for: :all) }
+    let(:pmt_at1) { create(:port_mapping_template, appliance_type: at1) }
+    let(:all_endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at1) }
+
+    let(:at2) { create(:appliance_type, visible_for: :owner, author: user) }
+    let(:pmt_at2) { create(:port_mapping_template, appliance_type: at2) }
+    let(:owner_endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at2) }
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error for not visible for all appliance types' do
+        get api("/endpoints/#{owner_endpoint.id}/descriptor")
+        expect(response.status).to eq 401
+      end
+
+      it 'returns 200 Success' do
+        get api("/endpoints/#{all_endpoint.id}/descriptor")
+        expect(response.status).to eq 200
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'returns 200 Success' do
+        get api("/endpoints/#{owner_endpoint.id}/descriptor", user)
+        expect(response.status).to eq 200
+      end
+
+      it 'returns endpoint descriptor' do
+        get api("/endpoints/#{owner_endpoint.id}/descriptor", user)
+        expect(response.body).to eq owner_endpoint.descriptor
+      end
+
+      it 'return 404 Not Found when endpoint does not exist' do
+        get api("/endpoints/not_existing/descriptor", user)
+        expect(response.status).to eq 404
+      end
+
+      it 'returns 403 Forbidden when user has not right to see appliance type' do
+        get api("/endpoints/#{owner_endpoint.id}/descriptor", different_user)
+        expect(response.status).to eq 403
+      end
+    end
+  end
+
   def es_response
     json_response['endpoints']
   end

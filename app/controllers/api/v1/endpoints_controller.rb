@@ -40,6 +40,10 @@ module Api
         end
       end
 
+      def descriptor
+        render text: @endpoint.descriptor
+      end
+
       private
 
       def find_endpoints
