@@ -48,6 +48,14 @@ describe Api::V1::DevModePropertySetsController do
         expect(dev_props_response.size).to eq 3
       end
     end
+
+    context 'search' do
+      it 'returns dev mode prop set created for given appliance type' do
+        get api("/dev_mode_property_sets?appliance_id=#{appl2.id}", developer)
+        expect(dev_props_response.size).to eq 1
+        expect(dev_props_response[0]).to dev_props_eq appl2.dev_mode_property_set
+      end
+    end
   end
 
   describe 'GET /dev_mode_property_sets/:id' do

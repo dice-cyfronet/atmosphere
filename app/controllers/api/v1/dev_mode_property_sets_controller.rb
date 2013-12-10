@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @dev_mode_property_sets.order(:id)
+        respond_with @dev_mode_property_sets.where(filter).order(:id)
       end
 
       def show
