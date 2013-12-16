@@ -14,6 +14,7 @@
 #
 
 class VirtualMachine < ActiveRecord::Base
+  extend Enumerize
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate'
   has_many :port_mappings, dependent: :delete_all
@@ -22,6 +23,8 @@ class VirtualMachine < ActiveRecord::Base
   has_and_belongs_to_many :appliances
   validates_presence_of :name, :virtual_machine_template_id
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
+  enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize']
+  validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize)
 
   before_create :instantiate_vm, unless: :id_at_site
   after_destroy :generate_proxy_conf
@@ -36,7 +39,7 @@ class VirtualMachine < ActiveRecord::Base
   def reboot
     cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
     cloud_client.reboot_server id_at_site
-    state = :booting
+    state = :build
     save
   end
 
@@ -99,7 +102,7 @@ class VirtualMachine < ActiveRecord::Base
     logger.info "instantiated #{server.id}"
     self[:id_at_site] = server.id
     self[:compute_site_id] = vm_tmpl.compute_site_id
-    self[:state] = :booting
+    self[:state] = :build
   end
 
   def perform_delete_in_cloud
