@@ -30,7 +30,7 @@ class Optimizer
           appliance.save
           Rails.logger.warn "No template for instantiating a vm for appliance #{appliance.id} was found"
         else
-          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id])
+          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build)
           appliance.state = :satisfied
           appliance.save
         end

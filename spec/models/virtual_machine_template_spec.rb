@@ -21,6 +21,8 @@ describe VirtualMachineTemplate do
     Fog.mock!
   end
 
+  expect_it { to ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
+
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine) }
     subject { create(:virtual_machine_template, source_vm: vm, state: :saving) }

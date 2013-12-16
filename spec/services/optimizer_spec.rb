@@ -146,5 +146,7 @@ describe Optimizer do
       expect(appl.state).to eql 'unsatisfied'
     end
 
+    it 'only saving tmpl exists'
+
   end
 end

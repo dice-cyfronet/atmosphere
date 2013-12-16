@@ -7,7 +7,7 @@ class VmUpdater
   def update
     vm.source_template = source_template
     vm.name = server.name
-    vm.state = server.state.downcase.to_sym
+    vm.state = map_state(server.state.downcase.to_sym)
     update_ips if update_ips?
 
     unless vm.save
@@ -21,6 +21,12 @@ class VmUpdater
 
   attr_reader :site, :server
 
+  # AWS states: pending , running, shuttingdown, stopped, stopping, terminated
+  # OS states: active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize
+  def map_state(key)
+    {pending: :build , running: :active, shuttingdown: :deleted, stopped: :deleted, stopping: :deleted, terminated: :deleted, active: :active, build: :build, deleted: :deleted, error: :error, hard_reboot: :hard_reboot, password: :password, reboot: :reboot, rebuild: :rebuild, rescue: :rescue, resize: :resize, revert_resize: :revert_resize, shutoff: :shutoff, suspended: :suspended, unknown: :unknown, verify_resize: :verify_resize}[key]
+  end
+
   def vm
     @vm ||= site.virtual_machines.find_or_initialize_by(id_at_site: server.id)
   end
@@ -30,7 +36,7 @@ class VmUpdater
   end
 
   def update_ips?
-    vm.state == :active || vm.state == :error
+    [:active, 'active', :error, 'error'].include? vm.state
   end
 
   def update_ips

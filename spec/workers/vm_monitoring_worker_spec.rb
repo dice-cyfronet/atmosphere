@@ -20,7 +20,7 @@ describe VmMonitoringWorker do
     let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', compute_site: cyfronet_folsom, state: :active) }
 
     let(:vm1_data) { vm('1', 'vm1', :active, '10.100.1.1') }
-    let(:vm2_data) { vm('2', 'vm2', :booting, '10.100.1.2') }
+    let(:vm2_data) { vm('2', 'vm2', :build, '10.100.1.2') }
     let(:vm3_data) { vm('3', 'vm3', :error, '10.100.1.3') }
 
     before do
@@ -63,7 +63,7 @@ describe VmMonitoringWorker do
     end
 
     context 'when some VMs exist' do
-      let!(:vm2) { create(:virtual_machine, id_at_site: '2', state: :booting, name: 'old_name', source_template: ubuntu, compute_site: cyfronet_folsom)}
+      let!(:vm2) { create(:virtual_machine, id_at_site: '2', state: :build,name: 'old_name', source_template: ubuntu, compute_site: cyfronet_folsom)}
 
       it 'does not create duplicated VMs' do
         expect {
@@ -81,10 +81,10 @@ describe VmMonitoringWorker do
 
     context 'when VM removed on cloud site' do
       before do
-        create(:virtual_machine, id_at_site: '1', state: :booting, name: 'vm1', source_template: ubuntu, compute_site: cyfronet_folsom)
-        create(:virtual_machine, id_at_site: '2', state: :booting, name: 'vm2', source_template: ubuntu, compute_site: cyfronet_folsom)
-        create(:virtual_machine, id_at_site: '3', state: :booting, name: 'vm3', source_template: ubuntu, compute_site: cyfronet_folsom)
-        create(:virtual_machine, id_at_site: '4', state: :booting, name: 'vm4', source_template: ubuntu, compute_site: cyfronet_folsom)
+        create(:virtual_machine, id_at_site: '1', state: :build, name: 'vm1', source_template: ubuntu, compute_site: cyfronet_folsom)
+        create(:virtual_machine, id_at_site: '2', state: :build, name: 'vm2', source_template: ubuntu, compute_site: cyfronet_folsom)
+        create(:virtual_machine, id_at_site: '3', state: :build, name: 'vm3', source_template: ubuntu, compute_site: cyfronet_folsom)
+        create(:virtual_machine, id_at_site: '4', state: :build, name: 'vm4', source_template: ubuntu, compute_site: cyfronet_folsom)
       end
 
       it 'removes deleted VM' do

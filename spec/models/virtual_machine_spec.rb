@@ -26,6 +26,7 @@ describe VirtualMachine do
   let(:vm) { create(:virtual_machine, compute_site: cs) }
 
   expect_it { to have_many(:port_mappings).dependent(:delete_all) }
+  expect_it { to ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize)) }
 
   context 'destruction' do
     let(:cc_mock) { double('cloud client mock') }
