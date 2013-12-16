@@ -93,10 +93,16 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
 
     context 'dynamic configuration' do
       let!(:dynamic_act) { create(:appliance_configuration_template, payload: '#{a} #{b} #{c}') }
+      let!(:dynamic_act_with_mi_ticket) { create(:appliance_configuration_template, payload: '#{a} #{' + "#{Air.config.mi_authentication_key}}") }
 
       it 'returns information about parameters' do
         get api("/appliance_configuration_templates/#{dynamic_act.id}", admin)
         expect(act_response['parameters']).to eq ['a', 'b', 'c']
+      end
+
+      it 'remote mi_ticket from params list' do
+        get api("/appliance_configuration_templates/#{dynamic_act_with_mi_ticket.id}", admin)
+        expect(act_response['parameters']).to eq ['a']
       end
     end
   end

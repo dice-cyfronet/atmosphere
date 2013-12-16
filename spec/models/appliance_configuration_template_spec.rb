@@ -39,9 +39,14 @@ describe ApplianceConfigurationTemplate do
   describe '#parameters' do
     let(:dynamic_ac_template) { create(:appliance_configuration_template, payload: 'dynamic #{a} #{b} #{c}') }
     let(:static_ac_template) { create(:appliance_configuration_template, payload: 'static') }
+    let(:template_with_mi_ticket) { create(:appliance_configuration_template, payload: 'dynamic #{a} #{' + "#{Air.config.mi_authentication_key}}") }
 
     it 'returns parameters for dynamic configuration' do
       expect(dynamic_ac_template.parameters).to eq ['a', 'b', 'c']
+    end
+
+    it 'remote mi_ticket from params list' do
+      expect(template_with_mi_ticket.parameters).to eq ['a']
     end
 
     it 'returns empty table for static configuration' do
