@@ -64,4 +64,23 @@ class ApplianceType < ActiveRecord::Base
     author ? author.login : 'anonymous'
   end
 
+  def self.create_from(appliance, overwrite = {})
+    ApplianceType.new appliance_type_attributes(appliance, overwrite)
+  end
+
+  private
+
+  def self.appliance_type_attributes(appliance, overwrite)
+    if appliance and appliance.dev_mode_property_set
+      params = appliance.dev_mode_property_set.attributes
+      %w(id created_at updated_at appliance_id).each { |el| params.delete(el) }
+    end
+    params ||= {}
+
+    overwrite_dup = overwrite.dup
+    overwrite_dup.delete(:appliance_id)
+    params.merge! overwrite_dup
+
+    params
+  end
 end

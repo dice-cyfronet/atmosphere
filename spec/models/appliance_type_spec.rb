@@ -72,7 +72,42 @@ describe ApplianceType do
       appliance_type.destroy
       expect(appliance_type.errors).not_to be_empty
     end
-
   end
 
+  describe '#create_from' do
+    let(:dev_set) { create(:dev_appliance_set) }
+    let(:at) { create(:appliance_type) }
+    let(:appl) { create(:appliance, appliance_type: at, appliance_set: dev_set) }
+    let(:dev_props) { appl.dev_mode_property_set }
+
+    it 'creates appliance type from appliance' do
+      at = ApplianceType.create_from(appl)
+      expect(at.name).to eq(dev_props.name)
+      expect(at.description).to eq(dev_props.description)
+      expect(at.shared).to eq(dev_props.shared)
+      expect(at.scalable).to eq(dev_props.scalable)
+      expect(at.preference_cpu).to eq(dev_props.preference_cpu)
+      expect(at.preference_memory).to eq(dev_props.preference_memory)
+      expect(at.preference_disk).to eq(dev_props.preference_disk)
+      expect(at.security_proxy).to eq(dev_props.security_proxy)
+    end
+
+    let(:overwrite) do
+      {
+        name: 'my name',
+        description: 'desc',
+        scalable: true,
+        preference_memory: 1024,
+        appliance_id: 23
+      }
+    end
+
+    it 'overwrite data from appliance' do
+      at = ApplianceType.create_from(appl, overwrite)
+      expect(at.name).to eq(overwrite[:name])
+      expect(at.description).to eq(overwrite[:description])
+      expect(at.scalable).to eq(overwrite[:scalable])
+      expect(at.preference_memory).to eq(overwrite[:preference_memory])
+    end
+  end
 end

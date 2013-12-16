@@ -18,30 +18,19 @@ module Api
       def create
         log_user_action 'create new appliance type'
         appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
-        new_at_params = {}
         tmpl = nil
         if appl
-          #if ((appl.appliance_set.user_id != current_user.id or appl.appliance_set.appliance_set_type != 'development') and not current_user.admin?)
-          #  raise CanCan::AccessDenied
-          #end
           authorize!(:save_vm_as_tmpl, appl)
-          if appl.dev_mode_property_set
-            new_at_params = appl.dev_mode_property_set.attributes
-            new_at_params.delete('id')
-            new_at_params.delete('created_at')
-            new_at_params.delete('updated_at')
-          end
           vm = appl.virtual_machines.first
           tmpl = VirtualMachineTemplate.create_from_vm(vm) if vm
         else
           unless current_user.admin?
-            raise ActionController::ParameterMissing.new('appliance_id parameter is missing')#ActionController::ParameterMissing
+            raise ActionController::ParameterMissing.new('appliance_id parameter is missing')
           end
         end
-        new_at_params.merge!(appliance_type_params)
-        new_at_params.delete('appliance_id')
+        new_at_params = appliance_type_params.dup
         new_at_params['user_id'] = new_at_params.delete('author_id')
-        @appliance_type = ApplianceType.new(new_at_params)
+        @appliance_type = ApplianceType.create_from(appl, new_at_params)
         @appliance_type.virtual_machine_templates << tmpl if tmpl
         @appliance_type.author = current_user if @appliance_type.author.blank?
         @appliance_type.save!
