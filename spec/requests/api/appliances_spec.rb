@@ -233,6 +233,29 @@ describe Api::V1::AppliancesController do
           config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
           expect(config_instance.payload).to eq 'dynamic config a b c'
         end
+
+        context 'with mi_ticket parameter' do
+          let(:config_with_mi_ticket) { create(:appliance_configuration_template, appliance_type: public_at, payload: 'dynamic config with mi_ticket: #{' + "#{Air.config.mi_authentication_key}}") }
+          let(:dynamic_request_with_mi_ticket_body) do
+            {
+              appliance: {
+                configuration_template_id: config_with_mi_ticket.id,
+                appliance_set_id: portal_set.id,
+                params: {
+                  param1: 'a',
+                  param2: 'b',
+                  param3: 'c'
+                }
+              }
+            }
+          end
+
+          it 'creates dynamic configuration with mi ticket injected' do
+            post api("/appliances", user), dynamic_request_with_mi_ticket_body, {mi_ticket: 'ticket'}
+            config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+            expect(config_instance.payload).to eq 'dynamic config with mi_ticket: ticket'
+          end
+        end
       end
 
       context 'with appliance type already added to appliance set' do

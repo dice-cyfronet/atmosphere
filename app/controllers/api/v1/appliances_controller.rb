@@ -114,7 +114,9 @@ module Api
       end
 
       def config_params
-        params[:appliance][:params] || {}
+        c_params = params[:appliance][:params] || {}
+        c_params[Air.config.mi_authentication_key] = request.headers[Air.config.mi_authentication_key]
+        c_params
       end
 
       def in_set_context?
