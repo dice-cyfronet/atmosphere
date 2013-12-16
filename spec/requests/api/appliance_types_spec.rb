@@ -222,6 +222,7 @@ describe Api::V1::ApplianceTypesController do
 
     let(:appl_set) { create(:dev_appliance_set, user: developer) }
     let!(:appl) { create(:appl_dev_mode, appliance_set: appl_set) }
+
     let(:new_at_name) { 'the newest appliance type ever' }
     let(:at_req_body) { {appliance_type: {name: new_at_name}} }
     let(:req_with_appl_id_body) { {appliance_type: {name: new_at_name, appliance_id: appl.id}} }
@@ -256,12 +257,16 @@ describe Api::V1::ApplianceTypesController do
       it 'creates new appliance type' do
         expect {
           post api("/appliance_types/", developer), req_with_appl_id_body
-          expect(at_response['name']).to eq new_at_name
-          expect(at_response['description']).to be_nil
-          expect(at_response['shared']).to be_false
-          expect(at_response['scalable']).to be_false
-          expect(at_response['visible_for']).to eq 'owner'
         }.to change { ApplianceType.count }.by(1)
+      end
+
+      it 'sets AT properties from appliance dev mode property set' do
+        post api("/appliance_types/", developer), req_with_appl_id_body
+        expect(at_response['name']).to eq new_at_name
+        expect(at_response['description']).to be_nil
+        expect(at_response['shared']).to be_false
+        expect(at_response['scalable']).to be_false
+        expect(at_response['visible_for']).to eq 'owner'
       end
 
       it 'creates new appliance type with owner set to other user' do
@@ -272,6 +277,32 @@ describe Api::V1::ApplianceTypesController do
       it 'sets current user when no other given' do
         post api("/appliance_types/", developer), req_with_appl_id_body
         expect(at_response['author_id']).to eq developer.id
+      end
+
+      context 'when pmt, endpoint and pmt property exists' do
+        before do
+          pmt = create(:port_mapping_template, dev_mode_property_set: appl.dev_mode_property_set, appliance_type: nil)
+          create(:pmt_property, port_mapping_template: pmt)
+          create(:endpoint, port_mapping_template: pmt)
+        end
+
+        it 'creates pmt copy from appliance pmt' do
+          expect {
+            post api("/appliance_types/", developer), req_with_appl_id_body
+          }.to change { PortMappingTemplate.count }.by(1)
+        end
+
+        it 'creates pmt property copy from appliance pmt' do
+          expect {
+            post api("/appliance_types/", developer), req_with_appl_id_body
+          }.to change { PortMappingProperty.count }.by(1)
+        end
+
+        it 'creates pmt property copy from appliance pmt' do
+          expect {
+            post api("/appliance_types/", developer), req_with_appl_id_body
+          }.to change { Endpoint.count }.by(1)
+        end
       end
 
       context 'appliance id is provided in request' do

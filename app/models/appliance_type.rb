@@ -65,7 +65,13 @@ class ApplianceType < ActiveRecord::Base
   end
 
   def self.create_from(appliance, overwrite = {})
-    ApplianceType.new appliance_type_attributes(appliance, overwrite)
+    at = ApplianceType.new appliance_type_attributes(appliance, overwrite)
+    PmtCopier.copy(appliance.dev_mode_property_set).each do |pmt|
+      pmt.appliance_type = at
+      at.port_mapping_templates << pmt
+    end if appliance and appliance.dev_mode_property_set
+
+    at
   end
 
   private

@@ -33,6 +33,7 @@ module Api
         @appliance_type = ApplianceType.create_from(appl, new_at_params)
         @appliance_type.virtual_machine_templates << tmpl if tmpl
         @appliance_type.author = current_user if @appliance_type.author.blank?
+
         @appliance_type.save!
         render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         log_user_action "appliance type created: #{@appliance_type.to_json}"

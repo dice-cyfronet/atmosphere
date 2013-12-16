@@ -109,5 +109,42 @@ describe ApplianceType do
       expect(at.scalable).to eq(overwrite[:scalable])
       expect(at.preference_memory).to eq(overwrite[:preference_memory])
     end
+
+    context 'when port mappings, endpoints, properties defined' do
+      let(:endpoint1) { build(:endpoint) }
+      let(:endpoint2) { build(:endpoint) }
+
+      let(:port_mapping_property1) { build(:pmt_property) }
+      let(:port_mapping_property2) { build(:pmt_property) }
+
+      let(:port_mapping1) { create(:port_mapping_template,
+          endpoints: [endpoint1, endpoint2],
+          port_mapping_properties: [
+            port_mapping_property1,
+            port_mapping_property2
+          ]
+        )
+      }
+
+      let(:port_mapping2) { create(:port_mapping_template) }
+
+      let(:at_with_pmt) { create(:filled_appliance_type,
+          port_mapping_templates: [port_mapping1, port_mapping2]
+        )
+      }
+
+      let(:appl_with_pmt) { create(:appliance, appliance_type: at_with_pmt, appliance_set: dev_set) }
+      let(:dev_props_with_pmt) { appl.dev_mode_property_set }
+
+      it 'creates pmt, endpoints, properties copy' do
+        at = ApplianceType.create_from(appl_with_pmt, overwrite)
+        expect(at.port_mapping_templates.length).to eq 2
+        expect(at.port_mapping_templates[0].endpoints.length).to eq 2
+        expect(at.port_mapping_templates[0].port_mapping_properties.length).to eq 2
+
+        expect(at.port_mapping_templates[1].endpoints.length).to eq 0
+        expect(at.port_mapping_templates[1].port_mapping_properties.length).to eq 0
+      end
+    end
   end
 end

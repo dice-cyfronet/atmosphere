@@ -45,14 +45,7 @@ class DevModePropertySet < ActiveRecord::Base
       security_proxy: appliance_type.security_proxy,
     )
 
-    dev_mode_property_set.port_mapping_templates = appliance_type.port_mapping_templates.collect do |pmt|
-        copy = pmt.dup
-        copy.appliance_type = nil
-        copy.endpoints = pmt.endpoints.collect(&:dup)
-        copy.port_mapping_properties = pmt.port_mapping_properties.collect(&:dup)
-        copy
-      end
-
+    dev_mode_property_set.port_mapping_templates = PmtCopier.copy appliance_type
     dev_mode_property_set
   end
 end
