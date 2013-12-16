@@ -46,7 +46,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   end
 
   def destroy(delete_in_cloud = true)
-    delete_in_cloud if delete_in_cloud
+    perform_delete_in_cloud if delete_in_cloud
     super()
   end
 
@@ -78,7 +78,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
     #self.appliance_type = vm.appliance_type
   end
 
-  def delete_in_cloud
+  def perform_delete_in_cloud
     logger.info "Deleting template #{uuid}"
     cloud_client = self.compute_site.cloud_client
     cloud_client.images.destroy self.id_at_site
