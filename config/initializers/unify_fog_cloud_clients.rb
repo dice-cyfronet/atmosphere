@@ -27,7 +27,6 @@ class Fog::Compute::OpenStack::Real
 end
 
 
-Fog::Compute::OpenStack::Server
 class Fog::Compute::OpenStack::Server
 
   def image_id
@@ -55,5 +54,9 @@ end
 class Fog::Compute::AWS::Image
   def destroy
     deregister
+  end
+
+  def status
+    ready? ? 'ACTIVE' : 'DELETED'
   end
 end
