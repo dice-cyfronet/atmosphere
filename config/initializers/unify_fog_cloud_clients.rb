@@ -1,4 +1,5 @@
 require 'fog/openstack/compute'
+require 'fog/openstack/models/compute/server'
 require 'fog/aws/compute'
 require 'fog/aws/models/compute/image'
 
@@ -23,6 +24,16 @@ class Fog::Compute::OpenStack::Real
       raise "Failed to save vm #{instance_id} as template"
     end
   end
+end
+
+
+Fog::Compute::OpenStack::Server
+class Fog::Compute::OpenStack::Server
+
+  def image_id
+    image['id']
+  end
+
 end
 
 class Fog::Compute::AWS::Real

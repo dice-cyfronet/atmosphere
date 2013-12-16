@@ -85,7 +85,7 @@ class VirtualMachine < ActiveRecord::Base
     logger.info 'Instantiating'
     vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
     cloud_client = vm_tmpl.compute_site.cloud_client
-    servers_params = {flavor_ref: 1, name: name, image_ref: vm_tmpl.id_at_site}#, key_name: 'tomek'}
+    servers_params = {flavor_ref: 1, name: name, image_ref: vm_tmpl.id_at_site}
     unless appliances.blank?
       user_data = appliances.first.appliance_configuration_instance.payload
       servers_params[:user_data] = user_data if user_data

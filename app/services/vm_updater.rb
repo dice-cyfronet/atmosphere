@@ -26,7 +26,7 @@ class VmUpdater
   end
 
   def source_template
-    VirtualMachineTemplate.find_by(compute_site: site, id_at_site: server.image['id'])
+    VirtualMachineTemplate.find_by(compute_site: site, id_at_site: server.image_id)
   end
 
   def update_ips?
