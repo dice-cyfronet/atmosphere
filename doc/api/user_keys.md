@@ -12,9 +12,9 @@ GET /user_keys
     {
       "id": 1,
       "name": "Fobar key",
-      fingerprint: "43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a",
-      public_key: "ssh-rsa ....",
-      user_id: 1
+      "fingerprint": "43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a",
+      "public_key": "ssh-rsa ....",
+      "user_id": 1
     }, {
       ...
     }
@@ -37,9 +37,9 @@ Parameters:
   "user_key": {
     "id": 1,
     "name": "Fobar key",
-    fingerprint: "43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a",
-    public_key: "ssh-rsa ....",
-    user_id: 1
+    "fingerprint": "43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a",
+    "public_key": "ssh-rsa ....",
+    "user_id": 1
   }
 }
 ```
@@ -56,7 +56,7 @@ POST /user_keys
 {
   "user_key": {
     "name": "Fobar key",
-    public_key: "ssh-rsa ....",
+    "public_key": "ssh-rsa ....",
   }
 }
 ```
