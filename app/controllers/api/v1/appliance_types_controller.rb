@@ -22,7 +22,7 @@ module Api
         if appl
           authorize!(:save_vm_as_tmpl, appl)
           vm = appl.virtual_machines.first
-          tmpl = VirtualMachineTemplate.create_from_vm(vm) if vm
+          tmpl = VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
         else
           unless current_user.admin?
             raise ActionController::ParameterMissing.new('appliance_id parameter is missing')
