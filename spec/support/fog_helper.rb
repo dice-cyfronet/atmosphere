@@ -1,9 +1,13 @@
 module FogHelpers
   # returns hash specofic for Fog library asking about VM
   def vm(id, name, status, addr='10.100.8.18')
+    vm_with_address_hash(id, name, status, {"private"=>[{"version"=>4, "addr"=>addr}]})
+  end
+
+  def vm_with_address_hash(id, name, status, addr_hash)
     {
       "id" => id,
-      "addresses" => {"private"=>[{"version"=>4, "addr"=>addr}]},
+      "addresses" => addr_hash,
       "image" => {
         "id" => "ubuntu",
         "links" => [
