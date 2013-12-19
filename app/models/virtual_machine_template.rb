@@ -17,7 +17,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   extend Enumerize
 
   belongs_to :source_vm, class_name: 'VirtualMachine', foreign_key: 'virtual_machine_id'
-  has_many :instances, class_name: 'VirtualMachine'
+  has_many :instances, class_name: 'VirtualMachine', dependent: :nullify
   belongs_to :compute_site
   belongs_to :appliance_type
   validates_presence_of :id_at_site, :name, :state, :compute_site_id

@@ -2,6 +2,7 @@ require 'fog/openstack/compute'
 require 'fog/openstack/models/compute/server'
 require 'fog/aws/compute'
 require 'fog/aws/models/compute/image'
+require 'fog/aws/models/compute/server'
 
 # open stack client does not provide import_key_pair method
 # while aws does
@@ -48,6 +49,14 @@ class Fog::Compute::AWS::Real
   def reboot_server(server_id)
     reboot_instances([server_id])
   end
+end
+
+class Fog::Compute::AWS::Server
+
+  def name
+    tags['Name']
+  end
+
 end
 
 # Image class does not implement destroy method

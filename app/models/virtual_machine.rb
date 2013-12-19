@@ -16,12 +16,12 @@
 class VirtualMachine < ActiveRecord::Base
   extend Enumerize
 
-  has_many :saved_templates, class_name: 'VirtualMachineTemplate'
+  has_many :saved_templates, class_name: 'VirtualMachineTemplate', dependent: :nullify
   has_many :port_mappings, dependent: :delete_all
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
   has_and_belongs_to_many :appliances
-  validates_presence_of :name, :virtual_machine_template_id
+  validates_presence_of :name
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize']
   validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize)
