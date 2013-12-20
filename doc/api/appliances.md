@@ -80,7 +80,7 @@ Parameters:
 
 ---
 
-Not all appliance types can be added into all appliance sets. For details please take a look at [Appliance Type `visible_for` parameter description](appliance_types#visible_for). E.g. user is able to start Appliance Type with `visible_for` param set to `owner` only when he/she is  an owner of this Appliance Type, otherwise `403` (Forbidden) will be returned and no Appliance will be added into Appliance Set.
+Not all appliance types can be added into all appliance sets. For details please take a look at [Appliance Type `visible_to` parameter description](appliance_types#visible_to). E.g. user is able to start Appliance Type with `visible_to` param set to `owner` only when he/she is  an owner of this Appliance Type, otherwise `403` (Forbidden) will be returned and no Appliance will be added into Appliance Set.
 
 ---
 

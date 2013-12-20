@@ -1,7 +1,7 @@
 class ApplianceTypeSerializer < ActiveModel::Serializer
   embed :ids
 
-  attributes :id, :name, :description, :shared, :scalable, :visible_for
+  attributes :id, :name, :description, :shared, :scalable, :visible_to
   attributes :preference_cpu, :preference_memory, :preference_disk
   attributes :active
 
@@ -12,5 +12,11 @@ class ApplianceTypeSerializer < ActiveModel::Serializer
 
   def active
     object.virtual_machine_templates.where(state: :active).count > 0
+  end
+
+  # visible_for will be removed after update MI will be deployed
+  attributes :visible_for
+  def visible_for
+    visible_to
   end
 end

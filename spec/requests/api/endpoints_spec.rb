@@ -9,8 +9,8 @@ describe Api::V1::EndpointsController do
   let(:developer) { create(:developer) }
 
   let(:security_proxy) { create(:security_proxy) }
-  let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy, visible_for: 'owner') }
-  let!(:at2) { create(:appliance_type, author: user, visible_for: 'all') }
+  let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy, visible_to: 'owner') }
+  let!(:at2) { create(:appliance_type, author: user, visible_to: 'all') }
   let!(:pmt1) { create(:port_mapping_template, appliance_type: at1) }
   let!(:pmt2) { create(:port_mapping_template, appliance_type: at2) }
   let!(:e1) { create(:endpoint, port_mapping_template: pmt1) }
@@ -410,11 +410,11 @@ describe Api::V1::EndpointsController do
   end
 
   describe 'GET /endpoints/:id/descriptor' do
-    let(:at1) { create(:appliance_type, visible_for: :all) }
+    let(:at1) { create(:appliance_type, visible_to: :all) }
     let(:pmt_at1) { create(:port_mapping_template, appliance_type: at1) }
     let(:all_endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at1) }
 
-    let(:at2) { create(:appliance_type, visible_for: :owner, author: user) }
+    let(:at2) { create(:appliance_type, visible_to: :owner, author: user) }
     let(:pmt_at2) { create(:port_mapping_template, appliance_type: at2) }
     let(:owner_endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at2) }
 

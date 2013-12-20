@@ -32,7 +32,7 @@ describe VirtualMachineTemplate do
       Air.stub(:get_cloud_client).and_return(cc_mock)
       cc_mock.stub(:servers).and_return(servers_mock)
     end
-    
+
     context 'active' do
       it 'sets source vm to nil' do
         allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
@@ -119,7 +119,7 @@ describe VirtualMachineTemplate do
         expect { subject.update_attribute(:state, :saving) }.to_not change { VirtualMachine.count }
       end
     end
-  
+
   end
 
 end

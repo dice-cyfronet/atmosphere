@@ -67,9 +67,9 @@ module Api
 
       def cannot_create_appliance?
         type = @appliance.appliance_type
-        visible_for = type.visible_for
+        visible_to = type.visible_to
 
-        case visible_for.to_sym
+        case visible_to.to_sym
           when :owner     then @appliance.appliance_set.user != type.author
           when :developer then !@appliance.appliance_set.appliance_set_type.development?
           else false

@@ -16,18 +16,18 @@ class Ability
     ### Anonymous user abilities
     user ||= User.new
     can [:read, :payload], owned_payloads
-    can [:endpoint_payload], ApplianceType, visible_for: 'all'
-    can :descriptor, Endpoint, port_mapping_template: { appliance_type: { visible_for: 'all' } }
+    can [:endpoint_payload], ApplianceType, visible_to: 'all'
+    can :descriptor, Endpoint, port_mapping_template: { appliance_type: { visible_to: 'all' } }
   end
 
   private
 
   def initialize_developer_roles(user)
     can :create, ApplianceSet, appliance_set_type: 'development'
-    can :read, ApplianceType, visible_for: 'developer'
+    can :read, ApplianceType, visible_to: 'developer'
     can :create, ApplianceType
     can :save_vm_as_tmpl, Appliance, appliance_set: {user_id: user.id, appliance_set_type: 'development'} #appl.appliance_set.user_id != current_user.id or appl.appliance_set.appliance_set_type != 'development'
-    can :read, ApplianceConfigurationTemplate, appliance_type: { visible_for: 'developer' }
+    can :read, ApplianceConfigurationTemplate, appliance_type: { visible_to: 'developer' }
     can [:read, :update], DevModePropertySet, appliance: { appliance_set: { user_id: user.id } }
   end
 
@@ -48,27 +48,27 @@ class Ability
     end
 
     ## Appliance types
-    can [:read, :endpoint_payload], ApplianceType, visible_for: 'all'
+    can [:read, :endpoint_payload], ApplianceType, visible_to: 'all'
     can [:read, :endpoint_payload], ApplianceType, user_id: user.id
     can [:update, :destroy], ApplianceType, user_id: user.id
 
     ## Elements of Appliance Types
     can :read, ApplianceConfigurationTemplate, appliance_type: { user_id: user.id }
-    can :read, ApplianceConfigurationTemplate, appliance_type: { visible_for: 'all' }
+    can :read, ApplianceConfigurationTemplate, appliance_type: { visible_to: 'all' }
     can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
 
     can :read, PortMappingTemplate, appliance_type: { user_id: user.id }
-    can :read, PortMappingTemplate, appliance_type: { visible_for: 'all' }
+    can :read, PortMappingTemplate, appliance_type: { visible_to: 'all' }
     can [:create, :update, :destroy], PortMappingTemplate, appliance_type: {user_id: user.id}
     can [:read, :create, :update, :destroy], PortMappingTemplate, dev_mode_property_set: { appliance: { appliance_set: { user_id: user.id } } }
 
     can [:read, :descriptor], Endpoint, port_mapping_template: { appliance_type: { user_id: user.id } }
-    can :read, Endpoint, port_mapping_template: { appliance_type: { visible_for: 'all' } }
+    can :read, Endpoint, port_mapping_template: { appliance_type: { visible_to: 'all' } }
     can [:create, :update, :destroy], Endpoint, port_mapping_template: { appliance_type: {user_id: user.id} }
     can [:read, :create, :update, :destroy], Endpoint, port_mapping_template: { dev_mode_property_set: { appliance: { appliance_set: { user_id: user.id } } } }
 
     can :read, PortMappingProperty, port_mapping_template: { appliance_type: { user_id: user.id } }
-    can :read, PortMappingProperty, port_mapping_template: { appliance_type: { visible_for: 'all' } }
+    can :read, PortMappingProperty, port_mapping_template: { appliance_type: { visible_to: 'all' } }
     can [:create, :update, :destroy], PortMappingProperty, port_mapping_template: { appliance_type: {user_id: user.id} }
 
     ## Virtual Machines

@@ -34,7 +34,7 @@ describe VirtualMachine do
     before do
       cc_mock.stub(:servers).and_return(servers_mock)
     end
-    
+
     it 'is not performed if it is being saved as template' do
       create(:virtual_machine_template, source_vm: vm, state: :saving)
       expect(servers_mock).to_not receive(:destroy)
@@ -101,7 +101,7 @@ describe VirtualMachine do
     let!(:pmt_1) { create(:port_mapping_template, target_port: priv_port, appliance_type: vm_ipless.appliance_type, application_protocol: :none) }
     let(:wrg) { double('wrangler') }
 
-    before do 
+    before do
       DnatWrangler.stub(:instance).and_return(wrg)
     end
 
@@ -171,9 +171,9 @@ describe VirtualMachine do
         it 'is not performed after VM with blank IP was destroyed' do
           vm_ipless.destroy
         end
-      
+
       end
-      
+
     end
 
     context 'regeneration' do
@@ -192,14 +192,14 @@ describe VirtualMachine do
       end
 
       context 'is not performed' do
-        
+
         it 'when attribute other than ip is updated' do
           vm = create(:virtual_machine)
           vm.name = 'so much changed'
           vm.save
         end
 
-        
+
       end
 
       context 'is performed' do
@@ -222,7 +222,7 @@ describe VirtualMachine do
 
 
   context 'injecting' do
-  
+
     VM_NAME = 'key-tester'
     FLAVOR_REF = 1
 
@@ -258,7 +258,7 @@ describe VirtualMachine do
       server_params = {flavor_ref: FLAVOR_REF, name: VM_NAME, image_ref: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload, key_name: key.id_at_site}
       expect(servers).to receive(:create).with(server_params).and_return(server)
       expect(server).to receive(:id).twice.and_return 1
-      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)  
+      create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
     end
 
     it 'does not inject user key if key is undefined' do

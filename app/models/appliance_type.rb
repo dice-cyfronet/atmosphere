@@ -7,7 +7,7 @@
 #  description       :text
 #  shared            :boolean          default(FALSE), not null
 #  scalable          :boolean          default(FALSE), not null
-#  visible_for       :string(255)      default("owner"), not null
+#  visible_to       :string(255)      default("owner"), not null
 #  preference_cpu    :float
 #  preference_memory :integer
 #  preference_disk   :integer
@@ -23,12 +23,12 @@ class ApplianceType < ActiveRecord::Base
   belongs_to :security_proxy
   belongs_to :author, class_name: 'User', foreign_key: 'user_id'
 
-  validates_presence_of :name, :visible_for
+  validates_presence_of :name, :visible_to
   validates_uniqueness_of :name
 
-  enumerize :visible_for, in: [:owner, :developer, :all]
+  enumerize :visible_to, in: [:owner, :developer, :all]
 
-  validates :visible_for, inclusion: %w(owner developer all)
+  validates :visible_to, inclusion: %w(owner developer all)
   validates :shared, inclusion: [true, false]
   validates :scalable, inclusion: [true, false]
 

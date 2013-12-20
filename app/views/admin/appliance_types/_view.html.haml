@@ -14,9 +14,9 @@
       Delete
 
   %h5
-    - if @appliance_type.visible_for == 'owner'
+    - if @appliance_type.visible_to == 'owner'
       %span.label.label-primary Only for owner
-    - elsif @appliance_type.visible_for == 'developer'
+    - elsif @appliance_type.visible_to == 'developer'
       %span.label.label-warning Only for developers
     - else
       %span.label.label-success For all

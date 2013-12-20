@@ -6,9 +6,9 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
   let(:user)  { create(:user) }
   let(:admin) { create(:admin) }
 
-  let(:at1) { create(:appliance_type, author: user, visible_for: :owner) }
-  let(:at2) { create(:appliance_type, visible_for: :all) }
-  let(:at3) { create(:appliance_type, visible_for: :owner) }
+  let(:at1) { create(:appliance_type, author: user, visible_to: :owner) }
+  let(:at2) { create(:appliance_type, visible_to: :all) }
+  let(:at3) { create(:appliance_type, visible_to: :owner) }
 
   let!(:at1_config_tpl1) { create(:appliance_configuration_template, appliance_type: at1) }
   let!(:at1_config_tpl2) { create(:appliance_configuration_template, appliance_type: at1) }

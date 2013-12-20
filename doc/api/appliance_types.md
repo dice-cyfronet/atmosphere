@@ -15,7 +15,7 @@ GET /appliance_types
       "description": "Foobar Appliance Type description",
       "shared": false,
       "scalable": true,
-      "visible_for": "owner",
+      "visible_to": "owner",
       "preference_cpu": 1.0,
       "preference_memory": 1024,
       "preference_disk": 10240,
@@ -49,7 +49,7 @@ Parameters:
     "description": "Foobar Appliance Type description",
     "shared": false,
     "scalable": true,
-    "visible_for": "all",
+    "visible_to": "all",
     "preference_cpu": 1.0,
     "preference_memory": 1024,
     "preference_disk": 10240,
@@ -62,7 +62,7 @@ Parameters:
 
 The `active` parameters set to true means that this `appliance type` is connected with one or more `virtual machine templates` and there is possible to spawn `appliance` from this appliance type. This parameter is read only.
 
-<a name="visible_for"></a> The `visible_for` parameter distinguish when such appliance type can be used. Allowed values are as follow:
+<a name="visible_to"></a> The `visible_to` parameter distinguish when such appliance type can be used. Allowed values are as follow:
 
 + `owner` - Appliance Type can be started in `development` and `production` mode but only by the Appliance Type `owner` (and `admin`). This kind of Appliance Types are only visible for the Appliance Type `owner` (and `admin`, when `all` flag is set to `true`)
 + `all` - Appliance Type can be started in `development` and `production` mode by `all` users
@@ -86,7 +86,7 @@ All parameters presented bellow will overwrite parameters defined in `Dev Mode P
 + `description` (optional) - New appliance type description
 + `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared amoung many users
 + `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scalled up or down
-+ `visible_for` (optional) - `owner` - default - appliance type can be used only by appliance type owner (in both development and production modes) / `developer` - appliance type can be started only in development mode / `all` - appliance type is production ready - it can be started in both development and production mode by everyone
++ `visible_to` (optional) - `owner` - default - appliance type can be used only by appliance type owner (in both development and production modes) / `developer` - appliance type can be started only in development mode / `all` - appliance type is production ready - it can be started in both development and production mode by everyone
 + `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type
 + `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type
 + `preference_disk` (optional) - hint for optimalized to determine disk space (in MB) required by the application installed on appliance type
@@ -122,7 +122,7 @@ Parameters:
 
 Method used by Taverna to include appliance type endpoint descriptor (WSDL or WADL) into Taverna workbench.
 
-When user credentials are empty this method will return success only for Appliance Types with `visible_for` set to `all`. If user credentials are available than user is able to get endpoint payload for Appliance Types with `visible_for` set to `owner` or `developer` (if user is a developer).
+When user credentials are empty this method will return success only for Appliance Types with `visible_to` set to `all`. If user credentials are available than user is able to get endpoint payload for Appliance Types with `visible_to` set to `owner` or `developer` (if user is a developer).
 
 ```
 GET /appliance_types/:id/endpoints/:service_name/:invocation_path

@@ -8,8 +8,8 @@ describe Api::V1::PortMappingPropertiesController do
   let(:admin)          { create(:admin) }
 
   let(:security_proxy) { create(:security_proxy) }
-  let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy, visible_for: 'owner') }
-  let!(:at2) { create(:appliance_type, author: user, visible_for: 'all') }
+  let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy, visible_to: 'owner') }
+  let!(:at2) { create(:appliance_type, author: user, visible_to: 'all') }
   let!(:pmt1) { create(:port_mapping_template, appliance_type: at1) }
   let!(:pmt2) { create(:port_mapping_template, appliance_type: at2) }
 
@@ -71,48 +71,48 @@ describe Api::V1::PortMappingPropertiesController do
         expect(response.status).to eq 401
       end
     end
-  
+
     context 'when authenticated as not owner and not admin' do
       it 'returns 403 Forbidden error for not public resources' do
         get api("/port_mapping_properties/#{pmp1.id}", different_user)
         expect(response.status).to eq 403
       end
-  
+
       it 'returns 200 Success for public resources' do
         get api("/port_mapping_properties/#{pmp2.id}", different_user)
         expect(response.status).to eq 200
       end
-  
+
       it 'returns chosen public port mapping property' do
         get api("/port_mapping_properties/#{pmp2.id}", different_user)
         expect(pmp_response).to port_mapping_property_eq pmp2
       end
     end
-  
+
     context 'when authenticated as owner' do
       it 'returns 200 Success' do
         get api("/port_mapping_properties/#{pmp1.id}", user)
         expect(response.status).to eq 200
       end
-  
+
       it 'returns chosen owned port mapping property' do
         get api("/port_mapping_properties/#{pmp1.id}", user)
         expect(pmp_response).to port_mapping_property_eq pmp1
       end
-  
+
       it 'returns chosen public port mapping property' do
         get api("/port_mapping_properties/#{pmp2.id}", user)
         expect(pmp_response).to port_mapping_property_eq pmp2
         get api("/port_mapping_properties/#{pmp2.id}", different_user)
         expect(pmp_response).to port_mapping_property_eq pmp2
       end
-  
+
       it 'returns 404 Not Found when port mapping property is not found' do
         get api("/port_mapping_properties/non_existing", user)
         expect(response.status).to eq 404
       end
     end
-  
+
     context 'when authenticated as admin' do
       it 'returns any chosen port mapping property' do
         get api("/port_mapping_properties/#{pmp1.id}", admin)
@@ -122,8 +122,8 @@ describe Api::V1::PortMappingPropertiesController do
       end
     end
   end
-  
-  
+
+
   describe 'POST /port_mapping_properties' do
     let(:new_request) do
       {

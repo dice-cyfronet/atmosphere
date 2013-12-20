@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.text     "description"
     t.boolean  "shared",            default: false,   null: false
     t.boolean  "scalable",          default: false,   null: false
-    t.string   "visible_for",       default: "owner", null: false
+    t.string   "visible_to",        default: "owner", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"

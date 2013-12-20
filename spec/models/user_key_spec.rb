@@ -17,7 +17,7 @@ describe UserKey do
 
   let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
   before do
-    Fog.mock! 
+    Fog.mock!
     cs.cloud_client.reset_data
   end
 

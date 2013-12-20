@@ -147,7 +147,7 @@ describe Api::V1::AppliancesController do
     let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
     let!(:development_set) { create(:appliance_set, user: developer, appliance_set_type: :development)}
 
-    let!(:public_at) { create(:appliance_type, visible_for: :all) }
+    let!(:public_at) { create(:appliance_type, visible_to: :all) }
 
     let(:static_config) { create(:static_config_template, appliance_type: public_at) }
     let(:static_request_body) { start_request(static_config, portal_set) }
@@ -300,8 +300,8 @@ describe Api::V1::AppliancesController do
       end
     end
 
-    context 'with private appliance type (visible_for: owner)' do
-      let(:private_at) { create(:appliance_type, author: user, visible_for: :owner) }
+    context 'with private appliance type (visible_to: owner)' do
+      let(:private_at) { create(:appliance_type, author: user, visible_to: :owner) }
       let(:private_at_config) { create(:static_config_template, appliance_type: private_at) }
 
       it 'allows to start appliance type by its author' do
@@ -315,8 +315,8 @@ describe Api::V1::AppliancesController do
       end
     end
 
-    context 'with development appliance type (visible_for: developer)' do
-      let(:development_at) { create(:appliance_type, visible_for: :developer) }
+    context 'with development appliance type (visible_to: developer)' do
+      let(:development_at) { create(:appliance_type, visible_to: :developer) }
       let(:development_at_config) { create(:static_config_template, appliance_type: development_at) }
 
       it 'allows to start in development mode' do

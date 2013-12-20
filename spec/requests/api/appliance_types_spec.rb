@@ -11,8 +11,8 @@ describe Api::V1::ApplianceTypesController do
   let(:security_proxy) { create(:security_proxy) }
 
   let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy) }
-  let!(:at2) { create(:appliance_type, visible_for: :all) }
-  let!(:dev_at) { create(:appliance_type, visible_for: :developer) }
+  let!(:at2) { create(:appliance_type, visible_to: :all) }
+  let!(:dev_at) { create(:appliance_type, visible_to: :developer) }
 
   describe 'GET /appliance_types' do
     context 'when unauthenticated' do
@@ -44,7 +44,7 @@ describe Api::V1::ApplianceTypesController do
       end
 
       context 'search' do
-        let!(:second_user_at) { create(:appliance_type, visible_for: :all, author: user) }
+        let!(:second_user_at) { create(:appliance_type, visible_to: :all, author: user) }
 
         it 'returns only appliance types created by the user' do
           get api("/appliance_types?author_id=#{user.id}", user)
@@ -159,7 +159,7 @@ describe Api::V1::ApplianceTypesController do
         description: 'new description',
         shared: true,
         scalable: true,
-        visible_for: :all,
+        visible_to: :all,
         preference_cpu: 10.0,
         preference_memory: 1024,
         preference_disk: 10240,
@@ -266,7 +266,7 @@ describe Api::V1::ApplianceTypesController do
         expect(at_response['description']).to be_nil
         expect(at_response['shared']).to be_false
         expect(at_response['scalable']).to be_false
-        expect(at_response['visible_for']).to eq 'owner'
+        expect(at_response['visible_to']).to eq 'owner'
       end
 
       it 'creates new appliance type with owner set to other user' do
