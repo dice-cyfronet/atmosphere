@@ -82,9 +82,13 @@ module Api
       end
 
       def filter
+        # visible_for will be removed after update MI will be deployed
+        params[:visible_to] = params[:visible_for] if params[:visible_for]
+
         filter = super
         author_id = params[:author_id]
         filter[:user_id] = author_id unless author_id.blank?
+
         filter
       end
 
