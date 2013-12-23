@@ -3,8 +3,7 @@ module Api
     class EndpointsController < Api::ApplicationController
 
       before_filter :find_endpoints, only: :index
-      load_and_authorize_resource :endpoint, except: :index
-      authorize_resource :endpoint, only: :index
+      load_and_authorize_resource :endpoint
 
       respond_to :json
 
@@ -47,9 +46,8 @@ module Api
       private
 
       def find_endpoints
-        @port_mapping_template = PortMappingTemplate.find(params[:port_mapping_template_id])
-        @endpoints = Endpoint.where(port_mapping_template_id: @port_mapping_template.id)
-        authorize!(:index, @port_mapping_template)
+        authenticate_user!
+        @endpoints = Endpoint.visible_to(current_user)
       end
 
       def endpoint_params

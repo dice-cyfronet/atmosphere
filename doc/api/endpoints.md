@@ -6,10 +6,6 @@ Get a list of Endpoints defined for a given Port Mapping Template.
 GET /endpoints
 ```
 
-Parameters:
-
-+ `port_mapping_template_id` (required) - The ID of the specific Port Mapping Template which Endpoints you'd like to get
-
 ```json
 {
   "endpoints": [
@@ -27,7 +23,6 @@ Parameters:
   ]
 }
 ```
-
 
 ## Details of a Endpoint
 

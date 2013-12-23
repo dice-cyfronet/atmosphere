@@ -31,9 +31,9 @@ describe Api::V1::EndpointsController do
     end
 
     context 'when authenticated as not owner and not admin' do
-      it 'returns 403 Forbidden error' do
+      it 'returns empty list when searching for non owned endpoint' do
         get api("/endpoints?port_mapping_template_id=#{pmt1.id}", different_user)
-        expect(response.status).to eq 403
+        expect(es_response).to eq []
       end
     end
 
@@ -62,11 +62,11 @@ describe Api::V1::EndpointsController do
       end
 
       # TODO - FIXME - when properly dealt with abilities
-      #it 'returns all public endpoints' do
-      #  get api("/endpoints", user)
-      #  expect(es_response).to be_an Array
-      #  expect(es_response.size).to eq 2
-      #end
+      it 'returns all public endpoints' do
+       get api("/endpoints", user)
+       expect(es_response).to be_an Array
+       expect(es_response.size).to eq 2
+      end
     end
 
     context 'when authenticated as developer' do
