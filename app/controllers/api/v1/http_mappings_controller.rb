@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with HttpMappingSerializer.page(params, @http_mappings)
+        respond_with HttpMappingSerializer.page(params, @http_mappings).order(:id)
       end
 
       def show
