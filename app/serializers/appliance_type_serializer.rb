@@ -13,10 +13,4 @@ class ApplianceTypeSerializer < ActiveModel::Serializer
   def active
     object.virtual_machine_templates.where(state: :active).count > 0
   end
-
-  # visible_for will be removed after update MI will be deployed
-  attributes :visible_for
-  def visible_for
-    visible_to
-  end
 end

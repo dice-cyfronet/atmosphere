@@ -31,9 +31,6 @@ module Api
         new_at_params = appliance_type_params.dup
         new_at_params['user_id'] = new_at_params.delete('author_id')
 
-        # visible_for will be removed after update MI will be deployed
-        new_at_params[:visible_to] = new_at_params[:visible_for] if new_at_params[:visible_for]
-
         @appliance_type = ApplianceType.create_from(appl, new_at_params)
         @appliance_type.virtual_machine_templates << tmpl if tmpl
         @appliance_type.author = current_user if @appliance_type.author.blank?
@@ -49,9 +46,6 @@ module Api
         update_params.delete 'appliance_id'
         author_id = update_params.delete(:author_id)
         update_params[:author] = User.find(author_id) if author_id
-
-        # visible_for will be removed after update MI will be deployed
-        update_params[:visible_to] = update_params[:visible_for] if update_params[:visible_for]
 
         @appliance_type.update_attributes!(update_params)
         render json: @appliance_type, serializer: ApplianceTypeSerializer
@@ -82,9 +76,6 @@ module Api
       end
 
       def filter
-        # visible_for will be removed after update MI will be deployed
-        params[:visible_to] = params[:visible_for] if params[:visible_for]
-
         filter = super
         author_id = params[:author_id]
         filter[:user_id] = author_id unless author_id.blank?
@@ -93,8 +84,7 @@ module Api
       end
 
       def appliance_type_params
-        # visible_for will be removed after update MI will be deployed
-        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_for, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id, :appliance_id)
+        params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id, :appliance_id)
       end
     end
   end
