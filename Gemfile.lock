@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: git://github.com/dice-cyfronet/redirus-worker.git
-  revision: 8acf3a0ae3ab69b2e9cb88371f1480e69be6a28b
+  revision: 5466e1b47ab7cb808a1ca7cd261324100e5bae7f
   branch: master
   specs:
     redirus-worker (0.0.1)
@@ -138,14 +138,14 @@ GEM
     formatador (0.2.4)
     github-markup (1.0.0)
     gravtastic (3.2.6)
-    guard (2.2.4)
+    guard (2.2.5)
       formatador (>= 0.2.4)
       listen (~> 2.1)
       lumberjack (~> 1.0)
       pry (>= 0.9.12)
       thor (>= 0.18.1)
-    guard-rspec (4.2.0)
-      guard (>= 2.1.1)
+    guard-rspec (4.2.3)
+      guard (~> 2.1)
       rspec (>= 2.14, < 4.0)
     guard-spork (1.5.1)
       childprocess (>= 0.2.3)
@@ -236,8 +236,8 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.1.1)
-    rb-fsevent (0.9.3)
-    rb-inotify (0.9.2)
+    rb-fsevent (0.9.4)
+    rb-inotify (0.9.3)
       ffi (>= 0.5.0)
     rdoc (3.12.2)
       json (~> 1.4)
