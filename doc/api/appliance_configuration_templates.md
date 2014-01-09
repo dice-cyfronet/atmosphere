@@ -63,6 +63,10 @@ Parameters:
 + `payload` (optional) - Appliance configuration template payload. It can contain placeholders (aka. dynamic variables in `#{variable_name}` format) for dynamic configuration. If such placeholder occurs than during appliance instantiation user can pass variables values. If variable is not found in instantiation request than empty string will be injected there
 + `appliance_type_id` - appliance type id for which this appliance configuration template will be created
 
+Special dynamic parameters which are automaticaly converted into dynamic values:
+
++ `#{mi_ticket} - While creating initial configuration instance user ticket is injected here
+
 ## Update appliance configuration template
 
 Updates existing appliance configuration template. Normal user is able to update appliance configuration template only for owned appliance type (where user is an appliance type author), admin is able to update appliance configuration template for all appliance types.
