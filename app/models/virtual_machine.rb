@@ -20,7 +20,8 @@ class VirtualMachine < ActiveRecord::Base
   has_many :port_mappings, dependent: :delete_all
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
-  has_and_belongs_to_many :appliances
+  has_many :appliances, through: :deployments, dependent: :destroy
+  has_many :deployments, dependent: :destroy  
   validates_presence_of :name
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize']

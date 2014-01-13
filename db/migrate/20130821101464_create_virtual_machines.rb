@@ -14,7 +14,9 @@ class CreateVirtualMachines < ActiveRecord::Migration
     add_foreign_key :virtual_machines, :compute_sites
     add_index :virtual_machines, [:compute_site_id, :id_at_site], unique: true
 
-    create_table :appliances_virtual_machines do |t|
+    # Linking table supporting the m:n relationship between appliances and virtual_machines.
+    # Also functions as an ActiveRecord in its own right.
+    create_table :deployments do |t|
       t.belongs_to :virtual_machine
       t.belongs_to :appliance
     end

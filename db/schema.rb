@@ -74,11 +74,6 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.datetime "updated_at"
   end
 
-  create_table "appliances_virtual_machines", force: true do |t|
-    t.integer "virtual_machine_id"
-    t.integer "appliance_id"
-  end
-
   create_table "compute_sites", force: true do |t|
     t.string   "site_id",                                   null: false
     t.string   "name"
@@ -92,6 +87,11 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.text     "template_filters"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "deployments", force: true do |t|
+    t.integer "virtual_machine_id"
+    t.integer "appliance_id"
   end
 
   create_table "dev_mode_property_sets", force: true do |t|

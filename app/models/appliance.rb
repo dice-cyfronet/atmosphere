@@ -26,7 +26,8 @@ class Appliance < ActiveRecord::Base
   validates_presence_of :state
 
   has_many :http_mappings, dependent: :destroy
-  has_and_belongs_to_many :virtual_machines
+  has_many :virtual_machines, through: :deployments, dependent: :destroy
+  has_many :deployments
 
   has_one :dev_mode_property_set, dependent: :destroy, autosave: true
   attr_readonly :dev_mode_property_set
@@ -35,8 +36,6 @@ class Appliance < ActiveRecord::Base
   after_destroy :remove_appliance_configuration_instance_if_needed
   after_destroy :optimize_destroyed_appliance
   after_create :optimize_saved_appliance
-
-  before_destroy :generate_proxy_conf
 
   scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(virtual_machines: {compute_site: compute_site}) }
 
@@ -68,9 +67,4 @@ class Appliance < ActiveRecord::Base
     Optimizer.instance.run(destroyed_appliance: self)
   end
 
-  def generate_proxy_conf
-    ComputeSite.with_appliance(self).each do |cs|
-      ProxyConfWorker.regeneration_required(cs)
-    end
-  end
 end

@@ -108,11 +108,12 @@ describe Appliance do
       let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
 
       context 'generates proxy conf' do
+
         before do
           expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
         end
 
-        it 'after appliance is destroyed' do
+        it 'after appliance is destroyed' do          
           appl.destroy
         end
       end

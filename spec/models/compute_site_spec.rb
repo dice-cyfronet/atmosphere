@@ -97,13 +97,13 @@ describe ComputeSite do
     let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
 
     it 'loads not readonly compute sites' do
-      ComputeSite.with_appliance(appl).each do |cs|
+      ComputeSite.with_deployment(appl.deployments.first).each do |cs|
         expect(cs.readonly?).to be_false
       end
     end
 
     it 'allows to update compute site parameters' do
-      ComputeSite.with_appliance(appl).each do |cs|
+      ComputeSite.with_deployment(appl.deployments.first).each do |cs|
         cs.update(regenerate_proxy_conf: true)
       end
 
