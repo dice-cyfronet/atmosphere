@@ -46,7 +46,7 @@ module Api
       end
 
       def endpoints
-        endpoints = Endpoint.appl_endpoints(@appliance).collect do |endpoint|
+        endpoints = Endpoint.appl_endpoints(@appliance).order(:id).collect do |endpoint|
           {
             id: endpoint.id,
             type: endpoint.endpoint_type,
