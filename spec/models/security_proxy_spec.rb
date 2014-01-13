@@ -20,7 +20,7 @@ describe SecurityProxy do
   expect_it { to have_many(:dev_mode_property_sets).dependent(:nullify) }
 
   it 'validates correct name' do
-    should allow_value('comp_lex/na-me').for(:name)
+    should allow_value('comp_lex/na-me.properties').for(:name)
     should_not allow_value('wrong\\path').for(:name)
     should_not allow_value('wrong//path').for(:name)
     should_not allow_value('/wrong/path').for(:name)

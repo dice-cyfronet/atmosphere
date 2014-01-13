@@ -2,7 +2,7 @@ module OwnedPayloable
   extend ActiveSupport::Concern
 
   def self.name_regex
-    '[\w-]+(\/{0,1}[\w-]+)+'
+    '[\w\.-]+(\/{0,1}[\w\.-]+)+'
   end
 
   included do
