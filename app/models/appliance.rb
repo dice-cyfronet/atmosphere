@@ -20,6 +20,8 @@ class Appliance < ActiveRecord::Base
   belongs_to :appliance_configuration_instance
   belongs_to :user_key
 
+  belongs_to :fund
+
   validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
 
   enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true

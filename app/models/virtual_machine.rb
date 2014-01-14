@@ -20,6 +20,7 @@ class VirtualMachine < ActiveRecord::Base
   has_many :port_mappings, dependent: :delete_all
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
+  belongs_to :virtual_machine_flavor
   has_many :appliances, through: :deployments, dependent: :destroy
   has_many :deployments, dependent: :destroy  
   validates_presence_of :name
