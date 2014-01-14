@@ -51,7 +51,7 @@ class Appliance < ActiveRecord::Base
   private
 
   def create_dev_mode_property_set
-    self.dev_mode_property_set = DevModePropertySet.create_from(appliance_type)
+    self.dev_mode_property_set = DevModePropertySet.create_from(appliance_type) unless self.dev_mode_property_set
   end
 
   def remove_appliance_configuration_instance_if_needed
