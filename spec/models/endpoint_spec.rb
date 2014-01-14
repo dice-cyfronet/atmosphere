@@ -3,9 +3,11 @@
 # Table name: endpoints
 #
 #  id                       :integer          not null, primary key
+#  name                     :string(255)      not null
 #  description              :text
 #  descriptor               :text
 #  endpoint_type            :string(255)      default("ws"), not null
+#  invocation_path          :string(255)      not null
 #  port_mapping_template_id :integer          not null
 #  created_at               :datetime
 #  updated_at               :datetime

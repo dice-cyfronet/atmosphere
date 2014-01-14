@@ -7,7 +7,7 @@
 #  description       :text
 #  shared            :boolean          default(FALSE), not null
 #  scalable          :boolean          default(FALSE), not null
-#  visible_to       :string(255)      default("owner"), not null
+#  visible_to        :string(255)      default("owner"), not null
 #  preference_cpu    :float
 #  preference_memory :integer
 #  preference_disk   :integer

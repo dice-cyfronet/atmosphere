@@ -8,6 +8,7 @@
 #  user_key_id                         :integer
 #  appliance_configuration_instance_id :integer          not null
 #  state                               :string(255)      default("new"), not null
+#  name                                :string(255)
 #  created_at                          :datetime
 #  updated_at                          :datetime
 #

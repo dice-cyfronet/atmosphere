@@ -9,7 +9,10 @@
 #  site_type             :string(255)      default("private")
 #  technology            :string(255)
 #  regenerate_proxy_conf :boolean          default(FALSE)
+#  http_proxy_url        :string(255)
+#  https_proxy_url       :string(255)
 #  config                :text
+#  template_filters      :text
 #  created_at            :datetime
 #  updated_at            :datetime
 #
