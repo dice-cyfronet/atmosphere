@@ -51,6 +51,7 @@ class PortMappingTemplate < ActiveRecord::Base
   after_save :generate_proxy_conf
   after_create :add_port_mappings_to_associated_vms
   after_update :update_port_mappings, if: :target_port_changed?
+  after_update :remove_dnat_port_mappings if :type_changed_into_http?
   after_destroy :generate_proxy_conf
 
   scope :def_order, -> { order(:service_name) }
@@ -108,5 +109,13 @@ class PortMappingTemplate < ActiveRecord::Base
 
   def strip_service_name
     self.service_name.strip! if self.service_name
+  end
+
+  def type_changed_into_http?
+    application_protocol != :none && application_protocol_was == :none
+  end
+
+  def remove_dnat_port_mappings
+    port_mappings.destroy_all
   end
 end

@@ -163,6 +163,31 @@ describe PortMappingTemplate do
         expect(subject.https?).to be_true
       end
     end
+
+    context 'when none changed into http/https' do
+      let(:appliance_type) { create(:appliance_type) }
+      let(:port_mapping) { create(:port_mapping, virtual_machine: vm) }
+      let(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none, port_mappings: [port_mapping]) }
+      let(:vm) { create(:virtual_machine) }
+      let!(:appliance) { create(:appliance, appliance_type: appliance_type, virtual_machines: [vm]) }
+
+      before do
+        pmt.application_protocol = :http
+        DnatWrangler.instance.stub(:remove_port_mapping)
+      end
+
+      it 'remove dnat redirection' do
+        expect {
+          pmt.save
+        }.to change { PortMapping.count }.by(-1)
+      end
+
+      it 'regenerate proxy configuration' do
+        expect(ProxyConfWorker).to receive(:regeneration_required).with(vm.compute_site)
+
+        pmt.save
+      end
+    end
   end
 
   context 'port mappings' do
