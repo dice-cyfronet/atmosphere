@@ -115,7 +115,7 @@ module Api
 
       def config_params
         c_params = params[:appliance][:params] || {}
-        c_params[Air.config.mi_authentication_key] = request.headers[Air.config.header_mi_authentication_key]
+        c_params[Air.config.mi_authentication_key] = request.headers[Air.config.header_mi_authentication_key] || params[Air.config.mi_authentication_key]
         c_params
       end
 
