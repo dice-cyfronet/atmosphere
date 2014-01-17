@@ -70,7 +70,7 @@ gem 'redcarpet'
 gem 'github-markup', require: 'github/markup'
 
 # cloud client lib
-gem 'fog', '~>1.18'
+gem 'fog', '~>1.19'
 gem 'unf'
 
 #delay and scheduled jobs
