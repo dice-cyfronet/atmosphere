@@ -188,6 +188,30 @@ describe PortMappingTemplate do
         pmt.save
       end
     end
+
+    context 'when http/https changed into none' do
+      let(:appliance_type) { create(:appliance_type) }
+      let(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http) }
+      let(:vm) { create(:virtual_machine, ip: '10.100.1.2') }
+      let!(:appliance) { create(:appliance, appliance_type: appliance_type, virtual_machines: [vm]) }
+
+      before do
+        pmt.application_protocol = :none
+        DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([])
+      end
+
+      it 'regenerate proxy configuration' do
+        expect(ProxyConfWorker).to receive(:regeneration_required).with(vm.compute_site)
+
+        pmt.save
+      end
+
+      it 'adds dnat port mapping' do
+        expect(DnatWrangler.instance).to receive(:add_dnat_for_vm).and_return([])
+
+        pmt.save
+      end
+    end
   end
 
   context 'port mappings' do

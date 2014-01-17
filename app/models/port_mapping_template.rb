@@ -52,6 +52,7 @@ class PortMappingTemplate < ActiveRecord::Base
   after_create :add_port_mappings_to_associated_vms
   after_update :update_port_mappings, if: :target_port_changed?
   after_update :remove_dnat_port_mappings if :type_changed_into_http?
+  after_update :add_port_mappings_to_associated_vms if :type_changed_into_dnat?
   after_destroy :generate_proxy_conf
 
   scope :def_order, -> { order(:service_name) }
@@ -65,7 +66,7 @@ class PortMappingTemplate < ActiveRecord::Base
   end
 
   def generate_proxy_conf
-    if http? || https?
+    if regenerate_proxy_conf?
       affected_sites = dev_mode_property_set.blank? ? ComputeSite.with_appliance_type(appliance_type) : ComputeSite.with_dev_property_set(dev_mode_property_set)
 
       affected_sites.each do |site|
@@ -112,7 +113,15 @@ class PortMappingTemplate < ActiveRecord::Base
   end
 
   def type_changed_into_http?
-    application_protocol != :none && application_protocol_was == :none
+    application_protocol.to_sym != :none && application_protocol_was.to_sym == :none
+  end
+
+  def type_changed_into_dnat?
+    application_protocol.to_sym == :none && application_protocol_was.to_sym != :none
+  end
+
+  def regenerate_proxy_conf?
+    http? || https? || type_changed_into_dnat?
   end
 
   def remove_dnat_port_mappings
