@@ -65,7 +65,7 @@ Parameters:
 
 Special dynamic parameters which are automaticaly converted into dynamic values:
 
-+ `#{mi_ticket} - While creating initial configuration instance user ticket is injected here
++ `#{mi_ticket}` - While creating initial configuration instance user ticket is injected here
 
 ## Update appliance configuration template
 
