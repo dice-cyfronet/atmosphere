@@ -6,7 +6,7 @@ class VmUpdater
 
   def update
     vm.source_template = source_template
-    vm.name = server.name
+    vm.name = server.name || '[unnamed]'
     vm.state = map_state(server.state.downcase.to_sym)
     update_ips if update_ips?
 

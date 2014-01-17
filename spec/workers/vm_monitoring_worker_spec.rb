@@ -116,5 +116,20 @@ describe VmMonitoringWorker do
         subject.perform(cyfronet_folsom.id)
       end
     end
+
+    context 'when name is nil' do
+      before do
+        data = cyfronet_folsom.cloud_client.data
+        servers = data[:servers]
+        servers[0] = vm('1', nil, :active, '10.100.1.1')
+      end
+
+      it 'sets default VM name' do
+        subject.perform(cyfronet_folsom.id)
+        vm = VirtualMachine.find_by(id_at_site: '1')
+
+        expect(vm.name).to eq "[unnamed]"
+      end
+    end
   end
 end
