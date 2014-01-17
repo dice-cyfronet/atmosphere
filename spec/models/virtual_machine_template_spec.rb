@@ -121,4 +121,47 @@ describe VirtualMachineTemplate do
       end
     end
   end
+
+  describe '#destroy' do
+    let(:images) { double(:images) }
+    let(:cloud_client) { double(:cloud_client, images: images) }
+
+    before do
+      ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
+    end
+
+    context 'when template is managed by atmosphere' do
+      let(:tmp) { build(:virtual_machine_template, managed_by_atmosphere: true) }
+
+      it 'removes template from compute site' do
+        expect(images).to receive(:destroy).with(tmp.id_at_site)
+        tmp.destroy
+      end
+    end
+
+    context 'when template is not managed by atmosphere' do
+      let(:external_tmp) { build(:virtual_machine_template) }
+
+      it 'removes template from compute site' do
+        expect(images).to_not receive(:destroy)
+        external_tmp.destroy
+      end
+    end
+  end
+
+  describe '::create_from_vm' do
+    let(:cloud_client) { double(:cloud_client) }
+    let(:vm) { build(:virtual_machine, id_at_site: 'id') }
+
+    before do
+      allow(cloud_client).to receive(:save_template)
+      ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
+    end
+
+    it 'sets managed_by_atmosphere to true' do
+      tmpl = VirtualMachineTemplate.create_from_vm(vm)
+
+      expect(tmpl.managed_by_atmosphere).to be_true
+    end
+  end
 end

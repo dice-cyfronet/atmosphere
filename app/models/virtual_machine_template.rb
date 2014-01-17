@@ -2,15 +2,16 @@
 #
 # Table name: virtual_machine_templates
 #
-#  id                 :integer          not null, primary key
-#  id_at_site         :string(255)      not null
-#  name               :string(255)      not null
-#  state              :string(255)      not null
-#  compute_site_id    :integer          not null
-#  virtual_machine_id :integer
-#  appliance_type_id  :integer
-#  created_at         :datetime
-#  updated_at         :datetime
+#  id                    :integer          not null, primary key
+#  id_at_site            :string(255)      not null
+#  name                  :string(255)      not null
+#  state                 :string(255)      not null
+#  managed_by_atmosphere :boolean          default(FALSE), not null
+#  compute_site_id       :integer          not null
+#  virtual_machine_id    :integer
+#  appliance_type_id     :integer
+#  created_at            :datetime
+#  updated_at            :datetime
 #
 
 class VirtualMachineTemplate < ActiveRecord::Base
@@ -24,15 +25,15 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
   validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
-  before_update :release_source_vm, if: :state_changed? 
+  before_update :release_source_vm, if: :state_changed?
   after_update :destroy_source_vm, if: :state_changed?
 
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
   end
 
-  def VirtualMachineTemplate.create_from_vm(virtual_machine, name=nil)
-    vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: name|| virtual_machine.name)
+  def self.create_from_vm(virtual_machine, name=nil)
+    vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: name|| virtual_machine.name, managed_by_atmosphere: true)
     logger.info "Saving template #{vm_template}"
     cs = vm_template.source_vm.compute_site
     cloud_client = cs.cloud_client
@@ -46,7 +47,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   end
 
   def destroy(delete_in_cloud = true)
-    perform_delete_in_cloud if delete_in_cloud
+    perform_delete_in_cloud if delete_in_cloud && managed_by_atmosphere
     super()
   end
 

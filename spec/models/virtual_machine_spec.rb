@@ -310,4 +310,19 @@ describe VirtualMachine do
       expect(external_vm.managed_by_atmosphere).to be_false
     end
   end
+
+  context '::manageable' do
+    let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true)  }
+
+    before do
+      create(:virtual_machine)
+    end
+
+    it 'returns only VMs manageable by atmosphere' do
+      vms = VirtualMachine.manageable
+
+      expect(vms.count).to eq 1
+      expect(vms[0]).to eq vm
+    end
+  end
 end
