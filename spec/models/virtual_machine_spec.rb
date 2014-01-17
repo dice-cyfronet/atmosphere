@@ -7,6 +7,7 @@
 #  name                        :string(255)      not null
 #  state                       :string(255)      not null
 #  ip                          :string(255)
+#  managed_by_atmosphere       :boolean          default(FALSE), not null
 #  compute_site_id             :integer          not null
 #  created_at                  :datetime
 #  updated_at                  :datetime
@@ -23,7 +24,8 @@ describe VirtualMachine do
   let(:public_ip) { '149.156.10.145' }
   let(:public_port) { 23457 }
   let(:cs) { create(:compute_site) }
-  let(:vm) { create(:virtual_machine, compute_site: cs) }
+  let(:vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: true) }
+  let(:external_vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: false) }
 
   expect_it { to have_many(:port_mappings).dependent(:delete_all) }
   expect_it { to ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize)) }
@@ -48,8 +50,11 @@ describe VirtualMachine do
       vm.destroy(true)
     end
 
-
-
+    it 'is not performed when VM not started by atmosphere' do
+      expect(servers_mock).to_not receive(:destroy)
+      external_vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      external_vm.destroy(true)
+    end
   end
 
   describe 'proxy conf generation' do
@@ -288,5 +293,21 @@ describe VirtualMachine do
       create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
     end
 
+  end
+
+  context 'creating new virtual machine' do
+    let(:appl) { create(:appliance) }
+    let(:tmpl) { create(:virtual_machine_template) }
+    let(:vm) { create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl) }
+    let(:external_vm) { create(:virtual_machine, appliances: [appl], id_at_site: 'vm_id', name: VM_NAME, source_template: tmpl) }
+
+
+    it 'sets managed_by_atmosphere to true for spawned VM' do
+      expect(vm.managed_by_atmosphere).to be_true
+    end
+
+    it 'sets managed_by_atmosphere to false for external VM' do
+      expect(external_vm.managed_by_atmosphere).to be_false
+    end
   end
 end

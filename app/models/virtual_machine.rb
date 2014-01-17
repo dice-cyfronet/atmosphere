@@ -7,6 +7,7 @@
 #  name                        :string(255)      not null
 #  state                       :string(255)      not null
 #  ip                          :string(255)
+#  managed_by_atmosphere       :boolean          default(FALSE), not null
 #  compute_site_id             :integer          not null
 #  created_at                  :datetime
 #  updated_at                  :datetime
@@ -21,7 +22,7 @@ class VirtualMachine < ActiveRecord::Base
   belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
   belongs_to :compute_site
   has_many :appliances, through: :deployments, dependent: :destroy
-  has_many :deployments, dependent: :destroy  
+  has_many :deployments, dependent: :destroy
   validates_presence_of :name
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize']
@@ -51,7 +52,7 @@ class VirtualMachine < ActiveRecord::Base
 
   def destroy(delete_in_cloud = true)
     saved_templates.each {|t| return if t.state == 'saving'}
-    perform_delete_in_cloud if delete_in_cloud
+    perform_delete_in_cloud if delete_in_cloud && managed_by_atmosphere
     super()
   end
 
@@ -104,6 +105,7 @@ class VirtualMachine < ActiveRecord::Base
     self[:id_at_site] = server.id
     self[:compute_site_id] = vm_tmpl.compute_site_id
     self[:state] = :build
+    self[:managed_by_atmosphere] = true
   end
 
   def perform_delete_in_cloud

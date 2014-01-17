@@ -2,15 +2,16 @@
 #
 # Table name: virtual_machine_templates
 #
-#  id                 :integer          not null, primary key
-#  id_at_site         :string(255)      not null
-#  name               :string(255)      not null
-#  state              :string(255)      not null
-#  compute_site_id    :integer          not null
-#  virtual_machine_id :integer
-#  appliance_type_id  :integer
-#  created_at         :datetime
-#  updated_at         :datetime
+#  id                    :integer          not null, primary key
+#  id_at_site            :string(255)      not null
+#  name                  :string(255)      not null
+#  state                 :string(255)      not null
+#  managed_by_atmosphere :boolean          default(FALSE), not null
+#  compute_site_id       :integer          not null
+#  virtual_machine_id    :integer
+#  appliance_type_id     :integer
+#  created_at            :datetime
+#  updated_at            :datetime
 #
 
 require 'spec_helper'
@@ -24,7 +25,7 @@ describe VirtualMachineTemplate do
   expect_it { to ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
 
   context 'state is updated' do
-    let!(:vm) { create(:virtual_machine) }
+    let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
     subject { create(:virtual_machine_template, source_vm: vm, state: :saving) }
     let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
@@ -119,7 +120,5 @@ describe VirtualMachineTemplate do
         expect { subject.update_attribute(:state, :saving) }.to_not change { VirtualMachine.count }
       end
     end
-
   end
-
 end
