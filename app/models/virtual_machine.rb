@@ -34,6 +34,8 @@ class VirtualMachine < ActiveRecord::Base
   after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
 
+  scope :manageable, -> { where(managed_by_atmosphere: true) }
+
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
   end

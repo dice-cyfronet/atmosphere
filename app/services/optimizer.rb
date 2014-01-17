@@ -46,7 +46,7 @@ class Optimizer
   def terminate_unused_vms
     #logger.info 'Terminating unused vms'
     # TODO ask PN for better query
-    VirtualMachine.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)').each {|vm| vm.destroy }
+    VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)').each {|vm| vm.destroy }
   end
 
 end

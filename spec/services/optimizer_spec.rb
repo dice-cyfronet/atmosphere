@@ -123,8 +123,8 @@ describe Optimizer do
   end
 
   context 'virtual machine is applianceless' do
-
-    let(:vm) { create(:virtual_machine) }
+    let!(:external_vm) { create(:virtual_machine) }
+    let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
 
     before do
       servers_double = double
@@ -132,9 +132,11 @@ describe Optimizer do
       allow(servers_double).to receive(:destroy)
     end
 
-    it 'terminates unused vm' do
+    it 'terminates unused manageable vm' do
       subject.run(destroyed_appliance: true)
-      expect(VirtualMachine.all).to be_blank
+
+      expect(VirtualMachine.count).to eq 1
+      expect(VirtualMachine.first).to eq external_vm
     end
   end
 
