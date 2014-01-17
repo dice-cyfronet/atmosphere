@@ -121,7 +121,7 @@ describe VmMonitoringWorker do
       before do
         data = cyfronet_folsom.cloud_client.data
         servers = data[:servers]
-        servers[0] = vm('1', nil, :active, '10.100.1.1')
+        servers['1'] = vm('1', nil, :active, '10.100.1.1')
       end
 
       it 'sets default VM name' do
