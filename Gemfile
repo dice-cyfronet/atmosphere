@@ -34,7 +34,7 @@ gem 'turbolinks'
 gem 'settingslogic'
 
 # Rendering forms
-gem 'simple_form', '~>3.0.0'
+gem 'simple_form', '~>3.0'
 
 # User avatar
 gem 'gravtastic'
