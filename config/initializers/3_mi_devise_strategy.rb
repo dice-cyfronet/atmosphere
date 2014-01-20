@@ -37,7 +37,8 @@ module Devise
       def adaptor
         @adaptor ||= ::OmniAuth::Vph::Adaptor.new({
             host: Air.config.vph.host,
-            roles_map: Air.config.vph.roles_map
+            roles_map: Air.config.vph.roles_map,
+            ssl_verify: Air.config.vph.ssl_verify
           })
       end
 

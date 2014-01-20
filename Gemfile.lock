@@ -24,7 +24,7 @@ GIT
 
 GIT
   remote: http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git
-  revision: ad223882124cc2d29f2c68f4f7287eb1b6ecaefe
+  revision: 7d7fbacb670b0fa7967cd7551429e8c49422bed1
   branch: master
   specs:
     omniauth-vph (0.1.0)

@@ -243,7 +243,8 @@ Devise.setup do |config|
   if Air.config.vph.enabled
     config.omniauth :vph,
       host: Air.config.vph.host,
-      roles_map: Air.config.vph.roles_map
+      roles_map: Air.config.vph.roles_map,
+      ssl_verify: Air.config.vph.ssl_verify
 
     Warden::Strategies.add(:mi_token_authenticatable, Devise::Strategies::MiTokenAuthenticatable)
 
