@@ -2,8 +2,9 @@
 defaults: &defaults
   vph:
     enabled: true
-    host: 'http://jump.vph-share.eu'
+    host: 'https://portal.vph-share.eu'
     roles_map: {cloudadmin: 'admin', developer: 'developer'}
+    ssl_verify: true
   dnat:
     url: 'http://10.10.10.10:8888'
     user: 'user'
