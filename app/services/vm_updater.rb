@@ -40,7 +40,7 @@ class VmUpdater
   end
 
   def update_ips
-    vm.ip = server.addresses['private'].first['addr'] if server.addresses and !server.addresses.blank?
+    vm.ip = server.public_ip_address || (server.addresses['private'].first['addr'] if server.addresses and !server.addresses.blank?)
   end
 
   def error(message)

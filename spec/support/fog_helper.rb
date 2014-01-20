@@ -20,4 +20,12 @@ module FogHelpers
       "fault" => nil
     }
   end
+
+  def amazon_vm(id, status, addr)
+    {
+      "instanceId" => id,
+      "ipAddress" => addr,
+      "instanceState" => { "name" => status }
+    }
+  end
 end
