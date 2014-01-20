@@ -58,8 +58,8 @@ describe SiteProxyConf do
         end
 
         it 'generates proxy conf for all site appliances' do
-          expect(subject.generate).to eq [
-            'appl1', 'proxy conf', 'appl2'
+          expect(subject.generate.sort).to eq [
+            'appl1', 'appl2', 'proxy conf'
           ]
         end
       end
