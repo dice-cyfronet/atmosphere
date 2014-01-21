@@ -18,6 +18,10 @@ describe Api::V1::PortMappingTemplatesController do
   let!(:appl1) { create(:appliance, appliance_set: as) }
   let!(:pmt3) { create(:dev_port_mapping_template, dev_mode_property_set: appl1.dev_mode_property_set, appliance_type: nil) }
 
+  let(:at3) { create(:appliance_type, author: user, visible_to: 'all') }
+  let!(:appl2) { create(:appliance, appliance_set: as, appliance_type: at3) }
+  let!(:pmt4) { create(:port_mapping_template, appliance_type: at3) }
+
 
   describe 'GET /port_mapping_templates' do
     context 'when unauthenticated' do
@@ -340,6 +344,15 @@ describe Api::V1::PortMappingTemplatesController do
           delete api("/port_mapping_templates/#{pmt1.id}", user)
         }.to change { PortMappingTemplate.count }.by(-1)
       end
+
+      it 'returns 422 to prevent deletion of port mapping template for used appliance type' do
+        expect {
+          delete api("/port_mapping_templates/#{pmt4.id}", user)
+          expect(response.status).to eq 422
+          expect(response.body).to include 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
+        }.to change { PortMappingTemplate.count }.by(0)
+      end
+
     end
   end
 
