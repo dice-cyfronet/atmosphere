@@ -27,6 +27,7 @@ class PortMappingTemplate < ActiveRecord::Base
 
   before_validation :check_only_one_belonging
   before_destroy :cant_change_used_appliance_type
+  before_create :cant_change_used_appliance_type
 
   validates_presence_of :service_name, :target_port, :application_protocol, :transport_protocol
 

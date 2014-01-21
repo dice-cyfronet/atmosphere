@@ -19,7 +19,7 @@ describe Api::V1::PortMappingTemplatesController do
   let!(:pmt3) { create(:dev_port_mapping_template, dev_mode_property_set: appl1.dev_mode_property_set, appliance_type: nil) }
 
   let(:at3) { create(:appliance_type, author: user, visible_to: 'all') }
-  let!(:appl2) { create(:appliance, appliance_set: as, appliance_type: at3) }
+  let(:appl2) { create(:appliance, appliance_set: as, appliance_type: at3) }
   let!(:pmt4) { create(:port_mapping_template, appliance_type: at3) }
 
 
@@ -157,6 +157,18 @@ describe Api::V1::PortMappingTemplatesController do
       }
     end
 
+    let(:pmt_for_used_at_request) do
+      {
+        port_mapping_template: {
+          transport_protocol: 'tcp',
+          application_protocol: 'http',
+          service_name: 'rdesktop',
+          target_port: 3389,
+          appliance_type_id: at3.id
+        }
+      }
+    end
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         post api("/port_mapping_templates")
@@ -222,6 +234,15 @@ describe Api::V1::PortMappingTemplatesController do
       it 'returns 422 when transport and application protocols are wrong' do
         post api("/port_mapping_templates", user), wrong_port_mapping_template_request
         expect(response.status).to eq 422
+      end
+
+      it 'returns 422 to prevent creation of port mapping template for used appliance type' do
+        appl2 # Perhaps you wonder, dear Sir, what that line in supposed to do? Scroll to the bottom for more info...
+        expect {
+          expect {
+            post api("/port_mapping_templates", user), pmt_for_used_at_request
+          }.to raise_error ActiveRecord::RecordNotSaved
+        }.to change { PortMappingTemplate.count }.by(0)
       end
     end
 
@@ -346,13 +367,13 @@ describe Api::V1::PortMappingTemplatesController do
       end
 
       it 'returns 422 to prevent deletion of port mapping template for used appliance type' do
+        appl2 # If you wonder what this is, well, welcome to rspec. This is for you, it's called... "Run Like Hell"
         expect {
           delete api("/port_mapping_templates/#{pmt4.id}", user)
           expect(response.status).to eq 422
           expect(response.body).to include 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
         }.to change { PortMappingTemplate.count }.by(0)
       end
-
     end
   end
 
