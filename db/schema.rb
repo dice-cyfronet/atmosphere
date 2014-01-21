@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130826172414) do
+ActiveRecord::Schema.define(version: 20140114111114) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,8 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "fund_id"
+    t.datetime "last_billing"
   end
 
   create_table "compute_sites", force: true do |t|
@@ -117,6 +119,14 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.integer  "port_mapping_template_id",                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "funds", force: true do |t|
+    t.string  "name",               default: "unnamed fund", null: false
+    t.integer "balance",            default: 0,              null: false
+    t.string  "currency_label",     default: "EUR",          null: false
+    t.integer "overdraft_limit",    default: 0,              null: false
+    t.string  "termination_policy", default: "suspend",      null: false
   end
 
   create_table "http_mappings", force: true do |t|
@@ -185,6 +195,11 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.integer "security_proxy_id"
   end
 
+  create_table "user_funds", force: true do |t|
+    t.integer "user_id"
+    t.integer "fund_id"
+  end
+
   create_table "user_keys", force: true do |t|
     t.string   "name",        null: false
     t.string   "fingerprint", null: false
@@ -219,6 +234,15 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
 
+  create_table "virtual_machine_flavors", force: true do |t|
+    t.string  "flavor_name",     null: false
+    t.float   "cpu"
+    t.float   "memory"
+    t.float   "hdd"
+    t.integer "hourly_cost",     null: false
+    t.integer "compute_site_id"
+  end
+
   create_table "virtual_machine_templates", force: true do |t|
     t.string   "id_at_site",         null: false
     t.string   "name",               null: false
@@ -241,6 +265,7 @@ ActiveRecord::Schema.define(version: 20130826172414) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
+    t.integer  "virtual_machine_flavor_id"
   end
 
   add_index "virtual_machines", ["compute_site_id", "id_at_site"], name: "index_virtual_machines_on_compute_site_id_and_id_at_site", unique: true, using: :btree
@@ -278,6 +303,8 @@ ActiveRecord::Schema.define(version: 20130826172414) do
   add_foreign_key "port_mappings", "virtual_machines", name: "port_mappings_virtual_machine_id_fk"
 
   add_foreign_key "user_keys", "users", name: "user_keys_user_id_fk"
+
+  add_foreign_key "virtual_machine_flavors", "compute_sites", name: "virtual_machine_flavors_compute_site_id_fk"
 
   add_foreign_key "virtual_machine_templates", "appliance_types", name: "virtual_machine_templates_appliance_type_id_fk"
   add_foreign_key "virtual_machine_templates", "compute_sites", name: "virtual_machine_templates_compute_site_id_fk"

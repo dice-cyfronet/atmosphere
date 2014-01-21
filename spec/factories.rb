@@ -11,6 +11,9 @@ FactoryGirl.define do
     password_confirmation { password }
     authentication_token { login }
 
+    # Create 2 funds for this user by default
+    funds { FactoryGirl.create_list(:fund, 2) }
+
     trait :developer do
       roles [:developer]
     end
@@ -80,6 +83,11 @@ FactoryGirl.define do
     appliance_type
     name { rand_str }
 
+    # Create a rich fund by default so there's no risk of interfering with non-billing tests.
+    fund { FactoryGirl.create(:fund, :balance => 1000000) }
+    # Use arbitrary last billing date
+    last_billing Date.parse('2014-01-14 12:00')
+
     trait :dev_mode do
       appliance_set { create(:dev_appliance_set) }
     end
@@ -114,6 +122,32 @@ FactoryGirl.define do
     site_type 'private'
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
+
+    # Create 4 VM flavors for this compute_site by default
+    virtual_machine_flavors { FactoryGirl.create_list(:virtual_machine_flavor, 4) }
+  end
+
+  sequence :vm_flavor_name do |n|
+    "Flavor #{n}"
+  end
+
+  factory :virtual_machine_flavor do
+    flavor_name { FactoryGirl.generate(:vm_flavor_name) }
+    cpu { rand(max=16) }
+    memory { rand(max=16384) }
+    hdd { rand(max=1000) }
+    hourly_cost { rand(max=100) }
+  end
+
+  sequence :fund_name do |n|
+    "Fund #{n}"
+  end
+
+  factory :fund do
+    name { FactoryGirl.generate(:fund_name) }
+    balance { rand(max=1000000) }
+    overdraft_limit { 0-rand(max=10000) }
+    termination_policy { "suspend" }
   end
 
   factory :user_key do |f|
@@ -184,6 +218,9 @@ FactoryGirl.define do
     state :active
     source_template
     compute_site
+
+    # By default, assign some random VM flavor which belongs to this VM's compute_site
+    virtual_machine_flavor { self.compute_site.virtual_machine_flavors.first }
   end
 
   factory :http_mapping do |f|
