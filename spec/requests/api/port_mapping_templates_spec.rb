@@ -236,7 +236,7 @@ describe Api::V1::PortMappingTemplatesController do
         expect(response.status).to eq 422
       end
 
-      it 'returns 422 to prevent creation of port mapping template for used appliance type' do
+      it 'throws and exception to prevent creation of port mapping template for used appliance type' do
         appl2 # Perhaps you wonder, dear Sir, what that line in supposed to do? Scroll to the bottom for more info...
         expect {
           expect {
@@ -317,6 +317,19 @@ describe Api::V1::PortMappingTemplatesController do
       it 'return 404 Not Found when port mapping template is not found' do
         put api("port_mapping_templates/wrong_id", user), update_json
         expect(response.status).to eq 404
+      end
+
+      it 'returns 422 to prevent creation of port mapping template for used appliance type' do
+        original_pmt = PortMappingTemplate.find(pmt4.id)
+        appl2 # Are you here to find out what is that mysterious appl2 call? Not yet, wait for it, wait for it, scroll a bit more...
+        expect {
+          put api("/port_mapping_templates/#{pmt4.id}", user), update_json
+        }.to raise_error ActiveRecord::RecordNotSaved
+        new_pmt = PortMappingTemplate.find(pmt4.id)
+        expect(original_pmt['transport_protocol']).to eq new_pmt['transport_protocol']
+        expect(original_pmt['application_protocol']).to eq new_pmt['application_protocol']
+        expect(original_pmt['service_name']).to eq new_pmt['service_name']
+        expect(original_pmt['target_port']).to eq new_pmt['target_port']
       end
     end
 
