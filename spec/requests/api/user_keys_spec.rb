@@ -120,6 +120,13 @@ describe Api::V1::UserKeysController do
         }
       end
 
+      let(:incorrect_request) do
+        {
+          name: 'aaa',
+          public_key: fixture_file_upload('spec/testing_user_public.key', 'plain/txt')
+        }
+      end
+
       it 'returns 201 Created on success' do
         post api("/user_keys", user), new_key_request
         expect(response.status).to eq 201
@@ -174,6 +181,12 @@ describe Api::V1::UserKeysController do
         post api("/user_keys", user), invalid_user_key_req
         expect(response.status).to eq 422
         expect(response.body).to eq '{"public_key":["is invalid"]}'
+      end
+
+      it 'returns 402 Unprocessable Entity status if the request is incorrect' do
+        post api("/user_keys", user), incorrect_request
+        expect(response.status).to eq 422
+        expect(response.body).to eq '{"name":["can\'t be blank"],"public_key":["can\'t be blank"]}'
       end
 
     end
