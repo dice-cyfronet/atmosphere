@@ -43,9 +43,11 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :security_proxies
   has_and_belongs_to_many :security_policies
 
+  has_many :funds, through: :user_funds
+  has_many :user_funds, dependent: :destroy
+
   include Gravtastic
   gravtastic default: 'mm'
-
 
   #roles
   include RoleModel
