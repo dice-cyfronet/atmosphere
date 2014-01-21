@@ -186,7 +186,8 @@ describe Api::V1::UserKeysController do
       it 'returns 402 Unprocessable Entity status if the request is incorrect' do
         post api("/user_keys", user), incorrect_request
         expect(response.status).to eq 422
-        expect(response.body).to eq '{"name":["can\'t be blank"],"public_key":["can\'t be blank"]}'
+        expect(response.body).to include '"name":["can\'t be blank"]'
+        expect(response.body).to include '"public_key":["can\'t be blank"]'
       end
 
     end
