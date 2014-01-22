@@ -38,6 +38,7 @@ class ComputeSite < ActiveRecord::Base
   scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}).readonly(false) }
 
   after_update :register_cloud_client, if: :config_changed?
+  before_save :force_proxy_conf_regeneration, if: :proxy_regeneration_needed?
 
   def to_s
     name
@@ -55,4 +56,11 @@ class ComputeSite < ActiveRecord::Base
     client
   end
 
+  def proxy_regeneration_needed?
+    http_proxy_url_changed? || https_proxy_url_changed? || site_id_changed?
+  end
+
+  def force_proxy_conf_regeneration
+    self.regenerate_proxy_conf = true
+  end
 end
