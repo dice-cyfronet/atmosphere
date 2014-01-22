@@ -152,35 +152,44 @@ describe Optimizer do
 
   end
 
-  context 'selects appropriate flavour' do
+  context 'flavor' do
 
-    before do
-      #VirtualMachine.stub(:create)
+    it 'includes flavor in params of created vm' do
+      VirtualMachine.stub(:create)
+      appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      expect(VirtualMachine).to have_received(:create).with({name: shareable_appl_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appl.id], state: :build, virtual_machine_flavor: subject.send(:select_flavor, tmpl_of_shareable_at)})
     end
 
-    context 'appliance type preferences not specified' do
+    context 'is selected optimaly' do
 
-      it 'selects instance with at least 1.5GB RAM for public compute site' do
+      context 'appliance type preferences not specified' do
+
+        it 'selects instance with at least 1.5GB RAM for public compute site' do
+          amazon = build(:amazon_with_flavors)
+          appl_type = build(:appliance_type)
+          tmpl = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
+          flavor = subject.send(:select_flavor, tmpl)
+          expect(flavor.memory).to be >= 1536
+        end
+
+        it 'selects instance with 512MB RAM for private compute site' do
+          openstack = build(:openstack_with_flavors)
+          appl_type = build(:appliance_type)
+          tmpl = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
+          flavor = subject.send(:select_flavor, tmpl)
+          expect(flavor.memory).to be >= 512
+        end
 
       end
 
-      it 'selects instance with 512MB RAM for private compute site' do
+      context 'appliance type preferences specified' do
+
+        it 'selects cheapest flavour that satisfies requirements' do
+          
+        end
 
       end
 
     end
-
-    context 'appliance type preferences specified' do
-
-      it 'selects smallest flavour that satisfies requirements' do
-        expect(VirtualMachine.count).to eq 0
-        appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
-        expect(VirtualMachine.count).to eq 1
-        created_vm = VirtualMachine.first
-        expect(created_vm.virtual_machine_flavor.name).to eq '1'
-      end
-
-    end
-
   end
 end

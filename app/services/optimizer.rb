@@ -1,5 +1,8 @@
+require 'utils'
+
 class Optimizer
   include Singleton
+  include Utils
 
 
   # Runs optimization of resource allocation (i.e. virtual machines in cloud).
@@ -30,7 +33,7 @@ class Optimizer
           appliance.save
           Rails.logger.warn "No template for instantiating a vm for appliance #{appliance.id} was found"
         else
-          flavor = select_flavor_for_appl_type(appliance.appliance_type, tmpl)
+          flavor = select_flavor(tmpl)
           VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
           appliance.state = :satisfied
           appliance.save
@@ -50,8 +53,12 @@ class Optimizer
     VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)').each {|vm| vm.destroy }
   end
 
-  def select_flavor_for_appl_type(appl_type, tmpl)
-    tmpl.compute_site.virtual_machine_flavors.first
+  def select_flavor(tmpl)
+    required_mem = tmpl.appliance_type.preference_memory || (tmpl.compute_site.public? ? 1536 : 512)
+    required_cores = tmpl.appliance_type.preference_cpu || 1
+    required_disk = tmpl.appliance_type.preference_disk || 0
+    (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| f.memory >= required_mem and f.cpu >= required_cores and f.hdd >= required_disk}) {|f| f.hourly_cost}).first
   end
+
 
 end
