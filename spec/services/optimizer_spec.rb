@@ -9,6 +9,8 @@ describe Optimizer do
   let!(:wf) { create(:workflow_appliance_set) }
   let!(:wf2) { create(:workflow_appliance_set) }
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
+  let!(:openstack) { create(:openstack_with_flavors) }
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: openstack)}
 
   subject { Optimizer.instance }
 
@@ -17,8 +19,6 @@ describe Optimizer do
   end
 
   context 'new appliance created' do
-
-    let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type)}
 
     context 'shareable appliance type' do
 
@@ -143,12 +143,44 @@ describe Optimizer do
   context 'no template is available' do
 
     it 'sets appliance to unsatisfied state' do
-      appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl = Appliance.create(appliance_set: wf, appliance_type: create(:appliance_type), appliance_configuration_instance: create(:appliance_configuration_instance))
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
 
     it 'only saving tmpl exists'
+
+  end
+
+  context 'selects appropriate flavour' do
+
+    before do
+      #VirtualMachine.stub(:create)
+    end
+
+    context 'appliance type preferences not specified' do
+
+      it 'selects instance with at least 1.5GB RAM for public compute site' do
+
+      end
+
+      it 'selects instance with 512MB RAM for private compute site' do
+
+      end
+
+    end
+
+    context 'appliance type preferences specified' do
+
+      it 'selects smallest flavour that satisfies requirements' do
+        expect(VirtualMachine.count).to eq 0
+        appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+        expect(VirtualMachine.count).to eq 1
+        created_vm = VirtualMachine.first
+        expect(created_vm.virtual_machine_flavor.name).to eq '1'
+      end
+
+    end
 
   end
 end

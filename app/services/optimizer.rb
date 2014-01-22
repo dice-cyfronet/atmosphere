@@ -30,7 +30,8 @@ class Optimizer
           appliance.save
           Rails.logger.warn "No template for instantiating a vm for appliance #{appliance.id} was found"
         else
-          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build)
+          flavor = select_flavor_for_appl_type(appliance.appliance_type, tmpl)
+          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
           appliance.state = :satisfied
           appliance.save
         end
@@ -47,6 +48,10 @@ class Optimizer
     #logger.info 'Terminating unused vms'
     # TODO ask PN for better query
     VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)').each {|vm| vm.destroy }
+  end
+
+  def select_flavor_for_appl_type(appl_type, tmpl)
+    tmpl.compute_site.virtual_machine_flavors.first
   end
 
 end
