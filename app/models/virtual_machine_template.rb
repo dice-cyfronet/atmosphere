@@ -27,6 +27,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
   before_update :release_source_vm, if: :state_changed?
   after_update :destroy_source_vm, if: :state_changed?
+  before_destroy :cant_destroy_non_managed_vmt
 
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
@@ -86,4 +87,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
     logger.info "Destroyed template #{uuid}"
   end
 
+  def cant_destroy_non_managed_vmt
+    errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+  end
 end

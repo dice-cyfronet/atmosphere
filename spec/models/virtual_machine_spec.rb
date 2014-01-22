@@ -50,10 +50,13 @@ describe VirtualMachine do
       vm.destroy(true)
     end
 
-    it 'is not performed when VM not started by atmosphere' do
-      expect(servers_mock).to_not receive(:destroy)
+    it 'does not allow to destroy not managed virtual machine' do
       external_vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      expect(servers_mock).to_not receive(:destroy)
+
       external_vm.destroy(true)
+
+      expect(external_vm.errors).not_to be_empty
     end
   end
 

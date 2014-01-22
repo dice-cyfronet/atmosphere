@@ -34,6 +34,7 @@ class VirtualMachine < ActiveRecord::Base
   after_destroy :delete_dnat, if: :ip?
   after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
+  before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
 
@@ -120,4 +121,7 @@ class VirtualMachine < ActiveRecord::Base
     ProxyConfWorker.regeneration_required(compute_site)
   end
 
+  def cant_destroy_non_managed_vm
+    errors.add :base, 'Virtual Machine is not managed by atmosphere' unless managed_by_atmosphere
+  end
 end
