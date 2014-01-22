@@ -144,7 +144,10 @@ describe VirtualMachineTemplate do
 
       it 'removes template from compute site' do
         expect(images).to_not receive(:destroy)
+
         external_tmp.destroy
+
+        expect(external_tmp.errors).not_to be_empty
       end
     end
   end
