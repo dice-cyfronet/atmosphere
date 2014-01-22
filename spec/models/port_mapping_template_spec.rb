@@ -120,11 +120,6 @@ describe PortMappingTemplate do
     it 'is valid' do
       expect(pmt).to be_valid
     end
-
-    it 'is not destroyable' do
-      pmt.destroy
-      expect(pmt.errors).not_to be_empty
-    end
   end
 
   context 'port mapping type' do

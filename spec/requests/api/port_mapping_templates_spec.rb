@@ -235,15 +235,6 @@ describe Api::V1::PortMappingTemplatesController do
         post api("/port_mapping_templates", user), wrong_port_mapping_template_request
         expect(response.status).to eq 422
       end
-
-      it 'throws and exception to prevent creation of port mapping template for used appliance type' do
-        appl2 # Perhaps you wonder, dear Sir, what that line in supposed to do? Scroll to the bottom for more info...
-        expect {
-          expect {
-            post api("/port_mapping_templates", user), pmt_for_used_at_request
-          }.to raise_error ActiveRecord::RecordNotSaved
-        }.to change { PortMappingTemplate.count }.by(0)
-      end
     end
 
     context 'when authenticated as admin' do
@@ -318,19 +309,6 @@ describe Api::V1::PortMappingTemplatesController do
         put api("port_mapping_templates/wrong_id", user), update_json
         expect(response.status).to eq 404
       end
-
-      it 'returns 422 to prevent creation of port mapping template for used appliance type' do
-        original_pmt = PortMappingTemplate.find(pmt4.id)
-        appl2 # Are you here to find out what is that mysterious appl2 call? Not yet, wait for it, wait for it, scroll a bit more...
-        expect {
-          put api("/port_mapping_templates/#{pmt4.id}", user), update_json
-        }.to raise_error ActiveRecord::RecordNotSaved
-        new_pmt = PortMappingTemplate.find(pmt4.id)
-        expect(original_pmt['transport_protocol']).to eq new_pmt['transport_protocol']
-        expect(original_pmt['application_protocol']).to eq new_pmt['application_protocol']
-        expect(original_pmt['service_name']).to eq new_pmt['service_name']
-        expect(original_pmt['target_port']).to eq new_pmt['target_port']
-      end
     end
 
     context 'when authenticated as admin' do
@@ -377,15 +355,6 @@ describe Api::V1::PortMappingTemplatesController do
         expect {
           delete api("/port_mapping_templates/#{pmt1.id}", user)
         }.to change { PortMappingTemplate.count }.by(-1)
-      end
-
-      it 'returns 422 to prevent deletion of port mapping template for used appliance type' do
-        appl2 # If you wonder what this is, well, welcome to rspec. This is for you, it's called... "Run Like Hell"
-        expect {
-          delete api("/port_mapping_templates/#{pmt4.id}", user)
-          expect(response.status).to eq 422
-          expect(response.body).to include 'Appliance Type cannot be modified when used in Appliance or Virtual Machine Templates'
-        }.to change { PortMappingTemplate.count }.by(0)
       end
     end
   end
