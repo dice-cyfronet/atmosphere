@@ -21,23 +21,25 @@ class Optimizer
       if appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appliance.virtual_machines << vm_to_be_reused
         appliance.state = :satisfied
-        unless appliance.save
-          Rails.logger.error appliance.errors.to_json
-        end
         ProxyConfWorker.regeneration_required(vm_to_be_reused.compute_site)
       else
-        # TODO orders templates based on cost model
-        tmpl = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type).first
-        if tmpl.blank?
+        tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
+        if tmpls.blank?
           appliance.state = :unsatisfied
           appliance.save
           Rails.logger.warn "No template for instantiating a vm for appliance #{appliance.id} was found"
         else
-          flavor = select_flavor(tmpl)
-          VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
-          appliance.state = :satisfied
-          appliance.save
+          tmpl, flavor = select_tmpl_and_flavor(tmpls)
+          if flavor.nil?
+            Rails.logger.warn "No matching flavor was found for appliance #{appliance.id}"
+          else
+            VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
+            appliance.state = :satisfied
+          end
         end
+      end
+      unless appliance.save
+        Rails.logger.error appliance.errors.to_json
       end
     end
   end
@@ -53,11 +55,17 @@ class Optimizer
     VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)').each {|vm| vm.destroy }
   end
 
-  def select_flavor(tmpl)
-    required_mem = tmpl.appliance_type.preference_memory || (tmpl.compute_site.public? ? 1536 : 512)
-    required_cores = tmpl.appliance_type.preference_cpu || 1
-    required_disk = tmpl.appliance_type.preference_disk || 0
-    (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| f.memory >= required_mem and f.cpu >= required_cores and f.hdd >= required_disk}) {|f| f.hourly_cost}).first
+  def select_tmpl_and_flavor(tmpls)
+    required_mem = tmpls.first.appliance_type.preference_memory || (tmpls.first.compute_site.public? ? 1536 : 512)
+    required_cores = tmpls.first.appliance_type.preference_cpu || 1
+    required_disk = tmpls.first.appliance_type.preference_disk || 0
+    opt_flavors_and_tmpls_map = {}
+    tmpls.each do |tmpl|
+      opt_fl = (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| f.memory >= required_mem and f.cpu >= required_cores and f.hdd >= required_disk}) {|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
+      opt_flavors_and_tmpls_map[opt_fl] = tmpl if opt_fl
+    end
+    globally_opt_flavor = (min_elements_by(opt_flavors_and_tmpls_map.keys){|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
+    [opt_flavors_and_tmpls_map[globally_opt_flavor], globally_opt_flavor]
   end
 
 

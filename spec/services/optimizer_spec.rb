@@ -141,14 +141,19 @@ describe Optimizer do
   end
 
   context 'no template is available' do
-
+    let(:at) { create(:appliance_type) }
     it 'sets appliance to unsatisfied state' do
-      appl = Appliance.create(appliance_set: wf, appliance_type: create(:appliance_type), appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl = Appliance.create(appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
 
-    it 'only saving tmpl exists'
+    it 'only saving tmpl exists' do
+      saving_tmpl = create(:virtual_machine_template, appliance_type: at, state: :saving)
+      appl = Appliance.create(appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl.reload
+      expect(appl.state).to eql 'unsatisfied'
+    end
 
   end
 
@@ -157,7 +162,8 @@ describe Optimizer do
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
       appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
-      expect(VirtualMachine).to have_received(:create).with({name: shareable_appl_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appl.id], state: :build, virtual_machine_flavor: subject.send(:select_flavor, tmpl_of_shareable_at)})
+      selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
+      expect(VirtualMachine).to have_received(:create).with({name: shareable_appl_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appl.id], state: :build, virtual_machine_flavor: selected_flavor})
     end
 
     context 'is selected optimaly' do
@@ -168,7 +174,7 @@ describe Optimizer do
           amazon = build(:amazon_with_flavors)
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
-          flavor = subject.send(:select_flavor, tmpl)
+          selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl])
           expect(flavor.memory).to be >= 1536
         end
 
@@ -176,7 +182,7 @@ describe Optimizer do
           openstack = build(:openstack_with_flavors)
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
-          flavor = subject.send(:select_flavor, tmpl)
+          selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl])
           expect(flavor.memory).to be >= 512
         end
 
@@ -185,7 +191,24 @@ describe Optimizer do
       context 'appliance type preferences specified' do
 
         it 'selects cheapest flavour that satisfies requirements' do
-          
+          amazon = build(:amazon_with_flavors)
+          openstack = build(:openstack_with_flavors)
+          appl_type = build(:appliance_type, preference_memory: 1024, preference_cpu: 2)
+          tmpl_at_amazon = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
+          tmpl_at_openstack = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
+          selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+          expect(flavor.memory).to be >= 1024
+          expect(flavor.cpu).to be >= 2
+          all_discarded_flavors = amazon.virtual_machine_flavors + openstack.virtual_machine_flavors - [flavor]
+          all_discarded_flavors.each {|f|
+            if(f.memory >= appl_type.preference_memory and f.cpu >= appl_type.preference_cpu)
+              expect(f.hourly_cost >= flavor.hourly_cost).to be true
+            end
+          }
+        end
+
+        it 'selects flavor with more ram if prices are equal' do
+
         end
 
       end
