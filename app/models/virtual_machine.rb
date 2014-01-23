@@ -96,6 +96,9 @@ class VirtualMachine < ActiveRecord::Base
     cloud_client = vm_tmpl.compute_site.cloud_client
     flavor_id = (virtual_machine_flavor.flavor_name if virtual_machine_flavor) || '1'
     servers_params = {flavor_ref: flavor_id, flavor_id: flavor_id, name: name, image_ref: vm_tmpl.id_at_site, image_id: vm_tmpl.id_at_site}
+    if vm_tmpl.compute_site.technology == 'aws'
+      servers_params[:groups] = ['mniec_permit_all']
+    end
     unless appliances.blank?
       user_data = appliances.first.appliance_configuration_instance.payload
       servers_params[:user_data] = user_data if user_data
@@ -105,6 +108,7 @@ class VirtualMachine < ActiveRecord::Base
         servers_params[:key_name] = user_key.id_at_site
       end
     end
+    logger.debug "Params of instantiating server #{servers_params}"
     server = cloud_client.servers.create(servers_params)
     logger.info "instantiated #{server.id}"
     self[:id_at_site] = server.id
