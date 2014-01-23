@@ -9,6 +9,8 @@ describe Optimizer do
   let!(:wf) { create(:workflow_appliance_set) }
   let!(:wf2) { create(:workflow_appliance_set) }
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
+  let!(:openstack) { create(:openstack_with_flavors) }
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: openstack)}
 
   subject { Optimizer.instance }
 
@@ -17,8 +19,6 @@ describe Optimizer do
   end
 
   context 'new appliance created' do
-
-    let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type)}
 
     context 'shareable appliance type' do
 
@@ -143,12 +143,53 @@ describe Optimizer do
   context 'no template is available' do
 
     it 'sets appliance to unsatisfied state' do
-      appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl = Appliance.create(appliance_set: wf, appliance_type: create(:appliance_type), appliance_configuration_instance: create(:appliance_configuration_instance))
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
 
     it 'only saving tmpl exists'
 
+  end
+
+  context 'flavor' do
+
+    it 'includes flavor in params of created vm' do
+      VirtualMachine.stub(:create)
+      appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      expect(VirtualMachine).to have_received(:create).with({name: shareable_appl_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appl.id], state: :build, virtual_machine_flavor: subject.send(:select_flavor, tmpl_of_shareable_at)})
+    end
+
+    context 'is selected optimaly' do
+
+      context 'appliance type preferences not specified' do
+
+        it 'selects instance with at least 1.5GB RAM for public compute site' do
+          amazon = build(:amazon_with_flavors)
+          appl_type = build(:appliance_type)
+          tmpl = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
+          flavor = subject.send(:select_flavor, tmpl)
+          expect(flavor.memory).to be >= 1536
+        end
+
+        it 'selects instance with 512MB RAM for private compute site' do
+          openstack = build(:openstack_with_flavors)
+          appl_type = build(:appliance_type)
+          tmpl = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
+          flavor = subject.send(:select_flavor, tmpl)
+          expect(flavor.memory).to be >= 512
+        end
+
+      end
+
+      context 'appliance type preferences specified' do
+
+        it 'selects cheapest flavour that satisfies requirements' do
+          
+        end
+
+      end
+
+    end
   end
 end
