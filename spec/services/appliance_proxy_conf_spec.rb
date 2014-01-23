@@ -221,7 +221,7 @@ describe ApplianceProxyConf do
     end
 
     def path(appl, pmt)
-      "#{appl.appliance_set.id}/#{appl.appliance_configuration_instance.id}/#{pmt.service_name}"
+      "#{appl.id}/#{pmt.service_name}"
     end
   end
 end

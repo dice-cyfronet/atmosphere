@@ -64,6 +64,6 @@ class ApplianceProxyConf
   end
 
   def path(pmt)
-    "#{@appliance.appliance_set.id}/#{@appliance.appliance_configuration_instance.id}/#{pmt.service_name}"
+    "#{@appliance.id}/#{pmt.service_name}"
   end
 end
