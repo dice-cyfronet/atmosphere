@@ -32,10 +32,12 @@
       %span.label.label-primary.dynamic-label
         Memory
         = @appliance_type.preference_memory
+        MB
     - if @appliance_type.preference_disk
       %span.label.label-primary.dynamic-label
         Data
         = @appliance_type.preference_disk
+        GB
 
 %hr
 .description

@@ -17,13 +17,21 @@
         = f.input :scalable
 
     .row
-      - [:preference_cpu, :preference_memory, :preference_disk].each do |preference|
-        .col-lg-4
-          = f.label preference
-          .input-group
-            = f.input_field preference
-            %span.input-group-addon= preference == :preference_cpu ? 'cores' : 'MB'
-
+      .col-lg-4
+        = f.label :preference_cpu
+        .input-group
+          = f.input_field :preference_cpu
+          %span.input-group-addon cores
+      .col-lg-4
+        = f.label :preference_memory
+        .input-group
+          = f.input_field :preference_memory
+          %span.input-group-addon MB
+      .col-lg-4
+        = f.label :preference_disk
+        .input-group
+          = f.input_field :preference_disk
+          %span.input-group-addon GB
   -#
   -#.actions
   -#  = f.button :submit
