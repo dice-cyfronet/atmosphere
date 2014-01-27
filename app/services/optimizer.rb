@@ -26,13 +26,17 @@ class Optimizer
         tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
         if tmpls.blank?
           appliance.state = :unsatisfied
+          err_msg = "No matching template was found for appliance #{appliance.name}"
+          appliance.state_explanation = err_msg
           appliance.save
-          Rails.logger.warn "No template for instantiating a vm for appliance #{appliance.id} was found"
+          Rails.logger.warn err_msg
         else
           tmpl, flavor = select_tmpl_and_flavor(tmpls)
           if flavor.nil?
             appliance.state = :unsatisfied
-            Rails.logger.warn "No matching flavor was found for appliance #{appliance.id}"
+            err_msg = "No matching flavor was found for appliance #{appliance.name}"
+            appliance.state_explanation = err_msg
+            Rails.logger.warn err_msg
           else
             VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
             appliance.state = :satisfied
@@ -65,7 +69,7 @@ class Optimizer
       opt_fl = (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| f.memory >= required_mem and f.cpu >= required_cores and f.hdd >= required_disk}) {|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
       opt_flavors_and_tmpls_map[opt_fl] = tmpl if opt_fl
     end
-    globally_opt_flavor = (min_elements_by(opt_flavors_and_tmpls_map.keys){|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
+    globally_opt_flavor = (min_elements_by(opt_flavors_and_tmpls_map.keys){|f| f.hourly_cost}).sort{ |x,y| x.memory <=> y.memory }.last
     [opt_flavors_and_tmpls_map[globally_opt_flavor], globally_opt_flavor]
   end
 

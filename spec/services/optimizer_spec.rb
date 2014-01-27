@@ -148,6 +148,12 @@ describe Optimizer do
       expect(appl.state).to eql 'unsatisfied'
     end
 
+    it 'sets state explanation' do
+      appl = Appliance.create(appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl.reload
+      expect(appl.state_explanation).to eql "No matching template was found for appliance #{appl.name}"
+    end
+
     it 'only saving tmpl exists' do
       saving_tmpl = create(:virtual_machine_template, appliance_type: at, state: :saving)
       appl = Appliance.create(appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
@@ -159,6 +165,7 @@ describe Optimizer do
 
   context 'flavor' do
 
+    let(:amazon) { create(:amazon_with_flavors) }
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
       appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
@@ -171,7 +178,6 @@ describe Optimizer do
       context 'appliance type preferences not specified' do
 
         it 'selects instance with at least 1.5GB RAM for public compute site' do
-          amazon = build(:amazon_with_flavors)
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
           selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl])
@@ -179,7 +185,6 @@ describe Optimizer do
         end
 
         it 'selects instance with 512MB RAM for private compute site' do
-          openstack = build(:openstack_with_flavors)
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
           selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl])
@@ -190,12 +195,11 @@ describe Optimizer do
 
       context 'appliance type preferences specified' do
 
+        let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
+        let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
+        let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
+
         it 'selects cheapest flavour that satisfies requirements' do
-          amazon = build(:amazon_with_flavors)
-          openstack = build(:openstack_with_flavors)
-          appl_type = build(:appliance_type, preference_memory: 1024, preference_cpu: 2)
-          tmpl_at_amazon = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
-          tmpl_at_openstack = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
           selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
           expect(flavor.memory).to be >= 1024
           expect(flavor.cpu).to be >= 2
@@ -208,6 +212,38 @@ describe Optimizer do
         end
 
         it 'selects flavor with more ram if prices are equal' do
+          biggest_os_flavor = openstack.virtual_machine_flavors.max_by {|f| f.memory}
+          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, hourly_cost: biggest_os_flavor.hourly_cost, compute_site: amazon)
+          amazon.reload
+          appl_type.preference_memory = biggest_os_flavor.memory
+          appl_type.save
+          tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+          expect(flavor).to eq optimal_flavor
+          expect(tmpl).to eq tmpl_at_amazon
+        end
+
+        context 'preferences exceeds resources of avaiable flavors' do
+
+          before do
+            appl_type.preference_cpu = 64
+            appl_type.save
+          end
+
+          it 'returns nil flavor' do
+            tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+            expect(flavor).to be_nil
+          end
+
+          it 'sets state explanation' do
+            [tmpl_at_amazon, tmpl_at_openstack]
+            appl = Appliance.create(appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service')
+            expect(appl.state_explanation).to eq "No matching flavor was found for appliance #{appl.name}"
+          end
+
+          it 'sets appliance as unsatisfied' do
+            appl = Appliance.create(appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+            expect(appl.state).to eq 'unsatisfied'
+          end
 
         end
 
