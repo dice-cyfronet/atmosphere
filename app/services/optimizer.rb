@@ -31,6 +31,7 @@ class Optimizer
         else
           tmpl, flavor = select_tmpl_and_flavor(tmpls)
           if flavor.nil?
+            appliance.state = :unsatisfied
             Rails.logger.warn "No matching flavor was found for appliance #{appliance.id}"
           else
             VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
