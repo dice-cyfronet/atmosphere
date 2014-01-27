@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140114111114) do
+ActiveRecord::Schema.define(version: 20140127082332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 20140114111114) do
     t.datetime "updated_at"
     t.integer  "fund_id"
     t.datetime "last_billing"
+    t.string   "state_explanation"
   end
 
   create_table "compute_sites", force: true do |t|
@@ -244,29 +245,29 @@ ActiveRecord::Schema.define(version: 20140114111114) do
   end
 
   create_table "virtual_machine_templates", force: true do |t|
-    t.string   "id_at_site",            null: false
-    t.string   "name",                  null: false
-    t.string   "state",                 null: false
-    t.integer  "compute_site_id",       null: false
+    t.string   "id_at_site",                            null: false
+    t.string   "name",                                  null: false
+    t.string   "state",                                 null: false
+    t.boolean  "managed_by_atmosphere", default: false, null: false
+    t.integer  "compute_site_id",                       null: false
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "managed_by_atmosphere"
   end
 
   add_index "virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "index_vm_tmpls_on_cs_id_and_id_at_site", unique: true, using: :btree
 
   create_table "virtual_machines", force: true do |t|
-    t.string   "id_at_site",                  null: false
-    t.string   "name",                        null: false
-    t.string   "state",                       null: false
+    t.string   "id_at_site",                                  null: false
+    t.string   "name",                                        null: false
+    t.string   "state",                                       null: false
     t.string   "ip"
-    t.integer  "compute_site_id",             null: false
+    t.boolean  "managed_by_atmosphere",       default: false, null: false
+    t.integer  "compute_site_id",                             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
-    t.boolean  "managed_by_atmosphere"
     t.integer  "virtual_machine_flavor_id"
   end
 

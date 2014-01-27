@@ -13,7 +13,7 @@ describe Api::V1::AppliancesController do
   let(:user_as) { create(:appliance_set, user: user) }
   let(:other_user_as) { create(:appliance_set, user: other_user) }
 
-  let!(:user_appliance1) { create(:appliance, appliance_set: user_as) }
+  let!(:user_appliance1) { create(:appliance, appliance_set: user_as, state: :unsatisfied, state_explanation: "flavour not found") }
   let!(:user_appliance2) { create(:appliance, appliance_set: user_as) }
   let!(:other_user_appliance) { create(:appliance, appliance_set: other_user_as) }
 

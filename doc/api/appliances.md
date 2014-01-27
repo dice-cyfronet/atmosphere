@@ -14,7 +14,9 @@ GET /appliances
       "name": "appliance name",
       "appliance_set_id": 2,
       "appliance_type_id": 3,
-      "appliance_configuration_instance_id": 4
+      "appliance_configuration_instance_id": 4,
+      "state": "satisfied", (or "unsatisfied")
+      "state_explanation": "No matching flavor was found" (explanation why VM cannot be started for this appliance)
     }, {
       ...
     }
@@ -41,7 +43,9 @@ Parameters:
     "name": "appliance name",
     "appliance_set_id": 2,
     "appliance_type_id": 3,
-    "appliance_configuration_instance_id": 4
+    "appliance_configuration_instance_id": 4,
+    "state": "satisfied", (or "unsatisfied")
+    "state_explanation": "No matching flavor was found" (explanation why VM cannot be started for this appliance)
   }
 }
 ```
