@@ -92,6 +92,24 @@ describe ComputeSite do
       subject.name = 'modified name'
       subject.save
     end
+
+    context 'config is blank' do
+
+      it 'does not recreate cloud client' do
+        Fog::Compute.stub(:new)
+        expect(Fog::Compute).to_not receive(:new)
+        subject.config = ''
+        subject.save
+      end
+
+      it 'sets cloud client to nil if config is blank' do
+        expect(Air).to receive(:unregister_cloud_client).with(subject.site_id)
+        subject.config = ''
+        subject.save
+      end
+
+    end
+  
   end
 
   context '#with_appliance scope' do
