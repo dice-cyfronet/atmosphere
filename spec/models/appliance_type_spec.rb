@@ -146,5 +146,25 @@ describe ApplianceType do
         expect(at.port_mapping_templates[1].port_mapping_properties.length).to eq 0
       end
     end
+
+    context 'when AT has appliance configuration templates' do
+      let(:act1) { build(:appliance_configuration_template) }
+      let(:act2) { build(:appliance_configuration_template) }
+
+      before do
+        at.appliance_configuration_templates << [act1, act2]
+        appl.reload
+      end
+
+      it 'copies initial configuration templates' do
+        at = ApplianceType.create_from(appl, overwrite)
+
+        expect(at.appliance_configuration_templates.to_a.size).to eq 2
+        expect(at.appliance_configuration_templates[0].name).to eq act2.name
+        expect(at.appliance_configuration_templates[0].payload).to eq act2.payload
+        expect(at.appliance_configuration_templates[1].name).to eq act1.name
+        expect(at.appliance_configuration_templates[1].payload).to eq act1.payload
+      end
+    end
   end
 end
