@@ -73,7 +73,7 @@ class ApplianceType < ActiveRecord::Base
     ActCopier.copy(appliance.appliance_type).each do |act|
       act.appliance_type = at
       at.appliance_configuration_templates << act
-    end
+    end if appliance
 
     at
   end
