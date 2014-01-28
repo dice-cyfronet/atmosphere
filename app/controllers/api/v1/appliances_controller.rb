@@ -98,11 +98,7 @@ module Api
       end
 
       def configuration_instance
-        if @config_instance.blank?
-          @config_instance = ApplianceConfigurationInstance.new(appliance_configuration_template: config_template)
-          @config_instance.create_payload(config_template.payload, config_params)
-        end
-        @config_instance
+        @config_instance ||= ApplianceConfigurationInstance.get(config_template, config_params)
       end
 
       def config_template

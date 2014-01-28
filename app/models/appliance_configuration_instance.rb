@@ -1,3 +1,5 @@
+require 'params_regexpable'
+
 # == Schema Information
 #
 # Table name: appliance_configuration_instances
@@ -10,15 +12,29 @@
 #
 
 class ApplianceConfigurationInstance < ActiveRecord::Base
-  include ParamsRegexpable
-
   belongs_to :appliance_configuration_template
 
   has_many :appliances
 
-  def create_payload(raw_payload, params = {})
-    self.payload = raw_payload.gsub(/#{param_regexp}/) do |param_name|
-          params[param_name[param_range]]
-        end
+  def self.get(config_template, params)
+    instance_payload = get_payload(config_template, params)
+
+    find_instance(config_template, instance_payload) || new_instance(config_template, instance_payload)
+  end
+
+  private
+
+  def self.find_instance(config_template, payload)
+    config_template.appliance_configuration_instances.find_by(payload: payload)
+  end
+
+  def self.new_instance(config_template, payload)
+    ApplianceConfigurationInstance.new(appliance_configuration_template: config_template, payload: payload)
+  end
+
+  def self.get_payload(config_template, params = {})
+    config_template.payload.gsub(/#{ParamsRegexpable.param_regexp}/) do |param_name|
+      params[param_name[ParamsRegexpable.param_range]]
+    end
   end
 end

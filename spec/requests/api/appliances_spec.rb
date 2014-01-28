@@ -205,6 +205,18 @@ describe Api::V1::AppliancesController do
           created_appliance = Appliance.find(appliance_response['id'])
           expect(created_appliance.name).to eq static_request_body[:appliance][:name]
         end
+
+        context 'and config instance already exists' do
+          before do
+            create(:appliance_configuration_instance, appliance_configuration_template: static_config, payload: static_config.payload)
+          end
+
+          it 'reuses configuratoin instance' do
+            expect {
+              post api("/appliances", user), static_request_body
+            }.to change { ApplianceConfigurationInstance.count}.by(0)
+          end
+        end
       end
 
       context 'with dynamic configuration' do
