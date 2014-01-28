@@ -71,7 +71,18 @@ describe Optimizer do
           config_inst = create(:appliance_configuration_instance)
           appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
           appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          # expect(ApplianceSet.all.size).to eql 2 # WTF?
+          vms = VirtualMachine.all
+          expect(vms.size).to eql 1
+          vm = vms.first
+          expect(vm.appliances.size).to eql 2
+          expect(vm.appliances).to include(appl1, appl2)
+        end
+
+        it 'reuses avaiable vm if appliances use config with equal payload' do
+          tmpl_of_shareable_at
+          config_inst = create(:appliance_configuration_instance)
+          appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload))
           vms = VirtualMachine.all
           expect(vms.size).to eql 1
           vm = vms.first

@@ -50,10 +50,14 @@ class ComputeSite < ActiveRecord::Base
 
   private
   def register_cloud_client
-    cloud_site_conf = JSON.parse(self.config).symbolize_keys
-    client = Fog::Compute.new(cloud_site_conf)
-    Air.register_cloud_client(self.site_id, client)
-    client
+    unless config.blank?
+      cloud_site_conf = JSON.parse(self.config).symbolize_keys
+      client = Fog::Compute.new(cloud_site_conf)
+      Air.register_cloud_client(self.site_id, client)
+      client
+    else
+      Air.unregister_cloud_client(site_id)
+    end
   end
 
   def proxy_regeneration_needed?
