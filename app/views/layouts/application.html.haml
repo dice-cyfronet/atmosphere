@@ -2,6 +2,10 @@
 %html{ lang: 'en'}
   = render 'layouts/head'
   %body
-    = render 'layouts/flash'
-    = render 'layouts/navbar'
-    .container= yield
+    #wrap
+      .proper-content
+        = render 'layouts/flash'
+        = render 'layouts/navbar'
+        .container= yield
+      #push
+    = render "layouts/footer"

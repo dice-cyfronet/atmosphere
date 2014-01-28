@@ -1,0 +1,39 @@
+$footer_height: 60px;
+
+html, body {
+  height: 100%;
+    /* The html and body elements cannot have any padding or margin. */
+}
+
+.proper-content {
+    padding-top: $navbarHeight; /* >= navbar height */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -30px;
+}
+
+/* Set the fixed height of the footer here */
+#push, #footer {
+  height: 30px;
+}
+
+#footer {
+  // background-color: #f5f5f5;
+  float:right;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
