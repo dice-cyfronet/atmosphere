@@ -313,8 +313,8 @@ describe Api::V1::AppliancesController do
               expect(optimizer).to receive(:run).once
             end
 
-            let(:another_conf_for_the_same_at) { create(:static_config_template, appliance_type: public_at) }
-            let(:req_for_second_appl_for_the_same_at) { start_request(another_conf_for_the_same_at, portal_set) }
+            let(:another_conf_tmpl_for_the_same_at) { create(:static_config_template, appliance_type: public_at) }
+            let(:req_for_second_appl_for_the_same_at) { start_request(another_conf_tmpl_for_the_same_at, portal_set) }
 
             it 'returns 201' do
               post api("/appliances", user), req_for_second_appl_for_the_same_at
