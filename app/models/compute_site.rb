@@ -37,7 +37,8 @@ class ComputeSite < ActiveRecord::Base
 
   scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}).readonly(false) }
 
-  after_update :register_cloud_client, if: :config_changed?
+  after_update :update_cloud_client, if: :config_changed?
+  after_destroy :unregister_cloud_client
   before_save :force_proxy_conf_regeneration, if: :proxy_regeneration_needed?
 
   def to_s
@@ -50,14 +51,22 @@ class ComputeSite < ActiveRecord::Base
 
   private
   def register_cloud_client
+    cloud_site_conf = JSON.parse(self.config).symbolize_keys
+    client = Fog::Compute.new(cloud_site_conf)
+    Air.register_cloud_client(self.site_id, client)
+    client
+  end
+
+  def update_cloud_client
     unless config.blank?
-      cloud_site_conf = JSON.parse(self.config).symbolize_keys
-      client = Fog::Compute.new(cloud_site_conf)
-      Air.register_cloud_client(self.site_id, client)
-      client
+      register_cloud_client
     else
-      Air.unregister_cloud_client(site_id)
+      unregister_cloud_client  
     end
+  end
+
+  def unregister_cloud_client
+    Air.unregister_cloud_client(site_id)
   end
 
   def proxy_regeneration_needed?

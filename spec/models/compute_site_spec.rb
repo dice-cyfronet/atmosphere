@@ -20,7 +20,7 @@
 require 'spec_helper'
 
 describe ComputeSite do
-
+  
   before { Fog.mock! }
 
   subject { FactoryGirl.create(:compute_site, technology: 'openstack') }
@@ -110,6 +110,13 @@ describe ComputeSite do
 
     end
   
+  end
+
+  context 'compute site is destroyed' do
+    it 'unregisters cloud client' do
+      expect(Air).to receive(:unregister_cloud_client).with(subject.site_id)
+      subject.destroy
+    end
   end
 
   context '#with_appliance scope' do
