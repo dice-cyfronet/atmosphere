@@ -37,6 +37,21 @@ describe Optimizer do
         expect(vm_2.appliances).to eq [appl2]
       end
 
+      it 'does reuses available vm if it is in dev mode' do
+          tmpl_of_shareable_at
+          config_inst = create(:appliance_configuration_instance)
+          appl1 = Appliance.create(appliance_set: create(:dev_appliance_set), appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          vms = VirtualMachine.all
+          expect(vms.size).to eql 2
+          vm_1 = vms.first
+          vm_2 = vms.last
+          expect(vm_1.appliances.size).to eql 1
+          expect(vm_2.appliances.size).to eql 1
+          expect(vm_1.appliances).to eq [appl1]
+          expect(vm_2.appliances).to eq [appl2]
+      end
+
     end
 
     context 'shareable appliance type' do
