@@ -20,6 +20,25 @@ describe Optimizer do
 
   context 'new appliance created' do
 
+    context 'development mode' do
+
+      it 'does not reuse available vm' do
+        tmpl_of_shareable_at
+        config_inst = create(:appliance_configuration_instance)
+        appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+        appl2 = Appliance.create(appliance_set: create(:dev_appliance_set), appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+        vms = VirtualMachine.all
+        expect(vms.size).to eql 2
+        vm_1 = vms.first
+        vm_2 = vms.last
+        expect(vm_1.appliances.size).to eql 1
+        expect(vm_2.appliances.size).to eql 1
+        expect(vm_1.appliances).to eq [appl1]
+        expect(vm_2.appliances).to eq [appl2]
+      end
+
+    end
+
     context 'shareable appliance type' do
 
       context 'vm cannot be reused' do
@@ -37,6 +56,21 @@ describe Optimizer do
           appl = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
           appl.reload
           expect(appl.state).to eql 'satisfied'
+        end
+
+        it 'does not reuse avaiable vm if appliances use config with equal payload and different ids' do
+          tmpl_of_shareable_at
+          config_inst = create(:appliance_configuration_instance)
+          appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload))
+          vms = VirtualMachine.all
+          expect(vms.size).to eql 2
+          vm_1 = vms.first
+          vm_2 = vms.last
+          expect(vm_1.appliances.size).to eql 1
+          expect(vm_2.appliances.size).to eql 1
+          expect(vm_1.appliances).to eq [appl1]
+          expect(vm_2.appliances).to eq [appl2]
         end
 
         context 'max appl number equal one' do
@@ -71,18 +105,6 @@ describe Optimizer do
           config_inst = create(:appliance_configuration_instance)
           appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
           appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          vms = VirtualMachine.all
-          expect(vms.size).to eql 1
-          vm = vms.first
-          expect(vm.appliances.size).to eql 2
-          expect(vm.appliances).to include(appl1, appl2)
-        end
-
-        it 'reuses avaiable vm if appliances use config with equal payload' do
-          tmpl_of_shareable_at
-          config_inst = create(:appliance_configuration_instance)
-          appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload))
           vms = VirtualMachine.all
           expect(vms.size).to eql 1
           vm = vms.first

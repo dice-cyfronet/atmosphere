@@ -18,7 +18,7 @@ class Optimizer
   def satisfy_appliance(appliance)
     if appliance.virtual_machines.blank?
       vm_to_be_reused = nil
-      if appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
+      if not appliance.development? and appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appliance.virtual_machines << vm_to_be_reused
         appliance.state = :satisfied
         ProxyConfWorker.regeneration_required(vm_to_be_reused.compute_site)
@@ -51,7 +51,8 @@ class Optimizer
 
   def find_vm_that_can_be_reused(appliance)
     # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
-    VirtualMachine.joins(appliances: :appliance_configuration_instance).where('appliance_configuration_instances.payload = ?', appliance.appliance_configuration_instance.payload).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no}.first
+    VirtualMachine.manageable.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no}.first
+    #VirtualMachine.joins(appliances: :appliance_configuration_instance).where('appliance_configuration_instances.payload = ?', appliance.appliance_configuration_instance.payload).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no}.first
   end
 
   def terminate_unused_vms
