@@ -304,6 +304,30 @@ describe Api::V1::AppliancesController do
             post api("/appliances", user), {appliance: { configuration_template_id: second_static_config.id } }
 
           end
+
+          context 'create new appl of the same AT with different configuration template' do
+
+            before do
+              # this is tricky, we expect optimizer to be run once in context 'with appliance type already added to appliance set'
+              # and the second time in context 'create new appl of the same AT with different configuration template'
+              expect(optimizer).to receive(:run).once
+            end
+
+            let(:another_conf_for_the_same_at) { create(:static_config_template, appliance_type: public_at) }
+            let(:req_for_second_appl_for_the_same_at) { start_request(another_conf_for_the_same_at, portal_set) }
+
+            it 'returns 201' do
+              post api("/appliances", user), req_for_second_appl_for_the_same_at
+              expect(response.status).to eq 201
+            end
+
+            it 'creates new appliance of the sam type when configuration template is different' do
+              expect {
+                post api("/appliances", user), req_for_second_appl_for_the_same_at
+              }.to change { Appliance.count}.by(1)
+            end
+
+          end
         end
 
         context 'when development appliance set' do

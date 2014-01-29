@@ -94,7 +94,7 @@ module Api
       end
 
       def appliance_unique?
-        Appliance.joins(:appliance_configuration_instance).where(appliance_configuration_instances: {payload: configuration_instance.payload}, appliance_set: @appliance.appliance_set, appliance_type: config_template.appliance_type).count == 0
+        Appliance.joins(:appliance_configuration_instance).where(appliance_configuration_instances: {payload: configuration_instance.payload, appliance_configuration_template_id: config_template_id}, appliance_set: @appliance.appliance_set, appliance_type: config_template.appliance_type).count == 0
       end
 
       def configuration_instance
