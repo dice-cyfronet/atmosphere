@@ -40,12 +40,14 @@ Parameters:
 + `id` (required) - The ID of the Port Mapping Property you are interested in
 
 ```json
-"port_mapping_property": {
-  "id": 1 (should equal the :id parameter),
-  "key": "property_key_string",
-  "value": "property_value_string",
-  "compute_site_id": nil (should always be nil),
-  "port_mapping_template_id": 5
+{
+  "port_mapping_property": {
+    "id": 1 (should equal the :id parameter),
+    "key": "property_key_string",
+    "value": "property_value_string",
+    "compute_site_id": nil (should always be nil),
+    "port_mapping_template_id": 5
+  }
 }
 ```
 
