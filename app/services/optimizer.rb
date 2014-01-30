@@ -21,7 +21,6 @@ class Optimizer
       if not appliance.development? and appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appliance.virtual_machines << vm_to_be_reused
         appliance.state = :satisfied
-        ProxyConfWorker.regeneration_required(vm_to_be_reused.compute_site)
       else
         tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
         if tmpls.blank?

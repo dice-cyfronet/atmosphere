@@ -135,15 +135,6 @@ describe Optimizer do
           appl2.reload
           expect(appl2.state).to eql 'satisfied'
         end
-
-        it 'triggers proxy regeneration if vm was reused' do
-          tmpl_of_shareable_at
-          config_inst = create(:appliance_configuration_instance)
-          appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl1.reload
-          expect(ProxyConfWorker).to receive(:regeneration_required).with(appl1.virtual_machines.first.compute_site)
-          appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-        end
       end
     end
 

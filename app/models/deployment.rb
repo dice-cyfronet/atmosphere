@@ -13,9 +13,10 @@ class Deployment < ActiveRecord::Base
 
   belongs_to :appliance
   belongs_to :virtual_machine
-  
+
   before_destroy :generate_proxy_conf
-  
+  after_create :generate_proxy_conf if :vm_active?
+
   private
 
   def generate_proxy_conf
@@ -24,4 +25,7 @@ class Deployment < ActiveRecord::Base
     end
   end
 
+  def vm_active?
+    !virtual_machine.ip.blank?
+  end
 end

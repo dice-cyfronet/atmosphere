@@ -114,7 +114,7 @@ describe Appliance do
           expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
         end
 
-        it 'after appliance is destroyed' do          
+        it 'after appliance is destroyed' do
           appl.destroy
         end
       end
@@ -136,6 +136,21 @@ describe Appliance do
 
           it 'after appliance is destroyed' do
             appl.destroy
+          end
+        end
+      end
+
+      context 'when second VM reused' do
+        let!(:vm2) { create(:virtual_machine, compute_site: cs, ip: '10.100.1.23') }
+
+        context 'generates proxy conf' do
+          before do
+            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
+          end
+
+          it 'after new VM is assigned to appliance' do
+            appl.virtual_machines << vm2
+            appl.save
           end
         end
       end
