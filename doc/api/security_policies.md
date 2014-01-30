@@ -10,6 +10,7 @@ GET /security_policies
 {
   "security_policies": [
     {
+      "id": 1,
       "name": "foobar/security/policy",
       "payload": "Security policy payload",
       "owners": [1, 2, 3]
@@ -35,6 +36,7 @@ Parameters:
 ```json
 {
   "security_policy": {
+    "id": 1,
     "name": "foobar/security/policy",
     "payload": "Security policy payload",
     "owners": [1, 2, 3]

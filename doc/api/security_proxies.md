@@ -10,6 +10,7 @@ GET /security_proxies
 {
   "security_proxies": [
     {
+      "id": 1,
       "name": "foobar/security/proxy",
       "payload": "Security proxy payload",
       "owners": [1, 2, 3]
@@ -35,6 +36,7 @@ Parameters:
 ```json
 {
   "security_proxy": {
+    "id": 1,
     "name": "foobar/security/proxy",
     "payload": "Security proxy payload",
     "owners": [1, 2, 3]

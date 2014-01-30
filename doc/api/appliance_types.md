@@ -19,9 +19,13 @@ GET /appliance_types
       "preference_cpu": 1.0,
       "preference_memory": 1024, (in MB)
       "preference_disk": 10, (in GB)
+      "active": true,
       "author_id": 1,
       "security_proxy_id": 1,
-      "active": true
+      "appliance_ids": [2, 4],
+      "port_mapping_template_ids": [2, 3],
+      "appliance_configuration_template_ids": [18, 23],
+      "virtual_machine_template_ids": [1, 4]
     }, {
       ...
     }
@@ -53,9 +57,13 @@ Parameters:
     "preference_cpu": 1.0,
     "preference_memory": 1024, (in MB)
     "preference_disk": 10, (in GB)
+    active: false,
     "author_id": 1,
     "security_proxy_id": 1,
-    active: false
+    "appliance_ids": [2, 4],
+    "port_mapping_template_ids": [2, 3],
+    "appliance_configuration_template_ids": [18, 23],
+    "virtual_machine_template_ids": [1, 4]
   }
 }
 ```
