@@ -88,7 +88,7 @@ module Api
       end
 
       def check_for_conflict!
-        if @appliance.appliance_set.production? and not appliance_unique?
+        if @appliance.appliance_set.production? && !appliance_unique?
           raise Air::Conflict.new 'You are not allowed to start 2 appliances with the same type and configuration in production appliance set'
         end
       end
@@ -116,7 +116,7 @@ module Api
       end
 
       def in_set_context?
-        not params[:appliance_set_id].blank?
+        !params[:appliance_set_id].blank?
       end
 
       def load_admin_abilities?
