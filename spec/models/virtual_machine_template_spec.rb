@@ -61,7 +61,6 @@ describe VirtualMachineTemplate do
         create(:appliance, virtual_machines: [vm])
         expect { subject.update_attribute(:state, :active) }.to_not change { VirtualMachine.count }
       end
-
     end
 
     context 'error' do
@@ -148,6 +147,29 @@ describe VirtualMachineTemplate do
         external_tmp.destroy
 
         expect(external_tmp.errors).not_to be_empty
+      end
+    end
+
+    context 'when tpl is in saving state' do
+      let(:vm) { create(:virtual_machine) }
+      let!(:tpl_in_saving_state) { create(:virtual_machine_template, source_vm: vm, state: :saving) }
+
+      context 'and source VM is assigned to appliance' do
+        before { create(:appliance, virtual_machines: [vm]) }
+
+        it 'does not remove source VM' do
+          expect {
+            tpl_in_saving_state.destroy
+          }.to change { VirtualMachine.count }.by(0)
+        end
+      end
+
+      context 'and source VM is not assigned to any appliance' do
+        it 'removes source VM' do
+          expect {
+            tpl_in_saving_state.destroy
+          }.to change { VirtualMachine.count }.by(-1)
+        end
       end
     end
   end

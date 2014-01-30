@@ -25,9 +25,10 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
   validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
-  before_update :release_source_vm, if: :state_changed?
-  after_update :destroy_source_vm, if: :state_changed?
+  before_update :release_source_vm, if: :saved?
+  after_update :destroy_source_vm, if: :saved?
   before_destroy :cant_destroy_non_managed_vmt
+  after_destroy :destroy_source_vm
 
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
@@ -55,17 +56,22 @@ class VirtualMachineTemplate < ActiveRecord::Base
   private
 
   def release_source_vm
-    if state != 'saving' and state != :saving
-      self.source_vm = nil
-    end
+    self.source_vm = nil
   end
 
   def destroy_source_vm
-    return unless virtual_machine_id_was
-    if state != 'saving' and state != :saving
+    if  virtual_machine_id_was
       vm = VirtualMachine.find(virtual_machine_id_was)
       vm.destroy if vm.appliances.blank?
     end
+  end
+
+  def saved?
+    state_changed? && !saving?
+  end
+
+  def saving?
+    state == 'saving' || state == :saving
   end
 
   def save_template_in_cloud
