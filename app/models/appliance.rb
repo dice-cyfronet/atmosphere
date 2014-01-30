@@ -58,6 +58,7 @@ class Appliance < ActiveRecord::Base
 
   def remove_appliance_configuration_instance_if_needed
     if appliance_configuration_instance.appliances.blank?
+      Air.action_logger.info "         -- appliance configuration intance #{appliance_configuration_instance.id} destroyed by appliance #{id}"
       appliance_configuration_instance.destroy
     end
   end
