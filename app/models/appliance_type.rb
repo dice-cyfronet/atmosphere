@@ -48,7 +48,7 @@ class ApplianceType < ActiveRecord::Base
 
   def destroy(force = false)
     if !force and has_dependencies?
-      errors.add :base, "ApplianceType #{name} cannot be destroyed because other users have running instances of this application."
+      errors.add :base, "#{name} cannot be destroyed because other users have running instances of this application."
       return false
     end
     super()  # Parentheses required NOT to pass 'force' as an argument (not needed in Base.destroy)
