@@ -13,12 +13,17 @@ class Api::V1::ApplianceEndpointsController < Api::ApplicationController
 
   def set_filter
     @endpoint_types = params[:endpoint_type].to_s.split(',') if params[:endpoint_type]
+    @endpoint_ids = params[:endpoint_id].to_s.split(',') if params[:endpoint_id]
   end
 
   def limit_appliance_types
-    @appliance_types = @endpoint_types ?
-      @appliance_types.where("id IN (SELECT appliance_type_id FROM port_mapping_templates where id IN (SELECT port_mapping_template_id from endpoints WHERE endpoint_type IN (?)))", @endpoint_types) :
-      @appliance_types.where('id IN (SELECT appliance_type_id FROM port_mapping_templates where id IN (SELECT port_mapping_template_id from endpoints))')
+    @appliance_types = if @endpoint_ids
+        @appliance_types.where("id IN (SELECT appliance_type_id FROM port_mapping_templates where id IN (SELECT port_mapping_template_id from endpoints WHERE id IN (?)))", @endpoint_ids)
+      elsif @endpoint_types
+        @appliance_types.where("id IN (SELECT appliance_type_id FROM port_mapping_templates where id IN (SELECT port_mapping_template_id from endpoints WHERE endpoint_type IN (?)))", @endpoint_types)
+      else
+        @appliance_types.where('id IN (SELECT appliance_type_id FROM port_mapping_templates where id IN (SELECT port_mapping_template_id from endpoints))')
+      end
   end
 
 

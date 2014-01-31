@@ -102,6 +102,14 @@ describe Api::V1::ApplianceEndpointsController do
           expect(endpoints(endpoints_response[2])[1]).to basic_endpoint_eq @ws_endpoint
         end
       end
+
+      context 'and we want to see only AT with selected endpoints' do
+        it 'returns single appliance type' do
+          get api("/appliance_endpoints?endpoint_id=#{@web_endpoint2.id}", @user)
+          expect(endpoints_response.size).to eq 1
+          expect(endpoints_response[0]).to basic_appliance_type_eq @at_with_web_and_rest
+        end
+      end
     end
   end
 
