@@ -78,6 +78,33 @@ class ApplianceType < ActiveRecord::Base
     at
   end
 
+  # This method is used to produce XML document that is being sent to the Metadata Registry
+  def as_metadata_xml
+    optional_elements = metadata_global_id ?
+        "<globalID>#{metadata_global_id}</globalID>" :
+        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d')}</metadataCreationDate>"
+
+    <<-MD_XML.strip_heredoc
+      <AtomicService>
+        <localID>#{id}</localID>
+        <name>#{name}</name>
+        <type>AtomicService</type>
+        <description>#{description}</description>
+        <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d')}</metadataUpdateDate>
+        <creationDate>#{created_at.strftime('%Y-%m-%d')}</creationDate>
+        <updateDate>#{updated_at.strftime('%Y-%m-%d')}</updateDate>
+        <author>#{author.login if author}</author>
+
+        #{optional_elements}
+
+        <endpoints>
+          #{port_mapping_templates.map(&:endpoints).flatten.map(&:as_metadata_xml).join}
+        </endpoints>
+      </AtomicService>
+    MD_XML
+  end
+
+
   private
 
   def self.appliance_type_attributes(appliance, overwrite)
