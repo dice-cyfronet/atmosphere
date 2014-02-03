@@ -418,6 +418,8 @@ describe Api::V1::EndpointsController do
     let(:pmt_at2) { create(:port_mapping_template, appliance_type: at2) }
     let(:owner_endpoint) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload', port_mapping_template: pmt_at2) }
 
+    let(:endpoint_with_descriptor_url) { create(:endpoint, invocation_path: 'invocation/path', descriptor: 'payload #{descriptor_url}', port_mapping_template: pmt_at2) }
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error for not visible for all appliance types' do
         get api("/endpoints/#{owner_endpoint.id}/descriptor")
@@ -449,6 +451,11 @@ describe Api::V1::EndpointsController do
       it 'returns 403 Forbidden when user has not right to see appliance type' do
         get api("/endpoints/#{owner_endpoint.id}/descriptor", different_user)
         expect(response.status).to eq 403
+      end
+
+      it 'returns descriptor with #{descriptor_url} filled in' do
+        get api("/endpoints/#{endpoint_with_descriptor_url.id}/descriptor", user)
+        expect(response.body).to eq "payload http://www.example.com/api/v1/endpoints/#{endpoint_with_descriptor_url.id}/descriptor"
       end
     end
   end

@@ -62,7 +62,7 @@ Parameters:
 + `port_mapping_template_id` (required) - The ID of the Port Mapping Template which should acquire the new Endpoint
 + `name` (required) - Short name of the endpoint meaning and purpose
 + `description` (optional) - Textual, human-readable description what is available on that port
-+ `descriptor` (optional) - Machine-readable document that describes the service available on that port
++ `descriptor` (optional) - Machine-readable document that describes the service available on that port. It supports one dynamic parameter: `#{descriptor_url}`. When it is included in descriptor payload than it will be changed into actual endpoint url.
 + `endpoint_type` (required) - One of "rest", "ws" or "webapp"
 + `invocation_path` (required) - Application invocation path
 
@@ -100,7 +100,7 @@ Parameters:
 
 ## Get endpoint descriptor
 
-Method used by Taverna to include endpoint descriptor (WSDL or WADL) into Taverna workbench.
+Method used by Taverna to include endpoint descriptor (WSDL or WADL) into Taverna workbench. If `#{descriptor_url}` parameter is available in the descriptor payload than it is converted into actual enpoint url.
 
 When user credentials are empty this method will return success only for Appliance Types with `visible_to` set to `all` endpoints. If user credentials are available than user is able to get endpoint descriptor for Appliance Types with `visible_to` set to `owner` or `developer` (if user is a developer).
 

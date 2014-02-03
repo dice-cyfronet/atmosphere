@@ -17,7 +17,7 @@ class ApplianceConfigurationInstance < ActiveRecord::Base
   has_many :appliances
 
   def self.get(config_template, params)
-    instance_payload = get_payload(config_template, params)
+    instance_payload = ParamsRegexpable.get_filtered(config_template.payload, params)
 
     find_instance(config_template, instance_payload) || new_instance(config_template, instance_payload)
   end
@@ -30,11 +30,5 @@ class ApplianceConfigurationInstance < ActiveRecord::Base
 
   def self.new_instance(config_template, payload)
     ApplianceConfigurationInstance.new(appliance_configuration_template: config_template, payload: payload)
-  end
-
-  def self.get_payload(config_template, params = {})
-    config_template.payload.gsub(/#{ParamsRegexpable.param_regexp}/) do |param_name|
-      params[param_name[ParamsRegexpable.param_range]]
-    end
   end
 end
