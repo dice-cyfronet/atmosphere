@@ -148,8 +148,8 @@ describe ApplianceType do
     end
 
     context 'when AT has appliance configuration templates' do
-      let(:act1) { build(:appliance_configuration_template) }
-      let(:act2) { build(:appliance_configuration_template) }
+      let(:act1) { build(:appliance_configuration_template, name: 'act1') }
+      let(:act2) { build(:appliance_configuration_template, name: 'act2') }
 
       before do
         at.appliance_configuration_templates << [act1, act2]
@@ -159,11 +159,13 @@ describe ApplianceType do
       it 'copies initial configuration templates' do
         at = ApplianceType.create_from(appl, overwrite)
 
-        expect(at.appliance_configuration_templates.to_a.size).to eq 2
-        expect(at.appliance_configuration_templates[0].name).to eq act2.name
-        expect(at.appliance_configuration_templates[0].payload).to eq act2.payload
-        expect(at.appliance_configuration_templates[1].name).to eq act1.name
-        expect(at.appliance_configuration_templates[1].payload).to eq act1.payload
+        init_confs = at.appliance_configuration_templates.sort {|x,y| x.name <=> y.name}
+
+        expect(init_confs.size).to eq 2
+        expect(init_confs[0].name).to eq act1.name
+        expect(init_confs[0].payload).to eq act1.payload
+        expect(init_confs[1].name).to eq act2.name
+        expect(init_confs[1].payload).to eq act2.payload
       end
     end
   end
