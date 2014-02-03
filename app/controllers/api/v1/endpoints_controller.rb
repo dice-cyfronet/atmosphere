@@ -44,7 +44,7 @@ module Api
           'descriptor_url' => descriptor_api_v1_endpoint_url(@endpoint)
         }
 
-        render text: ParamsRegexpable.get_filtered(@endpoint.descriptor, filter_params)
+        render text: ParamsRegexpable.filter(@endpoint.descriptor, filter_params)
       end
 
       private

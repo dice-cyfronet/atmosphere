@@ -7,7 +7,7 @@ module ParamsRegexpable
     Air.config.config_param.regexp
   end
 
-  def self.get_filtered(payload, params)
+  def self.filter(payload, params)
     payload.gsub(/#{ParamsRegexpable.param_regexp}/) do |param_name|
       params[param_name[ParamsRegexpable.param_range]]
     end
