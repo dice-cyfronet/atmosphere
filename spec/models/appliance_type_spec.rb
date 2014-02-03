@@ -172,6 +172,7 @@ describe ApplianceType do
 
   describe 'as_metadata_xml' do
     let(:at) { create(:appliance_type) }
+    let(:evil_at) { create(:appliance_type, name: '</name></AtomicService>WE RULE!') }
     let(:user) { create(:user) }
     let(:owned_at) { create(:appliance_type, author: user) }
     let(:published_at) { create(:appliance_type, metadata_global_id: 'MDGLID') }
@@ -228,6 +229,11 @@ describe ApplianceType do
             end
           end).to eq true
       end
+    end
+
+    it 'escapes XML content for proper document structure' do
+      xml = evil_at.as_metadata_xml.strip
+      expect(xml).to include('<name>&lt;/name&gt;&lt;/AtomicService&gt;WE RULE!</name>')
     end
   end
 

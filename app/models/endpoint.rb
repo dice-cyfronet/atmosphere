@@ -15,6 +15,7 @@
 
 class Endpoint < ActiveRecord::Base
   extend Enumerize
+  include EscapeXml
 
   belongs_to :port_mapping_template
 
@@ -39,8 +40,8 @@ class Endpoint < ActiveRecord::Base
     <<-MD_XML.strip_heredoc
       <Endpoint>
         <endpointID>#{id}</endpointID>
-        <endpointName>#{name}</endpointName>
-        <endpointDescription>#{description}</endpointDescription>
+        <endpointName>#{esc_xml name}</endpointName>
+        <endpointDescription>#{esc_xml description}</endpointDescription>
       </Endpoint>
     MD_XML
   end

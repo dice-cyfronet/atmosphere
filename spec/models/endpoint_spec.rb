@@ -40,6 +40,7 @@ describe Endpoint do
 
   describe 'as_metadata_xml' do
     let(:endp) { create(:endpoint) }
+    let(:evil_endp) { create(:endpoint, description: '</endpointDescription>') }
 
     it 'creates minimal valid metadata xml document' do
       xml = endp.as_metadata_xml.strip
@@ -48,6 +49,11 @@ describe Endpoint do
       expect(xml).to include('<endpointID>'+endp.id.to_s+'</endpointID>')
       expect(xml).to include('<endpointDescription></endpointDescription>')
       expect(xml).to end_with('</Endpoint>')
+    end
+
+    it 'escapes XML content for proper document structure' do
+      xml = evil_endp.as_metadata_xml.strip
+      expect(xml).to include('<endpointDescription>&lt;/endpointDescription&gt;</endpointDescription>')
     end
   end
 
