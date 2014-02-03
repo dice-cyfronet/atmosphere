@@ -22,7 +22,7 @@ class ApplianceConfigurationTemplate < ActiveRecord::Base
   has_many :appliance_configuration_instances, dependent: :nullify
 
   def parameters
-    params = payload.blank? ? [] : payload.scan(/#{ParamsRegexpable.param_regexp}/).collect { |raw_param| raw_param[ParamsRegexpable.param_range] }
+    params = ParamsRegexpable.parameters(payload)
     params.delete(Air.config.mi_authentication_key)
     params
   end
