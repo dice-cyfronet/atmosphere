@@ -21,17 +21,17 @@ class UserKey < ActiveRecord::Base
   attr_readonly :name, :public_key, :fingerprint
   validate :generate_fingerprint, unless: :persisted?
   before_destroy :delete_in_clouds
-  
+
   has_many :appliances
   belongs_to :user
 
   def id_at_site
-    "#{Digest::SHA1.hexdigest(fingerprint)}"
+    "#{user.login}-#{name}"
   end
 
   def generate_fingerprint
     logger.info "Generating fingerprint for #{public_key}"
-    return unless self.public_key    
+    return unless self.public_key
     fprint = nil
     Tempfile.open('ssh_public_key', '/tmp') do |file|
       file.puts self.public_key
@@ -52,7 +52,7 @@ class UserKey < ActiveRecord::Base
         write_attribute(:fingerprint, fprint)
       end
     end
-    
+
   end
 
   def import_to_clouds
