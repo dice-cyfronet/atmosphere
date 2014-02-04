@@ -81,11 +81,11 @@ class VirtualMachine < ActiveRecord::Base
     return unless pmts
     already_added_mapping_tmpls = port_mappings ? port_mappings.collect {|m| m.port_mapping_template} : []
     to_add = pmts.select {|pmt| pmt.application_protocol.none?} - already_added_mapping_tmpls
-    DnatWrangler.instance.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
+    compute_site.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
   end
 
   def delete_dnat
-    DnatWrangler.instance.remove_dnat_for_vm(self)
+    compute_site.dnat_client.remove_dnat_for_vm(self)
   end
 
   private

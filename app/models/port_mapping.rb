@@ -24,7 +24,7 @@ class PortMapping < ActiveRecord::Base
 
   private
   def delete_dnat
-    DnatWrangler.instance.remove_port_mapping(self)
+    virtual_machine.compute_site.dnat_client.remove_port_mapping(self)
   end
 
 end

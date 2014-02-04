@@ -27,10 +27,11 @@ describe PortMapping do
   expect_it { should_not allow_value(-1).for(:source_port) }
 
   it 'calls remove port mapping method of Dnat Wrangler service when it is destroyed' do
+    pm = create(:port_mapping)
     wrg = double('wrangler')
-    expect(wrg).to receive(:remove_port_mapping).with(subject)
-    DnatWrangler.stub(:instance).and_return(wrg)
-    subject.destroy
+    expect(wrg).to receive(:remove_port_mapping).with(pm)
+    pm.virtual_machine.compute_site.stub(:dnat_client).and_return(wrg)
+    pm.destroy
   end
 
 end

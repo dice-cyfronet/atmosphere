@@ -111,7 +111,8 @@ describe VirtualMachine do
     let(:wrg) { double('wrangler') }
 
     before do
-      DnatWrangler.stub(:instance).and_return(wrg)
+      vm.compute_site.stub(:dnat_client).and_return(wrg)
+      vm_ipless.compute_site.stub(:dnat_client).and_return(wrg)
     end
 
     context 'registration' do
@@ -188,7 +189,6 @@ describe VirtualMachine do
     context 'regeneration' do
 
       it 'deletes dnat if ip is changed to blank' do
-          vm = create(:virtual_machine, ip: priv_ip)
           expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
           vm.ip = nil
           vm.save

@@ -19,6 +19,8 @@ describe PortMappingTemplate do
 
   before { Fog.mock! }
 
+  let(:dnat_client_mock) { double('dnat client') }
+
   subject { FactoryGirl.create(:port_mapping_template) }
 
   expect_it { to be_valid }
@@ -168,7 +170,7 @@ describe PortMappingTemplate do
 
       before do
         pmt.application_protocol = :http
-        DnatWrangler.instance.stub(:remove_port_mapping)
+        dnat_client_mock.stub(:remove_port_mapping)
       end
 
       it 'remove dnat redirection' do
@@ -179,31 +181,30 @@ describe PortMappingTemplate do
 
       it 'regenerate proxy configuration' do
         expect(ProxyConfWorker).to receive(:regeneration_required).with(vm.compute_site)
-
         pmt.save
       end
     end
 
     context 'when http/https changed into none' do
-      let(:appliance_type) { create(:appliance_type) }
-      let(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http) }
-      let(:vm) { create(:virtual_machine, ip: '10.100.1.2') }
+      let!(:appliance_type) { create(:appliance_type) }
+      let!(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http) }
+      let!(:vm) { create(:virtual_machine, ip: '10.100.1.2') }
       let!(:appliance) { create(:appliance, appliance_type: appliance_type, virtual_machines: [vm]) }
-
+      
       before do
         pmt.application_protocol = :none
-        DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([])
+        dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
+        DnatWrangler.stub(:new).and_return(dnat_client_mock)
       end
 
       it 'regenerate proxy configuration' do
         expect(ProxyConfWorker).to receive(:regeneration_required).with(vm.compute_site)
-
         pmt.save
       end
 
       it 'adds dnat port mapping' do
-        expect(DnatWrangler.instance).to receive(:add_dnat_for_vm).and_return([])
-
+        expect(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([])
+        pmt.reload
         pmt.save
       end
     end
@@ -212,8 +213,7 @@ describe PortMappingTemplate do
   context 'port mappings' do
 
     before do
-     # VirtualMachine.any_instance.stub(:add_dnat)
-     DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([])
+     dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
     end
 
     let(:public_ip) { '149.156.10.135' }
@@ -230,14 +230,15 @@ describe PortMappingTemplate do
       let(:wrg) { double('wrangler') }
       before do
         Optimizer.instance.stub(:run)
-        DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([{port_mapping_template: PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
+        DnatWrangler.stub(:new).and_return(dnat_client_mock)
+        dnat_client_mock.stub(:add_dnat_for_vm).and_return([{port_mapping_template: PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
       end
       let(:proto) { 'tcp' }
       let(:priv_port) { 8080 }
 
 
       it 'calls Wrangler to add port mappings to production vms associated to created port mapping template' do
-        expect(DnatWrangler.instance).to receive(:add_dnat_for_vm)
+        expect(dnat_client_mock).to receive(:add_dnat_for_vm)
         pmt = create(:port_mapping_template, appliance_type:appliance.appliance_type, application_protocol: :none)
       end
 
@@ -252,8 +253,8 @@ describe PortMappingTemplate do
 
     describe 'port mapping template is updated' do
       it 'creates mapping update jobs for each port mapping if target port changed' do
-        DnatWrangler.instance.stub(:remove)
-        DnatWrangler.instance.stub(:add_dnat_for_vm).and_return([], [])#([{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}], [{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_2}])
+        dnat_client_mock.stub(:remove)
+        dnat_client_mock.stub(:add_dnat_for_vm).and_return([], [])#([{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}], [{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_2}])
         pmt.update_attribute(:target_port, 7777)
       end
 
