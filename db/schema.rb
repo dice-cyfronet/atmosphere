@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140203135532) do
+ActiveRecord::Schema.define(version: 20140203143501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,11 +47,11 @@ ActiveRecord::Schema.define(version: 20140203135532) do
   add_index "appliance_sets", ["user_id"], name: "index_appliance_sets_on_user_id", using: :btree
 
   create_table "appliance_types", force: true do |t|
-    t.string   "name",                                null: false
+    t.string   "name",                                 null: false
     t.text     "description"
-    t.boolean  "shared",            default: false,   null: false
-    t.boolean  "scalable",          default: false,   null: false
-    t.string   "visible_to",        default: "owner", null: false
+    t.boolean  "shared",             default: false,   null: false
+    t.boolean  "scalable",           default: false,   null: false
+    t.string   "visible_to",         default: "owner", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20140203135532) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "metadata_global_id"
   end
 
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
@@ -248,29 +249,29 @@ ActiveRecord::Schema.define(version: 20140203135532) do
   end
 
   create_table "virtual_machine_templates", force: true do |t|
-    t.string   "id_at_site",                            null: false
-    t.string   "name",                                  null: false
-    t.string   "state",                                 null: false
-    t.boolean  "managed_by_atmosphere", default: false, null: false
-    t.integer  "compute_site_id",                       null: false
+    t.string   "id_at_site",            null: false
+    t.string   "name",                  null: false
+    t.string   "state",                 null: false
+    t.integer  "compute_site_id",       null: false
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "managed_by_atmosphere"
   end
 
   add_index "virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "index_vm_tmpls_on_cs_id_and_id_at_site", unique: true, using: :btree
 
   create_table "virtual_machines", force: true do |t|
-    t.string   "id_at_site",                                  null: false
-    t.string   "name",                                        null: false
-    t.string   "state",                                       null: false
+    t.string   "id_at_site",                  null: false
+    t.string   "name",                        null: false
+    t.string   "state",                       null: false
     t.string   "ip"
-    t.boolean  "managed_by_atmosphere",       default: false, null: false
-    t.integer  "compute_site_id",                             null: false
+    t.integer  "compute_site_id",             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
+    t.boolean  "managed_by_atmosphere"
     t.integer  "virtual_machine_flavor_id"
   end
 

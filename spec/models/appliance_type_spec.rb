@@ -169,4 +169,72 @@ describe ApplianceType do
       end
     end
   end
+
+  describe 'as_metadata_xml' do
+    let(:at) { create(:appliance_type) }
+    let(:evil_at) { create(:appliance_type, name: '</name></AtomicService>WE RULE!') }
+    let(:user) { create(:user) }
+    let(:owned_at) { create(:appliance_type, author: user) }
+    let(:published_at) { create(:appliance_type, metadata_global_id: 'MDGLID') }
+    let(:endp11) { build(:endpoint) }
+    let(:endp12) { build(:endpoint, description: 'ENDP_DESC') }
+    let(:endp21) { build(:endpoint) }
+    let(:pmt1) { build(:port_mapping_template, endpoints: [endp11, endp12]) }
+    let(:pmt2) { build(:port_mapping_template, endpoints: [endp21]) }
+    let(:pmt3) { build(:port_mapping_template) }
+    let(:complex_at) { create(:appliance_type, port_mapping_templates: [pmt1, pmt2, pmt3], description: 'DESC') }
+
+    it 'creates minimal valid metadata xml document' do
+      xml = at.as_metadata_xml.strip
+      expect(xml).to start_with('<AtomicService>')
+      expect(xml).to include('<name>'+at.name+'</name>')
+      expect(xml).to include('<localID>'+at.id.to_s+'</localID>')
+      expect(xml).to include('<author></author>')
+      expect(xml).to include('<description></description>')
+      expect(xml).to include('<type>AtomicService</type>')
+      expect(xml).to include('<metadataUpdateDate>'+Time.now.strftime('%Y-%m-%d')+'</metadataUpdateDate>')
+      expect(xml).to include('<metadataCreationDate>'+Time.now.strftime('%Y-%m-%d')+'</metadataCreationDate>')
+      expect(xml).to include('<creationDate>'+at.created_at.strftime('%Y-%m-%d')+'</creationDate>')
+      expect(xml).to include('<updateDate>'+at.updated_at.strftime('%Y-%m-%d')+'</updateDate>')
+      expect(xml).to end_with('</AtomicService>')
+    end
+
+    it 'assigns correct user login' do
+      xml = owned_at.as_metadata_xml.strip
+      expect(xml).to include('<author>'+user.login+'</author>')
+    end
+
+    it 'creates proper update metadata xml document' do
+      xml = published_at.as_metadata_xml.strip
+      expect(xml).to include('<globalID>MDGLID</globalID>')
+      expect(xml).to_not include('metadataCreationDate')
+    end
+
+    it 'handles endpoints properly' do
+      xml = complex_at.as_metadata_xml.strip
+      p xml
+      expect(xml).to include('<description>DESC</description>')
+      expect(xml).to include('<Endpoint>')
+      expect(xml.scan('<Endpoint>').size).to eq 3
+      [endp11, endp12, endp21].each do |endp|
+        expect(
+          xml.split('Endpoint').any? do |endp_xml|
+            if endp_xml.include? endp.name
+              expect(endp_xml).to include('<endpointID>'+endp.id.to_s+'</endpointID>')
+              expect(endp_xml).to include('<endpointName>'+endp.name+'</endpointName>')
+              expect(endp_xml).to include('<endpointDescription>'+endp.description.to_s+'</endpointDescription>')
+              true
+            else
+              false
+            end
+          end).to eq true
+      end
+    end
+
+    it 'escapes XML content for proper document structure' do
+      xml = evil_at.as_metadata_xml.strip
+      expect(xml).to include('<name>&lt;/name&gt;&lt;/AtomicService&gt;WE RULE!</name>')
+    end
+  end
+
 end

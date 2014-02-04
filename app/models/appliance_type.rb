@@ -19,6 +19,7 @@
 
 class ApplianceType < ActiveRecord::Base
   extend Enumerize
+  include EscapeXml
 
   belongs_to :security_proxy
   belongs_to :author, class_name: 'User', foreign_key: 'user_id'
@@ -77,6 +78,33 @@ class ApplianceType < ActiveRecord::Base
 
     at
   end
+
+  # This method is used to produce XML document that is being sent to the Metadata Registry
+  def as_metadata_xml
+    optional_elements = metadata_global_id ?
+        "<globalID>#{metadata_global_id}</globalID>" :
+        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d')}</metadataCreationDate>"
+
+    <<-MD_XML.strip_heredoc
+      <AtomicService>
+        <localID>#{id}</localID>
+        <name>#{esc_xml name}</name>
+        <type>AtomicService</type>
+        <description>#{esc_xml description}</description>
+        <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d')}</metadataUpdateDate>
+        <creationDate>#{created_at.strftime('%Y-%m-%d')}</creationDate>
+        <updateDate>#{updated_at.strftime('%Y-%m-%d')}</updateDate>
+        <author>#{esc_xml(author.login) if author}</author>
+
+        #{optional_elements}
+
+        <endpoints>
+          #{port_mapping_templates.map(&:endpoints).flatten.map(&:as_metadata_xml).join}
+        </endpoints>
+      </AtomicService>
+    MD_XML
+  end
+
 
   private
 

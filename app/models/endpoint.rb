@@ -15,6 +15,7 @@
 
 class Endpoint < ActiveRecord::Base
   extend Enumerize
+  include EscapeXml
 
   belongs_to :port_mapping_template
 
@@ -32,6 +33,19 @@ class Endpoint < ActiveRecord::Base
   scope :appl_endpoints, ->(appl) { joins(port_mapping_template: :http_mappings).where(http_mappings: {appliance_id: appl.id}).uniq }
 
   scope :visible_to, ->(user) { includes(port_mapping_template: { appliance_type: {}, dev_mode_property_set: { appliance: :appliance_set } }).where("appliance_types.visible_to = 'all' or appliance_types.user_id = :user_id or appliance_sets.user_id = :user_id", { user_id: user.id }).references(:appliance_types, :appliance_sets) }
+
+
+  # This method is used to produce XML document that is being sent to the Metadata Registry
+  def as_metadata_xml
+    <<-MD_XML.strip_heredoc
+      <Endpoint>
+        <endpointID>#{id}</endpointID>
+        <endpointName>#{esc_xml name}</endpointName>
+        <endpointDescription>#{esc_xml description}</endpointDescription>
+      </Endpoint>
+    MD_XML
+  end
+
 
   private
 

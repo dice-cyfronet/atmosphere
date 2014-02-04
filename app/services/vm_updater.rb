@@ -7,7 +7,8 @@ class VmUpdater
   def update
     vm.source_template = source_template
     vm.name = server.name || '[unnamed]'
-    vm.state = map_state(server.state.downcase.to_sym)
+    vm.state = map_saving_state(vm, server.task_state) ||
+      map_state(server.state.downcase.to_sym)
     update_ips if update_ips?
 
     unless vm.save
@@ -25,6 +26,10 @@ class VmUpdater
   # OS states: active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize
   def map_state(key)
     {pending: :build , running: :active, shuttingdown: :deleted, stopped: :deleted, stopping: :deleted, terminated: :deleted, active: :active, build: :build, deleted: :deleted, error: :error, hard_reboot: :hard_reboot, password: :password, reboot: :reboot, rebuild: :rebuild, rescue: :rescue, resize: :resize, revert_resize: :revert_resize, shutoff: :shutoff, suspended: :suspended, unknown: :unknown, verify_resize: :verify_resize}[key]
+  end
+
+  def map_saving_state(vm, key)
+    (:saving if vm.saved_templates.count > 0) || ({image_snapshot: :saving}[key.to_sym] if key)
   end
 
   def vm

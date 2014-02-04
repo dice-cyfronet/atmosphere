@@ -34,6 +34,9 @@ class Fog::Compute::OpenStack::Server
     image['id']
   end
 
+  def task_state
+    os_ext_sts_task_state
+  end
 end
 
 class Fog::Compute::AWS::Real
@@ -57,6 +60,9 @@ class Fog::Compute::AWS::Server
     tags['Name']
   end
 
+  def task_state
+    nil #TODO
+  end
 end
 
 # Image class does not implement destroy method
