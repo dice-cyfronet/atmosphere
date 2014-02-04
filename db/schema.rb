@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140127082332) do
+ActiveRecord::Schema.define(version: 20140203135532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,9 @@ ActiveRecord::Schema.define(version: 20140127082332) do
     t.text     "template_filters"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "wrangler_url"
+    t.string   "wrangler_username"
+    t.string   "wrangler_password"
   end
 
   create_table "deployments", force: true do |t|
