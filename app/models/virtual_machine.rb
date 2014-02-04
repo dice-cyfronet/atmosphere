@@ -26,8 +26,8 @@ class VirtualMachine < ActiveRecord::Base
   has_many :deployments, dependent: :destroy
   validates_presence_of :name
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
-  enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize']
-  validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize)
+  enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving']
+  validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)
 
   before_create :instantiate_vm, unless: :id_at_site
   after_destroy :generate_proxy_conf
