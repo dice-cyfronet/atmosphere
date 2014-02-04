@@ -40,12 +40,14 @@ class ApplianceType < ActiveRecord::Base
   has_many :appliances, dependent: :destroy
   has_many :port_mapping_templates, dependent: :destroy
   has_many :appliance_configuration_templates, dependent: :destroy
-  has_many :virtual_machine_templates, dependent: :destroy
-
+  has_many :virtual_machine_templates
 
   scope :def_order, -> { order(:name) }
   scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
+
+  before_destroy :store_vmts
+  after_destroy :delete_vmts
 
   def destroy(force = false)
     if !force and has_dependencies?
@@ -120,5 +122,13 @@ class ApplianceType < ActiveRecord::Base
     params.merge! overwrite_dup
 
     params
+  end
+
+  def store_vmts
+    @vmts = virtual_machine_templates.to_a
+  end
+
+  def delete_vmts
+    @vmts.each(&:destroy)
   end
 end

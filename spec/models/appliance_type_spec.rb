@@ -51,7 +51,7 @@ describe ApplianceType do
   expect_it { to have_many :appliances }
   expect_it { to have_many(:port_mapping_templates).dependent(:destroy) }
   expect_it { to have_many(:appliance_configuration_templates).dependent(:destroy) }
-  expect_it { to have_many(:virtual_machine_templates).dependent(:destroy) }
+  expect_it { to have_many(:virtual_machine_templates) }
 
   context 'has virtual_machine_templates or appliances (aka "is used")' do
     let(:appliance_type) { create(:appliance_type) }
@@ -237,4 +237,21 @@ describe ApplianceType do
     end
   end
 
+  describe 'destroy object and relation to VMT' do
+    let(:vmt1) { create(:virtual_machine_template) }
+    let(:vmt2) { create(:virtual_machine_template) }
+    let!(:at) { create(:appliance_type, virtual_machine_templates: [vmt1, vmt2]) }
+
+    it 'removes all assigned virtual machine templates' do
+      expect {
+        at.destroy
+      }.to change { VirtualMachineTemplate.count }.by(-2)
+    end
+
+    it 'does not remove VMT when removed from relation' do
+      expect {
+        at.virtual_machine_templates = [ vmt1 ]
+      }.to change { VirtualMachineTemplate.count }.by(0)
+    end
+  end
 end

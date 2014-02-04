@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140203143501) do
+ActiveRecord::Schema.define(version: 20140204132451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -310,7 +310,7 @@ ActiveRecord::Schema.define(version: 20140203143501) do
 
   add_foreign_key "virtual_machine_flavors", "compute_sites", name: "virtual_machine_flavors_compute_site_id_fk"
 
-  add_foreign_key "virtual_machine_templates", "appliance_types", name: "virtual_machine_templates_appliance_type_id_fk"
+  add_foreign_key "virtual_machine_templates", "appliance_types", name: "virtual_machine_templates_appliance_type_id_fk", dependent: :nullify
   add_foreign_key "virtual_machine_templates", "compute_sites", name: "virtual_machine_templates_compute_site_id_fk"
   add_foreign_key "virtual_machine_templates", "virtual_machines", name: "virtual_machine_templates_virtual_machine_id_fk"
 
