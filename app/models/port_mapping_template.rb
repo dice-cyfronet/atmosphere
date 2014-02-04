@@ -94,9 +94,10 @@ class PortMappingTemplate < ActiveRecord::Base
   def update_port_mappings
     port_mappings.each {|pm|
       # TODO handle Wrangler errors
-      DnatWrangler.instance.remove(pm.virtual_machine.ip, target_port_was)
-      added_mapping_attrs = DnatWrangler.instance.add_dnat_for_vm(pm.virtual_machine, [self])
-      pm.update_attributes(added_mapping_attrs)
+      dnat_client = pm.virtual_machine.compute_site.dnat_client
+      dnat_client.remove(pm.virtual_machine.ip, target_port_was)
+      added_mapping_attrs = dnat_client.add_dnat_for_vm(pm.virtual_machine, [self])
+      pm.update_attributes(added_mapping_attrs.first)
     }
   end
 

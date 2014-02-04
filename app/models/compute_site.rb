@@ -49,6 +49,10 @@ class ComputeSite < ActiveRecord::Base
     Air.get_cloud_client(self.site_id) || register_cloud_client
   end
 
+  def dnat_client
+    DnatWrangler.new(wrangler_url, wrangler_username, wrangler_password)
+  end
+
   private
   def register_cloud_client
     cloud_site_conf = JSON.parse(self.config).symbolize_keys
