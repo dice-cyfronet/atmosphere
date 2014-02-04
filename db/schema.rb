@@ -91,6 +91,9 @@ ActiveRecord::Schema.define(version: 20140204132451) do
     t.text     "template_filters"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "wrangler_url"
+    t.string   "wrangler_username"
+    t.string   "wrangler_password"
   end
 
   create_table "deployments", force: true do |t|

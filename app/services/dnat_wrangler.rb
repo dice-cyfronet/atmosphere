@@ -1,11 +1,16 @@
 require 'wrangler'
 
 class DnatWrangler
-  include Singleton
   include Wrangler
 
+  def initialize(wrangler_url, wrangler_username, wrangler_password)
+    @wrangler_url = wrangler_url
+    @wrangler_username = wrangler_username
+    @wrangler_password = wrangler_password
+  end
+
   def remove_dnat_for_vm(vm)
-    return true unless vm.ip and not vm.port_mappings.blank?
+    return true unless vm.ip and @wrangler_url and not vm.port_mappings.blank?
     remove(vm.ip)
   end
 
@@ -28,20 +33,24 @@ class DnatWrangler
       {proto: pmt.transport_protocol, port: pmt.target_port}
     }
     return [] if to_add.blank? or not vm.ip?
-    resp = Wrangler::Client.dnat_client.post "/dnat/#{vm.ip}" do |req|
-      req.headers['Content-Type'] = 'application/json'
-      req.body = JSON.generate to_add
-    end
-    if resp.status == 200
-      added_pms = JSON.parse(resp.body).collect { |e| {port_mapping_template: pmt_map[e['privPort']], virtual_machine: vm, public_ip: e['pubIp'], source_port: e['pubPort']} }
+    if @wrangler_url
+      resp = dnat_client.post "/dnat/#{vm.ip}" do |req|
+        req.headers['Content-Type'] = 'application/json'
+        req.body = JSON.generate to_add
+      end
+      if resp.status == 200
+        added_pms = JSON.parse(resp.body).collect { |e| {port_mapping_template: pmt_map[e['privPort']], virtual_machine: vm, public_ip: e['pubIp'], source_port: e['pubPort']} }
+      else
+        Rails.logger.error "Wrangler returned #{resp.status} #{resp.body} when trying to add redirections for VM #{vm.uuid} with IP #{vm.ip}. Requested redirections: #{to_add}"
+        []
+      end
     else
-      Rails.logger.error "Wrangler returned #{resp.status} #{resp.body} when trying to add redirections for VM #{vm.uuid} with IP #{vm.ip}. Requested redirections: #{to_add}"
-      []
-    end
+      pmts.collect{|pmt| {port_mapping_template: pmt, virtual_machine:vm, public_ip: vm.ip, source_port: pmt.target_port}}
+    end 
   end
 
   def remove(ip, port = nil, protocol = nil)
-    dnat_client = Wrangler::Client.dnat_client
+    return true unless @wrangler_url
     path = build_path_for_params(ip, port, protocol)
     resp = dnat_client.delete(path)
     if not resp.status == 204
@@ -56,6 +65,15 @@ class DnatWrangler
 
   def build_req_params_msg(ip, port, protocol)
     "IP #{ip}#{', port ' + port.to_s if port}#{', protocol ' + protocol if protocol}"
+  end
+
+  def dnat_client
+    conn = Faraday.new(url: @wrangler_url) do |faraday|
+      faraday.request :url_encoded
+      faraday.response :logger 
+      faraday.adapter Faraday.default_adapter
+      faraday.basic_auth(@wrangler_username, @wrangler_password)
+    end
   end
 
 end

@@ -212,7 +212,6 @@ describe ApplianceType do
 
     it 'handles endpoints properly' do
       xml = complex_at.as_metadata_xml.strip
-      p xml
       expect(xml).to include('<description>DESC</description>')
       expect(xml).to include('<Endpoint>')
       expect(xml.scan('<Endpoint>').size).to eq 3
