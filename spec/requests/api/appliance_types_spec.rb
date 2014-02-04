@@ -249,7 +249,7 @@ describe Api::V1::ApplianceTypesController do
         expect(response.status).to eq 422
       end
 
-      it 'returns 201 Created' do
+      it 'returns 201 Created on success' do
         post api("/appliance_types/", developer), req_with_appl_id_body
         expect(response.status).to eq 201
       end
@@ -355,6 +355,16 @@ describe Api::V1::ApplianceTypesController do
         end
       end
 
+      context 'when appliance is already used to save AT' do
+        before do
+          create(:virtual_machine, appliances: [appl], state: :saving)
+        end
+
+        it 'returns 409 Conflict' do
+          post api("/appliance_types/", developer), req_with_appl_id_body
+          expect(response.status).to eq 409
+        end
+      end
     end
 
     context 'when authenticated as admin' do

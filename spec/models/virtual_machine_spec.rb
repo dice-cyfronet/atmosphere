@@ -29,7 +29,7 @@ describe VirtualMachine do
   let(:default_flavor) { create(:virtual_machine_flavor, flavor_name: '1')}
 
   expect_it { to have_many(:port_mappings).dependent(:delete_all) }
-  expect_it { to ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize)) }
+  expect_it { to ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
 
   context 'destruction' do
     let(:cc_mock) { double('cloud client mock') }

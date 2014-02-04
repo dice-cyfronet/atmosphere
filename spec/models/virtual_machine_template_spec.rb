@@ -176,7 +176,7 @@ describe VirtualMachineTemplate do
 
   describe '::create_from_vm' do
     let(:cloud_client) { double(:cloud_client) }
-    let(:vm) { build(:virtual_machine, id_at_site: 'id') }
+    let(:vm) { create(:virtual_machine, id_at_site: 'id') }
 
     before do
       allow(cloud_client).to receive(:save_template)
@@ -187,6 +187,13 @@ describe VirtualMachineTemplate do
       tmpl = VirtualMachineTemplate.create_from_vm(vm)
 
       expect(tmpl.managed_by_atmosphere).to be_true
+    end
+
+    it 'sets VM state to "saving"' do
+      tmpl = VirtualMachineTemplate.create_from_vm(vm)
+      vm.reload
+
+      expect(vm.state).to eq 'saving'
     end
   end
 end

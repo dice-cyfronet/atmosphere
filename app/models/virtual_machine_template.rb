@@ -45,6 +45,10 @@ class VirtualMachineTemplate < ActiveRecord::Base
     vm_template.compute_site = cs
     vm_template.state = :saving
     vm_template.save
+
+    virtual_machine.state = :saving
+    virtual_machine.save
+
     vm_template
   end
 
