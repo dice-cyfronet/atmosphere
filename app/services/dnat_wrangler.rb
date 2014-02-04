@@ -68,11 +68,11 @@ class DnatWrangler
   end
 
   def dnat_client
-    conn = Faraday.new(url: url) do |faraday|
+    conn = Faraday.new(url: @wrangler_url) do |faraday|
       faraday.request :url_encoded
       faraday.response :logger 
       faraday.adapter Faraday.default_adapter
-      faraday.basic_auth(username,password)
+      faraday.basic_auth(@wrangler_username, @wrangler_password)
     end
   end
 
