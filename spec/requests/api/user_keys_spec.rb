@@ -213,6 +213,17 @@ describe Api::V1::UserKeysController do
           expect(response.status).to eq 403
         }.to change { UserKey.count }.by(0)
       end
+
+      context 'when key is used in running VM' do
+        before { create(:appliance, user_key: user_key1) }
+
+        it 'returns 200 Success when deleting owned user key' do
+          expect {
+            delete api("/user_keys/#{user_key1.id}", user)
+            expect(response.status).to eq 422
+          }.to change { UserKey.count }.by(0)
+        end
+      end
     end
 
     context 'when authenticated as admin' do

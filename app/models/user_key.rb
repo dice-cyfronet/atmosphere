@@ -20,6 +20,7 @@ class UserKey < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :user_id
   attr_readonly :name, :public_key, :fingerprint
   validate :generate_fingerprint, unless: :persisted?
+  before_destroy :disallow_if_used_in_running_vm
   before_destroy :delete_in_clouds
 
   has_many :appliances
@@ -80,6 +81,13 @@ class UserKey < ActiveRecord::Base
       rescue Fog::Compute::OpenStack::NotFound
       end
       logger.info "Deleted key #{id_at_site} from #{cs.name}"
+    end
+  end
+
+  def disallow_if_used_in_running_vm
+    if appliances.count > 0
+      errors.add(:base, 'Unable to remove key used in running application')
+      return false
     end
   end
 end

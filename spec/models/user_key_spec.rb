@@ -61,4 +61,25 @@ describe UserKey do
     expect(errors).to eql({public_key: ["is invalid"]})
   end
 
+  describe '#describe' do
+    subject { create(:user_key) }
+
+    context 'when key is used in running VM' do
+      before do
+        appl = create(:appliance)
+        subject.appliances = [ appl ]
+        subject.save
+      end
+
+      it 'throws error' do
+        expect(subject.destroy).to be_false
+      end
+    end
+
+    context 'when key is not assigned to any VM' do
+      it 'it removed' do
+        expect(subject.destroy).to be_true
+      end
+    end
+  end
 end
