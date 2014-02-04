@@ -13,7 +13,7 @@ module Api
       end
 
       def create
-        log_user_action 'create new user key'
+        log_user_action "create new user key with following params #{params}"
         if params[:user_key] && (params[:user_key][:public_key].is_a? ActionDispatch::Http::UploadedFile)
           log_user_action 'the public user key was uploaded with a file'
           @user_key.public_key = params[:user_key][:public_key].read

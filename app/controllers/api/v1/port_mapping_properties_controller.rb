@@ -15,14 +15,14 @@ module Api
       end
 
       def create
-        log_user_action 'create new port mapping property'
+        log_user_action "create new port mapping property with following params #{params}"
         @port_mapping_property.save!
         render json: @port_mapping_property, serializer: PortMappingPropertySerializer, status: :created
         log_user_action "port mapping property created: #{@port_mapping_property.to_json}"
       end
 
       def update
-        log_user_action "update port mapping property #{@port_mapping_property.id}"
+        log_user_action "update port mapping property #{@port_mapping_property.id} with following params #{params}"
         @port_mapping_property.update_attributes!(port_mapping_property_params)
         render json: @port_mapping_property, serializer: PortMappingPropertySerializer
         log_user_action "port mapping property updated: #{@port_mapping_property.to_json}"

@@ -16,14 +16,14 @@ module Api
       end
 
       def create
-        log_user_action 'create new endpoint'
+        log_user_action "create new endpoint with following params #{params}"
         @endpoint.save!
         render json: @endpoint, serializer: EndpointSerializer, status: :created
         log_user_action "endpoint created: #{@endpoint.to_json}"
       end
 
       def update
-        log_user_action "update endpoint #{@endpoint.id}"
+        log_user_action "update endpoint #{@endpoint.id} with following params #{params}"
         @endpoint.update_attributes!(endpoint_params)
         render json: @endpoint, serializer: EndpointSerializer
         log_user_action "endpoint updated: #{@endpoint.to_json}"
