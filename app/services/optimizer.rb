@@ -37,7 +37,8 @@ class Optimizer
             appliance.state_explanation = err_msg
             Rails.logger.warn err_msg
           else
-            VirtualMachine.create(name: appliance.appliance_type.name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
+            vm_name = appliance.name.blank? ? appliance.appliance_type.name : appliance.name
+            VirtualMachine.create(name: vm_name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
             appliance.state = :satisfied
           end
         end
