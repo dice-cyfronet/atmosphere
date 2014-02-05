@@ -365,6 +365,27 @@ describe Api::V1::ApplianceTypesController do
           expect(response.status).to eq 409
         end
       end
+
+      context 'when rollback occurs' do
+
+        it 'removes template from cloud', focus: true do
+          cloud_client = double('cloud client')
+          expect(cloud_client).to receive(:save_template).and_return(99)
+          Fog::Compute.stub(:new).and_return cloud_client
+          ApplianceType.stub(:create_from).and_raise ActiveRecord::Rollback.new 'I want to cause rollback'
+          vm = create(:virtual_machine)
+          appl.virtual_machines << vm
+          expect(vm.saved_templates.size).to eq 0
+          expect { post api('/appliance_types/', developer), req_with_appl_id_body }.to change { VirtualMachineTemplate.count }.by(0)
+          
+          #vm.reload
+          #expect(vm.saved_templates.size).to eq 1
+          #tmpl = vm.saved_templates.first
+          #expect(tmpl.state).to eq 'saving'
+          #expect(tmpl.appliance_type_id).to eq at_response['id']
+        end
+
+      end
     end
 
     context 'when authenticated as admin' do
