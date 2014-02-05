@@ -13,14 +13,14 @@ module Api
       end
 
       def create
-        log_user_action 'create new appliance configuration template'
+        log_user_action "create new appliance configuration template with following params #{params}"
         @appliance_configuration_template.save!
         render json: @appliance_configuration_template, status: :created
         log_user_action "appliance configuration template created: #{@appliance_configuration_template.to_json}"
       end
 
       def update
-        log_user_action 'update appliance configuration template'
+        log_user_action "update appliance configuration template #{@appliance_configuration_template.id} with following params #{params}"
         @appliance_configuration_template.update_attributes!(update_params)
         render json: @appliance_configuration_template
         log_user_action "appliance configuration template updated: #{@appliance_configuration_template.to_json}"

@@ -16,7 +16,7 @@ module Api
       end
 
       def create
-        log_user_action 'create new appliance type'
+        log_user_action "create new appliance type with following params #{params}"
         appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
         tmpl = nil
         vm = nil
@@ -49,7 +49,7 @@ module Api
       end
 
       def update
-        log_user_action "update appliance type #{@appliance_type.id}"
+        log_user_action "update appliance type #{@appliance_type.id} with following params #{params}"
         update_params = appliance_type_params
         update_params.delete 'appliance_id'
         author_id = update_params.delete(:author_id)

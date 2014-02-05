@@ -16,14 +16,14 @@ module Api
       end
 
       def create
-        log_user_action 'create new port mapping template'
+        log_user_action "create new port mapping template with following params #{params}"
         @port_mapping_template.save!
         render json: @port_mapping_template, serializer: PortMappingTemplateSerializer, status: :created
         log_user_action "port mapping template created: #{@port_mapping_template.to_json}"
       end
 
       def update
-        log_user_action "update port mapping template #{@port_mapping_template.id}"
+        log_user_action "update port mapping template #{@port_mapping_template.id} with following params #{params}"
         update_params = port_mapping_template_params
         @port_mapping_template.update_attributes!(update_params)
         render json: @port_mapping_template, serializer: PortMappingTemplateSerializer
