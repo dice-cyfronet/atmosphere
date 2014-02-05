@@ -22,11 +22,12 @@ describe Optimizer do
 
     context 'development mode' do
 
+      let(:dev_appliance_set) { create(:dev_appliance_set) }
+      let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not reuse available vm' do
         tmpl_of_shareable_at
-        config_inst = create(:appliance_configuration_instance)
         appl1 = Appliance.create(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-        appl2 = Appliance.create(appliance_set: create(:dev_appliance_set), appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+        appl2 = Appliance.create(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
         vms = VirtualMachine.all
         expect(vms.size).to eql 2
         vm_1 = vms.first
@@ -37,10 +38,9 @@ describe Optimizer do
         expect(vm_2.appliances).to eq [appl2]
       end
 
-      it 'does reuses available vm if it is in dev mode' do
+      it 'does not reuse available vm if it is in dev mode' do
           tmpl_of_shareable_at
-          config_inst = create(:appliance_configuration_instance)
-          appl1 = Appliance.create(appliance_set: create(:dev_appliance_set), appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl1 = Appliance.create(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
           appl2 = Appliance.create(appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
           vms = VirtualMachine.all
           expect(vms.size).to eql 2
@@ -50,6 +50,26 @@ describe Optimizer do
           expect(vm_2.appliances.size).to eql 1
           expect(vm_1.appliances).to eq [appl1]
           expect(vm_2.appliances).to eq [appl2]
+      end
+
+      context 'sets vm name' do
+
+        before do
+          VirtualMachine.stub(:create)
+        end
+        
+        it 'to appliance name if it is not blank' do
+          appliance = Appliance.create(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, name: 'name full appliance')
+          vm_params = {name: appliance.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
+          expect(VirtualMachine).to have_received(:create).with(vm_params)
+        end
+
+        it 'to appliance type name if appliance name is blank' do
+          appliance = Appliance.create(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          vm_params = {name: appliance.appliance_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
+          expect(VirtualMachine).to have_received(:create).with(vm_params)
+        end
+
       end
 
     end
