@@ -15,7 +15,7 @@ module Api
       end
 
       def create
-        log_user_action 'create new appliance'
+        log_user_action "create new appliance with following params #{params}"
         @appliance.transaction do
           @appliance.appliance_type = config_template.appliance_type
 
@@ -29,7 +29,7 @@ module Api
       end
 
       def update
-        log_user_action "update appliance #{@appliance.id} name"
+        log_user_action "update appliance #{@appliance.id} with following params #{params}"
         @appliance.update_attributes!(update_params)
         render json: @appliance
         log_user_action "appliance name updated: #{@appliance_type.to_json}"

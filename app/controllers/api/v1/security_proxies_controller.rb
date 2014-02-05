@@ -14,14 +14,14 @@ module Api
       end
 
       def create
-        log_user_action 'create new security proxy'
+        log_user_action "create new security proxy with following params #{params}"
         @security_proxy.save!
         render json: @security_proxy, serializer: SecurityProxySerializer, status: :created
         log_user_action "security proxy created: #{@security_proxy.to_json}"
       end
 
       def update
-        log_user_action "update security proxy #{@security_proxy.id}"
+        log_user_action "update security proxy #{@security_proxy.id} with following params #{params}"
         @security_proxy.update_attributes!(params[:security_proxy])
         render json: @security_proxy, serializer: SecurityProxySerializer
         log_user_action "security proxy updated: #{@security_proxy.to_json}"

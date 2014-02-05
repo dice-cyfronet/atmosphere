@@ -14,7 +14,7 @@ module Api
       end
 
       def create
-        log_user_action 'create new appliance set'
+        log_user_action "create new appliance set with following params #{params}"
         if conflicted? @appliance_set.appliance_set_type
           msg = "Unable to create two #{@appliance_set.appliance_set_type} appliance sets"
           render json: {message: msg}, status: :conflict
@@ -27,7 +27,7 @@ module Api
       end
 
       def update
-        log_user_action "update appliance set #{@appliance_set.id}"
+        log_user_action "update appliance set #{@appliance_set.id} with following params #{params}"
         @appliance_set.update_attributes!(appliance_set_update_params)
         render json: @appliance_set, serializer: ApplianceSetSerializer
         log_user_action "appliance set updated: #{@appliance_set.to_json}"

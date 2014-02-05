@@ -13,7 +13,7 @@ module Api
       end
 
       def update
-        log_user_action "update dev mode property set #{@dev_mode_property_set.id}"
+        log_user_action "update dev mode property set #{@dev_mode_property_set.id} with following params #{params}"
 
         render json: @dev_mode_property_set, serializer:DevModePropertySetSerializer
         log_user_action "dev mode property set #{@dev_mode_property_set.id} updated #{@dev_mode_property_set.to_json}"
