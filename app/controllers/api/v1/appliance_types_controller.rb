@@ -24,7 +24,6 @@ module Api
           vm = appl.virtual_machines.first
 
           raise Air::Conflict.new("It is not allowed to save application twice") if vm && vm.state.saving?
-
           tmpl = VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
         else
           unless current_user.admin?

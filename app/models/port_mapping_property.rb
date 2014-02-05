@@ -24,6 +24,8 @@ class PortMappingProperty < ActiveRecord::Base
   validates_absence_of :port_mapping_template, if: 'compute_site != nil'
   validates_absence_of :compute_site, if: 'port_mapping_template != nil'
 
+  validates_uniqueness_of :key, :scope => :port_mapping_template_id
+
   after_save :generate_proxy_conf
   after_destroy :generate_proxy_conf
 

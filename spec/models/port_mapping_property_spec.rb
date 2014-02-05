@@ -103,4 +103,26 @@ describe PortMappingProperty do
       end
     end
   end
+
+  describe 'key uniques' do
+    context 'when PMP with key exist' do
+      let(:pmt) { create(:port_mapping_template) }
+      let(:pmt2) { create(:port_mapping_template) }
+      before do
+        pmt.port_mapping_properties.create(key: 'key', value: 'value')
+      end
+
+      it 'does not allow to create another one with the same PMT and key' do
+        expect {
+          pmt.port_mapping_properties.create!(key: 'key', value: 'value')
+        }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+
+      it 'allows to create 2 the same PMP for 2 different PMT' do
+        expect {
+          pmt2.port_mapping_properties.create!(key: 'key', value: 'value')
+        }.to_not raise_error
+      end
+    end
+  end
 end
