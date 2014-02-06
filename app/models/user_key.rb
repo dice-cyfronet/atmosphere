@@ -27,7 +27,7 @@ class UserKey < ActiveRecord::Base
   belongs_to :user
 
   def id_at_site
-    "#{user.login}-#{name}"
+    "#{user.login}-#{normalized_name}-#{Digest::SHA1.hexdigest(fingerprint)}"
   end
 
   def generate_fingerprint
@@ -89,5 +89,9 @@ class UserKey < ActiveRecord::Base
       errors.add(:base, 'Unable to remove key used in running application')
       return false
     end
+  end
+
+  def normalized_name
+    name.gsub(' ', '_')
   end
 end
