@@ -57,6 +57,7 @@ class Appliance < ActiveRecord::Base
       set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
       set.preference_disk = options[:preference_disk] if options[:preference_disk]
       self.dev_mode_property_set = set
+      set.appliance = self
     end
   end
 

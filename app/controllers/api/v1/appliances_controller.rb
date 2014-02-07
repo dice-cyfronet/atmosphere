@@ -19,6 +19,9 @@ module Api
         @appliance.transaction do
           @appliance.appliance_type = config_template.appliance_type
 
+          prefs = preferences
+          @appliance.create_dev_mode_property_set(prefs) if prefs
+
           raise CanCan::AccessDenied if cannot_create_appliance?
 
           @appliance.appliance_configuration_instance = configuration_instance
@@ -82,9 +85,16 @@ module Api
 
       def create_params
         appl_params = params.require(:appliance)
-        prod_params = appl_params.permit(:appliance_set_id, :name)
+        production? ? appl_params.permit(:appliance_set_id, :name) : appl_params.permit(:appliance_set_id, :user_key_id, :name)
+      end
 
-        ApplianceSet.find(prod_params[:appliance_set_id]).production? ? prod_params : appl_params.permit(:appliance_set_id, :user_key_id, :name)
+      def preferences
+        params.require(:appliance).permit(dev_mode_property_set: [:preference_memory, :preference_cpu, :preference_disk])[:dev_mode_property_set] unless production?
+      end
+
+      def production?
+        prod_params = params.require(:appliance).permit(:appliance_set_id)
+        ApplianceSet.find(prod_params[:appliance_set_id]).production?
       end
 
       def check_for_conflict!
