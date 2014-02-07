@@ -57,7 +57,7 @@ describe Optimizer do
         before do
           VirtualMachine.stub(:create)
         end
-        
+
         it 'to appliance name if it is not blank' do
           appliance = Appliance.create(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, name: 'name full appliance')
           vm_params = {name: appliance.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
@@ -307,7 +307,57 @@ describe Optimizer do
         end
 
       end
+    end
 
+    context 'dev mode properties' do
+      let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
+      let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
+      let(:as) { create(:appliance_set, appliance_set_type: :development) }
+
+      context 'when preferences are not set in appliance' do
+        it 'uses preferences from AT' do
+          expect(VirtualMachine).to receive(:create) do |hsh|
+            expect(hsh[:virtual_machine_flavor].cpu).to eq 2
+          end
+
+          create(:appliance, appliance_type: at, appliance_set: as)
+        end
+      end
+
+      context 'when preferences set in appliance' do
+        before do
+          @appl = build(:appliance, appliance_type: at, appliance_set: as)
+          @appl.dev_mode_property_set = DevModePropertySet.new(name: 'pref_test')
+          @appl.dev_mode_property_set.appliance = @appl
+        end
+
+        it 'takes dev mode preferences memory into account' do
+          expect(VirtualMachine).to receive(:create) do |hsh|
+            expect(hsh[:virtual_machine_flavor].memory).to eq 7680
+          end
+          @appl.dev_mode_property_set.preference_memory = 4000
+
+          @appl.save!
+        end
+
+        it 'takes dev mode preferences cpu into account' do
+          expect(VirtualMachine).to receive(:create) do |hsh|
+            expect(hsh[:virtual_machine_flavor].cpu).to eq 4
+          end
+          @appl.dev_mode_property_set.preference_cpu = 4
+
+          @appl.save!
+        end
+
+        it 'takes dev mode preferences disk into account' do
+          expect(VirtualMachine).to receive(:create) do |hsh|
+            expect(hsh[:virtual_machine_flavor].hdd).to eq 840
+          end
+          @appl.dev_mode_property_set.preference_disk = 600
+
+          @appl.save!
+        end
+      end
     end
   end
 end
