@@ -87,6 +87,7 @@ FactoryGirl.define do
     fund { FactoryGirl.create(:fund, :balance => 1000000) }
     # Use arbitrary last billing date
     last_billing Date.parse('2014-01-14 12:00')
+    prepaid_until Date.parse('2014-02-08 12:00')
 
     trait :dev_mode do
       appliance_set { create(:dev_appliance_set) }

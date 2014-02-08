@@ -77,7 +77,6 @@ ActiveRecord::Schema.define(version: 20140208121744) do
     t.datetime "last_billing"
     t.string   "state_explanation"
     t.datetime "prepaid_until",                                           null: false
-    t.datetime "datetime",                                                null: false
     t.integer  "amount_billed",                       default: 0,         null: false
     t.string   "billing_state",                       default: "prepaid", null: false
   end

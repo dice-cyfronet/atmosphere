@@ -90,7 +90,7 @@ class BillingCharger
     VirtualMachine.where(managed_by_atmosphere: true).all.each do |vm|
       # If this VM has at least one prepaid appliance, it must not be touched. For safety's sake, we will also not touch appliances whose billing state is flagged as erroneous
       if vm.appliances.select {|appl| [:prepaid, :error].include? appl.billing_state}.count > 0
-        # Do nothinig
+        # Do nothing
       # If this VM has at least one appliance whose funding policy states 'no action' then do nothing.
       elsif vm.appliances.select {|appl| appl.fund.termination_policy == "no_action"}.count > 0
         # Do nothing

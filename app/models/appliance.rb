@@ -23,6 +23,8 @@ class Appliance < ActiveRecord::Base
 
   belongs_to :fund
 
+  before_create :set_prepaid_until
+
   validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
 
   enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
@@ -55,6 +57,10 @@ class Appliance < ActiveRecord::Base
   end
 
   private
+
+  def set_prepaid_until
+    self.prepaid_until ||= Time.now # Will be used only if not otherwise set.
+  end
 
   def create_dev_mode_property_set
     self.dev_mode_property_set = DevModePropertySet.create_from(appliance_type) unless self.dev_mode_property_set
