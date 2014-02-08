@@ -27,6 +27,10 @@ class Appliance < ActiveRecord::Base
 
   enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
   validates_presence_of :state
+  enumerize :billing_state, in: [:prepaid, :expired, :error], predicates: true
+  validates_presence_of :billing_state
+
+  validates_numericality_of :amount_billed
 
   has_many :http_mappings, dependent: :destroy
   has_many :virtual_machines, through: :deployments, dependent: :destroy
