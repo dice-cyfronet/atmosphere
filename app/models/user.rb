@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
 
   has_many :funds, through: :user_funds
   has_many :user_funds, dependent: :destroy
+  has_many :billing_logs, dependent: :nullify
 
   include Gravtastic
   gravtastic default: 'mm'
@@ -67,6 +68,12 @@ class User < ActiveRecord::Base
     user.save
 
     user
+  end
+
+  def default_fund
+    # Return this user's default fund, if it exists.
+    dfs = self.user_funds.where(default: true)
+    dfs.blank? ? nil : dfs.first
   end
 
   def generate_password

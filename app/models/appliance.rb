@@ -23,7 +23,7 @@ class Appliance < ActiveRecord::Base
 
   belongs_to :fund
 
-  before_create :set_prepaid_until
+  before_destroy :final_billing
 
   validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
 
@@ -42,9 +42,10 @@ class Appliance < ActiveRecord::Base
   attr_readonly :dev_mode_property_set
 
   before_create :create_dev_mode_property_set, if: :development?
+  before_save :assign_default_fund
   after_destroy :remove_appliance_configuration_instance_if_needed
   after_destroy :optimize_destroyed_appliance
-  after_create :optimize_saved_appliance
+  after_create :initial_billing, :optimize_saved_appliance
 
   scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(virtual_machines: {compute_site: compute_site}) }
 
@@ -58,8 +59,19 @@ class Appliance < ActiveRecord::Base
 
   private
 
-  def set_prepaid_until
-    self.prepaid_until ||= Time.now # Will be used only if not otherwise set.
+  def assign_default_fund
+    # This is a "goalkeeper" method which will assign this appliance to its owner's default fund, if no fund has been specified yet.
+    # It is provided to ensure compatibility with old APIs of Atmosphere which do not request funds to be specified when instantiating appliances
+    # Once the APIs have been updated, this method will be deprecated and should be removed.
+    if self.fund.blank?
+      self.fund = self.appliance_set.user.default_fund
+      # Note that id the user does not have a default fund assigned, this method will be unable to figure out any useful fund for this appliance.
+    end
+  end
+
+  def final_billing
+    # Perform one final billing action for this appliance prior to its destruction.
+    BillingService::bill_appliance(self, Time.now, "Final billing action prior to appliance destruction.",false)
   end
 
   def create_dev_mode_property_set
@@ -75,6 +87,14 @@ class Appliance < ActiveRecord::Base
 
   def optimize_saved_appliance
     Optimizer.instance.run(created_appliance: self)
+  end
+
+  def initial_billing
+    # This method bills the freshly saved appliance for the first time.
+    # Note: This will fail if the appliance does not have a fund assigned (which is a 'should never happen' error. :)
+    BillingService::bill_appliance(self, Time.now, "Initial billing action following appliance instantiation.", true)
+    # CAUTION: This may immediately render the appliance "expired" if the assigned fund does not provide sufficient resources to pay for the appliance.
+    # In such cases, the appliance should never be visualized in platform GUIs or returned to external clients as 'active'.
   end
 
   def optimize_destroyed_appliance

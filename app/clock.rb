@@ -22,4 +22,12 @@ module Clockwork
       VmMonitoringWorker.perform_async(cs.id)
     end
   end
+
+  every(60.minutes, 'billing.bill') do
+    Rails.logger.info "Performing mass billing operation for all appliances."
+    BillingService::bill_all_appliances
+    Rails.logger.info "Applying funding policy to all virtual machines."
+    BillingService::apply_funding_policy
+  end
+
 end

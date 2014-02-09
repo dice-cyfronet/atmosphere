@@ -20,7 +20,7 @@ module Api
           @appliance.appliance_type = config_template.appliance_type
 
           # Add Time.now() as prepaid_until - this effectively means that the appliance is unpaid.
-          # The requestor must then bill this new appliance prior to exposing it to the end user.
+          # The requestor must bill this new appliance prior to exposing it to the end user.
           @appliance.prepaid_until = Time.now
 
           raise CanCan::AccessDenied if cannot_create_appliance?

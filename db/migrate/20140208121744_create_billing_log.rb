@@ -6,11 +6,15 @@ class CreateBillingLog < ActiveRecord::Migration
   def change
     create_table :billing_logs do |t|
       t.datetime :timestamp,        null:false
-      t.string :username,           null:false, default: 'unknown user'
       t.string :appliance,          null:false, default: "unknown appliance"
       t.string :fund,               null:false, default: "unknown fund"
       t.string :actor,              null:false, default: "unknown billing actor"
+      t.string :message,            null:false, default: "appliance prolongation"
+      t.string :currency,           null:false, default: "EUR"
       t.integer :amount_billed,     null:false, default: 0
+
+      t.belongs_to :user
+
     end
   end
 end

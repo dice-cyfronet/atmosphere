@@ -5,7 +5,9 @@
 
 class BillingLog < ActiveRecord::Base
 
-  validates_presence_of :username, :appliance, :cloud_site, :fund, :actor
+  belongs_to :user
+
+  validates_presence_of :appliance, :fund, :actor
   validates_numericality_of :amount_billed
 
 end
