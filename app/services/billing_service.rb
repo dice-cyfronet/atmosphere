@@ -59,7 +59,7 @@ class BillingService
             appl.amount_billed += amount_due
             appl.prepaid_until = billing_time+@appliance_prepayment_interval
             appl.last_billing = billing_time
-            appl.billing_state = :prepaid
+            appl.billing_state = 'prepaid'
             appl.save
             unless appl.errors.blank?
               Rails.logger.error("ERROR: Unable to update appliance #{appl.id} with billing data.")
