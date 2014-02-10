@@ -45,7 +45,7 @@ class DevModePropertySet < ActiveRecord::Base
       security_proxy: appliance_type.security_proxy,
     )
 
-    dev_mode_property_set.port_mapping_templates = PmtCopier.copy appliance_type
+    dev_mode_property_set.port_mapping_templates = PmtCopier.copy(appliance_type).each {|pmt| pmt.dev_mode_property_set = dev_mode_property_set}
     dev_mode_property_set
   end
 end
