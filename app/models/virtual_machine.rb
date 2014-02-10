@@ -12,6 +12,7 @@
 #  created_at                  :datetime
 #  updated_at                  :datetime
 #  virtual_machine_template_id :integer
+#  virtual_machine_flavor_id   :integer
 #
 
 class VirtualMachine < ActiveRecord::Base
