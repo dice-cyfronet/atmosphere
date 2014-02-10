@@ -11,6 +11,9 @@
 #  name                                :string(255)
 #  created_at                          :datetime
 #  updated_at                          :datetime
+#  fund_id                             :integer
+#  last_billing                        :datetime
+#  state_explanation                   :string(255)
 #
 
 class Appliance < ActiveRecord::Base
