@@ -29,20 +29,25 @@ module Api
             raise ActionController::ParameterMissing.new('appliance_id parameter is missing')
           end
         end
+        begin
+          ApplianceType.transaction do
+            tmpl = VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
 
-        ApplianceType.transaction do
-          tmpl = VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
+            new_at_params = appliance_type_params.dup
+            new_at_params['user_id'] = new_at_params.delete('author_id')
 
-          new_at_params = appliance_type_params.dup
-          new_at_params['user_id'] = new_at_params.delete('author_id')
+            @appliance_type = ApplianceType.create_from(appl, new_at_params)
+            @appliance_type.virtual_machine_templates << tmpl if tmpl
+            @appliance_type.author = current_user if @appliance_type.author.blank?
 
-          @appliance_type = ApplianceType.create_from(appl, new_at_params)
-          @appliance_type.virtual_machine_templates << tmpl if tmpl
-          @appliance_type.author = current_user if @appliance_type.author.blank?
-
-          @appliance_type.save!
+            @appliance_type.save!
+          end
+        rescue
+          if tmpl and tmpl.id_at_site
+            tmpl.perform_delete_in_cloud
+          end
+          raise $!
         end
-
 
         render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         log_user_action "appliance type created: #{@appliance_type.to_json}"

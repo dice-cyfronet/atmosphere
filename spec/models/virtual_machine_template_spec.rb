@@ -179,7 +179,7 @@ describe VirtualMachineTemplate do
     let(:vm) { create(:virtual_machine, id_at_site: 'id') }
 
     before do
-      allow(cloud_client).to receive(:save_template)
+      allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))
       ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
     end
 
