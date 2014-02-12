@@ -50,6 +50,11 @@ class ApplianceType < ActiveRecord::Base
   before_destroy :store_vmts
   after_destroy :delete_vmts
 
+  after_create :publish_metadata, if: 'visible_to.all?'
+  after_destroy :remove_metadata, if: 'metadata_global_id and visible_to.all?'
+  around_update :manage_metadata
+
+
   def destroy(force = false)
     if !force and has_dependencies?
       errors.add :base, "#{name} cannot be destroyed because other users have running instances of this application."
@@ -86,17 +91,18 @@ class ApplianceType < ActiveRecord::Base
   def as_metadata_xml
     optional_elements = metadata_global_id ?
         "<globalID>#{metadata_global_id}</globalID>" :
-        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d')}</metadataCreationDate>"
+        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataCreationDate>"
 
     <<-MD_XML.strip_heredoc
-      <AtomicService>
+    <resource_metadata>
+      <atomicService>
         <localID>#{id}</localID>
         <name>#{esc_xml name}</name>
         <type>AtomicService</type>
         <description>#{esc_xml description}</description>
-        <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d')}</metadataUpdateDate>
-        <creationDate>#{created_at.strftime('%Y-%m-%d')}</creationDate>
-        <updateDate>#{updated_at.strftime('%Y-%m-%d')}</updateDate>
+        <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataUpdateDate>
+        <creationDate>#{created_at.strftime('%Y-%m-%d %H:%M:%S')}</creationDate>
+        <updateDate>#{updated_at.strftime('%Y-%m-%d %H:%M:%S')}</updateDate>
         <author>#{esc_xml(author.login) if author}</author>
 
         #{optional_elements}
@@ -104,7 +110,8 @@ class ApplianceType < ActiveRecord::Base
         <endpoints>
           #{port_mapping_templates.map(&:endpoints).flatten.map(&:as_metadata_xml).join}
         </endpoints>
-      </AtomicService>
+      </atomicService>
+    </resource_metadata>
     MD_XML
   end
 
@@ -132,4 +139,36 @@ class ApplianceType < ActiveRecord::Base
   def delete_vmts
     @vmts.each(&:destroy)
   end
+
+
+  # METADATA lifecycle methods
+
+  # Check if we need to publish/update/unpublish metadata regarding this AT, if so, perform the task
+  def manage_metadata
+    was_visible_to_all = (visible_to_was == 'all')
+
+    yield
+
+    if metadata_global_id and was_visible_to_all and visible_to.all?
+      update_metadata
+    elsif metadata_global_id and was_visible_to_all
+      remove_metadata
+    elsif visible_to.all?
+      publish_metadata
+    end
+  end
+
+  def remove_metadata
+    MetadataRepositoryClient.instance.delete_metadata self
+  end
+
+  def publish_metadata
+    mgid = MetadataRepositoryClient.instance.publish_appliance_type self
+    update_column(:metadata_global_id, mgid) if mgid
+  end
+
+  def update_metadata
+    MetadataRepositoryClient.instance.update_appliance_type self
+  end
+
 end

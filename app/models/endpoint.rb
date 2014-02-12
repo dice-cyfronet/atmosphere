@@ -38,11 +38,11 @@ class Endpoint < ActiveRecord::Base
   # This method is used to produce XML document that is being sent to the Metadata Registry
   def as_metadata_xml
     <<-MD_XML.strip_heredoc
-      <Endpoint>
+      <endpoint>
         <endpointID>#{id}</endpointID>
         <endpointName>#{esc_xml name}</endpointName>
         <endpointDescription>#{esc_xml description}</endpointDescription>
-      </Endpoint>
+      </endpoint>
     MD_XML
   end
 

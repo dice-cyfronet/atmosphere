@@ -44,11 +44,11 @@ describe Endpoint do
 
     it 'creates minimal valid metadata xml document' do
       xml = endp.as_metadata_xml.strip
-      expect(xml).to start_with('<Endpoint>')
+      expect(xml).to start_with('<endpoint>')
       expect(xml).to include('<endpointName>'+endp.name+'</endpointName>')
       expect(xml).to include('<endpointID>'+endp.id.to_s+'</endpointID>')
       expect(xml).to include('<endpointDescription></endpointDescription>')
-      expect(xml).to end_with('</Endpoint>')
+      expect(xml).to end_with('</endpoint>')
     end
 
     it 'escapes XML content for proper document structure' do
