@@ -35,7 +35,8 @@ class VirtualMachine < ActiveRecord::Base
   after_destroy :delete_dnat, if: :ip?
   after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
-  after_update :register_in_zabbix, if: (:ip_changed? and :ip?)
+  after_update :update_in_zabbix, if: :ip_changed?
+  before_destroy :unregister_from_zabbix, if: :ip?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
@@ -90,7 +91,12 @@ class VirtualMachine < ActiveRecord::Base
     compute_site.dnat_client.remove_dnat_for_vm(self)
   end
 
-  private
+  def update_in_zabbix
+    if ip_was
+      unregister_from_zabbix
+    end
+    register_in_zabbix if ip
+  end
 
   def register_in_zabbix
     # TODO BW
@@ -99,6 +105,8 @@ class VirtualMachine < ActiveRecord::Base
   def unregister_from_zabbix
     # TODO BW
   end
+
+  private
 
   def instantiate_vm
     logger.info 'Instantiating'

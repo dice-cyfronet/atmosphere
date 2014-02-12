@@ -22,10 +22,13 @@ describe VirtualMachine do
   before { Fog.mock! }
 
   let(:priv_ip) { '10.1.1.16' }
+  let(:priv_ip_2) { '10.1.1.22' }
   let(:public_ip) { '149.156.10.145' }
   let(:public_port) { 23457 }
   let(:cs) { create(:compute_site) }
+  let(:appliance) { create(:appliance) }
   let(:vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: true) }
+  let(:vm_ipless) { create(:virtual_machine, appliances: [appliance]) }
   let(:external_vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: false) }
   let(:default_flavor) { create(:virtual_machine_flavor, flavor_name: '1')}
 
@@ -102,9 +105,50 @@ describe VirtualMachine do
     end
   end
 
+  context 'zabbix' do
+
+    it 'registers vm after IP was changed from blank to non blank' do
+      vm_ipless = create(:virtual_machine, appliances: [appliance], managed_by_atmosphere: true)
+      expect(vm_ipless).to receive(:register_in_zabbix)
+      expect(vm_ipless).not_to receive(:unregister_in_zabbix)
+      vm_ipless.ip = priv_ip
+      vm_ipless.save
+    end
+
+    it 'unregisters and registeres after IP was changed from non blank to non blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+      expect(vm).to receive(:unregister_from_zabbix).ordered
+      expect(vm).to receive(:register_in_zabbix).ordered
+      vm.ip = priv_ip_2
+      vm.save
+    end
+
+    it 'unregisters vm after IP was changed and is blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+      expect(vm).to receive(:unregister_from_zabbix)
+      expect(vm).to_not receive(:register_in_zabbix)        
+      vm.ip = nil
+      vm.save
+    end
+
+    it 'unregisters vm before vm is destroyed if ip was not blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+      expect(vm).to receive(:unregister_from_zabbix)
+      expect(vm).to_not receive(:register_in_zabbix)
+      vm.destroy(false)
+    end
+
+    it 'does nothing before vm is destroyed if ip was blank' do
+      vm_ipless = create(:virtual_machine, appliances: [appliance], managed_by_atmosphere: true)
+      vm_ipless.stub(:destroy)
+      expect(vm_ipless).not_to receive(:register_in_zabbix)
+      expect(vm_ipless).not_to receive(:unregister_in_zabbix)
+      vm_ipless.destroy
+    end
+
+  end
+
   context 'DNAT' do
-    let(:appliance) { create(:appliance) }
-    let(:vm_ipless) { create(:virtual_machine, appliances: [appliance]) }
     let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance]) }
     let(:priv_port) { 8888 }
     let(:priv_port_2) { 7070 }
