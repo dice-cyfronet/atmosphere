@@ -22,6 +22,6 @@
 /config/puma.rb
 
 # Ignore all logfiles and tempfiles.
-/log/*.log
+/log/*
 /tmp
 /.project

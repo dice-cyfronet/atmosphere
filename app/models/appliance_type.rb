@@ -2,19 +2,20 @@
 #
 # Table name: appliance_types
 #
-#  id                :integer          not null, primary key
-#  name              :string(255)      not null
-#  description       :text
-#  shared            :boolean          default(FALSE), not null
-#  scalable          :boolean          default(FALSE), not null
-#  visible_to        :string(255)      default("owner"), not null
-#  preference_cpu    :float
-#  preference_memory :integer
-#  preference_disk   :integer
-#  security_proxy_id :integer
-#  user_id           :integer
-#  created_at        :datetime
-#  updated_at        :datetime
+#  id                 :integer          not null, primary key
+#  name               :string(255)      not null
+#  description        :text
+#  shared             :boolean          default(FALSE), not null
+#  scalable           :boolean          default(FALSE), not null
+#  visible_to         :string(255)      default("owner"), not null
+#  preference_cpu     :float
+#  preference_memory  :integer
+#  preference_disk    :integer
+#  security_proxy_id  :integer
+#  user_id            :integer
+#  created_at         :datetime
+#  updated_at         :datetime
+#  metadata_global_id :string(255)
 #
 
 class ApplianceType < ActiveRecord::Base

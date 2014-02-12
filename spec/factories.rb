@@ -211,7 +211,7 @@ FactoryGirl.define do
 
   factory :port_mapping_property do |f|
     value { Faker::Lorem.words(10).join(' ') }
-    key 'key'
+    key { rand_str }
     compute_site
 
     trait :pmt_property do

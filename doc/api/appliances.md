@@ -81,6 +81,7 @@ Parameters:
 + `user_key_id` (optional) - User key id. User key will be rejested for appliances started in production mode
 + `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
++ `dev_mode_property_set` (optional, allowed only in development mode) - list of preferences for new started machine. Allowed preferences: `preference_memory` (in MB), `preference_cpu`, `preference_disk` (in GB).
 
 ---
 

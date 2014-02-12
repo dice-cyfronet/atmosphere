@@ -27,7 +27,7 @@ class UserKey < ActiveRecord::Base
   belongs_to :user
 
   def id_at_site
-    "#{user.login}-#{name}"
+    "#{user.login}-#{Digest::SHA1.hexdigest(fingerprint)}"
   end
 
   def generate_fingerprint

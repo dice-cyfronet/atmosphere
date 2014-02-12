@@ -82,4 +82,12 @@ describe UserKey do
       end
     end
   end
+
+  describe '#id_at_site' do
+    it 'normalizes key name' do
+      user = build(:user, login: 'john')
+      key = build(:user_key, user: user)
+      expect(key.id_at_site).to start_with('john-')
+    end
+  end
 end

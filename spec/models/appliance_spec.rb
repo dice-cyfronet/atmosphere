@@ -11,6 +11,9 @@
 #  name                                :string(255)
 #  created_at                          :datetime
 #  updated_at                          :datetime
+#  fund_id                             :integer
+#  last_billing                        :datetime
+#  state_explanation                   :string(255)
 #
 
 require 'spec_helper'
@@ -68,17 +71,29 @@ describe Appliance do
       DevModePropertySet.stub(:create_from).and_return(DevModePropertySet.new(name: 'dev'))
     }
 
-    it 'creates dev mode property set if development appliance set' do
-      appliance = create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+    context 'when development appliance set' do
+      it 'creates dev mode property set' do
+        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
 
-      expect(DevModePropertySet).to have_received(:create_from).with(appliance_type).once
-      expect(appliance.dev_mode_property_set).to_not be_nil
-    end
+        expect(DevModePropertySet).to have_received(:create_from).with(appliance_type).once
+        expect(appliance.dev_mode_property_set).to_not be_nil
+      end
 
-    it 'saves dev mode property set' do
-      expect {
-        create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
-      }.to change { DevModePropertySet.count }.by(1)
+      it 'saves dev mode property set' do
+        expect {
+          create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+        }.to change { DevModePropertySet.count }.by(1)
+      end
+
+      it 'overwrite dev mode property set' do
+        appliance = build(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+
+        appliance.create_dev_mode_property_set(preference_memory: 123, preference_cpu: 2, preference_disk: 321)
+
+        expect(appliance.dev_mode_property_set.preference_memory).to eq 123
+        expect(appliance.dev_mode_property_set.preference_cpu).to eq 2
+        expect(appliance.dev_mode_property_set.preference_disk).to eq 321
+      end
     end
 
     context 'does not create dev mode property set' do

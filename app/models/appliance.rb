@@ -11,6 +11,9 @@
 #  name                                :string(255)
 #  created_at                          :datetime
 #  updated_at                          :datetime
+#  fund_id                             :integer
+#  last_billing                        :datetime
+#  state_explanation                   :string(255)
 #
 
 class Appliance < ActiveRecord::Base
@@ -50,11 +53,18 @@ class Appliance < ActiveRecord::Base
     appliance_set.appliance_set_type.development?
   end
 
-  private
-
-  def create_dev_mode_property_set
-    self.dev_mode_property_set = DevModePropertySet.create_from(appliance_type) unless self.dev_mode_property_set
+  def create_dev_mode_property_set(options={})
+    unless self.dev_mode_property_set
+      set = DevModePropertySet.create_from(appliance_type)
+      set.preference_memory = options[:preference_memory] if options[:preference_memory]
+      set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
+      set.preference_disk = options[:preference_disk] if options[:preference_disk]
+      self.dev_mode_property_set = set
+      set.appliance = self
+    end
   end
+
+  private
 
   def remove_appliance_configuration_instance_if_needed
     if appliance_configuration_instance.appliances.blank?

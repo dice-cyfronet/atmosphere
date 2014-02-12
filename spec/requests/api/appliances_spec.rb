@@ -361,9 +361,24 @@ describe Api::V1::AppliancesController do
       let(:development_at) { create(:appliance_type, visible_to: :developer) }
       let(:development_at_config) { create(:static_config_template, appliance_type: development_at) }
 
-      it 'allows to start in development mode' do
-        post api("/appliances", developer), start_request(development_at_config, development_set)
-        expect(response.status).to eq 201
+      context 'when development mode' do
+        it 'allows to start' do
+          post api("/appliances", developer), start_request(development_at_config, development_set)
+          expect(response.status).to eq 201
+        end
+
+        it 'allows overwrite preferences' do
+          request = start_request(development_at_config, development_set)
+          request[:appliance][:dev_mode_property_set] = {preference_memory: 123, preference_cpu: 2, preference_disk: 321}
+
+          post api("/appliances", developer), request
+          appl = Appliance.find(appliance_response['id'])
+          set = appl.dev_mode_property_set
+
+          expect(set.preference_memory).to eq 123
+          expect(set.preference_cpu).to eq 2
+          expect(set.preference_disk).to eq 321
+        end
       end
 
       it 'does not allow to start in production mode' do

@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: virtual_machine_flavors
+#
+#  id              :integer          not null, primary key
+#  flavor_name     :string(255)      not null
+#  cpu             :float
+#  memory          :float
+#  hdd             :float
+#  hourly_cost     :integer          not null
+#  compute_site_id :integer
+#
+
 # VirtualMachineFlavor
 # Added by PN on 2014-01-14
 # This class stores information on the VM flavors available at each compute site registered with AIR
