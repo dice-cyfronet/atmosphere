@@ -55,7 +55,6 @@ class VirtualMachineTemplate < ActiveRecord::Base
       vm_template.perform_delete_in_cloud
       raise $!
     end
-
     vm_template
   end
 
