@@ -47,8 +47,7 @@ class ApplianceType < ActiveRecord::Base
   scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
 
-  before_destroy :store_vmts
-  after_destroy :delete_vmts
+  around_destroy :delete_vmts
 
   after_create :publish_metadata, if: 'visible_to.all?'
   after_destroy :remove_metadata, if: 'metadata_global_id and visible_to.all?'
@@ -132,12 +131,10 @@ class ApplianceType < ActiveRecord::Base
     params
   end
 
-  def store_vmts
-    @vmts = virtual_machine_templates.to_a
-  end
-
   def delete_vmts
-    @vmts.each(&:destroy)
+    vmts = virtual_machine_templates.to_a
+    yield
+    vmts.each(&:destroy)
   end
 
 
