@@ -29,4 +29,16 @@ describe HttpMapping do
 
   expect_it { to belong_to :port_mapping_template }
   expect_it { to validate_presence_of :port_mapping_template }
+
+  describe 'redirus worker jobs' do
+    subject { build(:http_mapping) }
+
+    context 'on destroy' do
+      it 'removes http redirection from redirus' do
+        subject.run_callbacks(:destroy)
+
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(subject.port_mapping_template.service_name, subject.application_protocol)
+      end
+    end
+  end
 end

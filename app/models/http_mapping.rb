@@ -22,4 +22,11 @@ class HttpMapping < ActiveRecord::Base
   validates_inclusion_of :application_protocol, in: %w(http https)
   enumerize :application_protocol, in: [:http, :https]
 
+  after_destroy :rm_proxy
+
+  private
+
+  def rm_proxy
+    Redirus::Worker::RmProxy.perform_async(port_mapping_template.service_name, application_protocol)
+  end
 end
