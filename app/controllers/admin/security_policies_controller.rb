@@ -2,6 +2,7 @@ class Admin::SecurityPoliciesController < ApplicationController
   load_and_authorize_resource :security_policy
 
   def index
+    authenticate_user!
   end
 
   def new
