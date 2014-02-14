@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: git://github.com/dice-cyfronet/redirus-worker.git
-  revision: b6d6aeb07c5982ed49f36e4a780c73204a4ef701
+  revision: efd431fd3379545538bffbb0ad046331e2216c40
   branch: subdomains
   specs:
     redirus-worker (0.0.1)
