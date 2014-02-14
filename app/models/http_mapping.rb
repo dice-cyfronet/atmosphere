@@ -41,9 +41,13 @@ class HttpMapping < ActiveRecord::Base
   def workers
     unless @workers
       target_port = port_mapping_template.target_port
-      @workers = appliance.virtual_machines.active.collect { |vm| "#{vm.ip}:#{target_port}" }
+      @workers = active_workers_ips.collect { |ip| "#{ip}:#{target_port}" }
     end
     @workers
+  end
+
+  def active_workers_ips
+    appliance.virtual_machines.active.pluck(:ip)
   end
 
   def properties
