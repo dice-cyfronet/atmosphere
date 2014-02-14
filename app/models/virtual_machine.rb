@@ -38,6 +38,7 @@ class VirtualMachine < ActiveRecord::Base
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
+  scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
