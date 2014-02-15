@@ -47,6 +47,8 @@ class User < ActiveRecord::Base
   has_many :user_funds, dependent: :destroy
   has_many :billing_logs, dependent: :nullify
 
+  before_save :check_fund_assignment
+
   include Gravtastic
   gravtastic default: 'mm'
 
@@ -84,4 +86,15 @@ class User < ActiveRecord::Base
     "#{login} <#{email}>"
   end
 
+  private
+
+  # Checks whether any fund has been assigned to this user.
+  # If not, assign the first available fund (if it exists) and make it this user's default fund
+  # This method is provided to ensure compatibility with old versions of Atmosphere which do not supply fund information when creating users.
+  # Once the platform APIs are updated, this method will be deprecated and should be removed.
+  def check_fund_assignment
+    if funds.blank? and Fund.all.count > 0
+      user_funds << UserFund.new(user: self, fund: Fund.first, default: true)
+    end
+  end
 end
