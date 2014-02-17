@@ -30,27 +30,29 @@ class HttpMapping < ActiveRecord::Base
 
   private
 
+  # delegate :service_name
+
   def rm_proxy
     Redirus::Worker::RmProxy.perform_async(port_mapping_template.service_name, application_protocol)
   end
 
   def has_workers?
-    workers.size > 0
+    workers_ips.size > 0
   end
 
   def workers
-    unless @workers
-      target_port = port_mapping_template.target_port
-      @workers = active_workers_ips.collect { |ip| "#{ip}:#{target_port}" }
-    end
-    @workers
+    workers_ips.collect { |ip| "#{ip}:#{target_port}" }
   end
 
-  def active_workers_ips
-    appliance.virtual_machines.active.pluck(:ip)
+  def target_port
+    @target_port ||= port_mapping_template.target_port
+  end
+
+  def workers_ips
+    @workers_ips ||= appliance.active_vms.pluck(:ip)
   end
 
   def properties
-    port_mapping_template.port_mapping_properties.collect { |pmp| pmp.to_s }
+    port_mapping_template.properties
   end
 end

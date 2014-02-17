@@ -74,6 +74,10 @@ class PortMappingTemplate < ActiveRecord::Base
     end
   end
 
+  def properties
+    port_mapping_properties.collect { |pmp| pmp.to_s }
+  end
+
   private
 
   def check_only_one_belonging

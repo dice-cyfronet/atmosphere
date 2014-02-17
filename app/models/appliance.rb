@@ -64,6 +64,10 @@ class Appliance < ActiveRecord::Base
     end
   end
 
+  def active_vms
+    virtual_machines.active
+  end
+
   private
 
   def remove_appliance_configuration_instance_if_needed
