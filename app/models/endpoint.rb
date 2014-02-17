@@ -40,8 +40,8 @@ class Endpoint < ActiveRecord::Base
     <<-MD_XML.strip_heredoc
       <endpoint>
         <endpointID>#{id}</endpointID>
-        <endpointName>#{esc_xml name}</endpointName>
-        <endpointDescription>#{esc_xml description}</endpointDescription>
+        <name>#{esc_xml name}</name>
+        <description>#{esc_xml description}</description>
       </endpoint>
     MD_XML
   end

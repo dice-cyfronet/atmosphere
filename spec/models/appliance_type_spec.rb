@@ -223,8 +223,8 @@ describe ApplianceType do
           xml.split('Endpoint').any? do |endp_xml|
             if endp_xml.include? endp.name
               expect(endp_xml).to include('<endpointID>'+endp.id.to_s+'</endpointID>')
-              expect(endp_xml).to include('<endpointName>'+endp.name+'</endpointName>')
-              expect(endp_xml).to include('<endpointDescription>'+endp.description.to_s+'</endpointDescription>')
+              expect(endp_xml).to include('<name>'+endp.name+'</name>')
+              expect(endp_xml).to include('<description>'+endp.description.to_s+'</description>')
               true
             else
               false
