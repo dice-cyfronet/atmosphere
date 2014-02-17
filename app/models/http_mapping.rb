@@ -25,15 +25,20 @@ class HttpMapping < ActiveRecord::Base
   after_destroy :rm_proxy
 
   def update_proxy
-    Redirus::Worker::AddProxy.perform_async(port_mapping_template.service_name, workers, application_protocol, properties) if has_workers?
+    Redirus::Worker::AddProxy.perform_async(proxy_name, workers, application_protocol, properties) if has_workers?
   end
 
   private
 
-  # delegate :service_name
+  delegate :service_name, :target_port, :properties, to: :port_mapping_template
+  delegate :active_vms, to: :appliance
 
   def rm_proxy
-    Redirus::Worker::RmProxy.perform_async(port_mapping_template.service_name, application_protocol)
+    Redirus::Worker::RmProxy.perform_async(proxy_name, application_protocol)
+  end
+
+  def proxy_name
+    "#{service_name}.#{appliance.id}"
   end
 
   def has_workers?
@@ -44,15 +49,7 @@ class HttpMapping < ActiveRecord::Base
     workers_ips.collect { |ip| "#{ip}:#{target_port}" }
   end
 
-  def target_port
-    @target_port ||= port_mapping_template.target_port
-  end
-
   def workers_ips
-    @workers_ips ||= appliance.active_vms.pluck(:ip)
-  end
-
-  def properties
-    port_mapping_template.properties
+    @workers_ips ||= active_vms.pluck(:ip)
   end
 end

@@ -32,12 +32,15 @@ describe HttpMapping do
 
   describe 'redirus worker jobs' do
     subject { build(:http_mapping) }
+    before do
+      allow(subject.appliance).to receive(:id).and_return(1)
+    end
 
     context 'on destroy' do
       it 'removes http redirection from redirus' do
         subject.run_callbacks(:destroy)
 
-        expect(Redirus::Worker::RmProxy).to have_enqueued_job(subject.port_mapping_template.service_name, subject.application_protocol)
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(proxy_name, subject.application_protocol)
       end
     end
 
@@ -61,7 +64,7 @@ describe HttpMapping do
 
         subject.update_proxy
 
-        expect(Redirus::Worker::AddProxy).to have_enqueued_job(subject.port_mapping_template.service_name, ['10.100.2.3:80', '10.100.2.4:80'], subject.application_protocol, [])
+        expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, ['10.100.2.3:80', '10.100.2.4:80'], subject.application_protocol, [])
       end
 
       it 'adds http redirection with properties' do
@@ -73,8 +76,12 @@ describe HttpMapping do
 
         subject.update_proxy
 
-         expect(Redirus::Worker::AddProxy).to have_enqueued_job(subject.port_mapping_template.service_name, ['10.100.2.3:80'], subject.application_protocol, ['k1 v1', 'k2 v2'])
+         expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, ['10.100.2.3:80'], subject.application_protocol, ['k1 v1', 'k2 v2'])
       end
     end
+  end
+
+  def proxy_name
+    "#{subject.port_mapping_template.service_name}.1"
   end
 end
