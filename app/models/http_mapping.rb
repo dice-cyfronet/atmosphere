@@ -25,13 +25,17 @@ class HttpMapping < ActiveRecord::Base
   after_destroy :rm_proxy
 
   def update_proxy
-    Redirus::Worker::AddProxy.perform_async(proxy_name, workers, application_protocol, properties) if has_workers?
+    has_workers? ? create_update_proxy : rm_proxy
   end
 
   private
 
   delegate :service_name, :target_port, :properties, to: :port_mapping_template
   delegate :active_vms, to: :appliance
+
+  def create_update_proxy
+    Redirus::Worker::AddProxy.perform_async(proxy_name, workers, application_protocol, properties)
+  end
 
   def rm_proxy
     Redirus::Worker::RmProxy.perform_async(proxy_name, application_protocol)

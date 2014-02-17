@@ -76,7 +76,13 @@ describe HttpMapping do
 
         subject.update_proxy
 
-         expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, ['10.100.2.3:80'], subject.application_protocol, ['k1 v1', 'k2 v2'])
+        expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, ['10.100.2.3:80'], subject.application_protocol, ['k1 v1', 'k2 v2'])
+      end
+
+      it 'removes http redirection when no workers' do
+        subject.update_proxy
+
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(proxy_name, subject.application_protocol)
       end
     end
   end
