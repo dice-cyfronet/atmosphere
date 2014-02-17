@@ -25,7 +25,7 @@ class HttpMapping < ActiveRecord::Base
   after_destroy :rm_proxy
 
   def update_proxy
-    has_workers? ? create_update_proxy : rm_proxy
+    create_update_proxy || rm_proxy
   end
 
   private
@@ -34,7 +34,7 @@ class HttpMapping < ActiveRecord::Base
   delegate :active_vms, to: :appliance
 
   def create_update_proxy
-    Redirus::Worker::AddProxy.perform_async(proxy_name, workers, application_protocol, properties)
+    has_workers? && Redirus::Worker::AddProxy.perform_async(proxy_name, workers, application_protocol, properties)
   end
 
   def rm_proxy
