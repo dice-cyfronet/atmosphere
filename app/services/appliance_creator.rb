@@ -9,7 +9,7 @@ class ApplianceCreator
   end
 
   def create!
-    check_for_at_instantiation_possility!
+    check_for_at_instantiation_possibility!
     check_for_conflict!
 
     appliance.transaction do
@@ -44,7 +44,7 @@ class ApplianceCreator
     appliance.appliance_configuration_instance = configuration_instance
   end
 
-  def check_for_at_instantiation_possility!
+  def check_for_at_instantiation_possibility!
     raise CanCan::AccessDenied unless can_create_appliance?
   end
 
