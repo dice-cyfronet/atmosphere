@@ -457,6 +457,13 @@ describe Api::V1::EndpointsController do
         get api("/endpoints/#{endpoint_with_descriptor_url.id}/descriptor", user)
         expect(response.body).to eq "payload http://www.example.com/api/v1/endpoints/#{endpoint_with_descriptor_url.id}/descriptor"
       end
+
+      it 'returns empty descriptor' do
+        @empty_endpoint = create(:endpoint, descriptor: nil, port_mapping_template: pmt_at2)
+        get api("/endpoints/#{@empty_endpoint.id}/descriptor", user)
+
+        expect(response.body).to eq ''
+      end
     end
   end
 

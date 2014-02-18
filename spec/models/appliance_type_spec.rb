@@ -2,19 +2,20 @@
 #
 # Table name: appliance_types
 #
-#  id                :integer          not null, primary key
-#  name              :string(255)      not null
-#  description       :text
-#  shared            :boolean          default(FALSE), not null
-#  scalable          :boolean          default(FALSE), not null
-#  visible_to        :string(255)      default("owner"), not null
-#  preference_cpu    :float
-#  preference_memory :integer
-#  preference_disk   :integer
-#  security_proxy_id :integer
-#  user_id           :integer
-#  created_at        :datetime
-#  updated_at        :datetime
+#  id                 :integer          not null, primary key
+#  name               :string(255)      not null
+#  description        :text
+#  shared             :boolean          default(FALSE), not null
+#  scalable           :boolean          default(FALSE), not null
+#  visible_to         :string(255)      default("owner"), not null
+#  preference_cpu     :float
+#  preference_memory  :integer
+#  preference_disk    :integer
+#  security_proxy_id  :integer
+#  user_id            :integer
+#  created_at         :datetime
+#  updated_at         :datetime
+#  metadata_global_id :string(255)
 #
 
 require 'spec_helper'
@@ -186,17 +187,19 @@ describe ApplianceType do
 
     it 'creates minimal valid metadata xml document' do
       xml = at.as_metadata_xml.strip
-      expect(xml).to start_with('<AtomicService>')
+      expect(xml).to start_with('<resource_metadata>')
+      expect(xml).to include('<atomicService>')
       expect(xml).to include('<name>'+at.name+'</name>')
       expect(xml).to include('<localID>'+at.id.to_s+'</localID>')
       expect(xml).to include('<author></author>')
       expect(xml).to include('<description></description>')
       expect(xml).to include('<type>AtomicService</type>')
-      expect(xml).to include('<metadataUpdateDate>'+Time.now.strftime('%Y-%m-%d')+'</metadataUpdateDate>')
-      expect(xml).to include('<metadataCreationDate>'+Time.now.strftime('%Y-%m-%d')+'</metadataCreationDate>')
-      expect(xml).to include('<creationDate>'+at.created_at.strftime('%Y-%m-%d')+'</creationDate>')
-      expect(xml).to include('<updateDate>'+at.updated_at.strftime('%Y-%m-%d')+'</updateDate>')
-      expect(xml).to end_with('</AtomicService>')
+      expect(xml).to include('<metadataUpdateDate>'+Time.now.strftime('%Y-%m-%d %H:%M:%S')+'</metadataUpdateDate>')
+      expect(xml).to include('<metadataCreationDate>'+Time.now.strftime('%Y-%m-%d %H:%M:%S')+'</metadataCreationDate>')
+      expect(xml).to include('<creationDate>'+at.created_at.strftime('%Y-%m-%d %H:%M:%S')+'</creationDate>')
+      expect(xml).to include('<updateDate>'+at.updated_at.strftime('%Y-%m-%d %H:%M:%S')+'</updateDate>')
+      expect(xml).to include('</atomicService>')
+      expect(xml).to end_with('</resource_metadata>')
     end
 
     it 'assigns correct user login' do
@@ -213,15 +216,15 @@ describe ApplianceType do
     it 'handles endpoints properly' do
       xml = complex_at.as_metadata_xml.strip
       expect(xml).to include('<description>DESC</description>')
-      expect(xml).to include('<Endpoint>')
-      expect(xml.scan('<Endpoint>').size).to eq 3
+      expect(xml).to include('<endpoint>')
+      expect(xml.scan('<endpoint>').size).to eq 3
       [endp11, endp12, endp21].each do |endp|
         expect(
           xml.split('Endpoint').any? do |endp_xml|
             if endp_xml.include? endp.name
               expect(endp_xml).to include('<endpointID>'+endp.id.to_s+'</endpointID>')
-              expect(endp_xml).to include('<endpointName>'+endp.name+'</endpointName>')
-              expect(endp_xml).to include('<endpointDescription>'+endp.description.to_s+'</endpointDescription>')
+              expect(endp_xml).to include('<name>'+endp.name+'</name>')
+              expect(endp_xml).to include('<description>'+endp.description.to_s+'</description>')
               true
             else
               false
@@ -234,6 +237,51 @@ describe ApplianceType do
       xml = evil_at.as_metadata_xml.strip
       expect(xml).to include('<name>&lt;/name&gt;&lt;/AtomicService&gt;WE RULE!</name>')
     end
+  end
+
+  describe 'manage metadata' do
+    let(:at) { create(:appliance_type) }
+    let(:public_at) { create(:appliance_type, visible_to: :all) }
+    let(:published_at) { create(:appliance_type, visible_to: :all, metadata_global_id: 'mgid') }
+
+    it 'does not publish private appliance types' do
+      expect(at).not_to receive(:publish_metadata)
+      at.run_callbacks(:create)
+    end
+
+    it 'publishes new pubic appliance type' do
+      expect(public_at).to receive(:publish_metadata)
+      public_at.run_callbacks(:create)
+    end
+
+    it 'publishes private appliance type made public' do
+      expect(public_at).to receive(:publish_metadata)
+      public_at.save
+
+      at.visible_to = :all
+      mrc = MetadataRepositoryClient.instance
+      expect(mrc).to receive(:publish_appliance_type).with(at)
+      at.save
+    end
+
+    it 'does not publish private updated appliance type' do
+      expect(at).to receive(:manage_metadata).once
+      expect(at).not_to receive(:publish_metadata)
+      at.run_callbacks(:update)
+    end
+
+    it 'does not unregister private or unpublished destroyed appliance type metadata' do
+      expect(at).not_to receive(:remove_metadata)
+      published_at.run_callbacks(:destroy)
+      expect(public_at).not_to receive(:remove_metadata)
+      public_at.run_callbacks(:destroy)
+    end
+
+    it 'unregisters public destroyed appliance type metadata' do
+      expect(published_at).to receive(:remove_metadata).once
+      published_at.run_callbacks(:destroy)
+    end
+
   end
 
   describe 'destroy object and relation to VMT' do

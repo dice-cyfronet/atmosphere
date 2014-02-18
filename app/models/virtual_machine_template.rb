@@ -30,6 +30,11 @@ class VirtualMachineTemplate < ActiveRecord::Base
   before_destroy :cant_destroy_non_managed_vmt
   after_destroy :destroy_source_vm
 
+  scope :def_order, -> { order(:name) }
+  scope :active, -> { where(state: 'active') }
+  scope :unassigned, -> { where(appliance_type_id: nil) }
+
+
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
   end
@@ -44,17 +49,30 @@ class VirtualMachineTemplate < ActiveRecord::Base
     vm_template.id_at_site = id_at_site
     vm_template.compute_site = cs
     vm_template.state = :saving
-    vm_template.save
-
     virtual_machine.state = :saving
-    virtual_machine.save
-
+    begin
+      vm_template.transaction do
+        vm_template.save!
+        virtual_machine.save!
+      end
+    rescue
+      logger.error $!
+      vm_template.perform_delete_in_cloud
+      raise $!
+    end
     vm_template
   end
 
   def destroy(delete_in_cloud = true)
     perform_delete_in_cloud if delete_in_cloud && managed_by_atmosphere
     super()
+  end
+
+  def perform_delete_in_cloud
+    logger.info "Deleting template #{uuid}"
+    cloud_client = self.compute_site.cloud_client
+    cloud_client.images.destroy self.id_at_site
+    logger.info "Destroyed template #{uuid}"
   end
 
   private
@@ -88,13 +106,6 @@ class VirtualMachineTemplate < ActiveRecord::Base
     self.compute_site = cs
     self.state = :saving
     #self.appliance_type = vm.appliance_type
-  end
-
-  def perform_delete_in_cloud
-    logger.info "Deleting template #{uuid}"
-    cloud_client = self.compute_site.cloud_client
-    cloud_client.images.destroy self.id_at_site
-    logger.info "Destroyed template #{uuid}"
   end
 
   def cant_destroy_non_managed_vmt

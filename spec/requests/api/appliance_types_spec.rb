@@ -365,6 +365,7 @@ describe Api::V1::ApplianceTypesController do
           expect(response.status).to eq 409
         end
       end
+
     end
 
     context 'when authenticated as admin' do

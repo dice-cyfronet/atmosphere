@@ -15,6 +15,9 @@
 #  template_filters      :text
 #  created_at            :datetime
 #  updated_at            :datetime
+#  wrangler_url          :string(255)
+#  wrangler_username     :string(255)
+#  wrangler_password     :string(255)
 #
 
 class ComputeSite < ActiveRecord::Base

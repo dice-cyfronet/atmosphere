@@ -27,6 +27,9 @@ describe VirtualMachineTemplate do
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
     subject { create(:virtual_machine_template, source_vm: vm, state: :saving) }
+    let(:active_vmt) { create(:virtual_machine_template, source_vm: vm, state: :active) }
+    let(:at) { create(:appliance_type) }
+    let(:assigned_vmt) { create(:virtual_machine_template, source_vm: vm, appliance_type: at) }
     let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
     before do
@@ -60,6 +63,16 @@ describe VirtualMachineTemplate do
       it 'does not destroy vm in cloud if it has an appliance associated' do
         create(:appliance, virtual_machines: [vm])
         expect { subject.update_attribute(:state, :active) }.to_not change { VirtualMachine.count }
+      end
+
+      it 'shows up on the active scope' do
+        expect(VirtualMachineTemplate.active).to_not include subject
+        expect(VirtualMachineTemplate.active).to include active_vmt
+      end
+
+      it 'shows up on the unassigned scope' do
+        expect(VirtualMachineTemplate.unassigned).to_not include assigned_vmt
+        expect(VirtualMachineTemplate.unassigned).to include active_vmt
       end
     end
 
@@ -179,7 +192,7 @@ describe VirtualMachineTemplate do
     let(:vm) { create(:virtual_machine, id_at_site: 'id') }
 
     before do
-      allow(cloud_client).to receive(:save_template)
+      allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))
       ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
     end
 

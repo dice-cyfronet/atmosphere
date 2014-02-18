@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20140209121151) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
     t.integer  "appliance_configuration_template_id"
@@ -63,6 +60,8 @@ ActiveRecord::Schema.define(version: 20140209121151) do
   end
 
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
+  add_index "appliance_types", ["security_proxy_id"], name: "appliance_types_security_proxy_id_fk", using: :btree
+  add_index "appliance_types", ["user_id"], name: "appliance_types_user_id_fk", using: :btree
 
   create_table "appliances", force: true do |t|
     t.integer  "appliance_set_id",                                        null: false
@@ -91,6 +90,11 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.integer  "amount_billed", default: 0,                        null: false
     t.integer  "user_id"
   end
+
+  add_index "appliances", ["appliance_configuration_instance_id"], name: "appliances_appliance_configuration_instance_id_fk", using: :btree
+  add_index "appliances", ["appliance_set_id"], name: "appliances_appliance_set_id_fk", using: :btree
+  add_index "appliances", ["appliance_type_id"], name: "appliances_appliance_type_id_fk", using: :btree
+  add_index "appliances", ["user_key_id"], name: "appliances_user_key_id_fk", using: :btree
 
   create_table "compute_sites", force: true do |t|
     t.string   "site_id",                                   null: false
@@ -129,16 +133,21 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.datetime "updated_at"
   end
 
+  add_index "dev_mode_property_sets", ["appliance_id"], name: "dev_mode_property_sets_appliance_id_fk", using: :btree
+  add_index "dev_mode_property_sets", ["security_proxy_id"], name: "dev_mode_property_sets_security_proxy_id_fk", using: :btree
+
   create_table "endpoints", force: true do |t|
-    t.string   "name",                                    null: false
+    t.string   "name",                                                     null: false
     t.text     "description"
-    t.text     "descriptor"
-    t.string   "endpoint_type",            default: "ws", null: false
-    t.string   "invocation_path",                         null: false
-    t.integer  "port_mapping_template_id",                null: false
+    t.text     "descriptor",               limit: 16777215
+    t.string   "endpoint_type",                             default: "ws", null: false
+    t.string   "invocation_path",                                          null: false
+    t.integer  "port_mapping_template_id",                                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "endpoints", ["port_mapping_template_id"], name: "endpoints_port_mapping_template_id_fk", using: :btree
 
   create_table "funds", force: true do |t|
     t.string  "name",               default: "unnamed fund", null: false
@@ -157,6 +166,9 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.datetime "updated_at"
   end
 
+  add_index "http_mappings", ["appliance_id"], name: "http_mappings_appliance_id_fk", using: :btree
+  add_index "http_mappings", ["port_mapping_template_id"], name: "http_mappings_port_mapping_template_id_fk", using: :btree
+
   create_table "port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
     t.string   "value",                    null: false
@@ -165,6 +177,9 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "port_mapping_properties", ["compute_site_id"], name: "port_mapping_properties_compute_site_id_fk", using: :btree
+  add_index "port_mapping_properties", ["port_mapping_template_id"], name: "port_mapping_properties_port_mapping_template_id_fk", using: :btree
 
   create_table "port_mapping_templates", force: true do |t|
     t.string   "transport_protocol",       default: "tcp",        null: false
@@ -177,6 +192,9 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.datetime "updated_at"
   end
 
+  add_index "port_mapping_templates", ["appliance_type_id"], name: "port_mapping_templates_appliance_type_id_fk", using: :btree
+  add_index "port_mapping_templates", ["dev_mode_property_set_id"], name: "port_mapping_templates_dev_mode_property_set_id_fk", using: :btree
+
   create_table "port_mappings", force: true do |t|
     t.string   "public_ip",                null: false
     t.integer  "source_port",              null: false
@@ -185,6 +203,9 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "port_mappings", ["port_mapping_template_id"], name: "port_mappings_port_mapping_template_id_fk", using: :btree
+  add_index "port_mappings", ["virtual_machine_id"], name: "port_mappings_virtual_machine_id_fk", using: :btree
 
   create_table "security_policies", force: true do |t|
     t.string   "name"
@@ -263,6 +284,8 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.integer "compute_site_id"
   end
 
+  add_index "virtual_machine_flavors", ["compute_site_id"], name: "virtual_machine_flavors_compute_site_id_fk", using: :btree
+
   create_table "virtual_machine_templates", force: true do |t|
     t.string   "id_at_site",                            null: false
     t.string   "name",                                  null: false
@@ -275,7 +298,9 @@ ActiveRecord::Schema.define(version: 20140209121151) do
     t.datetime "updated_at"
   end
 
+  add_index "virtual_machine_templates", ["appliance_type_id"], name: "virtual_machine_templates_appliance_type_id_fk", using: :btree
   add_index "virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "index_vm_tmpls_on_cs_id_and_id_at_site", unique: true, using: :btree
+  add_index "virtual_machine_templates", ["virtual_machine_id"], name: "virtual_machine_templates_virtual_machine_id_fk", using: :btree
 
   create_table "virtual_machines", force: true do |t|
     t.string   "id_at_site",                                  null: false
