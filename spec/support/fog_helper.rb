@@ -15,6 +15,7 @@ module FogHelpers
         ]
       },
       "name" => name,
+      "flavor" => {"id"=>"1", "links"=> [{"href"=>"http://10.100.0.24:8774/84b9cf57455c473ca1f463017ffbfcd7/flavors/1","rel"=>"bookmark"}]},
       "state" => status.to_s.upcase,
       "key_name" => "jm",
       "fault" => nil
@@ -25,7 +26,8 @@ module FogHelpers
     {
       "instanceId" => id,
       "ipAddress" => addr,
-      "instanceState" => { "name" => status }
+      "instanceState" => { "name" => status },
+      "flavor_id" => "m1.medium"
     }
   end
 end

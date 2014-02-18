@@ -254,6 +254,17 @@ RSpec::Matchers.define :vm_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :flavor_eq do |expected|
+  match do |actual|
+    actual.id_at_site == expected.id &&
+    actual.cpu == expected.vcpus &&
+    actual.memory == expected.ram &&
+    actual.hdd == expected.disk &&
+    actual.flavor_name == expected.name
+  end
+end
+
+
 RSpec::Matchers.define :at_be_updated_by do |expected|
   match do |actual|
     (actual.name == expected[:name] || expected[:name].blank?) &&

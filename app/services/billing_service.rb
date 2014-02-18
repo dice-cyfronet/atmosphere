@@ -100,7 +100,7 @@ class BillingService
 
   # This scans for :expired appliances and figures out what to do with the underlying VMs, following fund policies
   def self.apply_funding_policy
-    VirtualMachine.where(managed_by_atmosphere: true).each do |vm|
+    VirtualMachine.where(managed_by_atmosphere: true).all.each do |vm|
       # If this VM has at least one prepaid appliance, it must not be touched. For safety's sake, we will also not touch appliances whose billing state is flagged as erroneous
       if vm.appliances.select {|appl| ['prepaid', 'error'].include? appl.billing_state}.count > 0
         # Do nothing

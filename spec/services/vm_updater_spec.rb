@@ -16,6 +16,7 @@ describe VmUpdater do
           image_id: 'vmt_id_at_site',
           name: 'name',
           state: 'active',
+          flavor: {'id' => "1"},
           task_state: 'image_snapshot',
           public_ip_address: nil,
           addresses: nil
@@ -37,6 +38,7 @@ describe VmUpdater do
           image_id: 'vmt_id_at_site',
           name: 'name',
           state: 'active',
+          flavor: {'id' => "1"},
           task_state: nil,
           public_ip_address: nil,
           addresses: nil

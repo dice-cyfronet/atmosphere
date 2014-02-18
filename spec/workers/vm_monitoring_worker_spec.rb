@@ -134,6 +134,7 @@ describe VmMonitoringWorker do
       end
     end
 
+
     context 'amazon' do
       let(:amazon) { create(:compute_site, site_id: 'aws', config: '{"provider":"aws", "aws_access_key_id":"key_id", "aws_secret_access_key":"access_key", "region":"eu-west-1"}') }
 

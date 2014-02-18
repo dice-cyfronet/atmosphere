@@ -7,6 +7,17 @@ class VmUpdater
   def update
     vm.source_template = source_template
     vm.name = server.name || '[unnamed]'
+    # Check if this VM's flavor is already defined for this CS; add if necessary.
+
+    Rails.logger.debug("My compute site: #{vm.compute_site.inspect}")
+    Rails.logger.debug("My flavor: #{server.flavor.inspect}")
+    Rails.logger.debug("My flavor id: #{server.flavor['id']}")
+
+
+    unless FlavorManager.exists_in_compute_site?(vm.compute_site, server.flavor['id'])
+      FlavorManager.check_and_update_flavor(vm.compute_site, vm.compute_site.cloud_client.flavors.select{|f| f.id.to_s == server.flavor['id']}.first)
+    end
+    vm.virtual_machine_flavor = VirtualMachineFlavor.where(compute_site: vm.compute_site, id_at_site: server.flavor['id']).first
     vm.state = map_saving_state(vm, server.task_state) ||
       map_state(server.state.downcase.to_sym)
     update_ips if update_ips?

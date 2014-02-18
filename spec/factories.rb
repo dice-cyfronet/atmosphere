@@ -125,7 +125,7 @@ FactoryGirl.define do
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
 
     # Create 4 VM flavors for this compute_site by default
-    virtual_machine_flavors { FactoryGirl.create_list(:virtual_machine_flavor, 4) }
+    # virtual_machine_flavors { FactoryGirl.create_list(:virtual_machine_flavor, 4) }
 
     trait :openstack_flavors do
       virtual_machine_flavors { [
@@ -150,8 +150,17 @@ FactoryGirl.define do
     factory :amazon_with_flavors, traits: [:amazon_flavors] do
       site_type 'public'
       technology 'aws'
+      #config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
     end
+
+    factory :amazon_compute_site do
+      site_type 'public'
+      technology 'aws'
+      config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
+    end
+
     factory :openstack_with_flavors, traits: [:openstack_flavors]
+
   end
 
   sequence :vm_flavor_name do |n|

@@ -23,6 +23,10 @@ module Clockwork
     end
   end
 
+  every(120.minutes, 'monitoring.flavors') do
+    FlavorWorker.perform_async
+  end
+
   every(60.minutes, 'billing.bill') do
     BillingWorker.perform_async
   end
