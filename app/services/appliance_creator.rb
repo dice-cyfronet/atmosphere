@@ -15,6 +15,7 @@ class ApplianceCreator
     appliance.transaction do
       apply_preferences
       init_appliance_configuration
+      init_billing
 
       appliance.save!
     end
@@ -34,6 +35,12 @@ class ApplianceCreator
 
   def apply_preferences
     preferences && appliance.create_dev_mode_property_set(preferences)
+  end
+
+  def init_billing
+    # Add Time.now() as prepaid_until - this effectively means that the appliance is unpaid.
+    # The requestor must bill this new appliance prior to exposing it to the end user.
+    appliance.prepaid_until = Time.now
   end
 
   def preferences

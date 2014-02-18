@@ -60,6 +60,17 @@ class Appliance < ActiveRecord::Base
     appliance_set.appliance_set_type.development?
   end
 
+  def create_dev_mode_property_set(options={})
+    unless self.dev_mode_property_set
+      set = DevModePropertySet.create_from(appliance_type)
+      set.preference_memory = options[:preference_memory] if options[:preference_memory]
+      set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
+      set.preference_disk = options[:preference_disk] if options[:preference_disk]
+      self.dev_mode_property_set = set
+      set.appliance = self
+    end
+  end
+
   private
 
   def assign_default_fund
@@ -75,17 +86,6 @@ class Appliance < ActiveRecord::Base
   def final_billing
     # Perform one final billing action for this appliance prior to its destruction.
     BillingService::bill_appliance(self, Time.now, "Final billing action prior to appliance destruction.",false)
-  end
-
-  def create_dev_mode_property_set(options={})
-    unless self.dev_mode_property_set
-      set = DevModePropertySet.create_from(appliance_type)
-      set.preference_memory = options[:preference_memory] if options[:preference_memory]
-      set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
-      set.preference_disk = options[:preference_disk] if options[:preference_disk]
-      self.dev_mode_property_set = set
-      set.appliance = self
-    end
   end
 
   private

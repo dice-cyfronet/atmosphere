@@ -160,13 +160,15 @@ describe Optimizer do
 
     context 'not shareable appliance type' do
       let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type)}
+      let!(:cs) { create(:openstack_with_flavors) }
+      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, compute_site: cs)}
 
       it 'instantiates a new vm although vm with given conf is already running' do
         tmpl_of_not_shareable_at
         config_inst = create(:appliance_configuration_instance)
         appl1 = create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst)
         appl2 = create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst)
+
         vms = VirtualMachine.all
         expect(vms.size).to eql 2
         appl1.reload
