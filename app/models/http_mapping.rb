@@ -16,8 +16,9 @@ class HttpMapping < ActiveRecord::Base
 
   belongs_to :appliance
   belongs_to :port_mapping_template
+  has_one :compute_site
 
-  validates_presence_of :url, :application_protocol, :appliance, :port_mapping_template
+  validates_presence_of :url, :application_protocol, :appliance, :port_mapping_template, :compute_site
 
   validates_inclusion_of :application_protocol, in: %w(http https)
   enumerize :application_protocol, in: [:http, :https]
