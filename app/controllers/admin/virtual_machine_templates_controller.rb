@@ -17,7 +17,11 @@ class Admin::VirtualMachineTemplatesController < ApplicationController
   # PATCH/PUT /virtual_machine_templates/1
   def update
     if @virtual_machine_template.update(virtual_machine_template_params)
-      redirect_to admin_virtual_machine_template_url(@virtual_machine_template), notice: 'Virtual machine template was successfully updated.'
+      if Rails.application.routes.recognize_path(request.referrer)[:controller] == 'admin/appliance_types'
+        redirect_to request.referer
+      else
+        redirect_to admin_virtual_machine_template_url(@virtual_machine_template), notice: 'Virtual machine template was successfully updated.'
+      end
     else
       render action: 'edit'
     end
