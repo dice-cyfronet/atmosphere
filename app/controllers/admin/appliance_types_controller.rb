@@ -37,6 +37,18 @@ class Admin::ApplianceTypesController < ApplicationController
     end
   end
 
+  # PUT /admin/appliance_types/1/assign_virtual_machine_template
+  # Serves for assigning active VMT particular AT
+  def assign_virtual_machine_template
+    if params[:virtual_machine_template_id]
+      vmt = VirtualMachineTemplate.find params[:virtual_machine_template_id]
+      @appliance_type.virtual_machine_templates << vmt if vmt
+      redirect_to [:admin, @appliance_type], notice: 'Appliance Type was successfully updated.'
+    else
+      render action: 'edit'
+    end
+  end
+
   # DELETE /admin/appliance_types/1
   def destroy
     if @appliance_type.destroy
