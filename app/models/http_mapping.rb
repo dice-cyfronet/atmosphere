@@ -16,7 +16,7 @@ class HttpMapping < ActiveRecord::Base
 
   belongs_to :appliance
   belongs_to :port_mapping_template
-  has_one :compute_site
+  belongs_to :compute_site
 
   validates_presence_of :url, :application_protocol, :appliance, :port_mapping_template, :compute_site
 
@@ -25,33 +25,36 @@ class HttpMapping < ActiveRecord::Base
 
   after_destroy :rm_proxy
 
-  def update_proxy
-    create_update_proxy || rm_proxy
-  end
-
-  private
-
-  delegate :service_name, :target_port, :properties, to: :port_mapping_template
-  delegate :active_vms, to: :appliance
-
-  def create_update_proxy
-    has_workers? && Redirus::Worker::AddProxy.perform_async(proxy_name, workers, application_protocol, properties)
-  end
-
-  def rm_proxy
-    Redirus::Worker::RmProxy.perform_async(proxy_name, application_protocol)
+  def update_proxy(ips = nil)
+    create_or_update_proxy(ips) || rm_proxy
   end
 
   def proxy_name
     "#{service_name}.#{appliance.id}"
   end
 
-  def has_workers?
-    workers_ips.size > 0
+  def create_or_update_proxy(ips = nil)
+    if has_workers?(ips)
+      Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::AddProxy, 'args' => [proxy_name, workers(ips), application_protocol, properties])
+      true
+    end
   end
 
-  def workers
-    workers_ips.collect { |ip| "#{ip}:#{target_port}" }
+  private
+
+  def workers(ips=nil)
+    (ips || workers_ips).collect { |ip| "#{ip}:#{target_port}" }
+  end
+
+  delegate :service_name, :target_port, :properties, to: :port_mapping_template
+  delegate :active_vms, to: :appliance
+
+  def rm_proxy
+    Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::RmProxy, 'args' => [proxy_name, application_protocol])
+  end
+
+  def has_workers?(ips)
+    ips && ips.size > 0 || workers_ips.size > 0
   end
 
   def workers_ips

@@ -122,6 +122,8 @@ FactoryGirl.define do
     site_type 'private'
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
+    http_proxy_url { Faker::Internet.uri('http') }
+    https_proxy_url { Faker::Internet.uri('https') }
 
     # Create 4 VM flavors for this compute_site by default
     virtual_machine_flavors { FactoryGirl.create_list(:virtual_machine_flavor, 4) }
@@ -247,6 +249,12 @@ FactoryGirl.define do
 
     # By default, assign some random VM flavor which belongs to this VM's compute_site
     virtual_machine_flavor { self.compute_site.virtual_machine_flavors.first }
+
+    trait :active_vm do
+      ip { Faker::Internet.ip_v4_address }
+    end
+
+    factory :active_vm, traits: [:active_vm]
   end
 
   factory :http_mapping do |f|
@@ -254,6 +262,7 @@ FactoryGirl.define do
     application_protocol "http"
     appliance
     port_mapping_template
+    compute_site
   end
 
 end

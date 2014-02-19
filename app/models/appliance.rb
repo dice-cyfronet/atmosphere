@@ -31,7 +31,7 @@ class Appliance < ActiveRecord::Base
   enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
   validates_presence_of :state
 
-  has_many :http_mappings, dependent: :destroy
+  has_many :http_mappings, dependent: :destroy, autosave: true
   has_many :virtual_machines, through: :deployments, dependent: :destroy
   has_many :deployments
 
