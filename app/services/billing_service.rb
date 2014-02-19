@@ -9,7 +9,7 @@ class BillingService
   def self.bill_all_appliances
     Appliance.all.each do |appl|
       begin
-        bill_appliance(appl, Time.now, "Mass billing operation.", true)
+        bill_appliance(appl, Time.now.utc, "Mass billing operation.", true)
       rescue Air::BillingException => e
         # TODO: Communicate this to the user via MI. For safety's sake, leave this appliance alone.
         appl.billing_state = 'error'
@@ -25,14 +25,10 @@ class BillingService
     if appl.prepaid_until.blank?
       # This should not happen - it means that we do not know when this appliance will run out of funds. Therefore we cannot meaningfully bill it again and must return an error.
       Rails.logger.error("Unable to determine current payment validity date for appliance #{appl.id}. Skipping.")
-      BillingLog.new(timestamp: Time.now, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Unable to determine current payment validity date for appliance.", actor: "bill_appliance", amount_billed: 0).save
-      appl.billing_state = :error
+      BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Unable to determine current payment validity date for appliance.", actor: "bill_appliance", amount_billed: 0).save
+      appl.billing_state = "error"
       appl.save
       raise Air::BillingException.new(message: "Unable to determine current payment validity date for appliance #{appl.id}")
-    elsif appl.state != 'satisfied'
-      # The appliance is not satisfied and therefore unusable - we should not charge for it.
-      Rails.logger.warn("Appliance #{appl.id} is not satisfied. Skipping.")
-      # Do not raise an exception but skip this appliance.
     else
       # Figure out how long this appliance can continue to run without being billed again.
       billing_interval = (billing_time - appl.prepaid_until) # This will return time in seconds
@@ -46,28 +42,28 @@ class BillingService
         ActiveRecord::Base.transaction do
           amount_due = calculate_charge_for_appliance(appl, billing_time, apply_prepayment)
           # Check if there are sufficient funds
-          if amount_due > appl.fund.balance-appl.fund.overdraft_limit
+          if (amount_due > appl.fund.balance-appl.fund.overdraft_limit)
             # We've run out of funds. This appliance cannot be paid for. Flagging it as expired.
             Rails.logger.warn("The balance of fund #{appl.fund.id} is insufficient to cover continued operation of appliance #{appl.id} (current balance: #{appl.fund.balance}; overdraft limit: #{appl.fund.overdraft_limit}; calculated charge: #{amount_due}). Flagging appliance as expired.")
-            BillingLog.new(timestamp: Time.now, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Funding expired for this appliance.", actor: "bill_appliance", amount_billed: 0).save
-            appl.billing_state = 'expired' # A separate method will be used to clean up all expired appliances according to their funds' termination policies
+            BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Funding expired for this appliance.", actor: "bill_appliance", amount_billed: 0).save
+            appl.billing_state = "expired" # A separate method will be used to clean up all expired appliances according to their funds' termination policies
             appl.save
           else
             Rails.logger.debug("Applying charge of #{amount_due} to appliance #{appl.id} and deducting it from balance of fund #{appl.fund.id}.")
             appl.fund.balance -= amount_due
             appl.fund.save
             appl.amount_billed += amount_due
-            appl.prepaid_until = billing_time+@appliance_prepayment_interval
+            appl.prepaid_until = billing_time+(apply_prepayment ? @appliance_prepayment_interval : 0)
             appl.last_billing = billing_time
-            appl.billing_state = 'prepaid'
+            appl.billing_state = "prepaid"
             appl.save
             unless appl.errors.blank?
               Rails.logger.error("ERROR: Unable to update appliance #{appl.id} with billing data.")
-              BillingLog.new(timestamp: Time.now, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Error saving appliance following update of billing information.", actor: "bill_appliance", amount_billed: 0).save
+              BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Error saving appliance following update of billing information.", actor: "bill_appliance", amount_billed: 0).save
               raise Air::BillingException.new(message: "Unable to update appliance #{appl.id} with billing data.")
             else
               # Write success to log.
-              BillingLog.new(timestamp: Time.now, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: message, actor: "bill_appliance", amount_billed: amount_due).save
+              BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: message, actor: "bill_appliance", amount_billed: amount_due).save
             end
           end
         end
@@ -82,9 +78,9 @@ class BillingService
   # - This is usually true, but will be false when calculating final charge for an appliance which is being shut down.
   def self.calculate_charge_for_appliance(appl, billing_time, apply_prepayment = true)
     # By default, the billing process should extend the validity of the appliance until now+1.hour.
-    billable_time = ((billing_time - appl.prepaid_until) + (apply_prepayment ? @appliance_prepayment_interval : 0))/3600 # Time in hours
+    billable_time = self.calculate_billable_time(appl, billing_time, apply_prepayment)
 
-    amount_due = 0.0
+    amount_due = 0
 
     # Iterate over appliance vms (there can be many, if the appliance is shared)
     appl.virtual_machines.each do |vm|
@@ -121,6 +117,32 @@ class BillingService
         Rails.logger.error("Unable to figure out what to do with vm #{vm.id}. This probably indicates an error in BillingCharger::apply_funding_policy. Please report this to PN.")
         # Leave this VM as is, for safety's sake.
       end
+    end
+  end
+
+  def self.calculate_billable_time(appliance, billing_time, apply_prepayment)
+    ((billing_time - appliance.prepaid_until) + (apply_prepayment ? @appliance_prepayment_interval : 0))/3600 # Time in hours
+  end
+
+  # Determines whether this appliance can afford to use a given VM (which may be shared)
+  def self.can_afford_vm?(appliance, vm)
+    billable_time = self.calculate_billable_time(appliance, Time.now.utc, true)
+    amt_due = (billable_time*(vm.virtual_machine_flavor.hourly_cost)/(vm.appliances.count+1)).round
+    if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit)
+      true
+    else
+      false
+    end
+  end
+
+  # Determines whether this appliance can afford to fully use a VM of a given flavor (which may not be spawned yet)
+  def self.can_afford_flavor?(appliance, flavor)
+    billable_time = self.calculate_billable_time(appliance, Time.now.utc, true)
+    amt_due = (billable_time*(flavor.hourly_cost)).round
+    if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit)
+      true
+    else
+      false
     end
   end
 

@@ -38,9 +38,9 @@ class ApplianceCreator
   end
 
   def init_billing
-    # Add Time.now() as prepaid_until - this effectively means that the appliance is unpaid.
+    # Add Time.now.utc() as prepaid_until - this effectively means that the appliance is unpaid.
     # The requestor must bill this new appliance prior to exposing it to the end user.
-    appliance.prepaid_until = Time.now
+    appliance.prepaid_until = Time.now.utc
   end
 
   def preferences

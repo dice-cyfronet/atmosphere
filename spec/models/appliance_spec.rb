@@ -119,7 +119,7 @@ describe Appliance do
     end
 
     context 'when appliance with VM' do
-      let(:cs) { create(:compute_site) }
+      let(:cs) { create(:openstack_with_flavors) }
       let!(:vm) { create(:virtual_machine, compute_site: cs) }
       let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
 
@@ -135,7 +135,7 @@ describe Appliance do
       end
 
       context 'when second VM started on different compute site' do
-        let(:cs2) { create(:compute_site) }
+        let(:cs2) { create(:openstack_with_flavors) }
         let!(:vm2) { create(:virtual_machine, compute_site: cs2) }
 
         before do

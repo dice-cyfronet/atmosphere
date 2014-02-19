@@ -26,14 +26,12 @@ class Appliance < ActiveRecord::Base
 
   belongs_to :fund
 
-  before_destroy :final_billing
-
   validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
 
   enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
   validates_presence_of :state
-  enumerize :billing_state, in: [:prepaid, :expired, :error], predicates: true
-  validates_presence_of :billing_state
+  enumerize :billing_state, in: ["initial", "prepaid", "expired", "error"], predicates: true
+  validates_presence_of :billing_state, default: "initial"
 
   validates_numericality_of :amount_billed
 
@@ -46,6 +44,7 @@ class Appliance < ActiveRecord::Base
 
   before_create :create_dev_mode_property_set, if: :development?
   before_save :assign_default_fund
+  before_destroy :final_billing, prepend: true
   after_destroy :remove_appliance_configuration_instance_if_needed
   after_destroy :optimize_destroyed_appliance
   after_create :initial_billing, :optimize_saved_appliance
@@ -85,7 +84,7 @@ class Appliance < ActiveRecord::Base
 
   def final_billing
     # Perform one final billing action for this appliance prior to its destruction.
-    BillingService::bill_appliance(self, Time.now, "Final billing action prior to appliance destruction.",false)
+    BillingService::bill_appliance(self, Time.now.utc, "Final billing action prior to appliance destruction.", false)
   end
 
   private
@@ -101,11 +100,9 @@ class Appliance < ActiveRecord::Base
   end
 
   def initial_billing
-    # This method bills the freshly saved appliance for the first time.
-    # Note: This will fail if the appliance does not have a fund assigned (which is a 'should never happen' error. :)
-    BillingService::bill_appliance(self, Time.now, "Initial billing action following appliance instantiation.", true)
-    # CAUTION: This may immediately render the appliance "expired" if the assigned fund does not provide sufficient resources to pay for the appliance.
-    # In such cases, the appliance should never be visualized in platform GUIs or returned to external clients as 'active'.
+    # This method sets billing details for a newly created appliance
+    self.prepaid_until = Time.now.utc
+    self.billing_state = "expired"
   end
 
   def optimize_destroyed_appliance

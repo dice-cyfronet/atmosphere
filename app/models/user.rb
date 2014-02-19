@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
   def default_fund
     # Return this user's default fund, if it exists.
     dfs = self.user_funds.where(default: true)
-    dfs.blank? ? nil : dfs.first
+    dfs.blank? ? nil : dfs.first.fund
   end
 
   def generate_password
