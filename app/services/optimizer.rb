@@ -24,8 +24,7 @@ class Optimizer
           appliance.virtual_machines << vm_to_be_reused
           appliance.state = :satisfied
         else
-          appliance.state = :unsatisfied
-          appliance.billing_state = "expired"
+          not_enough_funds(appliance)
         end
       else
         tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
@@ -42,13 +41,12 @@ class Optimizer
             err_msg = "No matching flavor was found for appliance #{appliance.name}"
             appliance.state_explanation = err_msg
             Rails.logger.warn err_msg
-          elsif BillingService.can_afford_flavor?(appliance,flavor)
+          elsif BillingService.can_afford_flavor?(appliance, flavor)
             vm_name = appliance.name.blank? ? appliance.appliance_type.name : appliance.name
             VirtualMachine.create(name: vm_name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
             appliance.state = :satisfied
           else
-            appliance.state = :unsatisfied
-            appliance.billing_state = "expired"
+            not_enough_funds(appliance)
           end
         end
       end
@@ -62,6 +60,12 @@ class Optimizer
         end
       end
     end
+  end
+
+  def not_enough_funds(appliance)
+    appliance.state = :unsatisfied
+    appliance.billing_state = "expired"
+    appliance.state_explanation = 'Not enough funds'
   end
 
   def preferences(appl)
