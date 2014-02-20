@@ -23,7 +23,7 @@
 require 'spec_helper'
 
 describe ComputeSite do
-  
+
   before { Fog.mock! }
 
   subject { FactoryGirl.create(:compute_site, technology: 'openstack') }
@@ -112,34 +112,13 @@ describe ComputeSite do
       end
 
     end
-  
+
   end
 
   context 'compute site is destroyed' do
     it 'unregisters cloud client' do
       expect(Air).to receive(:unregister_cloud_client).with(subject.site_id)
       subject.destroy
-    end
-  end
-
-  context '#with_appliance scope' do
-    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
-    let(:vm) { create(:virtual_machine, compute_site: compute_site) }
-    let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
-
-    it 'loads not readonly compute sites' do
-      ComputeSite.with_deployment(appl.deployments.first).each do |cs|
-        expect(cs.readonly?).to be_false
-      end
-    end
-
-    it 'allows to update compute site parameters' do
-      ComputeSite.with_deployment(appl.deployments.first).each do |cs|
-        cs.update(regenerate_proxy_conf: true)
-      end
-
-      compute_site.reload
-      expect(compute_site.regenerate_proxy_conf).to be_true
     end
   end
 

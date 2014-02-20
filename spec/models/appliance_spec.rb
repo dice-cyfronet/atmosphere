@@ -113,76 +113,37 @@ describe Appliance do
     end
   end
 
-  context '#generate_proxy_conf' do
-    before do
-      Optimizer.instance.stub(:run)
-    end
+  # context 'http proxies' do
+  #   before do
+  #     Optimizer.instance.stub(:run)
+  #   end
 
-    context 'when appliance with VM' do
-      let(:cs) { create(:compute_site) }
-      let!(:vm) { create(:virtual_machine, compute_site: cs) }
-      let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
+  #   let(:appl) { create(:appliance) }
+  #   let(:updater) { double }
+  #   let(:active_vm) { create(:virtual_machine, state: :active, ip: '10.100.1.1') }
+  #   let(:inactive_vm) { create(:virtual_machine, ip: nil) }
 
-      context 'generates proxy conf' do
+  #   it 'updates appliance proxies when active VM is added' do
+  #     expect(ApplianceProxyUpdater).to receive(:new).with(appl).and_return(updater)
+  #     expect(updater).to receive(:update)
 
-        before do
-          expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-        end
+  #     appl.virtual_machines << active_vm
+  #   end
 
-        it 'after appliance is destroyed' do
-          appl.destroy
-        end
-      end
+  #   it 'does not update appliance proxies when VM is not active' do
+  #     expect(ApplianceProxyUpdater).to_not receive(:new)
 
-      context 'when second VM started on different compute site' do
-        let(:cs2) { create(:compute_site) }
-        let!(:vm2) { create(:virtual_machine, compute_site: cs2) }
+  #     appl.virtual_machines << inactive_vm
+  #   end
 
-        before do
-          appl.virtual_machines << vm2
-          appl.save
-        end
+  #   context 'when appliance have VM assigned' do
+  #     it 'updates appliance proxies when removing active VM' do
+  #       appl.virtual_machines << active_vm
+  #       expect(ApplianceProxyUpdater).to receive(:new).with(appl).and_return(updater)
+  #       expect(updater).to receive(:update)
 
-        context 'generates proxy conf for both sites' do
-          before do
-            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs2)
-          end
-
-          it 'after appliance is destroyed' do
-            appl.destroy
-          end
-        end
-      end
-
-      context 'when second VM reused' do
-        let!(:vm2) { create(:virtual_machine, compute_site: cs, ip: '10.100.1.23') }
-
-        context 'generates proxy conf' do
-          before do
-            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-          end
-
-          it 'after new VM is assigned to appliance' do
-            appl.virtual_machines << vm2
-            appl.save
-          end
-        end
-      end
-    end
-
-    context 'when appliance without VM' do
-      let!(:appl) { create(:appliance) }
-
-      context 'does not generate proxy conf for any compute site' do
-        before do
-          expect(ProxyConfWorker).to_not receive(:regeneration_required)
-        end
-
-        it 'after appliance is destroyed' do
-          appl.destroy
-        end
-      end
-    end
-  end
+  #       appl.virtual_machines = []
+  #     end
+  #   end
+  # end
 end

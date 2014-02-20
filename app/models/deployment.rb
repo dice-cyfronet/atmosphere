@@ -20,9 +20,7 @@ class Deployment < ActiveRecord::Base
   private
 
   def generate_proxy_conf
-    ComputeSite.with_deployment(self).each do |cs|
-      ProxyConfWorker.regeneration_required(cs)
-    end
+    ApplianceProxyUpdater.new(appliance).update
   end
 
   def vm_active?

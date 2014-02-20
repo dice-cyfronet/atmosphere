@@ -8,7 +8,7 @@ class ApplianceProxyUpdater
     @port_mapping_templates = [options[:port_mapping_template]] if options[:port_mapping_template]
   end
 
-  def update
+  def update(hints={})
     main_compute_site ? create_or_update_http_mappings : remove_http_mappings
   end
 

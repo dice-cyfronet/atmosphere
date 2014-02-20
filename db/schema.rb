@@ -16,9 +16,6 @@ ActiveRecord::Schema.define(version: 20140218074453) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
     t.integer  "appliance_configuration_template_id"
