@@ -16,16 +16,12 @@ class Optimizer
 
   private
   def satisfy_appliance(appliance)
+    appl_manager = ApplianceManager.new(appliance)
+
     if appliance.virtual_machines.blank?
       vm_to_be_reused = nil
-      if not appliance.development? and appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
-        # Check if we can afford this VM
-        if BillingService.can_afford_vm?(appliance, vm_to_be_reused)
-          appliance.virtual_machines << vm_to_be_reused
-          appliance.state = :satisfied
-        else
-          not_enough_funds(appliance)
-        end
+      if appl_manager.can_reuse_vm? && !(vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
+        appl_manager.reuse_vm!(vm_to_be_reused)
       else
         tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
         if tmpls.blank?
@@ -41,23 +37,14 @@ class Optimizer
             err_msg = "No matching flavor was found for appliance #{appliance.name}"
             appliance.state_explanation = err_msg
             Rails.logger.warn err_msg
-          elsif BillingService.can_afford_flavor?(appliance, flavor)
-            vm_name = appliance.name.blank? ? appliance.appliance_type.name : appliance.name
-            VirtualMachine.create(name: vm_name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
-            appliance.state = :satisfied
           else
-            not_enough_funds(appliance)
+            vm_name = appliance.name.blank? ? appliance.appliance_type.name : appliance.name
+            appl_manager.spawn_vm!(tmpl, flavor, vm_name)
           end
         end
       end
-      unless appliance.save
+      unless appl_manager.save
         Rails.logger.error appliance.errors.to_json
-      else
-        appliance.reload
-        # Now bill the appliance, but only if it is satisfied
-        if appliance.state == "satisfied"
-          BillingService::bill_appliance(appliance, Time.now.utc, "Optimization completed - performing billing action.", true)
-        end
       end
     end
   end
