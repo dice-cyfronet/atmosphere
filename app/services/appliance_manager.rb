@@ -19,7 +19,7 @@ class ApplianceManager
   end
 
   def save
-    appliance.save.tap { |_| bill }
+    appliance.save.tap { |saved| bill if saved }
   end
 
   private
