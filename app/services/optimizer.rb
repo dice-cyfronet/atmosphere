@@ -16,11 +16,12 @@ class Optimizer
 
   private
   def satisfy_appliance(appliance)
+    appl_manager = ApplianceVmsManager.new(appliance)
+
     if appliance.virtual_machines.blank?
       vm_to_be_reused = nil
-      if not appliance.development? and appliance.appliance_type.shared and not (vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
-        appliance.virtual_machines << vm_to_be_reused
-        appliance.state = :satisfied
+      if appl_manager.can_reuse_vm? && !(vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
+        appl_manager.add_vm(vm_to_be_reused)
       else
         tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
         if tmpls.blank?
@@ -38,8 +39,8 @@ class Optimizer
             Rails.logger.warn err_msg
           else
             vm_name = appliance.name.blank? ? appliance.appliance_type.name : appliance.name
-            VirtualMachine.create(name: vm_name, source_template: tmpl, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: flavor)
-            appliance.state = :satisfied
+            vm = VirtualMachine.create(name: vm_name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor)
+            appl_manager.add_vm(vm)
           end
         end
       end
