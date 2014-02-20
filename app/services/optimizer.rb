@@ -16,7 +16,7 @@ class Optimizer
 
   private
   def satisfy_appliance(appliance)
-    appl_manager = ApplianceManager.new(appliance)
+    appl_manager = ApplianceVmsManager.new(appliance)
 
     if appliance.virtual_machines.blank?
       vm_to_be_reused = nil

@@ -1,4 +1,4 @@
-class ApplianceManager
+class ApplianceVmsManager
   attr_reader :appliance
 
   def initialize(appliance)
