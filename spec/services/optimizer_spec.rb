@@ -56,18 +56,25 @@ describe Optimizer do
 
         before do
           VirtualMachine.stub(:create)
+          ApplianceManager.any_instance.stub(:add_vm)
         end
 
         it 'to appliance name if it is not blank' do
-          appliance = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, name: 'name full appliance')
-          vm_params = {name: appliance.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
-          expect(VirtualMachine).to have_received(:create).with(vm_params)
+          name = 'name full appliance'
+          expect(VirtualMachine).to receive(:create) do |params|
+            expect(params[:name]).to eq name
+          end
+
+          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance')
+
         end
 
         it 'to appliance type name if appliance name is blank' do
-          appliance = create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          vm_params = {name: appliance.appliance_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
-          expect(VirtualMachine).to have_received(:create).with(vm_params)
+          expect(VirtualMachine).to receive(:create) do |params|
+            expect(params[:name]).to eq shareable_appl_type.name
+          end
+
+          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type)
         end
 
       end
@@ -227,9 +234,13 @@ describe Optimizer do
     let(:amazon) { create(:amazon_with_flavors) }
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
-      appl = create(:appliance, name: nil, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      ApplianceManager.any_instance.stub(:add_vm)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
-      expect(VirtualMachine).to have_received(:create).with({name: shareable_appl_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appl.id], state: :build, virtual_machine_flavor: selected_flavor})
+      expect(VirtualMachine).to receive(:create) do |params|
+        expect(params[:virtual_machine_flavor]).to eq selected_flavor
+      end
+
+      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type)
     end
 
     context 'is selected optimaly' do
@@ -313,6 +324,8 @@ describe Optimizer do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
       let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
+
+      before { ApplianceManager.any_instance.stub(:add_vm) } #smell
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do
