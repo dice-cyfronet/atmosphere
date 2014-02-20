@@ -1,8 +1,9 @@
 class ApplianceProxyConf
-  def initialize(appliance, http_proxy_url, https_proxy_url)
+  def initialize(appliance, compute_site)
     @appliance = appliance
-    @http_proxy_url = http_proxy_url
-    @https_proxy_url = https_proxy_url
+    @compute_site = compute_site
+    @http_proxy_url = compute_site.http_proxy_url
+    @https_proxy_url = compute_site.https_proxy_url
   end
 
   def generate
@@ -36,10 +37,10 @@ class ApplianceProxyConf
   end
 
   def get_or_create_port_mapping(pmt, type, path)
-    pm = @appliance.http_mappings.find_or_create_by(port_mapping_template: pmt, application_protocol: type)
+    pm = @appliance.http_mappings.find_or_create_by(port_mapping_template: pmt, application_protocol: type, compute_site: @compute_site)
     pm.url = path
     unless pm.save
-      logger.error "Unable to save port mapping for #{@appliance.id} appliance, #{pmt.id} port mapping because of #{pm.errors.to_json}"
+      Rails.logger.error "Unable to save port mapping for #{@appliance.id} appliance, #{pmt.id} port mapping because of #{pm.errors.to_json}"
     end
   end
 

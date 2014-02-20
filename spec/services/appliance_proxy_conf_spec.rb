@@ -12,10 +12,10 @@ describe ApplianceProxyConf do
   end
 
   describe '#generate' do
-    let(:cs) { create(:compute_site) }
+    let(:cs) { create(:compute_site, http_proxy_url: 'http', https_proxy_url: 'https') }
     let(:appl_type) { create(:appliance_type)}
 
-    subject { ApplianceProxyConf.new(appl, 'http', 'https') }
+    subject { ApplianceProxyConf.new(appl, cs) }
 
     context 'when production appliance started on cloud site' do
       # cs
@@ -99,7 +99,7 @@ describe ApplianceProxyConf do
         end
 
         context 'when one port mapping exists' do
-          let!(:port_mapping) { create(:http_mapping, appliance: appl, port_mapping_template: http_https_pmt) }
+          let!(:port_mapping) { create(:http_mapping, appliance: appl, port_mapping_template: http_https_pmt, compute_site: cs) }
 
           it 'creates only missing port mapping' do
             expect {

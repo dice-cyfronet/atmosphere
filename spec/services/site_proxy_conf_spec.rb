@@ -31,7 +31,7 @@ describe SiteProxyConf do
       let(:appl1_proxy_conf) { double }
 
       before do
-        expect(ApplianceProxyConf).to receive(:new).with(appl1, 'http', 'https').and_return(appl1_proxy_conf)
+        expect(ApplianceProxyConf).to receive(:new).with(appl1, cs).and_return(appl1_proxy_conf)
         expect(appl1_proxy_conf).to receive(:generate).and_return(['appl1', 'proxy conf'])
       end
 
@@ -53,7 +53,7 @@ describe SiteProxyConf do
         let(:appl2_proxy_conf) { double }
 
         before do
-          expect(ApplianceProxyConf).to receive(:new).with(appl2, 'http', 'https').and_return(appl2_proxy_conf)
+          expect(ApplianceProxyConf).to receive(:new).with(appl2, cs).and_return(appl2_proxy_conf)
           expect(appl2_proxy_conf).to receive(:generate).and_return(['appl2'])
         end
 

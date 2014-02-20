@@ -8,7 +8,7 @@ class SiteProxyConf
 
   def generate
     Appliance.started_on_site(@compute_site).collect do |appliance|
-      ApplianceProxyConf.new(appliance, @compute_site.http_proxy_url, @compute_site.https_proxy_url).generate
+      ApplianceProxyConf.new(appliance, @compute_site).generate
     end.flatten.uniq
   end
 
