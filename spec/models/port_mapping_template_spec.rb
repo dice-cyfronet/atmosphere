@@ -190,7 +190,7 @@ describe PortMappingTemplate do
       let!(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http) }
       let!(:vm) { create(:virtual_machine, ip: '10.100.1.2') }
       let!(:appliance) { create(:appliance, appliance_type: appliance_type, virtual_machines: [vm]) }
-      
+
       before do
         pmt.application_protocol = :none
         dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
