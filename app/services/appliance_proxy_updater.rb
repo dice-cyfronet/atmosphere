@@ -5,7 +5,7 @@ class ApplianceProxyUpdater
 
   def initialize(appliance, options = {})
     @appliance = appliance
-    @port_mapping_templates = options[:port_mapping_templates]
+    @port_mapping_templates = [options[:port_mapping_template]] if options[:port_mapping_template]
   end
 
   def update

@@ -93,11 +93,14 @@ describe ApplianceProxyUpdater do
     let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm1, vm2]) }
 
     context 'http' do
-      subject { ApplianceProxyUpdater.new(appl, port_mapping_templates: [http]) }
+      subject { ApplianceProxyUpdater.new(appl, port_mapping_template: http) }
+      before { subject.update }
+
+      it 'updates only one proxy' do
+        expect(Redirus::Worker::AddProxy).to have(1).jobs
+      end
 
       it 'creates new proxy in redirus' do
-        subject.update
-
         expect(Redirus::Worker::AddProxy).to have_enqueued_job(
           proxy_name(appl, http),
           [worker(vm1, http), worker(vm2, http)],
@@ -108,11 +111,14 @@ describe ApplianceProxyUpdater do
     end
 
     context 'https' do
-      subject { ApplianceProxyUpdater.new(appl, port_mapping_templates: [https]) }
+      subject { ApplianceProxyUpdater.new(appl, port_mapping_template: https) }
+      before { subject.update }
+
+      it 'updates only one proxy' do
+        expect(Redirus::Worker::AddProxy).to have(1).jobs
+      end
 
       it 'creates new proxy in redirus' do
-        subject.update
-
         expect(Redirus::Worker::AddProxy).to have_enqueued_job(
           proxy_name(appl, https),
           [worker(vm1, https), worker(vm2, https)],
