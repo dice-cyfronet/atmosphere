@@ -147,6 +147,8 @@ describe Api::V1::AppliancesController do
     let!(:portal_set) { create(:appliance_set, user: user, appliance_set_type: :portal)}
     let!(:development_set) { create(:appliance_set, user: developer, appliance_set_type: :development)}
 
+    let!(:fund) { create(:fund) }
+
     let!(:public_at) { create(:appliance_type, visible_to: :all) }
 
     let(:static_config) { create(:static_config_template, appliance_type: public_at) }
@@ -158,7 +160,8 @@ describe Api::V1::AppliancesController do
       {
         appliance: {
           configuration_template_id: static_config.id,
-          appliance_set_id: development_set.id
+          appliance_set_id: development_set.id,
+          fund_id: fund.id
         }
       }
     end

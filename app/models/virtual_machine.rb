@@ -95,7 +95,7 @@ class VirtualMachine < ActiveRecord::Base
     logger.info 'Instantiating'
     vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
     cloud_client = vm_tmpl.compute_site.cloud_client
-    flavor_id = (virtual_machine_flavor.flavor_name if virtual_machine_flavor) || '1'
+    flavor_id = (virtual_machine_flavor.id_at_site if virtual_machine_flavor) || compute_site.virtual_machine_flavors.first.id_at_site
     servers_params = {flavor_ref: flavor_id, flavor_id: flavor_id, name: name, image_ref: vm_tmpl.id_at_site, image_id: vm_tmpl.id_at_site}
     if vm_tmpl.compute_site.technology == 'aws'
       servers_params[:groups] = ['mniec_permit_all']
