@@ -1,7 +1,8 @@
 class VmUpdater
-  def initialize(site, server)
+  def initialize(site, server, updater_class = ApplianceProxyUpdater)
     @site = site
     @server = server
+    @updater_class = updater_class
   end
 
   def update
@@ -11,8 +12,14 @@ class VmUpdater
       map_state(server.state.downcase.to_sym)
     update_ips if update_ips?
 
-    unless vm.save
-      error("unable to create/update #{vm.id} virtual machine because: #{vm.errors.to_json}")
+    # we need to check state before vm is saved
+    # to get prvious state
+    furhter_update_requred = furhter_update_requred?
+
+    if vm.save
+     update_affected_appliances if furhter_update_requred
+    else
+      error
     end
 
     vm
@@ -21,6 +28,22 @@ class VmUpdater
   private
 
   attr_reader :site, :server
+
+  def furhter_update_requred?
+    ip_changed? || state_changed_from_active?
+  end
+
+  def ip_changed?
+    vm.state.active? && vm.ip_changed?
+  end
+
+  def state_changed_from_active?
+    vm.state_was == 'active' && vm.state_changed?
+  end
+
+  def update_affected_appliances
+    vm.appliances.each { |appl| @updater_class.new(appl).update }
+  end
 
   # AWS states: pending , running, shuttingdown, stopped, stopping, terminated
   # OS states: active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize
@@ -48,7 +71,7 @@ class VmUpdater
     vm.ip = server.public_ip_address || (server.addresses['private'].first['addr'] if server.addresses and !server.addresses.blank?)
   end
 
-  def error(message)
-    Rails.logger.error "MONITORING: #{message}"
+  def error
+    Rails.logger.error "MONITORING: unable to create/update #{vm.id} virtual machine because: #{vm.errors}"
   end
 end
