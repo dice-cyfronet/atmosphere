@@ -56,7 +56,7 @@ describe Optimizer do
 
         before do
           VirtualMachine.stub(:create)
-          ApplianceManager.any_instance.stub(:add_vm)
+          ApplianceVmsManager.any_instance.stub(:add_vm)
         end
 
         it 'to appliance name if it is not blank' do
@@ -283,7 +283,7 @@ describe Optimizer do
     let(:amazon) { create(:amazon_with_flavors) }
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
-      ApplianceManager.any_instance.stub(:add_vm)
+      ApplianceVmsManager.any_instance.stub(:add_vm)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
       expect(VirtualMachine).to receive(:create) do |params|
         expect(params[:virtual_machine_flavor]).to eq selected_flavor
@@ -374,7 +374,7 @@ describe Optimizer do
       let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
-      before { ApplianceManager.any_instance.stub(:add_vm) } #smell
+      before { ApplianceVmsManager.any_instance.stub(:add_vm) } #smell
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do
