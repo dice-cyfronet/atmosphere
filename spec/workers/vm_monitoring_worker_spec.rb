@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe VmMonitoringWorker do
   let(:vm_updater_class) { double }
+  let(:vm_destroyer_class) { double('destroyer') }
 
-  subject { VmMonitoringWorker.new(vm_updater_class) }
+  subject { VmMonitoringWorker.new(vm_updater_class, vm_destroyer_class) }
 
   context 'as a sidekiq worker' do
     it 'responds to #perform' do
@@ -43,7 +44,10 @@ describe VmMonitoringWorker do
       it 'deletes VMs not found on compute site' do
         old_vm = double
         allow(cs).to receive(:virtual_machines).and_return(['1', old_vm, '2'])
-        expect(old_vm).to receive(:destroy).with(false)
+        destroyer = double
+
+        expect(destroyer).to receive(:destroy).with(false)
+        expect(vm_destroyer_class).to receive(:new).with(old_vm).and_return(destroyer)
 
         subject.perform(1)
       end
