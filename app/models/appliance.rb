@@ -45,6 +45,14 @@ class Appliance < ActiveRecord::Base
 
   scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(virtual_machines: {compute_site: compute_site}) }
 
+  scope :with_pmt, ->(pmt) do
+      if pmt.dev_mode_property_set.blank?
+        joins(appliance_type: :port_mapping_templates).where(port_mapping_templates: {id: pmt.id})
+      else
+        joins(dev_mode_property_set: :port_mapping_templates).where(port_mapping_templates: {id: pmt.id})
+      end
+    end
+
   def to_s
     "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
   end
