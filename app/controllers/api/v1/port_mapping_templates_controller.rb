@@ -19,7 +19,7 @@ module Api
       def create
         log_user_action "create new port mapping template with following params #{params}"
         @manager.save!
-        render json: @manager.port_mapping_template, status: :created
+        render json: @manager.object, status: :created
         log_user_action "port mapping template created: #{@port_mapping_template.to_json}"
       end
 
@@ -27,7 +27,7 @@ module Api
         log_user_action "update port mapping template #{@port_mapping_template.id} with following params #{params}"
         update_params = port_mapping_template_params
         @manager.update!(update_params)
-        render json: @manager.port_mapping_template
+        render json: @manager.object
         log_user_action "port mapping template updated: #{@port_mapping_template.to_json}"
       end
 
@@ -37,7 +37,7 @@ module Api
           render json: {}
           log_user_action "port mapping template destroyed: #{@port_mapping_template.id}"
         else
-          render_error @manager.port_mapping_template
+          render_error @manager.object
         end
       end
 
@@ -61,7 +61,7 @@ module Api
       end
 
       def initialize_manager
-        @manager = PmtManager.new(@port_mapping_template)
+        @manager = AffectedApplianceAwareManager.new(@port_mapping_template, AppliancesAffectedByPmt)
       end
     end # of PortMappingTemplatesController
   end # of V1
