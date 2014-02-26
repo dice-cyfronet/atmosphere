@@ -59,6 +59,8 @@ gem 'font-awesome-rails'
 gem "active_model_serializers"
 gem 'will_paginate', '~> 3.0.5'
 
+gem "zabbixapi"
+
 #markdown in js
 gem 'showdown-rails'
 
