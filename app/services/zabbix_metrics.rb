@@ -1,33 +1,29 @@
 class ZabbixMetrics
 
-  def initialize(template_name = nil)
-    @config = Air.config.zabbix
-    @template_name = template_name || @config.template_name
+  def initialize(client = nil, template_name = nil)
+    @template_name = template_name || Air.config.zabbix.template_name
+    @client = client
   end
 
   def metrics
-    @metrics || init_metrics
+    @metrics || load_metrics
   end
 
   def reload
-    init_metrics
+    load_metrics
     metrics.keys
   end
 
   def create_host_metrics(host_id)
-    raise "Method only applicable for Integer id" if !host_id.is_a? Integer
-    host_items = client.host_items(host_id)
-    host_metrics = {}
-    host_items.each { |item| host_metrics[item["name"]] = HostMetric.new(client, item) if (metrics.has_key?(item["name"])) }
-    host_metrics
+    HostMetrics.new(host_id, metrics.keys, client)
   end
 
   private
 
-  def init_metrics
+  def load_metrics
     @items = client.template_items(@template_name)
     @metrics = {}
-    @items.each { |item| @metrics[item["name"]] = Metric.new(client,item) }
+    @items.each { |item| @metrics[item["name"]] = Metric.new(item, client) }
     @metrics
   end
 

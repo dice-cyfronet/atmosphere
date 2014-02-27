@@ -2,16 +2,17 @@ require "zabbixapi"
 
 class ZabbixClient
 
-  def initialize
+  def initialize(api = nil)
     @config = Air.config.zabbix
+    @api = api
   end
 
   def api
     @api || connect
   end
 
-  def history(item_id)
-    api.query(QueryBuilder.new.add_params(:itemids => item_id).build_get("history"))
+  def history(qb = QueryBuilder.new)
+    api.query(qb.build_get("history"))
   end
 
   def host(host_ident)
