@@ -9,14 +9,21 @@ describe AppliancesAffectedByPmt do
   let!(:pmt) { create(:port_mapping_template, appliance_type: at) }
 
   context 'in production mode' do
+    let!(:appl1) { create(:appliance, appliance_type: at) }
+
     it 'finds affected appliances using appliance_type relation' do
-      appl1 = create(:appliance, appliance_type: at)
       create(:appliance)
 
       affected_appl = AppliancesAffectedByPmt.new(pmt).find
 
       expect(affected_appl.size).to eq 1
       expect(affected_appl.first).to eq appl1
+    end
+
+    it 'returns appliance which can be updated' do
+      affected_appl = AppliancesAffectedByPmt.new(pmt).find.first
+
+      expect(affected_appl.readonly?).to be_false
     end
   end
 

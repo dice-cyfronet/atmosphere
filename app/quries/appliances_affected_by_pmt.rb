@@ -4,7 +4,7 @@ class AppliancesAffectedByPmt
   end
 
   def find
-    joined_appliance.where(port_mapping_templates: {id: @pmt.id})
+    joined_appliance.where(port_mapping_templates: {id: @pmt.id}).readonly(false)
   end
 
   private
