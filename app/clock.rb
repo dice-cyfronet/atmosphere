@@ -5,9 +5,9 @@ require_relative "../config/boot"
 require_relative "../config/environment"
 
 module Clockwork
-  every(5.seconds, 'proxyconf.regenerate') do
-    ProxyConfWorker.regenerate_proxy_confs
-  end
+  # every(5.seconds, 'proxyconf.regenerate') do
+  #   ProxyConfWorker.regenerate_proxy_confs
+  # end
 
   every(1.minute, 'monitoring.templates') do
     ComputeSite.select(:id, :name).each do |cs|
