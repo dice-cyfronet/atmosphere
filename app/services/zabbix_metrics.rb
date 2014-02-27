@@ -1,7 +1,7 @@
 class ZabbixMetrics
 
   def initialize(client = nil, template_name = nil)
-    @template_name = template_name || Air.config.zabbix.template_name
+    @template_name = template_name || Air.config.zabbix.atmo_template_name
     @client = client
   end
 
