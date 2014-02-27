@@ -32,7 +32,18 @@ describe ApplianceProxyUpdater do
       end
     end
 
-    context 'and VM assigned' do
+    context 'and inactive VM assigned' do
+      let(:vm) { create(:virtual_machine, state: :build, ip: nil) }
+      let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm]) }
+
+      it 'does nothing' do
+        expect {
+          subject.update
+        }.to change { HttpMapping.count }.by(0)
+      end
+    end
+
+    context 'and active VM assigned' do
       let(:vm1) { create(:active_vm) }
       let(:vm2) { create(:active_vm) }
       let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm1, vm2]) }

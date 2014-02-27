@@ -9,7 +9,7 @@ class ApplianceProxyUpdater
   end
 
   def update(hints={})
-    main_compute_site ? create_or_update_http_mappings : remove_http_mappings
+    create_or_update? ? create_or_update_http_mappings : remove_http_mappings
   end
 
   private
@@ -58,6 +58,10 @@ class ApplianceProxyUpdater
   def url(http_mapping, base_url)
     uri = URI(base_url)
     "#{uri.scheme}://#{http_mapping.proxy_name}.#{uri.host}"
+  end
+
+  def create_or_update?
+    !workers_ips.blank?
   end
 
   def workers_ips
