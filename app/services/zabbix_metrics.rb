@@ -16,11 +16,7 @@ class ZabbixMetrics
   end
 
   def create_host_metrics(host_id)
-    raise "Method only applicable for Integer id" if !host_id.is_a? Integer
-    host_items = client.host_items(host_id)
-    host_metrics = {}
-    host_items.each { |item| host_metrics[item["name"]] = HostMetric.new(client, item) if (metrics.has_key?(item["name"])) }
-    host_metrics
+    HostMetrics.new(host_id, metrics.keys, client)
   end
 
   private
@@ -28,7 +24,7 @@ class ZabbixMetrics
   def init_metrics
     @items = client.template_items(@template_name)
     @metrics = {}
-    @items.each { |item| @metrics[item["name"]] = Metric.new(client,item) }
+    @items.each { |item| @metrics[item["name"]] = Metric.new(item, client) }
     @metrics
   end
 
