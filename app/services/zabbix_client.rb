@@ -11,8 +11,8 @@ class ZabbixClient
     @api || connect
   end
 
-  def history(item_id, qb = QueryBuilder.new)
-    api.query(qb.add_params(:itemids => item_id).build_get("history"))
+  def history(qb = QueryBuilder.new)
+    api.query(qb.build_get("history"))
   end
 
   def host(host_ident)

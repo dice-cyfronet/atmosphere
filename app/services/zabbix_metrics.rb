@@ -1,6 +1,6 @@
 class ZabbixMetrics
 
-  def initialize(template_name = nil, client = nil)
+  def initialize(client = nil, template_name = nil)
     @template_name = template_name || Air.config.zabbix.template_name
     @client = client
   end

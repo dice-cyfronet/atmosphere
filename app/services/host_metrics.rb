@@ -15,9 +15,33 @@ class HostMetrics
     metrics.keys
   end
 
+  def ids
+    metrics.values.map{ |metric| metric.id }
+  end
+
   def collect_all
-    # TODO batch collection
-    metrics.values.map{ |metric| {metric.name => metric.collect} }
+    client.history
+
+    qb = QueryBuilder.new
+    qb.add_params(:itemids => ids)
+    results = client.history(qb)
+
+    sorted = {}
+
+    results.each do |res|
+      id = res["itemid"].to_i
+      if sorted.has_key?(id)
+        sorted[id] += [res]
+      else
+        sorted[id] = [res]
+      end
+    end
+
+    metrics.values.map do |metric|
+      metric.store_results(sorted.has_key?(metric.id) ? sorted[metric.id] : [])
+      { metric.name => metric.evaluated_results }
+    end
+
   end
 
   private

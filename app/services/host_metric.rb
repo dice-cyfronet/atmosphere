@@ -1,6 +1,6 @@
 class HostMetric < Metric
 
-  attr_accessor :body, :id
+  attr_accessor :body, :id, :results
 
   def initialize(body, client)
     super(body, client)
@@ -8,10 +8,18 @@ class HostMetric < Metric
 
   def collect
     qb = QueryBuilder.new
+    qb.add_params(:itemids => @id)
     qb.add_params(:history => @type)
-    result = client.history(@id, qb)
-    @last_results = result
-    result.map{ |measure| MetricValueEvaluator.evaluate(@type, measure["value"])}
+    store_results(client.history(qb))
+  end
+
+  def store_results(results)
+    @results = results
+    evaluated_results
+  end
+
+  def evaluated_results
+    @results.map{ |measure| MetricValueEvaluator.evaluate(@type, measure["value"])}
   end
 
 end
