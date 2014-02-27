@@ -18,7 +18,7 @@ describe AffectedApplianceAwareManager do
     end
 
     it 'invokes updater on all affected appliances' do
-      expect_appliance_update
+      expect_appliance_update(:saved)
 
       subject.save!
     end
@@ -40,7 +40,7 @@ describe AffectedApplianceAwareManager do
 
     it 'invokes updater on all affected appliances when obj destroyed' do
       expect(obj).to receive(:destroy).and_return(true)
-      expect_appliance_update
+      expect_appliance_update(:destroyed)
 
       subject.destroy
     end
@@ -63,7 +63,7 @@ describe AffectedApplianceAwareManager do
 
     it 'updates affected appliances on success' do
       expect(obj).to receive(:update_attributes!).with('params')
-      expect_appliance_update
+      expect_appliance_update(:updated)
 
       subject.update!('params')
     end
@@ -79,14 +79,14 @@ describe AffectedApplianceAwareManager do
     end
   end
 
-  def expect_appliance_update
+  def expect_appliance_update(action_symbol)
     appl1, appl2 = 'appl1', 'appl2'
     allow(affected_appliances).to receive(:find).and_return([appl1, appl2])
 
     appl1_updater, appl2_updater = double, double
-    expect(appl1_updater).to receive(:update)
+    expect(appl1_updater).to receive(:update).with({action_symbol => obj})
     expect(updater_class).to receive(:new).with(appl1).and_return(appl1_updater)
-    expect(appl2_updater).to receive(:update)
+    expect(appl2_updater).to receive(:update).with({action_symbol => obj})
     expect(updater_class).to receive(:new).with(appl2).and_return(appl2_updater)
   end
 end

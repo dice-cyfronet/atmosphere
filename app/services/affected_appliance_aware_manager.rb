@@ -9,27 +9,30 @@ class AffectedApplianceAwareManager
 
   def save!
     object.save!
-    update_affected_appliances
+    update_affected_appliances(saved: object)
   end
 
   def destroy
     affected_appliances_array = affected_appliances.to_a
     object.destroy.tap do |destroyed|
-      update_affected_appliances(affected_appliances) if destroyed
+      update_affected_appliances(
+        affected_appliances_array,
+        destroyed: object
+      ) if destroyed
     end
   end
 
   def update!(update_params)
     object.update_attributes!(update_params)
-    update_affected_appliances
+    update_affected_appliances(updated: object)
   end
 
   private
 
   attr_reader :appl_updater_class, :affected_appliances_query_class
 
-  def update_affected_appliances(appl=affected_appliances)
-    appl.each { |appl| appl_updater_class.new(appl).update }
+  def update_affected_appliances(appls=affected_appliances, options)
+    appls.each { |appl| appl_updater_class.new(appl).update(options) }
   end
 
   def affected_appliances

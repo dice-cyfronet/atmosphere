@@ -104,8 +104,8 @@ describe ApplianceProxyUpdater do
     let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm1, vm2]) }
 
     context 'http' do
-      subject { ApplianceProxyUpdater.new(appl, port_mapping_template: http) }
-      before { subject.update }
+      subject { ApplianceProxyUpdater.new(appl) }
+      before { subject.update(updated: http) }
 
       it 'updates only one proxy' do
         expect(Redirus::Worker::AddProxy).to have(1).jobs
@@ -122,8 +122,8 @@ describe ApplianceProxyUpdater do
     end
 
     context 'https' do
-      subject { ApplianceProxyUpdater.new(appl, port_mapping_template: https) }
-      before { subject.update }
+      subject { ApplianceProxyUpdater.new(appl) }
+      before { subject.update(saved: https) }
 
       it 'updates only one proxy' do
         expect(Redirus::Worker::AddProxy).to have(1).jobs
@@ -137,6 +137,32 @@ describe ApplianceProxyUpdater do
           []
         )
       end
+    end
+
+    context 'when deleting PMT' do
+      subject { ApplianceProxyUpdater.new(appl) }
+      before { subject.update(deleted: https) }
+
+      it 'does nothing' do
+        expect(Redirus::Worker::AddProxy).to_not have_enqueued_job
+        expect(Redirus::Worker::RmProxy).to_not have_enqueued_job
+      end
+    end
+  end
+
+  context 'when in development mode' do
+    let(:as) { create(:dev_appliance_set) }
+    let(:vm) { create(:active_vm) }
+    let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm], appliance_set: as) }
+
+    subject { ApplianceProxyUpdater.new(appl) }
+
+    it 'creates http mapping assigned into dev_mode_property_set' do
+      subject.update
+
+      http_mapping = HttpMapping.where(appliance_id: appl.id).first
+
+      expect(http_mapping.port_mapping_template.dev_mode_property_set).to eq appl.dev_mode_property_set
     end
   end
 
