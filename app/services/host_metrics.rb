@@ -7,11 +7,11 @@ class HostMetrics
   end
 
   def metrics
-    @metrics || init_metrics
+    @metrics || load_metrics
   end
 
   def reload
-    init_metrics
+    load_metrics
     metrics.keys
   end
 
@@ -22,10 +22,10 @@ class HostMetrics
 
   private
 
-  def init_metrics
-    host_items = client.host_items(@host_id)
+  def load_metrics
+    @items = client.host_items(@host_id)
     @metrics = {}
-    host_items.each { |item| @metrics[item["name"]] = HostMetric.new(item, client) if (@metrics_names.include?(item["name"])) }
+    @items.each { |item| @metrics[item["name"]] = HostMetric.new(item, client) if (@metrics_names.include?(item["name"])) }
     @metrics
   end
 

@@ -1,17 +1,16 @@
 class ZabbixMetrics
 
   def initialize(template_name = nil, client = nil)
-    @config = Air.config.zabbix
+    @template_name = template_name || Air.config.zabbix.template_name
     @client = client
-    @template_name = template_name || @config.template_name
   end
 
   def metrics
-    @metrics || init_metrics
+    @metrics || load_metrics
   end
 
   def reload
-    init_metrics
+    load_metrics
     metrics.keys
   end
 
@@ -21,7 +20,7 @@ class ZabbixMetrics
 
   private
 
-  def init_metrics
+  def load_metrics
     @items = client.template_items(@template_name)
     @metrics = {}
     @items.each { |item| @metrics[item["name"]] = Metric.new(item, client) }
