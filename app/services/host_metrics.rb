@@ -19,15 +19,12 @@ class HostMetrics
     metrics.values.map{ |metric| metric.id }
   end
 
-  def collect_all
-    client.history
-
+  def collect
     qb = QueryBuilder.new
     qb.add_params(:itemids => ids)
+    qb.add_params(:limit => HostMetric::ITEM_LIMIT * metrics.size)
     results = client.history(qb)
-
     sorted = {}
-
     results.each do |res|
       id = res["itemid"].to_i
       if sorted.has_key?(id)
@@ -36,12 +33,16 @@ class HostMetrics
         sorted[id] = [res]
       end
     end
-
     metrics.values.map do |metric|
       metric.store_results(sorted.has_key?(metric.id) ? sorted[metric.id] : [])
       { metric.name => metric.evaluated_results }
     end
+  end
 
+  def collect_last
+    items = client.host_items(@host_id)
+    items.each { |item| metrics[item["name"]].reload(item) if metrics.has_key?([item["name"]]) }
+    metrics.values.map { |metric| { metric.name => metric.last_value } }
   end
 
   private
