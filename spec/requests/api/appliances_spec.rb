@@ -283,21 +283,24 @@ describe Api::V1::AppliancesController do
         context 'when production appliance set' do
           let!(:existing_appliance) { create(:appliance, appliance_configuration_instance: config_instance, appliance_set: portal_set, appliance_type: static_config.appliance_type) }
 
-          it 'returns 409 Conflict' do
+          it 'returns 201 Created' do
+            expect(optimizer).to receive(:run).once
             post api("/appliances", user), static_request_body
-            expect(response.status).to eq 409
+            expect(response.status).to eq 201
           end
 
           it 'does not create new configuration instance' do
+            expect(optimizer).to receive(:run).once
             expect {
               post api("/appliances", user), static_request_body
             }.to change { ApplianceConfigurationInstance.count}.by(0)
           end
 
-          it 'does not create new appliance' do
+          it 'creates new appliance' do
+            expect(optimizer).to receive(:run).once
             expect {
               post api("/appliances", user), static_request_body
-            }.to change { Appliance.count}.by(0)
+            }.to change { Appliance.count}.by(1)
           end
 
           it 'creates new appliance when configuration payload the same but different appliance types' do
