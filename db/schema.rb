@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140218074453) do
+ActiveRecord::Schema.define(version: 20140218085136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,17 +65,31 @@ ActiveRecord::Schema.define(version: 20140218074453) do
   add_index "appliance_types", ["name"], name: "index_appliance_types_on_name", unique: true, using: :btree
 
   create_table "appliances", force: true do |t|
-    t.integer  "appliance_set_id",                                    null: false
-    t.integer  "appliance_type_id",                                   null: false
+    t.integer  "appliance_set_id",                                        null: false
+    t.integer  "appliance_type_id",                                       null: false
     t.integer  "user_key_id"
-    t.integer  "appliance_configuration_instance_id",                 null: false
-    t.string   "state",                               default: "new", null: false
+    t.integer  "appliance_configuration_instance_id",                     null: false
+    t.string   "state",                               default: "new",     null: false
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "fund_id"
     t.datetime "last_billing"
     t.string   "state_explanation"
+    t.integer  "amount_billed",                       default: 0,         null: false
+    t.string   "billing_state",                       default: "prepaid", null: false
+    t.datetime "prepaid_until",                       default: "now()",   null: false
+  end
+
+  create_table "billing_logs", force: true do |t|
+    t.datetime "timestamp",                                        null: false
+    t.string   "appliance",     default: "unknown appliance",      null: false
+    t.string   "fund",          default: "unknown fund",           null: false
+    t.string   "actor",         default: "unknown billing actor",  null: false
+    t.string   "message",       default: "appliance prolongation", null: false
+    t.string   "currency",      default: "EUR",                    null: false
+    t.integer  "amount_billed", default: 0,                        null: false
+    t.integer  "user_id"
   end
 
   create_table "compute_sites", force: true do |t|
@@ -204,6 +218,7 @@ ActiveRecord::Schema.define(version: 20140218074453) do
   create_table "user_funds", force: true do |t|
     t.integer "user_id"
     t.integer "fund_id"
+    t.boolean "default", default: false
   end
 
   create_table "user_keys", force: true do |t|
@@ -247,6 +262,7 @@ ActiveRecord::Schema.define(version: 20140218074453) do
     t.float   "hdd"
     t.integer "hourly_cost",     null: false
     t.integer "compute_site_id"
+    t.string  "id_at_site"
   end
 
   create_table "virtual_machine_templates", force: true do |t|

@@ -45,13 +45,15 @@ Parameters:
 
 ```json
 {
-  "id": 1 (should equal the :id parameter),
-  "transport_protocol": either "tcp" or "udp",
-  "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
-  "service_name": "rdesktop",
-  "target_port": 3389,
-  "appliance_type_id": 5 or nil,
-  "dev_mode_property_set_id": 5 or nil
+  "port_mapping_template": {
+    "id": 1 (should equal the :id parameter),
+    "transport_protocol": either "tcp" or "udp",
+    "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
+    "service_name": "rdesktop",
+    "target_port": 3389,
+    "appliance_type_id": 5 or nil,
+    "dev_mode_property_set_id": 5 or nil
+  }
 }
 ```
 

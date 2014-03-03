@@ -55,7 +55,7 @@ POST /appliance_sets
 Parameters:
 
 + `name` (optional) - The name of the appliance set
-+ `priority` (optional) - Appliance set priority
++ `priority` (optional) - Appliance set priority (number between 1 and 100)
 + `appliance_set_type` (optional) - Appliance set type (`portal`, `workflow` or `development`). Default `workflow`
 
 ## Update appliance set

@@ -10,6 +10,7 @@ class VmUpdater
     vm.name = server.name || '[unnamed]'
     vm.state = map_saving_state(vm, server.task_state) ||
       map_state(server.state.downcase.to_sym)
+    vm.virtual_machine_flavor = vm_flavor
     update_ips if update_ips?
 
     # we need to check state before vm is saved
@@ -69,6 +70,10 @@ class VmUpdater
 
   def update_ips
     vm.ip = server.public_ip_address || (server.addresses['private'].first['addr'] if server.addresses and !server.addresses.blank?)
+  end
+
+  def vm_flavor
+    VirtualMachineFlavor.where(compute_site: vm.compute_site, id_at_site: server.flavor['id']).first
   end
 
   def error

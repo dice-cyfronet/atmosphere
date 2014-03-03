@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe VmUpdater do
   let(:cs)  { create(:compute_site) }
+  let!(:flavor) { create(:virtual_machine_flavor, compute_site: cs) }
   let(:vmt) { create(:virtual_machine_template, compute_site: cs) }
 
   let(:updater) { double('updater', update: true) }
@@ -21,7 +22,8 @@ describe VmUpdater do
     context "when task state equals to image_snapshot" do
       let(:server) do
         server_double(state: 'active',
-                      task_state: 'image_snapshot')
+                      task_state: 'image_snapshot',
+                      flavor: {'id' => "1"})
       end
 
       subject { VmUpdater.new(cs, server, updater_class) }
@@ -33,7 +35,10 @@ describe VmUpdater do
     end
 
     context 'when relation to saved_templates is not empty' do
-      let(:server) { server_double(state: 'active') }
+      let(:server) do
+        server_double(state: 'active',
+                      flavor: {'id' => "1"})
+      end
 
       before do
         vm = create(:virtual_machine,
@@ -237,18 +242,20 @@ describe VmUpdater do
       image_id: 'vmt_id_at_site',
       name: 'name',
       state: options[:state] || nil,
+      flavor: options[:flavor] || {'id' => '1'},
       task_state: options[:task_state] || nil,
       public_ip_address: options[:public_ip_address] || nil,
       addresses: options[:public_ip_address] || nil
     )
   end
 
-  def server_double_with_priv_ip
+  def server_double_with_priv_ip(options={})
     double(
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
       state: 'active',
+      flavor: options[:flavor] || {'id' => '1'},
       task_state: nil,
       public_ip_address: nil,
       addresses: {'private' => [ {'addr' => '10.100.2.3'} ]}

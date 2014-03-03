@@ -1,5 +1,6 @@
 class ProfilesController < ApplicationController
-  authorize_resource :class => false
+  skip_authorization_check
+  before_filter :authenticate_user!
 
   layout 'profile'
 

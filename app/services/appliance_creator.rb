@@ -10,11 +10,11 @@ class ApplianceCreator
 
   def create!
     check_for_at_instantiation_possibility!
-    check_for_conflict!
 
     appliance.transaction do
       apply_preferences
       init_appliance_configuration
+      init_billing
 
       appliance.save!
     end
@@ -34,6 +34,12 @@ class ApplianceCreator
 
   def apply_preferences
     preferences && appliance.create_dev_mode_property_set(preferences)
+  end
+
+  def init_billing
+    # Add Time.now.utc() as prepaid_until - this effectively means that the appliance is unpaid.
+    # The requestor must bill this new appliance prior to exposing it to the end user.
+    appliance.prepaid_until = Time.now.utc
   end
 
   def preferences
@@ -57,16 +63,6 @@ class ApplianceCreator
       when :developer then appliance.appliance_set.appliance_set_type.development?
       else true
     end
-  end
-
-  def check_for_conflict!
-    if appliance.appliance_set.production? && !appliance_unique?
-      raise Air::Conflict.new 'You are not allowed to start 2 appliances with the same type and configuration in production appliance set'
-    end
-  end
-
-  def appliance_unique?
-    Appliance.joins(:appliance_configuration_instance).where(appliance_configuration_instances: {payload: configuration_instance.payload, appliance_configuration_template_id: config_template_id}, appliance_set: appliance_set, appliance_type: config_template.appliance_type).count == 0
   end
 
   def production?

@@ -21,7 +21,7 @@ class Optimizer
     if appliance.virtual_machines.blank?
       vm_to_be_reused = nil
       if appl_manager.can_reuse_vm? && !(vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
-        appl_manager.add_vm(vm_to_be_reused)
+        appl_manager.reuse_vm!(vm_to_be_reused)
       else
         tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
         if tmpls.blank?
@@ -39,15 +39,20 @@ class Optimizer
             Rails.logger.warn err_msg
           else
             vm_name = appliance.name.blank? ? appliance.appliance_type.name : appliance.name
-            vm = VirtualMachine.create(name: vm_name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor)
-            appl_manager.add_vm(vm)
+            appl_manager.spawn_vm!(tmpl, flavor, vm_name)
           end
         end
       end
-      unless appliance.save
+      unless appl_manager.save
         Rails.logger.error appliance.errors.to_json
       end
     end
+  end
+
+  def not_enough_funds(appliance)
+    appliance.state = :unsatisfied
+    appliance.billing_state = "expired"
+    appliance.state_explanation = 'Not enough funds'
   end
 
   def preferences(appl)
