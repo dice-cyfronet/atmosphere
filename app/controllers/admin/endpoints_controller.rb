@@ -1,4 +1,4 @@
-class Admin::EndpointsController < ApplicationController
+class Admin::EndpointsController < Admin::ApplicationController
 
   # NOTE: all actions below do Ajax/JSON
 

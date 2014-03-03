@@ -36,4 +36,11 @@ class Settings < Settingslogic
 
   Settings['token_authentication_key'] ||= 'private_token'
   Settings['mi_authentication_key']    ||= 'mi_ticket'
+
+  # Default config values for MetadataRegistry setup
+  Settings['metadata'] ||= Settingslogic.new({})
+  Settings.metadata['registry_endpoint'] = 'http://vphshare.atosresearch.eu/metadata-extended/rest/metadata/' if Settings.metadata['registry_endpoint'].nil?
+  Settings.metadata['remote_connect'] = false if Settings.metadata['remote_connect'].nil?
+  Settings.metadata['remote_publish'] = false if Settings.metadata['remote_publish'].nil?
+
 end
