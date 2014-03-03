@@ -1,4 +1,4 @@
-class Admin::ApplianceTypesController < ApplicationController
+class Admin::ApplianceTypesController < Admin::ApplicationController
 
   load_and_authorize_resource :appliance_type
   before_filter :set_appliance_types

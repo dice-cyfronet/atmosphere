@@ -1,4 +1,4 @@
-class Admin::PortMappingTemplatesController < ApplicationController
+class Admin::PortMappingTemplatesController < Admin::ApplicationController
 
   # NOTE: all actions below do Ajax/JSON
 

@@ -1,4 +1,4 @@
-class Admin::VirtualMachinesController < ApplicationController
+class Admin::VirtualMachinesController < Admin::ApplicationController
   load_and_authorize_resource :virtual_machine
   before_filter :set_virtual_machine_templates, :only => [:new, :create]
   before_filter :set_appliances, :only => [:new, :create]
@@ -17,7 +17,7 @@ class Admin::VirtualMachinesController < ApplicationController
   end
 
   # GET /virtual_machines/1/edit
-  #def edit  
+  #def edit
   #end
 
   # POST /virtual_machines
@@ -67,7 +67,7 @@ class Admin::VirtualMachinesController < ApplicationController
     end
 
     def set_virtual_machine_templates
-      @virtual_machine_templates = VirtualMachineTemplate.all 
+      @virtual_machine_templates = VirtualMachineTemplate.all
     end
 
     def set_appliances

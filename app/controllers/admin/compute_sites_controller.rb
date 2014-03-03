@@ -1,4 +1,4 @@
-class Admin::ComputeSitesController < ApplicationController
+class Admin::ComputeSitesController < Admin::ApplicationController
   load_and_authorize_resource :compute_site
 
   # GET /compute_sites
