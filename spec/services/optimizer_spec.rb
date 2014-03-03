@@ -165,6 +165,7 @@ describe Optimizer do
 
         context 'and user has emough funds to start appliance' do
           before do
+            appl1.reload
             allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
             allow(BillingService).to receive(:bill_appliance)
             appl2.reload
@@ -189,6 +190,7 @@ describe Optimizer do
 
         context 'and user does not have emough funds to start appliance' do
           before do
+            appl1.reload
             allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(false)
           end
 
