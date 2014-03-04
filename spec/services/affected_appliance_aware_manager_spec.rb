@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AffectedApplianceAwareManager do
 
-  let(:obj) { double('obj', save!: true) }
+  let(:obj) { double('obj', save!: true, id: 2) }
   let(:updater) { double('updater') }
   let(:updater_class) { double(new: updater) }
   let(:affected_appliances) { double(find: []) }
@@ -55,6 +55,12 @@ describe AffectedApplianceAwareManager do
   end
 
   context '#update!' do
+    let(:frozen) { double }
+    let(:copy) { double('copy', :id= => true, freeze: frozen) }
+    before do
+      allow(obj).to receive(:dup).and_return(copy)
+    end
+
     it 'updates obj' do
       expect(obj).to receive(:update_attributes!).with('params')
 
@@ -63,7 +69,8 @@ describe AffectedApplianceAwareManager do
 
     it 'updates affected appliances on success' do
       expect(obj).to receive(:update_attributes!).with('params')
-      expect_appliance_update(:updated)
+      expect(copy).to receive(:id=).with(2)
+      expect_appliance_update(:updated, old: frozen)
 
       subject.update!('params')
     end
@@ -79,14 +86,16 @@ describe AffectedApplianceAwareManager do
     end
   end
 
-  def expect_appliance_update(action_symbol)
+  def expect_appliance_update(action_symbol, hsh = {})
     appl1, appl2 = 'appl1', 'appl2'
     allow(affected_appliances).to receive(:find).and_return([appl1, appl2])
 
+    params = {action_symbol => obj}.merge(hsh)
+
     appl1_updater, appl2_updater = double, double
-    expect(appl1_updater).to receive(:update).with({action_symbol => obj})
+    expect(appl1_updater).to receive(:update).with(params)
     expect(updater_class).to receive(:new).with(appl1).and_return(appl1_updater)
-    expect(appl2_updater).to receive(:update).with({action_symbol => obj})
+    expect(appl2_updater).to receive(:update).with(params)
     expect(updater_class).to receive(:new).with(appl2).and_return(appl2_updater)
   end
 end

@@ -148,6 +148,25 @@ describe ApplianceProxyUpdater do
         expect(Redirus::Worker::RmProxy).to_not have_enqueued_job
       end
     end
+
+    context 'when PMT name changed' do
+      before do
+        @old_http_https = http_https.dup
+        @old_http_https.id = http_https.id
+        @old_http_https = @old_http_https.freeze
+
+        http_https.service_name = "updated_name"
+
+        subject.update(updated: http_https, old: @old_http_https)
+      end
+
+      it 'removes old redirection' do
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+          proxy_name(appl, @old_http_https), 'http')
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+          proxy_name(appl, @old_http_https), 'https')
+      end
+    end
   end
 
   context 'when in development mode' do

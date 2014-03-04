@@ -4,6 +4,7 @@ class Admin::PortMappingTemplatesController < Admin::ApplicationController
 
   load_and_authorize_resource :appliance_type
   load_and_authorize_resource :port_mapping_template, through: :appliance_type
+  before_filter :initialize_manager, only: [:create, :update, :destroy]
   layout false
 
 
@@ -19,7 +20,7 @@ class Admin::PortMappingTemplatesController < Admin::ApplicationController
 
   # POST /admin/appliance_types/1/port_mapping_templates
   def create
-    @port_mapping_template.save port_mapping_template_params
+    @manager.save!
     render_index
   end
 
@@ -30,13 +31,13 @@ class Admin::PortMappingTemplatesController < Admin::ApplicationController
 
   # PATCH/PUT /admin/appliance_types/1/port_mapping_templates/1
   def update
-    @port_mapping_template.update port_mapping_template_params
+    @manager.update!(port_mapping_template_params)
     render_index
   end
 
   # DELETE /admin/appliance_types/1/port_mapping_templates/1
   def destroy
-    @port_mapping_template.destroy
+    @manager.destroy
     render_index
   end
 
@@ -59,4 +60,7 @@ class Admin::PortMappingTemplatesController < Admin::ApplicationController
     render partial: 'index'
   end
 
+  def initialize_manager
+    @manager = AffectedApplianceAwareManager.new(@port_mapping_template, AppliancesAffectedByPmt)
+  end
 end

@@ -23,8 +23,9 @@ class AffectedApplianceAwareManager
   end
 
   def update!(update_params)
+    old_object = frozen_copy
     object.update_attributes!(update_params)
-    update_affected_appliances(updated: object)
+    update_affected_appliances(updated: object, old: old_object)
   end
 
   private
@@ -37,5 +38,11 @@ class AffectedApplianceAwareManager
 
   def affected_appliances
     affected_appliances_query_class.new(object).find
+  end
+
+  def frozen_copy
+    old_object = object.dup
+    old_object.id = object.id
+    old_object.freeze
   end
 end

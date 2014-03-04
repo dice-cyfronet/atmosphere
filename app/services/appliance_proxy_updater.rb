@@ -9,7 +9,8 @@ class ApplianceProxyUpdater
 
   def update(hints = {})
     pmt = affected_pmt(hints)
-    Updater.new(appliance, pmt).update if should_react?(hints)
+    old_pmt = old_pmt(hints)
+    Updater.new(appliance, pmt, old_pmt).update if should_react?(hints)
   end
 
   private
@@ -32,10 +33,15 @@ class ApplianceProxyUpdater
     pmt
   end
 
+  def old_pmt(hints)
+    hints[:old] if hints[:old] && hints[:old].is_a?(PortMappingTemplate)
+  end
+
   class Updater
-    def initialize(appliance, pmt)
+    def initialize(appliance, pmt, old_pmt)
       @appliance = appliance
       @port_mapping_templates = [pmt] if pmt
+      @old_pmt = old_pmt
     end
 
     def update
@@ -47,18 +53,34 @@ class ApplianceProxyUpdater
     attr_reader :appliance
 
     def create_or_update_http_mappings
-      to_update = []
+      to_update, to_remove = [], []
       port_mapping_templates.each do |pmt|
         to_update << update_for_pmt(pmt, 'http') if pmt.http?
         to_update << update_for_pmt(pmt, 'https') if pmt.https?
+
+        if remove_old_mappings?(pmt, @old_pmt)
+          to_remove << @old_pmt
+        end
       end
 
       if appliance.save
-        to_update.each do |mapping|
-          mapping.update_proxy(workers_ips)
-        end
+        update_mappings(to_update)
+        remove_proxy_for_pmts(to_remove)
       else
         Rails.logger.error "Cannot create http mappings for #{appliance.id} because of #{appliance.errors.to_json}"
+      end
+    end
+
+    def update_mappings(mappings)
+      mappings.each do |mapping|
+        mapping.update_proxy(workers_ips)
+      end
+    end
+
+    def remove_proxy_for_pmts(pmts)
+      pmts.each do |pmt|
+        remove_proxy(pmt, 'http') if pmt.http?
+        remove_proxy(pmt, 'https') if pmt.https?
       end
     end
 
@@ -75,7 +97,7 @@ class ApplianceProxyUpdater
     end
 
     def mapping(pmt, type)
-      appliance.http_mappings.find_or_initialize_by(port_mapping_template: pmt, application_protocol: type)
+      appliance.http_mappings.find_or_initialize_by(port_mapping_template_id: pmt.id, application_protocol: type)
     end
 
     def main_compute_site
@@ -104,6 +126,17 @@ class ApplianceProxyUpdater
 
     def workers_ips
       @workers_ips ||= appliance.active_vms.pluck(:ip)
+    end
+
+    def remove_old_mappings?(pmt, old_pmt)
+      old_pmt && pmt.id == old_pmt.id && pmt.service_name != old_pmt.service_name
+    end
+
+    def remove_proxy(pmt, type)
+      Sidekiq::Client.push(
+        'queue' => mapping(pmt, type).compute_site.site_id,
+        'class' => Redirus::Worker::RmProxy,
+        'args' => ["#{pmt.service_name}.#{appliance.id}", type])
     end
   end
 end
