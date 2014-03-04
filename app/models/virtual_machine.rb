@@ -15,6 +15,8 @@
 #  virtual_machine_flavor_id   :integer
 #
 
+require "zabbix"
+
 class VirtualMachine < ActiveRecord::Base
   extend Enumerize
 
@@ -93,11 +95,14 @@ class VirtualMachine < ActiveRecord::Base
   private
 
   def register_in_zabbix
-    # TODO BW
+    ip = "IP-HERE"
+    port = "PORT-HERE"
+    @zabbix_host_id = Zabbix.register_host(uuid, ip, port)
+    @zabbix_host_id
   end
 
   def unregister_from_zabbix
-    # TODO BW
+    Zabbix.unregister_host(@zabbix_host_id)
   end
 
   def instantiate_vm
