@@ -9,7 +9,7 @@ class Metric
 
   def reload(new_body = nil)
     unless new_body
-      new_body = client.item(@id)
+      new_body = @client.item(@id)
       raise "Error reloading metric" if (new_body.nil? || new_body.size != 1)
     end
     init_structure(new_body.first)
@@ -17,10 +17,6 @@ class Metric
   end
 
   protected
-
-  def client
-    @client ||= ZabbixClient.new
-  end
 
   def init_structure(body)
     @body = body
