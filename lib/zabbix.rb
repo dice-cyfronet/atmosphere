@@ -10,7 +10,7 @@ module Zabbix
     @metrics.create_host_metrics(hostid)
   end
 
-  def register_host(unique_id, ip, port)
+  def register_host(unique_id, ip, port = nil)
     @registration.register(unique_id, ip, port)
   end
 

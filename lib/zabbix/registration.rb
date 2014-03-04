@@ -6,10 +6,13 @@ module Zabbix
     def initialize(client = nil, group_name = nil, template_name = nil)
       @group_name = group_name || Air.config.zabbix.atmo_group_name
       @template_name = template_name || Air.config.zabbix.atmo_template_name
+      @zabbix_agent_port = Air.config.zabbix.zabbix_agent_port
       @client = client
     end
 
-    def register(unique_id, ip, port)
+    def register(unique_id, ip, port = nil)
+
+      port = port || @zabbix_agent_port
 
       # Interface type
       # 1 - agent
@@ -31,7 +34,8 @@ module Zabbix
       groupid = client.api.hostgroups.get_id(:name => @group_name)
       templateid = client.api.templates.get_id(:host => @template_name)
 
-      host_id = client.api.hosts.create_or_update(
+      # TODO create_or_update method is more suitable in this place but for some reason it does not update old values (eg. ip)
+      host_id = client.api.hosts.create(
           :host => unique_id,
           :interfaces => [
               {

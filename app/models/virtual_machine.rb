@@ -17,7 +17,7 @@
 
 require "zabbix"
 
-class VirtualMachine < ActiveRecord::Base
+  class VirtualMachine < ActiveRecord::Base
   extend Enumerize
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate', dependent: :nullify
@@ -95,14 +95,11 @@ class VirtualMachine < ActiveRecord::Base
   private
 
   def register_in_zabbix
-    ip = "IP-HERE"
-    port = "PORT-HERE"
-    @zabbix_host_id = Zabbix.register_host(uuid, ip, port)
-    @zabbix_host_id
+    self.zabbix_host_id = Zabbix.register_host(uuid, ip)
   end
 
   def unregister_from_zabbix
-    Zabbix.unregister_host(@zabbix_host_id)
+    Zabbix.unregister_host(self.zabbix_host_id)
   end
 
   def instantiate_vm
