@@ -79,7 +79,16 @@ class Fog::Compute::AWS::Image
   end
 
   def status
-    ready? ? 'ACTIVE' : 'DELETED'
+    # possible states of an image in EC2: available, pending, failed
+    # this maps to: active, saving and error
+    case state
+    when 'available'
+      'active'
+    when 'pending'
+      'saving'
+    else
+      'error'
+    end
   end
 end
 
