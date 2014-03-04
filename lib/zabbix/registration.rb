@@ -31,7 +31,7 @@ module Zabbix
       groupid = client.api.hostgroups.get_id(:name => @group_name)
       templateid = client.api.templates.get_id(:host => @template_name)
 
-      host_id = client.api.hosts.create(
+      host_id = client.api.hosts.create_or_update(
           :host => unique_id,
           :interfaces => [
               {
