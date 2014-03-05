@@ -21,6 +21,9 @@ defaults: &defaults
     url: 'https://vph.cyfronet.pl/zabbix/api_jsonrpc.php'
     user: 'zabbix_user'
     password: 'zabbix_pass'
+    atmo_template_name: 'Template OS Linux'
+    atmo_group_name: 'Atmosphere Internal Monitoring'
+    zabbix_agent_port: 10050
 
   #token_authentication_key: private_token
   #mi_authentication_key: mi_ticket
