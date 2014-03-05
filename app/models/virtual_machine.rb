@@ -15,7 +15,9 @@
 #  virtual_machine_flavor_id   :integer
 #
 
-class VirtualMachine < ActiveRecord::Base
+require "zabbix"
+
+  class VirtualMachine < ActiveRecord::Base
   extend Enumerize
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate', dependent: :nullify
@@ -99,11 +101,11 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def register_in_zabbix
-    # TODO BW
+    self.zabbix_host_id = Zabbix.register_host(uuid, ip)
   end
 
   def unregister_from_zabbix
-    # TODO BW
+    Zabbix.unregister_host(self.zabbix_host_id)
   end
 
   private
