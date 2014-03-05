@@ -19,7 +19,11 @@ require 'spec_helper'
 
 describe VirtualMachine do
 
-  before { Fog.mock! }
+  before {
+    Fog.mock! 
+    Zabbix.stub(:register_host).and_return 'zabbix_host_id'
+    Zabbix.stub(:unregister_host)
+  }
 
   let(:priv_ip) { '10.1.1.16' }
   let(:priv_ip_2) { '10.1.1.22' }

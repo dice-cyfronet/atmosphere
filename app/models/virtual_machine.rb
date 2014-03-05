@@ -17,7 +17,7 @@
 
 require "zabbix"
 
-  class VirtualMachine < ActiveRecord::Base
+class VirtualMachine < ActiveRecord::Base
   extend Enumerize
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate', dependent: :nullify
@@ -37,7 +37,7 @@ require "zabbix"
   after_destroy :delete_dnat, if: :ip?
   after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
-  after_update :update_in_zabbix, if: :ip_changed?
+  before_update :update_in_zabbix, if: :ip_changed?
   before_destroy :unregister_from_zabbix, if: :ip?
   before_destroy :cant_destroy_non_managed_vm
 
@@ -94,6 +94,7 @@ require "zabbix"
   end
 
   def update_in_zabbix
+    logger.info "Updating vm #{uuid} in Zabbix"
     if ip_was
       unregister_from_zabbix
     end
@@ -101,11 +102,14 @@ require "zabbix"
   end
 
   def register_in_zabbix
-    self.zabbix_host_id = Zabbix.register_host(uuid, ip)
+    logger.info "Registering vm #{uuid} in Zabbix"
+    self[:zabbix_host_id] = Zabbix.register_host(uuid, ip)
   end
 
   def unregister_from_zabbix
+    logger.info "Unregistering vm #{uuid} from Zabbix"
     Zabbix.unregister_host(self.zabbix_host_id)
+    self[:zabbix_host_id] = nil
   end
 
   private
