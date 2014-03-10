@@ -104,10 +104,14 @@ class ApplianceProxyUpdater
       @main_cs ||= ComputeSite.with_appliance(appliance).first
     end
 
+    def url_generator
+      @url_generator ||= Proxy::UrlGenerator.new(main_compute_site)
+    end
+
     def update_for_pmt(pmt, type)
       http_mapping = mapping(pmt, type)
       http_mapping.compute_site ||= main_compute_site
-      http_mapping.url = url(http_mapping, base_url(type)) if http_mapping.url.blank?
+      http_mapping.url = url_generator.url_for(http_mapping) if http_mapping.url.blank?
       http_mapping
     end
 
