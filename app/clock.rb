@@ -22,4 +22,8 @@ module Clockwork
       VmMonitoringWorker.perform_async(cs.id)
     end
   end
+
+  every(Air.config.zabbix.query_interval.minutes, 'monitoring.load') do
+    VmLoadMonitoringWorker.perform_async
+  end
 end
