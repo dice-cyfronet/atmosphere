@@ -1,9 +1,15 @@
 require 'spec_helper'
+require 'zabbix'
 
 describe VmMonitoringWorker do
   include FogHelpers
 
-  before { Fog.mock! }
+  before {
+    Fog.mock! 
+    Zabbix.stub(:register_host).and_return 1
+    Zabbix.stub(:unregister_host)
+    Zabbix.stub(:host_metrics)
+  }
 
   context 'as a sidekiq worker' do
     it 'responds to #perform' do
