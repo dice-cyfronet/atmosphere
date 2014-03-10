@@ -146,4 +146,29 @@ describe ComputeSite do
       end
     end
   end
+
+  context '#proxy_urls_changed?' do
+    let(:cs) { create(:compute_site) }
+
+    it 'returns true when http proxy url changed' do
+      cs.http_proxy_url = "updated"
+      cs.save
+
+      expect(cs.proxy_urls_changed?).to be_true
+    end
+
+    it 'returns true when https proxy url changed' do
+      cs.https_proxy_url = "updated"
+      cs.save
+
+      expect(cs.proxy_urls_changed?).to be_true
+    end
+
+    it 'return false when other parameters updated' do
+      cs.site_id = 'updated'
+      cs.save
+
+      expect(cs.proxy_urls_changed?).to be_false
+    end
+  end
 end

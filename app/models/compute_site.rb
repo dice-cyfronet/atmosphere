@@ -56,6 +56,11 @@ class ComputeSite < ActiveRecord::Base
     DnatWrangler.new(wrangler_url, wrangler_username, wrangler_password)
   end
 
+  def proxy_urls_changed?
+    changed_attrs = previous_changes.keys
+    changed_attrs.include?('http_proxy_url') || changed_attrs.include?('https_proxy_url')
+  end
+
   private
   def register_cloud_client
     cloud_site_conf = JSON.parse(self.config).symbolize_keys
