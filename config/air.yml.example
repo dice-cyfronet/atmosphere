@@ -24,6 +24,7 @@ defaults: &defaults
     atmo_template_name: 'Template OS Linux'
     atmo_group_name: 'Atmosphere Internal Monitoring'
     zabbix_agent_port: 10050
+    query_interval: 5 # number of minutes between querying Zabbix for load metrics
 
   #token_authentication_key: private_token
   #mi_authentication_key: mi_ticket
