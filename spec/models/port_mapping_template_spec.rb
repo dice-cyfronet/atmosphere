@@ -178,11 +178,6 @@ describe PortMappingTemplate do
           pmt.save
         }.to change { PortMapping.count }.by(-1)
       end
-
-      it 'regenerate proxy configuration' do
-        expect(ProxyConfWorker).to receive(:regeneration_required).with(vm.compute_site)
-        pmt.save
-      end
     end
 
     context 'when http/https changed into none' do
@@ -195,11 +190,6 @@ describe PortMappingTemplate do
         pmt.application_protocol = :none
         dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
         DnatWrangler.stub(:new).and_return(dnat_client_mock)
-      end
-
-      it 'regenerate proxy configuration' do
-        expect(ProxyConfWorker).to receive(:regeneration_required).with(vm.compute_site)
-        pmt.save
       end
 
       it 'adds dnat port mapping' do
@@ -261,129 +251,6 @@ describe PortMappingTemplate do
       it 'does not create mapping update jobs if target port was not changed' do
         expect(DnatWrangler).to_not receive(:remove)
         pmt.update_attribute(:service_name, 'new service name')
-      end
-    end
-
-  end
-
-  describe '#generate_proxy_conf' do
-    before do
-      VirtualMachine.any_instance.stub(:generate_proxy_conf).and_return(true)
-    end
-
-    context 'when pmt is added to appliance type' do
-
-      let!(:pmt) { create(:port_mapping_template) }
-      let(:appl_type) { pmt.appliance_type }
-      let(:cs)  { create(:compute_site) }
-
-      context 'and appliance is started in production mode' do
-        let(:set)  { create(:appliance_set) }
-        let(:vm)   { create(:virtual_machine, compute_site: cs) }
-        let!(:appl) { create(:appliance, appliance_set: set, virtual_machines: [ vm ], appliance_type: appl_type) }
-
-        context 'proxy conf is generated' do
-          before do
-            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-          end
-
-          it 'after pmt is updated' do
-            pmt.target_port = 1234
-            pmt.save
-          end
-
-          it 'after pmt is created' do
-            create(:port_mapping_template, appliance_type: appl_type)
-          end
-        end
-
-        context 'with VMs started on two compute sites' do
-          let(:cs2)  { create(:compute_site) }
-          let(:vm2)   { create(:virtual_machine, compute_site: cs2) }
-
-          before do
-            appl.virtual_machines << vm2
-            appl.save
-          end
-
-          context 'proxy conf is generated for both compute sites' do
-            before do
-              expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-              expect(ProxyConfWorker).to receive(:regeneration_required).with(cs2)
-            end
-
-            it 'after pmt is updated' do
-              pmt.target_port = 1234
-              pmt.save
-            end
-
-            it 'after pmt is created' do
-              create(:port_mapping_template, appliance_type: appl_type)
-            end
-          end
-        end
-      end
-
-      context 'and appliance is started in development mode' do
-        let(:set)  { create(:dev_appliance_set) }
-        let!(:appl) { create(:appliance, appliance_set: set, appliance_type: appl_type) }
-        let(:dev_pmt) { appl.dev_mode_property_set.port_mapping_templates.first }
-        let!(:vm)   { create(:virtual_machine, compute_site: cs, appliances: [ appl ]) }
-
-        context 'proxy conf is generated' do
-          before do
-            expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-          end
-
-          it 'after development pmt is updated' do
-            dev_pmt.target_port = 321
-            dev_pmt.save
-          end
-
-          it 'after development pmt is destroyed' do
-            dev_pmt.destroy
-          end
-
-          it 'after new development pmt is created' do
-            create(:port_mapping_template, dev_mode_property_set: appl.dev_mode_property_set, appliance_type: nil)
-          end
-        end
-
-        context 'proxy conf is not generated' do
-          before do
-            expect(ProxyConfWorker).to_not receive(:regeneration_required).with(cs)
-          end
-
-          it 'after pmt is updated' do
-            pmt.target_port = 1234
-            pmt.save
-          end
-
-          it 'after pmt is created' do
-            create(:port_mapping_template, appliance_type: appl_type)
-          end
-        end
-      end
-
-      context 'and no appliance is started with this pmt' do
-        context 'proxy is not generated' do
-          before do
-            expect(ProxyConfWorker).to_not receive(:regeneration_required).with(cs)
-          end
-
-          it 'after pmt is updated' do
-            pmt.target_port = 1234
-            pmt.save
-          end
-
-          it 'after pmt is created' do
-            create(:port_mapping_template, appliance_type: appl_type)
-          end
-
-          it 'after pmt is deleted' do
-            pmt.destroy
-          end
-        end
       end
     end
   end

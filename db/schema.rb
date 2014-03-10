@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140218085136) do
+ActiveRecord::Schema.define(version: 20140310073458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,12 +93,11 @@ ActiveRecord::Schema.define(version: 20140218085136) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id",                                   null: false
+    t.string   "site_id",                               null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",             default: "private"
+    t.string   "site_type",         default: "private"
     t.string   "technology"
-    t.boolean  "regenerate_proxy_conf", default: false
     t.string   "http_proxy_url"
     t.string   "https_proxy_url"
     t.text     "config"

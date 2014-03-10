@@ -123,7 +123,7 @@ describe ComputeSite do
   end
 
   context '#with_appliance_type' do
-    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
+    let(:compute_site) { create(:compute_site) }
     let(:vm) { create(:virtual_machine, compute_site: compute_site) }
     let(:at) { create(:appliance_type) }
     let!(:appl) { create(:appliance, appliance_type: at, virtual_machines: [ vm ]) }
@@ -136,7 +136,7 @@ describe ComputeSite do
   end
 
   context '#with_dev_property_set' do
-    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
+    let(:compute_site) { create(:compute_site) }
     let(:vm) { create(:virtual_machine, compute_site: compute_site) }
     let(:as) { create(:dev_appliance_set) }
     let!(:appl) { create(:appliance, appliance_set: as, virtual_machines: [ vm ]) }
@@ -145,38 +145,6 @@ describe ComputeSite do
       ComputeSite.with_dev_property_set(appl.dev_mode_property_set).each do |cs|
         expect(cs.readonly?).to be_false
       end
-    end
-  end
-
-  context 'update proxy configuration' do
-    before { subject.regenerate_proxy_conf = false }
-
-    it 'is triggered when http proxy urls changed' do
-      subject.http_proxy_url = "http://new.url"
-      subject.save
-
-      expect(subject.regenerate_proxy_conf).to be_true
-    end
-
-    it 'is triggered when https proxy urls changed' do
-      subject.https_proxy_url = "https://new.url"
-      subject.save
-
-      expect(subject.regenerate_proxy_conf).to be_true
-    end
-
-    it 'is triggered when site_id changed' do
-      subject.site_id = "new_site_id"
-      subject.save
-
-      expect(subject.regenerate_proxy_conf).to be_true
-    end
-
-    it 'is not triggered when other element changed' do
-      subject.location = "New location"
-      subject.save
-
-      expect(subject.regenerate_proxy_conf).to be_false
     end
   end
 end

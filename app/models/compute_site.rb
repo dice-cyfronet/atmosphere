@@ -44,7 +44,6 @@ class ComputeSite < ActiveRecord::Base
 
   after_update :update_cloud_client, if: :config_changed?
   after_destroy :unregister_cloud_client
-  before_save :force_proxy_conf_regeneration, if: :proxy_regeneration_needed?
 
   def to_s
     name
@@ -76,13 +75,5 @@ class ComputeSite < ActiveRecord::Base
 
   def unregister_cloud_client
     Air.unregister_cloud_client(site_id)
-  end
-
-  def proxy_regeneration_needed?
-    http_proxy_url_changed? || https_proxy_url_changed? || site_id_changed?
-  end
-
-  def force_proxy_conf_regeneration
-    self.regenerate_proxy_conf = true
   end
 end
