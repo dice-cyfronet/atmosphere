@@ -1,3 +1,5 @@
+require 'rexml/document'
+
 # Acts as a single facade to the Metadata Repository
 # Used to publish, update and unpublish AIR data inside MR
 class MetadataRepositoryClient
@@ -30,15 +32,23 @@ class MetadataRepositoryClient
     return unless can_write and appliance_type
     status, response = do_http(server_endpoint + appliance_type.metadata_global_id.to_s, :delete)
     status ? logme("Response body: #{response.body}") : logme_problem
+    status
   end
 
-  # Simple diagnostic operation to get all published, active AtomicServices
-  def get_active_metadata(type = 'AtomicService')
+  # Gets all published, active AtomicServices globalID
+  def get_active_global_ids(type = 'AtomicService')
     return unless can_read
     #status, response = do_http(server_endpoint + "filter?logicalExpression=type:#{type}%20AND%20status:active")
-    status, response = do_http(server_endpoint + "facets/#{type}/status?value=inactive")
+    status, response = do_http(server_endpoint + "facets/#{type}/status?value=active")
     logme_problem unless status
-    response.body.to_s
+    if status
+      doc = REXML::Document.new response.body.to_s
+      global_ids = []
+      doc.elements.each("resource_metadata_list/resource_metadata/atomicService/globalID") { |element| global_ids << element.text }
+      global_ids
+    else
+      []
+    end
   end
 
 

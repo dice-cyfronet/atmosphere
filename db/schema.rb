@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140310073458) do
+ActiveRecord::Schema.define(version: 20140310130146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -129,14 +129,15 @@ ActiveRecord::Schema.define(version: 20140310073458) do
   end
 
   create_table "endpoints", force: true do |t|
-    t.string   "name",                                    null: false
+    t.string   "name",                                     null: false
     t.text     "description"
     t.text     "descriptor"
-    t.string   "endpoint_type",            default: "ws", null: false
-    t.string   "invocation_path",                         null: false
-    t.integer  "port_mapping_template_id",                null: false
+    t.string   "endpoint_type",            default: "ws",  null: false
+    t.string   "invocation_path",                          null: false
+    t.integer  "port_mapping_template_id",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "secured",                  default: false, null: false
   end
 
   create_table "funds", force: true do |t|
@@ -261,6 +262,7 @@ ActiveRecord::Schema.define(version: 20140310073458) do
     t.float   "hdd"
     t.integer "hourly_cost",     null: false
     t.integer "compute_site_id"
+    t.string  "id_at_site"
   end
 
   create_table "virtual_machine_templates", force: true do |t|
