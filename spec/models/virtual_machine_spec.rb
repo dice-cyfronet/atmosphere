@@ -21,8 +21,9 @@ describe VirtualMachine do
 
   before {
     Fog.mock! 
-    Zabbix.stub(:register_host).and_return 'zabbix_host_id'
+    Zabbix.stub(:register_host).and_return 1
     Zabbix.stub(:unregister_host)
+    Zabbix.stub(:host_metrics)
   }
 
   let(:priv_ip) { '10.1.1.16' }
@@ -119,25 +120,48 @@ describe VirtualMachine do
       vm_ipless.save
     end
 
-    it 'unregisters and registeres after IP was changed from non blank to non blank' do
-      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+    it 'unregisters and registeres after IP was changed from non blank to non blank and zabbix_host_id was not blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, zabbix_host_id: 1)
       expect(vm).to receive(:unregister_from_zabbix).ordered
       expect(vm).to receive(:register_in_zabbix).ordered
       vm.ip = priv_ip_2
       vm.save
     end
 
-    it 'unregisters vm after IP was changed and is blank' do
+    it 'registeres after IP was changed from non blank to non blank but zabbix_host_id was blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+      expect(vm).to_not receive(:unregister_from_zabbix)
+      expect(vm).to receive(:register_in_zabbix)
+      vm.ip = priv_ip_2
+      vm.save
+    end
+
+    it 'unregisters vm after non-blank IP was changed and is blank and zabbix_host_id was not blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, zabbix_host_id: 1)
       expect(vm).to receive(:unregister_from_zabbix)
       expect(vm).to_not receive(:register_in_zabbix)        
       vm.ip = nil
       vm.save
     end
 
-    it 'unregisters vm before vm is destroyed if ip was not blank' do
+    it 'does not unregister vm after non-blank IP was changed and is blank but zabbix_host_id is blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+      expect(vm).to_not receive(:unregister_from_zabbix)
+      expect(vm).to_not receive(:register_in_zabbix)        
+      vm.ip = nil
+      vm.save
+    end
+
+    it 'unregisters vm before vm is destroyed if ip and zabbix_host_id are not blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, zabbix_host_id: 1)
       expect(vm).to receive(:unregister_from_zabbix)
+      expect(vm).to_not receive(:register_in_zabbix)
+      vm.destroy(false)
+    end
+
+    it 'does nothing before vm is destroyed if ip is present but zabbix_host_id is blank' do
+      vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
+      expect(vm).to_not receive(:unregister_from_zabbix)
       expect(vm).to_not receive(:register_in_zabbix)
       vm.destroy(false)
     end

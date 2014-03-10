@@ -38,7 +38,7 @@ class VirtualMachine < ActiveRecord::Base
   after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
   before_update :update_in_zabbix, if: :ip_changed?
-  before_destroy :unregister_from_zabbix, if: :ip?
+  before_destroy :unregister_from_zabbix, if: :ip? && :zabbix_host_id?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
@@ -95,7 +95,7 @@ class VirtualMachine < ActiveRecord::Base
 
   def update_in_zabbix
     logger.info "Updating vm #{uuid} in Zabbix"
-    if ip_was
+    if ip_was && zabbix_host_id
       unregister_from_zabbix
     end
     register_in_zabbix if ip
@@ -107,9 +107,18 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def unregister_from_zabbix
-    logger.info "Unregistering vm #{uuid} from Zabbix"
+    logger.info "Unregistering vm #{uuid} with zabbix host id #{zabbix_host_id} from Zabbix"
     Zabbix.unregister_host(self.zabbix_host_id)
     self[:zabbix_host_id] = nil
+  end
+
+  def current_load_metrics
+      metrics=Zabbix.host_metrics(zabbix_host_id) if zabbix_host_id
+      metrics.collect_last
+  end
+
+  def save_load_metrics(metrics)
+
   end
 
   private
