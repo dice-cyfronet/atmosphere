@@ -9,6 +9,7 @@
 #  port_mapping_template_id :integer
 #  created_at               :datetime
 #  updated_at               :datetime
+#  compute_site_id          :integer          not null
 #
 
 class HttpMapping < ActiveRecord::Base

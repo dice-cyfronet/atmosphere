@@ -14,6 +14,9 @@
 #  fund_id                             :integer
 #  last_billing                        :datetime
 #  state_explanation                   :string(255)
+#  amount_billed                       :integer          default(0), not null
+#  billing_state                       :string(255)      default("prepaid"), not null
+#  prepaid_until                       :datetime         not null
 #
 
 require 'spec_helper'

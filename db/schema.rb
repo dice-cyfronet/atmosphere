@@ -261,7 +261,6 @@ ActiveRecord::Schema.define(version: 20140310073458) do
     t.float   "hdd"
     t.integer "hourly_cost",     null: false
     t.integer "compute_site_id"
-    t.string  "id_at_site"
   end
 
   create_table "virtual_machine_templates", force: true do |t|
