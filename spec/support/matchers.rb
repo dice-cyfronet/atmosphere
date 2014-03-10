@@ -164,7 +164,8 @@ RSpec::Matchers.define :endpoint_eq do |expected|
     (actual['descriptor'] == expected.descriptor) &&
     (actual['endpoint_type'] == expected.endpoint_type) &&
     (actual['invocation_path'] == expected.invocation_path) &&
-    (actual['port_mapping_template_id'] == expected.port_mapping_template_id)
+    (actual['port_mapping_template_id'] == expected.port_mapping_template_id) &&
+    (actual['secured'] == expected.secured)
   end
 end
 
