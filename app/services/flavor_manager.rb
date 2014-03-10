@@ -11,6 +11,14 @@ class FlavorManager
 
   def self.scan_site(cs)
     begin
+      # Purge flavors which no longer exist in cs
+      cs.virtual_machine_flavors.each do |flavor|
+        if !(self.exists_in_compute_site?(cs, flavor.id_at_site)) and flavor.virtual_machines.count == 0
+          flavor.destroy
+        end
+      end
+
+      # Retrieve the current list of flavors from cs and update Atmo representation accordingly
       cs.cloud_client.flavors.each do |flavor|
         self.check_and_update_flavor(cs, flavor)
       end

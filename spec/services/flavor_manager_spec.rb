@@ -43,6 +43,20 @@ describe FlavorManager do
         flavor6_aws.reload
         expect(flavor6_aws).to flavor_eq fog_flavor
       end
+
+      it 'removes nonexistent flavor on openstack' do
+        FlavorManager::scan_site(cs1)
+        expect(cs1.virtual_machine_flavors.count).to eq cs1.cloud_client.flavors.count
+        # Add nonexistent flavor to compute_site cs1
+        create(:virtual_machine_flavor, compute_site: cs1, id_at_site: "foo", flavor_name: "baz")
+        cs1.reload
+        expect(cs1.virtual_machine_flavors.where(flavor_name: "baz").count).to eq 1
+        # Scan site again and expect flavor "baz" to be gone
+        FlavorManager::scan_site(cs1)
+        cs1.reload
+        expect(cs1.virtual_machine_flavors.where(flavor_name: "baz").count).to eq 0
+      end
+
     end
 
     context 'when idle' do
