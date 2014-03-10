@@ -173,6 +173,7 @@ describe ApplianceType do
 
   describe 'as_metadata_xml' do
     let(:at) { create(:appliance_type) }
+    let(:devel_at) { create(:appliance_type, visible_to: 'developer') }
     let(:evil_at) { create(:appliance_type, name: '</name></AtomicService>WE RULE!') }
     let(:user) { create(:user) }
     let(:owned_at) { create(:appliance_type, author: user) }
@@ -192,6 +193,7 @@ describe ApplianceType do
       expect(xml).to include('<name>'+at.name+'</name>')
       expect(xml).to include('<localID>'+at.id.to_s+'</localID>')
       expect(xml).to include('<author></author>')
+      expect(xml).to include('<development>false</development>')
       expect(xml).to include('<description></description>')
       expect(xml).to include('<type>AtomicService</type>')
       expect(xml).to include('<metadataUpdateDate>'+Time.now.strftime('%Y-%m-%d %H:%M:%S')+'</metadataUpdateDate>')
@@ -211,6 +213,11 @@ describe ApplianceType do
       xml = published_at.as_metadata_xml.strip
       expect(xml).to include('<globalID>MDGLID</globalID>')
       expect(xml).to_not include('metadataCreationDate')
+    end
+
+    it 'puts development state in metadata xml document' do
+      xml = devel_at.as_metadata_xml.strip
+      expect(xml).to include('<development>true</development>')
     end
 
     it 'handles endpoints properly' do
@@ -242,7 +249,9 @@ describe ApplianceType do
   describe 'manage metadata' do
     let(:at) { create(:appliance_type) }
     let(:public_at) { create(:appliance_type, visible_to: :all) }
+    let(:devel_at) { create(:appliance_type, visible_to: :developer) }
     let(:published_at) { create(:appliance_type, visible_to: :all, metadata_global_id: 'mgid') }
+    let(:published_devel_at) { create(:appliance_type, visible_to: :developer, metadata_global_id: 'mgid') }
 
     it 'does not publish private appliance types' do
       expect(at).not_to receive(:publish_metadata)
@@ -254,11 +263,23 @@ describe ApplianceType do
       public_at.run_callbacks(:create)
     end
 
+    it 'publishes new development appliance type' do
+      expect(devel_at).to receive(:publish_metadata)
+      devel_at.run_callbacks(:create)
+    end
+
     it 'publishes private appliance type made public' do
       expect(public_at).to receive(:publish_metadata)
       public_at.save
 
       at.visible_to = :all
+      mrc = MetadataRepositoryClient.instance
+      expect(mrc).to receive(:publish_appliance_type).with(at)
+      at.save
+    end
+
+    it 'publishes private appliance type made development' do
+      at.visible_to = :developer
       mrc = MetadataRepositoryClient.instance
       expect(mrc).to receive(:publish_appliance_type).with(at)
       at.save
@@ -277,9 +298,12 @@ describe ApplianceType do
       public_at.run_callbacks(:destroy)
     end
 
-    it 'unregisters public destroyed appliance type metadata' do
+    it 'unregisters published destroyed appliance type metadata' do
       expect(published_at).to receive(:remove_metadata).once
       published_at.run_callbacks(:destroy)
+
+      expect(published_devel_at).to receive(:remove_metadata).once
+      published_devel_at.run_callbacks(:destroy)
     end
 
   end

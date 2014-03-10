@@ -49,8 +49,8 @@ class ApplianceType < ActiveRecord::Base
 
   around_destroy :delete_vmts
 
-  after_create :publish_metadata, if: 'visible_to.all?'
-  after_destroy :remove_metadata, if: 'metadata_global_id and visible_to.all?'
+  after_create :publish_metadata, if: :publishable?
+  after_destroy :remove_metadata, if: 'metadata_global_id and publishable?'
   around_update :manage_metadata
 
 
@@ -103,6 +103,7 @@ class ApplianceType < ActiveRecord::Base
         <creationDate>#{created_at.strftime('%Y-%m-%d %H:%M:%S')}</creationDate>
         <updateDate>#{updated_at.strftime('%Y-%m-%d %H:%M:%S')}</updateDate>
         <author>#{esc_xml(author.login) if author}</author>
+        <development>#{visible_to == 'developer' ? 'true' : 'false'}</development>
 
         #{optional_elements}
 
@@ -140,17 +141,21 @@ class ApplianceType < ActiveRecord::Base
 
   # METADATA lifecycle methods
 
+  def publishable?
+    visible_to.developer? or visible_to.all?
+  end
+
   # Check if we need to publish/update/unpublish metadata regarding this AT, if so, perform the task
   def manage_metadata
-    was_visible_to_all = (visible_to_was == 'all')
+    was_published = ((visible_to_was == 'all') or (visible_to_was == 'developer'))
 
     yield
 
-    if metadata_global_id and was_visible_to_all and visible_to.all?
+    if metadata_global_id and was_published and publishable?
       update_metadata
-    elsif metadata_global_id and was_visible_to_all
+    elsif metadata_global_id and was_published
       remove_metadata
-    elsif visible_to.all?
+    elsif publishable?
       publish_metadata
     end
   end
