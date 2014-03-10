@@ -57,13 +57,13 @@ class BillingService
             appl.last_billing = billing_time
             appl.billing_state = "prepaid"
             appl.save
-            unless appl.errors.blank?
+            if appl.errors.blank?
+              # Write success to log.
+              BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: message, actor: "bill_appliance", amount_billed: amount_due).save
+            else
               Rails.logger.error("ERROR: Unable to update appliance #{appl.id} with billing data.")
               BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Error saving appliance following update of billing information.", actor: "bill_appliance", amount_billed: 0).save
               raise Air::BillingException.new(message: "Unable to update appliance #{appl.id} with billing data.")
-            else
-              # Write success to log.
-              BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: message, actor: "bill_appliance", amount_billed: amount_due).save
             end
           end
         end
