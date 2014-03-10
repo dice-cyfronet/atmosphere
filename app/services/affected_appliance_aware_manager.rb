@@ -1,7 +1,7 @@
 class AffectedApplianceAwareManager
   attr_reader :object
 
-  def initialize(object, affected_appliances_query_class, appl_updater_class=ApplianceProxyUpdater)
+  def initialize(object, affected_appliances_query_class, appl_updater_class=Proxy::ApplianceProxyUpdater)
     @object = object
     @appl_updater_class = appl_updater_class
     @affected_appliances_query_class = affected_appliances_query_class

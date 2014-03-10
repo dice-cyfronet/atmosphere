@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe ApplianceProxyUpdater do
-  subject { ApplianceProxyUpdater.new(appl) }
+describe Proxy::ApplianceProxyUpdater do
+  subject { Proxy::ApplianceProxyUpdater.new(appl) }
   let(:http) { create(:port_mapping_template, application_protocol: :http) }
   let(:https) { create(:port_mapping_template, application_protocol: :https) }
   let(:http_https) { create(:port_mapping_template, application_protocol: :http_https) }
@@ -104,7 +104,7 @@ describe ApplianceProxyUpdater do
     let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm1, vm2]) }
 
     context 'http' do
-      subject { ApplianceProxyUpdater.new(appl) }
+      subject { Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(updated: http) }
 
       it 'updates only one proxy' do
@@ -122,7 +122,7 @@ describe ApplianceProxyUpdater do
     end
 
     context 'https' do
-      subject { ApplianceProxyUpdater.new(appl) }
+      subject { Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(saved: https) }
 
       it 'updates only one proxy' do
@@ -140,7 +140,7 @@ describe ApplianceProxyUpdater do
     end
 
     context 'when deleting PMT' do
-      subject { ApplianceProxyUpdater.new(appl) }
+      subject { Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(deleted: https) }
 
       it 'does nothing' do
@@ -174,7 +174,7 @@ describe ApplianceProxyUpdater do
     let(:vm) { create(:active_vm) }
     let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm], appliance_set: as) }
 
-    subject { ApplianceProxyUpdater.new(appl) }
+    subject { Proxy::ApplianceProxyUpdater.new(appl) }
 
     it 'creates http mapping assigned into dev_mode_property_set' do
       subject.update

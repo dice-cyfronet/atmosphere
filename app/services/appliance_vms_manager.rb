@@ -1,6 +1,6 @@
 class ApplianceVmsManager
 
-  def initialize(appliance, updater_class=ApplianceProxyUpdater)
+  def initialize(appliance, updater_class=Proxy::ApplianceProxyUpdater)
     @appliance = appliance
     @updater = updater_class.new(appliance)
   end

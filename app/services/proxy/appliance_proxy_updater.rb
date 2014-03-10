@@ -1,6 +1,6 @@
 require 'uri'
 
-class ApplianceProxyUpdater
+class Proxy::ApplianceProxyUpdater
   attr_reader :appliance
 
   def initialize(appliance)
