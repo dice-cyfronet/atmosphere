@@ -1,5 +1,5 @@
 class VmUpdater
-  def initialize(site, server, updater_class = ApplianceProxyUpdater)
+  def initialize(site, server, updater_class = Proxy::ApplianceProxyUpdater)
     @site = site
     @server = server
     @updater_class = updater_class

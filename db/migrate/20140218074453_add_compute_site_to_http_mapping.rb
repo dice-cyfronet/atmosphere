@@ -10,7 +10,7 @@ class AddComputeSiteToHttpMapping < ActiveRecord::Migration
 
     puts "Updating http mappings for all existing appliances"
     Appliance.all.each do |appl|
-      ApplianceProxyUpdater.new(appl).update
+      Proxy::ApplianceProxyUpdater.new(appl).update
     end
   end
 

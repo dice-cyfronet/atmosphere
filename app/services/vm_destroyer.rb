@@ -1,7 +1,7 @@
 class VmDestroyer
   delegate :errors, to: :virtual_machine
 
-  def initialize(virtual_machine, appl_updater_class = ApplianceProxyUpdater)
+  def initialize(virtual_machine, appl_updater_class = Proxy::ApplianceProxyUpdater)
     @virtual_machine = virtual_machine
     @appl_updater_class = appl_updater_class
   end
