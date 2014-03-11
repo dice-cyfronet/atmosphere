@@ -12,8 +12,9 @@ class FlavorManager
   def self.scan_site(cs)
     begin
       # Purge flavors which no longer exist in cs
+      existing_flavors = cs.cloud_client.flavors.collect{|f| f.id}
       cs.virtual_machine_flavors.each do |flavor|
-        if !(self.exists_in_compute_site?(cs, flavor.id_at_site)) and flavor.virtual_machines.count == 0
+        if !(existing_flavors.include? flavor.id_at_site) and flavor.virtual_machines.count == 0
           flavor.destroy
         end
       end
