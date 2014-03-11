@@ -57,11 +57,15 @@ class ComputeSite < ActiveRecord::Base
   end
 
   def proxy_urls_changed?
-    changed_attrs = previous_changes.keys
-    changed_attrs.include?('http_proxy_url') || changed_attrs.include?('https_proxy_url')
+    previously_changed?('http_proxy_url', 'https_proxy_url')
+  end
+
+  def site_id_previously_changed?
+    previously_changed?('site_id')
   end
 
   private
+
   def register_cloud_client
     cloud_site_conf = JSON.parse(self.config).symbolize_keys
     client = Fog::Compute.new(cloud_site_conf)
@@ -79,5 +83,9 @@ class ComputeSite < ActiveRecord::Base
 
   def unregister_cloud_client
     Air.unregister_cloud_client(site_id)
+  end
+
+  def previously_changed?(*args)
+    !(previous_changes.keys & args).empty?
   end
 end
