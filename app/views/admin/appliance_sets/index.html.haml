@@ -35,13 +35,14 @@
           %td
             - appliance_set.appliances.each do |appliance|
               Billing state:
-              %strong
-                = succeed '.' do
-                  = appliance.billing_state
+              - label_map = {initial: :primary, prepaid: :success, expired: :danger, error: :danger}
+              %span(class="label label-#{label_map[appliance.billing_state.to_sym]}")
+                = appliance.billing_state
+              &nbsp;
               State:
-              %strong
-                = succeed '.' do
-                  = appliance.state
+              - label_map = {new: :primary, satisfied: :success, unsatisfied: :danger}
+              %span(class="label label-#{label_map[appliance.state.to_sym]}")
+                = appliance.state
               %br
               - appliance.virtual_machines.each do |virtual_machine|
                 = virtual_machine.id_at_site
