@@ -26,8 +26,8 @@
                   = appliance.fund ? appliance.fund.name : 'no fund assigned'
               Amount billed:
               %strong
-                = succeed '.' do
-                  = (appliance.amount_billed/10000.0).round(2)
+                = number_to_currency(appliance.amount_billed/10000.0, unit: '')
+                = appliance.fund ? appliance.fund.currency_label : '?'
               %br
               - appliance.virtual_machines.each do |virtual_machine|
                 = virtual_machine.appliance_type.name
