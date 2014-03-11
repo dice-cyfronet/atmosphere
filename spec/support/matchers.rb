@@ -197,8 +197,8 @@ RSpec::Matchers.define :appliance_eq do |expected|
     actual['appliance_type_id'] == expected.appliance_type_id &&
     actual['appliance_configuration_instance_id'] == expected.appliance_configuration_instance_id &&
     actual['state'] == expected.state &&
-    actual['state_explanation'] == expected.state_explanation
-
+    actual['state_explanation'] == expected.state_explanation &&
+    actual['amount_billed'] == expected.amount_billed
   end
 end
 
