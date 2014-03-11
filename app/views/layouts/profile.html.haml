@@ -7,7 +7,7 @@
     .container
       .row
         .col-md-2
-          = image_tag current_user.gravatar_url(:size => 165), class: "img-thumbnail"
+          = image_tag current_user.gravatar_url(size: 165), class: "img-thumbnail"
           %h4
             = current_user.full_name
           %h5
