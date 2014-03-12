@@ -62,46 +62,6 @@ describe VirtualMachine do
     end
   end
 
-  describe 'proxy conf generation' do
-
-    context 'is performed' do
-
-      before do
-        expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-        vm.stub(:regenerate_dnat)
-      end
-
-      it 'after IP is updated' do
-        vm.ip = priv_ip
-        vm.save
-      end
-
-      it 'after VM is created with IP filled' do
-        create(:virtual_machine, ip: priv_ip, compute_site: cs)
-      end
-
-      it 'after VM is destroyed' do
-        # just simulate VM deletion, no deletion on real cloud
-        vm.destroy(false)
-      end
-    end
-
-    context 'is not performed' do
-      before do
-        expect(ProxyConfWorker).to_not receive(:regeneration_required)
-      end
-
-      it 'after VM is created with empty IP' do
-        create(:virtual_machine)
-      end
-
-      it 'after VM attribute other than IP is changed' do
-        vm.name = 'new_name'
-        vm.save
-      end
-    end
-  end
-
   context 'DNAT' do
     let(:appliance) { create(:appliance) }
     let(:vm_ipless) { create(:virtual_machine, appliances: [appliance]) }

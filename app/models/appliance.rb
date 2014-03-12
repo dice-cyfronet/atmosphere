@@ -14,6 +14,9 @@
 #  fund_id                             :integer
 #  last_billing                        :datetime
 #  state_explanation                   :string(255)
+#  amount_billed                       :integer          default(0), not null
+#  billing_state                       :string(255)      default("prepaid"), not null
+#  prepaid_until                       :datetime         not null
 #
 
 class Appliance < ActiveRecord::Base
@@ -35,7 +38,7 @@ class Appliance < ActiveRecord::Base
 
   validates_numericality_of :amount_billed
 
-  has_many :http_mappings, dependent: :destroy
+  has_many :http_mappings, dependent: :destroy, autosave: true
   has_many :virtual_machines, through: :deployments, dependent: :destroy
   has_many :deployments
 
@@ -68,6 +71,10 @@ class Appliance < ActiveRecord::Base
       self.dev_mode_property_set = set
       set.appliance = self
     end
+  end
+
+  def active_vms
+    virtual_machines.active
   end
 
   private

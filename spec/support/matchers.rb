@@ -292,9 +292,9 @@ end
 
 RSpec::Matchers.define :vm_fog_data_equals do |fog_vm_data, template|
   match do |actual|
-    actual.id_at_site == fog_vm_data['id'] &&
-    actual.name == fog_vm_data['name'] &&
-    actual.state.to_s == fog_vm_data['state'].downcase &&
+    actual.id_at_site == fog_vm_data.id &&
+    actual.name == fog_vm_data.name &&
+    actual.state.to_s == fog_vm_data.state.downcase &&
     actual.compute_site == template.compute_site &&
     actual.source_template == template
   end

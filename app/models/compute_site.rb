@@ -2,22 +2,21 @@
 #
 # Table name: compute_sites
 #
-#  id                    :integer          not null, primary key
-#  site_id               :string(255)      not null
-#  name                  :string(255)
-#  location              :string(255)
-#  site_type             :string(255)      default("private")
-#  technology            :string(255)
-#  regenerate_proxy_conf :boolean          default(FALSE)
-#  http_proxy_url        :string(255)
-#  https_proxy_url       :string(255)
-#  config                :text
-#  template_filters      :text
-#  created_at            :datetime
-#  updated_at            :datetime
-#  wrangler_url          :string(255)
-#  wrangler_username     :string(255)
-#  wrangler_password     :string(255)
+#  id                :integer          not null, primary key
+#  site_id           :string(255)      not null
+#  name              :string(255)
+#  location          :string(255)
+#  site_type         :string(255)      default("private")
+#  technology        :string(255)
+#  http_proxy_url    :string(255)
+#  https_proxy_url   :string(255)
+#  config            :text
+#  template_filters  :text
+#  created_at        :datetime
+#  updated_at        :datetime
+#  wrangler_url      :string(255)
+#  wrangler_username :string(255)
+#  wrangler_password :string(255)
 #
 
 class ComputeSite < ActiveRecord::Base
@@ -40,9 +39,10 @@ class ComputeSite < ActiveRecord::Base
 
   scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}).readonly(false) }
 
+  scope :with_appliance, ->(appliance) {joins(virtual_machines: :appliances).where(appliances: {id: appliance.id})}
+
   after_update :update_cloud_client, if: :config_changed?
   after_destroy :unregister_cloud_client
-  before_save :force_proxy_conf_regeneration, if: :proxy_regeneration_needed?
 
   def to_s
     name
@@ -56,7 +56,16 @@ class ComputeSite < ActiveRecord::Base
     DnatWrangler.new(wrangler_url, wrangler_username, wrangler_password)
   end
 
+  def proxy_urls_changed?
+    previously_changed?('http_proxy_url', 'https_proxy_url')
+  end
+
+  def site_id_previously_changed?
+    previously_changed?('site_id')
+  end
+
   private
+
   def register_cloud_client
     cloud_site_conf = JSON.parse(self.config).symbolize_keys
     client = Fog::Compute.new(cloud_site_conf)
@@ -68,7 +77,7 @@ class ComputeSite < ActiveRecord::Base
     unless config.blank?
       register_cloud_client
     else
-      unregister_cloud_client  
+      unregister_cloud_client
     end
   end
 
@@ -76,11 +85,7 @@ class ComputeSite < ActiveRecord::Base
     Air.unregister_cloud_client(site_id)
   end
 
-  def proxy_regeneration_needed?
-    http_proxy_url_changed? || https_proxy_url_changed? || site_id_changed?
-  end
-
-  def force_proxy_conf_regeneration
-    self.regenerate_proxy_conf = true
+  def previously_changed?(*args)
+    !(previous_changes.keys & args).empty?
   end
 end

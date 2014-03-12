@@ -1,8 +1,8 @@
 class ApplianceVmsManager
-  attr_reader :appliance
 
-  def initialize(appliance)
+  def initialize(appliance, updater_class=Proxy::ApplianceProxyUpdater)
     @appliance = appliance
+    @updater = updater_class.new(appliance)
   end
 
   def can_reuse_vm?
@@ -24,6 +24,8 @@ class ApplianceVmsManager
 
   private
 
+  attr_reader :appliance, :updater
+
   def not_enough_funds
     appliance.state = :unsatisfied
     appliance.billing_state = "expired"
@@ -32,12 +34,17 @@ class ApplianceVmsManager
 
   def instantiate_vm(tmpl, flavor, name)
     vm = VirtualMachine.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor, appliances: [appliance])
-    appliance.state = :satisfied
+    appliance_satisfied(vm)
   end
 
   def add_vm(vm)
     appliance.virtual_machines << vm
+    appliance_satisfied(vm)
+  end
+
+  def appliance_satisfied(vm)
     appliance.state = :satisfied
+    updater.update(new_vm: vm)
   end
 
   def bill

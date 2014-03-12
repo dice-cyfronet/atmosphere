@@ -97,12 +97,11 @@ ActiveRecord::Schema.define(version: 20140310130146) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id",                                   null: false
+    t.string   "site_id",                               null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",             default: "private"
+    t.string   "site_type",         default: "private"
     t.string   "technology"
-    t.boolean  "regenerate_proxy_conf", default: false
     t.string   "http_proxy_url"
     t.string   "https_proxy_url"
     t.text     "config"
@@ -165,6 +164,7 @@ ActiveRecord::Schema.define(version: 20140310130146) do
     t.integer  "port_mapping_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "compute_site_id",                           null: false
   end
 
   add_index "http_mappings", ["appliance_id"], name: "http_mappings_appliance_id_fk", using: :btree
@@ -340,6 +340,7 @@ ActiveRecord::Schema.define(version: 20140310130146) do
   add_foreign_key "endpoints", "port_mapping_templates", name: "endpoints_port_mapping_template_id_fk"
 
   add_foreign_key "http_mappings", "appliances", name: "http_mappings_appliance_id_fk"
+  add_foreign_key "http_mappings", "compute_sites", name: "http_mappings_compute_site_id_fk"
   add_foreign_key "http_mappings", "port_mapping_templates", name: "http_mappings_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_properties", "compute_sites", name: "port_mapping_properties_compute_site_id_fk"

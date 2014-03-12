@@ -53,57 +53,6 @@ describe PortMappingProperty do
     end
   end
 
-  describe '#generate_proxy_conf' do
-    context 'when property belongs to compute site' do
-      let(:cs) { create(:compute_site) }
-      # need to be create before generating stub
-      let!(:prop) { create(:port_mapping_property, compute_site: cs) }
-
-      context 'generates proxy conf' do
-        before do
-          expect(ProxyConfWorker).to receive(:regeneration_required).with(cs)
-        end
-
-        it 'after property is edited' do
-          prop.key = 'new_key'
-          prop.save
-        end
-
-        it 'after property is created' do
-          create(:port_mapping_property, compute_site: cs)
-        end
-
-        it 'after property is destroyed' do
-          prop.destroy
-        end
-      end
-    end
-
-    context 'when property belongs to pmt' do
-      let(:pmt) { create(:port_mapping_template) }
-      let!(:prop) { create(:pmt_property, port_mapping_template: pmt) }
-
-      context 'generates proxy conf' do
-        before do
-          expect(pmt).to receive(:generate_proxy_conf)
-        end
-
-        it 'after property is edited' do
-          prop.key = 'new_key'
-          prop.save
-        end
-
-        it 'after property is created' do
-          create(:pmt_property, port_mapping_template: pmt)
-        end
-
-        it 'after property is destroyed' do
-          prop.destroy
-        end
-      end
-    end
-  end
-
   describe 'key uniques' do
     context 'when PMP with key exist' do
       let(:pmt) { create(:port_mapping_template) }

@@ -31,13 +31,12 @@ class VirtualMachine < ActiveRecord::Base
   validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)
 
   before_create :instantiate_vm, unless: :id_at_site
-  after_destroy :generate_proxy_conf
   after_destroy :delete_dnat, if: :ip?
-  after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
+  scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -121,10 +120,6 @@ class VirtualMachine < ActiveRecord::Base
   def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
     cloud_client.servers.destroy(id_at_site)
-  end
-
-  def generate_proxy_conf
-    ProxyConfWorker.regeneration_required(compute_site)
   end
 
   def cant_destroy_non_managed_vm
