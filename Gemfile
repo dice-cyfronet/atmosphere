@@ -49,7 +49,7 @@ gem 'role_model'
 gem 'omniauth'
 gem 'omniauth-vph', git: 'http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git', branch: :master
 
-gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :subdomains, require: 'redirus/worker/proxy'
+gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
 gem 'haml-rails'
 gem 'bootstrap-sass', '~>3.1'

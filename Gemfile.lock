@@ -8,8 +8,8 @@ GIT
 
 GIT
   remote: git://github.com/dice-cyfronet/redirus-worker.git
-  revision: f7fd985f26e30f425a7dd308f355cee53a5d9852
-  branch: subdomains
+  revision: 3624252e6c7625cd00a6eebed1385729d08234c2
+  branch: master
   specs:
     redirus-worker (0.0.1)
       sidekiq
@@ -286,7 +286,7 @@ GEM
     showdown-rails (0.0.4)
       actionpack (>= 3.1)
       railties (>= 3.1)
-    sidekiq (2.17.6)
+    sidekiq (2.17.7)
       celluloid (>= 0.15.2)
       connection_pool (>= 1.0.0)
       json
