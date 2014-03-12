@@ -80,6 +80,9 @@ gem 'sinatra', require: nil
 gem 'sidekiq'
 gem 'clockwork'
 
+# time series DB influxdb
+gem 'influxdb'
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
