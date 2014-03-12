@@ -15,7 +15,8 @@
 #  virtual_machine_flavor_id   :integer
 #
 
-require "zabbix"
+require 'zabbix'
+require 'tsdb_client'
 
 class VirtualMachine < ActiveRecord::Base
   extend Enumerize
@@ -118,7 +119,20 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def save_load_metrics(metrics)
+    return unless metrics
+    cpu_load_1 = 'Processor load (1 min average per core)'
+    cpu_load_5 = 'Processor load (5 min average per core)'
+    cpu_load_15 = 'Processor load (15 min average per core)'
 
+    metrics_hash = {}
+    metrics.each {|m| metrics_hash.merge!(m)}
+
+    tsdb_client = TsdbClient.client
+    appliances.each do |appl|
+      tsdb_client.write_point(cpu_load_1, {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
+      tsdb_client.write_point(cpu_load_5, {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
+      tsdb_client.write_point(cpu_load_15, {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
+    end
   end
 
   private
