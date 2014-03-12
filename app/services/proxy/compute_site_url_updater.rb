@@ -1,6 +1,6 @@
 class Proxy::ComputeSiteUrlUpdater
 
-  def initialize(compute_site, mappings_finder_class=::ComputSiteHttpMappings, url_generator_class=Proxy::UrlGenerator)
+  def initialize(compute_site, mappings_finder_class=::ComputeSiteHttpMappings, url_generator_class=Proxy::UrlGenerator)
     @compute_site = compute_site
     @mappings_finder_class = mappings_finder_class
     @url_generator_class = url_generator_class
