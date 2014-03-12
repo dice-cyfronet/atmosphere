@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'zabbix'
 
 describe VmUpdater do
   let(:cs)  { create(:compute_site) }
@@ -14,6 +15,9 @@ describe VmUpdater do
     VirtualMachineTemplate.stub(:find_by)
       .with(compute_site: cs, id_at_site: "vmt_id_at_site")
         .and_return(vmt)
+    Zabbix.stub(:register_host).and_return 1
+    Zabbix.stub(:unregister_host)
+    Zabbix.stub(:host_metrics)
   end
 
   subject { VmUpdater.new(cs, server, updater_class) }
