@@ -128,9 +128,9 @@ class VirtualMachine < ActiveRecord::Base
 
     tsdb_client = TsdbClient.client
     appliances.each do |appl|
-      tsdb_client.write_point(cpu_load_1, {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
-      tsdb_client.write_point(cpu_load_5, {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
-      tsdb_client.write_point(cpu_load_15, {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
+      tsdb_client.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
+      tsdb_client.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
+      tsdb_client.write_point('cpu_load_15', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
     end
   end
 
