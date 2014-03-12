@@ -17,6 +17,12 @@ defaults: &defaults
   #  regexp: '#{\w*}'
   #  range: '2..-2'
 
+  influxdb:
+    host: 'influxdb.host.edu.pl'
+    username: 'influxdbuser'
+    password: 'influxdbpassword'
+    database: 'influxdbdatabase'
+
   zabbix:
     url: 'https://vph.cyfronet.pl/zabbix/api_jsonrpc.php'
     user: 'zabbix_user'
