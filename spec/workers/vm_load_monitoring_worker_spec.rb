@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe VmLoadMonitoringWorker do
-  include FogHelpers
 
   before {
     Fog.mock!

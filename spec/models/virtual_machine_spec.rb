@@ -30,12 +30,8 @@ describe VirtualMachine do
   let(:priv_ip_2) { '10.1.1.22' }
   let(:public_ip) { '149.156.10.145' }
   let(:public_port) { 23457 }
-#<<<<<<< HEAD
-#  let(:cs) { create(:compute_site) }
-#  let(:appliance) { create(:appliance) }
-#=======
   let(:cs) { create(:openstack_with_flavors) }
-#>>>>>>> master
+  let(:appliance) { create(:appliance) }
   let(:vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: true) }
   let(:vm_ipless) { create(:virtual_machine, appliances: [appliance]) }
   let(:external_vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: false) }
