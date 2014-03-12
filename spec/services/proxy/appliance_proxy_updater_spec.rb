@@ -66,7 +66,7 @@ describe Proxy::ApplianceProxyUpdater do
 
         http_mapping = appl.http_mappings.find_by(port_mapping_template: http)
 
-        expect(http_mapping.url).to include "#{http.service_name}.#{appl.id}"
+        expect(http_mapping.url).to include proxy_name(appl, http)
         expect(http_mapping.url).to start_with 'http://'
       end
 
@@ -75,7 +75,7 @@ describe Proxy::ApplianceProxyUpdater do
 
         https_mapping = appl.http_mappings.find_by(port_mapping_template: https)
 
-        expect(https_mapping.url).to include "#{https.service_name}.#{appl.id}"
+        expect(https_mapping.url).to include proxy_name(appl, https)
         expect(https_mapping.url).to start_with 'https://'
       end
 
@@ -186,7 +186,7 @@ describe Proxy::ApplianceProxyUpdater do
   end
 
   def proxy_name(appl, pmt)
-    "#{pmt.service_name}.#{appl.id}"
+    "#{pmt.service_name}-#{appl.id}"
   end
 
   def worker(vm, pmt)

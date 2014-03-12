@@ -31,7 +31,7 @@ class HttpMapping < ActiveRecord::Base
   end
 
   def proxy_name
-    "#{service_name}.#{appliance.id}"
+    "#{service_name}-#{appliance.id}"
   end
 
   def create_or_update_proxy(ips = nil)

@@ -26,12 +26,12 @@ describe Proxy::UrlGenerator do
 
     it 'generate http proxy url for http mapping' do
       mapping.application_protocol = :http
-      expect(subject.url_for(mapping)).to eq 'http://service_name.1.http.proxy'
+      expect(subject.url_for(mapping)).to eq 'http://service_name-1.http.proxy'
     end
 
     it 'generate https proxy url for https mapping' do
       mapping.application_protocol = :https
-      expect(subject.url_for(mapping)).to eq 'https://service_name.1.https.proxy'
+      expect(subject.url_for(mapping)).to eq 'https://service_name-1.https.proxy'
     end
   end
 end

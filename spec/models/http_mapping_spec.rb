@@ -89,6 +89,6 @@ describe HttpMapping do
   end
 
   def proxy_name
-    "#{subject.port_mapping_template.service_name}.1"
+    "#{subject.port_mapping_template.service_name}-1"
   end
 end

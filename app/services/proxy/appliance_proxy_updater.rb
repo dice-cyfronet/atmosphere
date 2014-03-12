@@ -140,7 +140,7 @@ class Proxy::ApplianceProxyUpdater
       Sidekiq::Client.push(
         'queue' => mapping(pmt, type).compute_site.site_id,
         'class' => Redirus::Worker::RmProxy,
-        'args' => ["#{pmt.service_name}.#{appliance.id}", type])
+        'args' => ["#{pmt.service_name}-#{appliance.id}", type])
     end
   end
 end
