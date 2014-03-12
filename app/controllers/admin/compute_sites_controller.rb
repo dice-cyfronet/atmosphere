@@ -1,4 +1,4 @@
-class Admin::ComputeSitesController < ApplicationController
+class Admin::ComputeSitesController < Admin::ApplicationController
   load_and_authorize_resource :compute_site
 
   # GET /compute_sites
@@ -29,6 +29,9 @@ class Admin::ComputeSitesController < ApplicationController
   # PATCH/PUT /compute_sites/1
   def update
     if @compute_site.update(compute_site_params)
+      Proxy::ComputeSiteUrlUpdater.new(@compute_site).update if @compute_site.proxy_urls_changed?
+      Proxy::ComputeSiteAppliancesUpdater.new(@compute_site).update if @compute_site.site_id_previously_changed?
+
       redirect_to admin_compute_sites_url(@compute_site), notice: 'Compute site was successfully updated.'
     else
       render action: 'edit'
@@ -46,5 +49,4 @@ class Admin::ComputeSitesController < ApplicationController
     def compute_site_params
       params.require(:compute_site).permit(:site_id, :name, :location, :site_type, :technology, :config, :template_filters, :http_proxy_url, :https_proxy_url, :wrangler_url, :wrangler_username, :wrangler_password)
     end
-
 end

@@ -1,4 +1,4 @@
-class Admin::ApplianceTypesController < ApplicationController
+class Admin::ApplianceTypesController < Admin::ApplicationController
 
   load_and_authorize_resource :appliance_type
   before_filter :set_appliance_types
@@ -31,6 +31,18 @@ class Admin::ApplianceTypesController < ApplicationController
   # PATCH/PUT /admin/appliance_types/1
   def update
     if @appliance_type.update appliance_type_params
+      redirect_to [:admin, @appliance_type], notice: 'Appliance Type was successfully updated.'
+    else
+      render action: 'edit'
+    end
+  end
+
+  # PUT /admin/appliance_types/1/assign_virtual_machine_template
+  # Serves for assigning active VMT particular AT
+  def assign_virtual_machine_template
+    if params[:virtual_machine_template_id]
+      vmt = VirtualMachineTemplate.find params[:virtual_machine_template_id]
+      @appliance_type.virtual_machine_templates << vmt if vmt
       redirect_to [:admin, @appliance_type], notice: 'Appliance Type was successfully updated.'
     else
       render action: 'edit'

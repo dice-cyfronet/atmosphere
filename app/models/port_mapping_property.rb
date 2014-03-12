@@ -26,16 +26,7 @@ class PortMappingProperty < ActiveRecord::Base
 
   validates_uniqueness_of :key, :scope => :port_mapping_template_id
 
-  after_save :generate_proxy_conf
-  after_destroy :generate_proxy_conf
-
   def to_s
     "#{key} #{value}"
-  end
-
-  private
-
-  def generate_proxy_conf
-    port_mapping_template.blank? ? ProxyConfWorker.regeneration_required(compute_site) : port_mapping_template.generate_proxy_conf
   end
 end

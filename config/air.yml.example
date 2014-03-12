@@ -41,6 +41,15 @@ development:
 test:
   <<: *defaults
 
+  # Simple config for MetadataRegistry setup
+  metadata:
+    # Whom to connect to
+    registry_endpoint: 'placeholder'
+    # Perform remote connection at all?
+    remote_connect: false
+    # If remote_connect, perform write operations on the registry?
+    remote_publish: false
+
 production:
   <<: *defaults
   mailer:

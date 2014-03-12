@@ -1,7 +1,8 @@
-class Admin::SecurityProxiesController < ApplicationController
+class Admin::SecurityProxiesController < Admin::ApplicationController
   load_and_authorize_resource :security_proxy
 
   def index
+    authenticate_user!
   end
 
   def new

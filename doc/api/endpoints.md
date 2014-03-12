@@ -16,7 +16,8 @@ GET /endpoints
       "descriptor": "<xml>structured_text_for_machine_use</xml>" (e.g., a WSDL document),
       "endpoint_type": one of "rest", "ws" or "webapp",
       "invocation_path": "app/invocation/path",
-      "port_mapping_template_id": 5 (should equal the :port_mapping_template_id parameter)
+      "port_mapping_template_id": 5 (should equal the :port_mapping_template_id parameter),
+      "secured": true/false
     }, {
       ...
     }
@@ -44,7 +45,8 @@ Parameters:
   "descriptor": "<xml>structured_text_for_machine_use</xml>" (e.g., a WSDL document),
   "endpoint_type": one of "rest", "ws" or "webapp",
   "invocation_path": "app/invocation/path",
-  "port_mapping_template_id": 5
+  "port_mapping_template_id": 5,
+  "secured": true
 }
 ```
 
@@ -65,6 +67,7 @@ Parameters:
 + `descriptor` (optional) - Machine-readable document that describes the service available on that port. It supports one dynamic parameter: `#{descriptor_url}`. When it is included in descriptor payload than it will be changed into actual endpoint url.
 + `endpoint_type` (required) - One of "rest", "ws" or "webapp"
 + `invocation_path` (required) - Application invocation path
++ `secured` (optional) - True if endpoint is secured and require user token (default `false`)
 
 In case of successful Endpoint creation, returns the JSON object with the details of the created entity.
 

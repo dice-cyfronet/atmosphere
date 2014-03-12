@@ -30,6 +30,11 @@ class VirtualMachineTemplate < ActiveRecord::Base
   before_destroy :cant_destroy_non_managed_vmt
   after_destroy :destroy_source_vm
 
+  scope :def_order, -> { order(:name) }
+  scope :active, -> { where(state: 'active') }
+  scope :unassigned, -> { where(appliance_type_id: nil) }
+
+
   def uuid
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
   end

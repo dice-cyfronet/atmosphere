@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140304162004) do
+ActiveRecord::Schema.define(version: 20140310130146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,12 +93,11 @@ ActiveRecord::Schema.define(version: 20140304162004) do
   end
 
   create_table "compute_sites", force: true do |t|
-    t.string   "site_id",                                   null: false
+    t.string   "site_id",                               null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",             default: "private"
+    t.string   "site_type",         default: "private"
     t.string   "technology"
-    t.boolean  "regenerate_proxy_conf", default: false
     t.string   "http_proxy_url"
     t.string   "https_proxy_url"
     t.text     "config"
@@ -130,14 +129,15 @@ ActiveRecord::Schema.define(version: 20140304162004) do
   end
 
   create_table "endpoints", force: true do |t|
-    t.string   "name",                                    null: false
+    t.string   "name",                                     null: false
     t.text     "description"
     t.text     "descriptor"
-    t.string   "endpoint_type",            default: "ws", null: false
-    t.string   "invocation_path",                         null: false
-    t.integer  "port_mapping_template_id",                null: false
+    t.string   "endpoint_type",            default: "ws",  null: false
+    t.string   "invocation_path",                          null: false
+    t.integer  "port_mapping_template_id",                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "secured",                  default: false, null: false
   end
 
   create_table "funds", force: true do |t|
@@ -155,6 +155,7 @@ ActiveRecord::Schema.define(version: 20140304162004) do
     t.integer  "port_mapping_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "compute_site_id",                           null: false
   end
 
   create_table "port_mapping_properties", force: true do |t|
@@ -265,29 +266,29 @@ ActiveRecord::Schema.define(version: 20140304162004) do
   end
 
   create_table "virtual_machine_templates", force: true do |t|
-    t.string   "id_at_site",                            null: false
-    t.string   "name",                                  null: false
-    t.string   "state",                                 null: false
-    t.boolean  "managed_by_atmosphere", default: false, null: false
-    t.integer  "compute_site_id",                       null: false
+    t.string   "id_at_site",            null: false
+    t.string   "name",                  null: false
+    t.string   "state",                 null: false
+    t.integer  "compute_site_id",       null: false
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "managed_by_atmosphere"
   end
 
   add_index "virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "index_vm_tmpls_on_cs_id_and_id_at_site", unique: true, using: :btree
 
   create_table "virtual_machines", force: true do |t|
-    t.string   "id_at_site",                                  null: false
-    t.string   "name",                                        null: false
-    t.string   "state",                                       null: false
+    t.string   "id_at_site",                  null: false
+    t.string   "name",                        null: false
+    t.string   "state",                       null: false
     t.string   "ip"
-    t.boolean  "managed_by_atmosphere",       default: false, null: false
-    t.integer  "compute_site_id",                             null: false
+    t.integer  "compute_site_id",             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
+    t.boolean  "managed_by_atmosphere"
     t.integer  "virtual_machine_flavor_id"
     t.integer  "zabbix_host_id"
   end
@@ -315,6 +316,7 @@ ActiveRecord::Schema.define(version: 20140304162004) do
   add_foreign_key "endpoints", "port_mapping_templates", name: "endpoints_port_mapping_template_id_fk"
 
   add_foreign_key "http_mappings", "appliances", name: "http_mappings_appliance_id_fk"
+  add_foreign_key "http_mappings", "compute_sites", name: "http_mappings_compute_site_id_fk"
   add_foreign_key "http_mappings", "port_mapping_templates", name: "http_mappings_port_mapping_template_id_fk"
 
   add_foreign_key "port_mapping_properties", "compute_sites", name: "port_mapping_properties_compute_site_id_fk"

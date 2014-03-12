@@ -34,15 +34,14 @@ class VirtualMachine < ActiveRecord::Base
   validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)
 
   before_create :instantiate_vm, unless: :id_at_site
-  after_destroy :generate_proxy_conf
   after_destroy :delete_dnat, if: :ip?
-  after_save :generate_proxy_conf, if: :ip_changed?
   after_update :regenerate_dnat, if: :ip_changed?
   before_update :update_in_zabbix, if: :ip_changed?
   before_destroy :unregister_from_zabbix, if: :ip? && :zabbix_host_id?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
+  scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
@@ -141,7 +140,7 @@ class VirtualMachine < ActiveRecord::Base
     logger.info 'Instantiating'
     vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
     cloud_client = vm_tmpl.compute_site.cloud_client
-    flavor_id = (virtual_machine_flavor.flavor_name if virtual_machine_flavor) || '1'
+    flavor_id = (virtual_machine_flavor.id_at_site if virtual_machine_flavor) || compute_site.virtual_machine_flavors.first.id_at_site
     servers_params = {flavor_ref: flavor_id, flavor_id: flavor_id, name: name, image_ref: vm_tmpl.id_at_site, image_id: vm_tmpl.id_at_site}
     if vm_tmpl.compute_site.technology == 'aws'
       servers_params[:groups] = ['mniec_permit_all']
@@ -167,10 +166,6 @@ class VirtualMachine < ActiveRecord::Base
   def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
     cloud_client.servers.destroy(id_at_site)
-  end
-
-  def generate_proxy_conf
-    ProxyConfWorker.regeneration_required(compute_site)
   end
 
   def cant_destroy_non_managed_vm

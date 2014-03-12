@@ -30,6 +30,9 @@ Air::Application.routes.draw do
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
     resources :appliance_types do
+      member do
+        put :assign_virtual_machine_template
+      end
       resources :port_mapping_templates, except: [:show] do
         resources :endpoints, except: [:show]
       end

@@ -164,7 +164,8 @@ RSpec::Matchers.define :endpoint_eq do |expected|
     (actual['descriptor'] == expected.descriptor) &&
     (actual['endpoint_type'] == expected.endpoint_type) &&
     (actual['invocation_path'] == expected.invocation_path) &&
-    (actual['port_mapping_template_id'] == expected.port_mapping_template_id)
+    (actual['port_mapping_template_id'] == expected.port_mapping_template_id) &&
+    (actual['secured'] == expected.secured)
   end
 end
 
@@ -196,8 +197,8 @@ RSpec::Matchers.define :appliance_eq do |expected|
     actual['appliance_type_id'] == expected.appliance_type_id &&
     actual['appliance_configuration_instance_id'] == expected.appliance_configuration_instance_id &&
     actual['state'] == expected.state &&
-    actual['state_explanation'] == expected.state_explanation
-
+    actual['state_explanation'] == expected.state_explanation &&
+    actual['amount_billed'] == expected.amount_billed
   end
 end
 
@@ -254,6 +255,17 @@ RSpec::Matchers.define :vm_eq do |expected|
   end
 end
 
+RSpec::Matchers.define :flavor_eq do |expected|
+  match do |actual|
+    actual.id_at_site == expected.id &&
+    actual.cpu == expected.vcpus &&
+    actual.memory == expected.ram &&
+    actual.hdd == expected.disk &&
+    actual.flavor_name == expected.name
+  end
+end
+
+
 RSpec::Matchers.define :at_be_updated_by do |expected|
   match do |actual|
     (actual.name == expected[:name] || expected[:name].blank?) &&
@@ -280,9 +292,9 @@ end
 
 RSpec::Matchers.define :vm_fog_data_equals do |fog_vm_data, template|
   match do |actual|
-    actual.id_at_site == fog_vm_data['id'] &&
-    actual.name == fog_vm_data['name'] &&
-    actual.state.to_s == fog_vm_data['state'].downcase &&
+    actual.id_at_site == fog_vm_data.id &&
+    actual.name == fog_vm_data.name &&
+    actual.state.to_s == fog_vm_data.state.downcase &&
     actual.compute_site == template.compute_site &&
     actual.source_template == template
   end

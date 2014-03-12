@@ -5,9 +5,6 @@ require_relative "../config/boot"
 require_relative "../config/environment"
 
 module Clockwork
-  every(5.seconds, 'proxyconf.regenerate') do
-    ProxyConfWorker.regenerate_proxy_confs
-  end
 
   every(1.minute, 'monitoring.templates') do
     ComputeSite.select(:id, :name).each do |cs|
@@ -26,4 +23,13 @@ module Clockwork
   every(Air.config.zabbix.query_interval.minutes, 'monitoring.load') do
     VmLoadMonitoringWorker.perform_async
   end
+
+  every(120.minutes, 'monitoring.flavors') do
+    FlavorWorker.perform_async
+  end
+
+  every(60.minutes, 'billing.bill') do
+    BillingWorker.perform_async
+  end
+
 end

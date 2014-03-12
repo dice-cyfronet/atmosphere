@@ -50,6 +50,9 @@ en:
   appliance_types:
     title: Types
     long_title: Appliance Types
+  appliance_sets:
+    title: Sets
+    long_title: Appliance Sets
   compute_sites:
     title: Sites
     long_title: Compute Sites

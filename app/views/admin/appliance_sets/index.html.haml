@@ -1,16 +1,76 @@
 %h1 Listing appliance sets
 
-%table
+%table.table.table-hover.table-condensed
   %tr
-    %th
-    %th
-    %th
+    %th User
+    %th Type
+    %th Appliance Type
+    %th Virtual Machines
+    %th Site
+    %th Flavor
+    %th Actions
 
-  - @appliance_sets.each do |appliance_set|
-    %tr
-      %td= link_to 'Show', [:admin, appliance_set]
-      %td= link_to 'Edit', edit_admin_appliance_set_path(appliance_set)
-      %td= link_to 'Destroy', [:admin, appliance_set], :method => :delete, :data => { :confirm => 'Are you sure?' }
+  - @appliance_sets.joins(:user).order('users.login', priority: :desc).group_by(&:user).each do |user, sets|
+    - sets.each_with_index do |appliance_set, i|
+      %tr
+        - if i==0
+          %td{rowspan: sets.count}= user.login
+        %td= appliance_set.appliance_set_type
+
+        - if appliance_set.appliances.present?
+          %td
+            - appliance_set.appliances.each do |appliance|
+              Fund:
+              %strong
+                = succeed '.' do
+                  = appliance.fund ? appliance.fund.name : 'no fund assigned'
+              Amount billed:
+              %strong
+                = number_to_currency(appliance.amount_billed/10000.0, unit: '')
+                = appliance.fund ? appliance.fund.currency_label : '?'
+              %br
+              - appliance.virtual_machines.each do |virtual_machine|
+                = virtual_machine.appliance_type.name
+                %br
+          %td
+            - appliance_set.appliances.each do |appliance|
+              Billing state:
+              - label_map = {initial: :primary, prepaid: :success, expired: :danger, error: :danger}
+              %span(class="label label-#{label_map[appliance.billing_state.to_sym]}")
+                = appliance.billing_state
+              &nbsp;
+              State:
+              - label_map = {new: :primary, satisfied: :success, unsatisfied: :danger}
+              %span(class="label label-#{label_map[appliance.state.to_sym]}")
+                = appliance.state
+              %br
+              - appliance.virtual_machines.each do |virtual_machine|
+                = virtual_machine.id_at_site
+                %br
+          %td
+            - appliance_set.appliances.each do |appliance|
+              %br
+              - appliance.virtual_machines.each do |virtual_machine|
+                = virtual_machine.compute_site.name
+                %br
+          %td
+            - appliance_set.appliances.each do |appliance|
+              %br
+              - appliance.virtual_machines.each do |virtual_machine|
+                = virtual_machine.virtual_machine_flavor ? virtual_machine.virtual_machine_flavor.id_at_site : 'No flavor'
+                %br
+        - else
+          %td(colspan='4')
+            No appliances.
+
+        %td
+          .btn-group
+            -#= link_to edit_admin_appliance_set_path(appliance_set),
+            -#  class: 'btn btn-success btn-xs', title: 'Edit this Appliance Set' do
+            -#  =fa_icon 'edit'
+            = link_to [:admin, appliance_set], method: :delete, data: { confirm: 'Are you sure?' },
+              class: 'btn btn-danger btn-xs', title: 'Remove this Appliance Set' do
+              =fa_icon 'trash-o'
 
 %br
 

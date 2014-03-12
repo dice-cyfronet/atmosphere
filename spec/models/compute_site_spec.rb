@@ -2,28 +2,27 @@
 #
 # Table name: compute_sites
 #
-#  id                    :integer          not null, primary key
-#  site_id               :string(255)      not null
-#  name                  :string(255)
-#  location              :string(255)
-#  site_type             :string(255)      default("private")
-#  technology            :string(255)
-#  regenerate_proxy_conf :boolean          default(FALSE)
-#  http_proxy_url        :string(255)
-#  https_proxy_url       :string(255)
-#  config                :text
-#  template_filters      :text
-#  created_at            :datetime
-#  updated_at            :datetime
-#  wrangler_url          :string(255)
-#  wrangler_username     :string(255)
-#  wrangler_password     :string(255)
+#  id                :integer          not null, primary key
+#  site_id           :string(255)      not null
+#  name              :string(255)
+#  location          :string(255)
+#  site_type         :string(255)      default("private")
+#  technology        :string(255)
+#  http_proxy_url    :string(255)
+#  https_proxy_url   :string(255)
+#  config            :text
+#  template_filters  :text
+#  created_at        :datetime
+#  updated_at        :datetime
+#  wrangler_url      :string(255)
+#  wrangler_username :string(255)
+#  wrangler_password :string(255)
 #
 
 require 'spec_helper'
 
 describe ComputeSite do
-  
+
   before { Fog.mock! }
 
   subject { FactoryGirl.create(:compute_site, technology: 'openstack') }
@@ -112,7 +111,7 @@ describe ComputeSite do
       end
 
     end
-  
+
   end
 
   context 'compute site is destroyed' do
@@ -122,29 +121,8 @@ describe ComputeSite do
     end
   end
 
-  context '#with_appliance scope' do
-    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
-    let(:vm) { create(:virtual_machine, compute_site: compute_site) }
-    let!(:appl) { create(:appliance, virtual_machines: [ vm ]) }
-
-    it 'loads not readonly compute sites' do
-      ComputeSite.with_deployment(appl.deployments.first).each do |cs|
-        expect(cs.readonly?).to be_false
-      end
-    end
-
-    it 'allows to update compute site parameters' do
-      ComputeSite.with_deployment(appl.deployments.first).each do |cs|
-        cs.update(regenerate_proxy_conf: true)
-      end
-
-      compute_site.reload
-      expect(compute_site.regenerate_proxy_conf).to be_true
-    end
-  end
-
   context '#with_appliance_type' do
-    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
+    let(:compute_site) { create(:compute_site) }
     let(:vm) { create(:virtual_machine, compute_site: compute_site) }
     let(:at) { create(:appliance_type) }
     let!(:appl) { create(:appliance, appliance_type: at, virtual_machines: [ vm ]) }
@@ -157,7 +135,7 @@ describe ComputeSite do
   end
 
   context '#with_dev_property_set' do
-    let(:compute_site) { create(:compute_site, regenerate_proxy_conf: false) }
+    let(:compute_site) { create(:compute_site) }
     let(:vm) { create(:virtual_machine, compute_site: compute_site) }
     let(:as) { create(:dev_appliance_set) }
     let!(:appl) { create(:appliance, appliance_set: as, virtual_machines: [ vm ]) }
@@ -169,35 +147,46 @@ describe ComputeSite do
     end
   end
 
-  context 'update proxy configuration' do
-    before { subject.regenerate_proxy_conf = false }
+  context '#proxy_urls_changed?' do
+    let(:cs) { create(:compute_site) }
 
-    it 'is triggered when http proxy urls changed' do
-      subject.http_proxy_url = "http://new.url"
-      subject.save
+    it 'returns true when http proxy url changed' do
+      cs.http_proxy_url = "updated"
+      cs.save
 
-      expect(subject.regenerate_proxy_conf).to be_true
+      expect(cs.proxy_urls_changed?).to be_true
     end
 
-    it 'is triggered when https proxy urls changed' do
-      subject.https_proxy_url = "https://new.url"
-      subject.save
+    it 'returns true when https proxy url changed' do
+      cs.https_proxy_url = "updated"
+      cs.save
 
-      expect(subject.regenerate_proxy_conf).to be_true
+      expect(cs.proxy_urls_changed?).to be_true
     end
 
-    it 'is triggered when site_id changed' do
-      subject.site_id = "new_site_id"
-      subject.save
+    it 'return false when other parameters updated' do
+      cs.site_id = 'updated'
+      cs.save
 
-      expect(subject.regenerate_proxy_conf).to be_true
+      expect(cs.proxy_urls_changed?).to be_false
+    end
+  end
+
+  context '#site_id_previously_changed?' do
+    let(:cs) { create(:compute_site) }
+
+    it 'returns true when site_id changed' do
+      cs.https_proxy_url = "updated"
+      cs.save
+
+      expect(cs.site_id_previously_changed?).to be_false
     end
 
-    it 'is not triggered when other element changed' do
-      subject.location = "New location"
-      subject.save
+    it 'returns false when other attribues changed' do
+      cs.site_id = 'updated'
+      cs.save
 
-      expect(subject.regenerate_proxy_conf).to be_false
+      expect(cs.site_id_previously_changed?).to be_true
     end
   end
 end

@@ -56,22 +56,47 @@ describe Optimizer do
 
         before do
           VirtualMachine.stub(:create)
+          ApplianceVmsManager.any_instance.stub(:add_vm)
         end
 
         it 'to appliance name if it is not blank' do
-          appliance = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, name: 'name full appliance')
-          vm_params = {name: appliance.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
-          expect(VirtualMachine).to have_received(:create).with(vm_params)
+          name = 'name full appliance'
+          expect(VirtualMachine).to receive(:create) do |params|
+            expect(params[:name]).to eq name
+          end
+
+          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance')
+
         end
 
         it 'to appliance type name if appliance name is blank' do
-          appliance = create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          vm_params = {name: appliance.appliance_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appliance.id], state: :build, virtual_machine_flavor: tmpl_of_shareable_at.compute_site.virtual_machine_flavors.first}
-          expect(VirtualMachine).to have_received(:create).with(vm_params)
+          expect(VirtualMachine).to receive(:create) do |params|
+            expect(params[:name]).to eq shareable_appl_type.name
+          end
+
+          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type)
         end
 
       end
 
+    end
+
+    shared_examples 'not_enough_funds' do
+      it 'set appliance state to unsatisfied' do
+        expect(appl2.state).to eq 'unsatisfied'
+      end
+
+      it 'describe user why appliance state cannot be satisfied' do
+        expect(appl2.state_explanation).to eq 'Not enough funds'
+      end
+
+      it 'set biling state to expired' do
+        expect(appl2.billing_state).to eq 'expired'
+      end
+
+      it 'has no VM assigned' do
+        expect(appl2.virtual_machines.count).to eq 0
+      end
     end
 
     context 'shareable appliance type' do
@@ -134,50 +159,83 @@ describe Optimizer do
       end
 
       context 'vm can be reused' do
+        let(:config_inst) { create(:appliance_configuration_instance) }
+        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
+        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
 
-        it 'reuses available vm' do
-          tmpl_of_shareable_at
-          config_inst = create(:appliance_configuration_instance)
-          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          vms = VirtualMachine.all
-          expect(vms.size).to eql 1
-          vm = vms.first
-          expect(vm.appliances.size).to eql 2
-          expect(vm.appliances).to include(appl1, appl2)
+        context 'and user has emough funds to start appliance' do
+          before do
+            appl1.reload
+            allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
+            allow(BillingService).to receive(:bill_appliance)
+            appl2.reload
+          end
+
+          it 'reuses available vm' do
+            vms = VirtualMachine.all
+            expect(vms.size).to eql 1
+            vm = vms.first
+            expect(vm.appliances.size).to eql 2
+            expect(vm.appliances).to include(appl1, appl2)
+          end
+
+          it 'sets appliance state to satisfied if vm was reused' do
+            expect(appl2.state).to eql 'satisfied'
+          end
+
+          it 'triggers billing' do
+            expect(BillingService).to have_received(:bill_appliance)
+          end
         end
 
-        it 'sets appliance state to satisfied if vm was reused' do
-          tmpl_of_shareable_at
-          config_inst = create(:appliance_configuration_instance)
-          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2.reload
-          expect(appl2.state).to eql 'satisfied'
+        context 'and user does not have emough funds to start appliance' do
+          before do
+            appl1.reload
+            allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(false)
+          end
+
+          it_behaves_like 'not_enough_funds'
         end
       end
     end
 
     context 'not shareable appliance type' do
-      let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type)}
+      let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
+      let(:cs) { create(:openstack_with_flavors) }
+      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, compute_site: cs)}
+      let(:config_inst) { create(:appliance_configuration_instance) }
+      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst) }
 
-      it 'instantiates a new vm although vm with given conf is already running' do
-        tmpl_of_not_shareable_at
-        config_inst = create(:appliance_configuration_instance)
-        appl1 = create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst)
-        appl2 = create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst)
-        vms = VirtualMachine.all
-        expect(vms.size).to eql 2
-        appl1.reload
-        appl2.reload
-        expect(appl1.virtual_machines.size).to eql 1
-        expect(appl2.virtual_machines.size).to eql 1
-        vm1 = appl1.virtual_machines.first
-        vm2 = appl2.virtual_machines.first
-        expect(vm1 == vm2).to be_false
+      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst) }
+
+      context 'and user has emough funds to start appliance' do
+        before do
+          allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
+
+          appl1.reload
+          appl2.reload
+        end
+
+        it 'instantiates a new vm although vm with given conf is already running' do
+          vms = VirtualMachine.all
+          expect(vms.size).to eql 2
+          expect(appl1.virtual_machines.size).to eql 1
+          expect(appl2.virtual_machines.size).to eql 1
+          vm1 = appl1.virtual_machines.first
+          vm2 = appl2.virtual_machines.first
+          expect(vm1 == vm2).to be_false
+        end
       end
 
+      context 'and user does not have emough funds to start appliance' do
+        before do
+          allow(BillingService).to receive(:can_afford_flavor?).and_return(false)
+
+          appl2.reload
+        end
+
+        it_behaves_like 'not_enough_funds'
+      end
     end
   end
 
@@ -227,9 +285,13 @@ describe Optimizer do
     let(:amazon) { create(:amazon_with_flavors) }
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
-      appl = create(:appliance, name: nil, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+      ApplianceVmsManager.any_instance.stub(:add_vm)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
-      expect(VirtualMachine).to have_received(:create).with({name: shareable_appl_type.name, source_template: tmpl_of_shareable_at, appliance_ids: [appl.id], state: :build, virtual_machine_flavor: selected_flavor})
+      expect(VirtualMachine).to receive(:create) do |params|
+        expect(params[:virtual_machine_flavor]).to eq selected_flavor
+      end
+
+      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type)
     end
 
     context 'is selected optimaly' do
@@ -313,6 +375,8 @@ describe Optimizer do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
       let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
+
+      before { ApplianceVmsManager.any_instance.stub(:add_vm) } #smell
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do

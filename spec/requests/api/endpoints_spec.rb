@@ -13,7 +13,7 @@ describe Api::V1::EndpointsController do
   let!(:at2) { create(:appliance_type, author: user, visible_to: 'all') }
   let!(:pmt1) { create(:port_mapping_template, appliance_type: at1) }
   let!(:pmt2) { create(:port_mapping_template, appliance_type: at2) }
-  let!(:e1) { create(:endpoint, port_mapping_template: pmt1) }
+  let!(:e1) { create(:endpoint, port_mapping_template: pmt1, secured: true) }
   let!(:e2) { create(:endpoint, port_mapping_template: pmt2) }
 
   let(:as) { create(:dev_appliance_set, user: developer) }

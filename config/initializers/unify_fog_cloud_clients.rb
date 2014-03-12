@@ -1,8 +1,10 @@
 require 'fog/openstack/compute'
 require 'fog/openstack/models/compute/server'
 require 'fog/aws/compute'
+require 'fog/aws/models/compute/flavor'
 require 'fog/aws/models/compute/image'
 require 'fog/aws/models/compute/server'
+
 
 # open stack client does not provide import_key_pair method
 # while aws does
@@ -26,7 +28,6 @@ class Fog::Compute::OpenStack::Real
     end
   end
 end
-
 
 class Fog::Compute::OpenStack::Server
 
@@ -56,6 +57,12 @@ end
 
 class Fog::Compute::AWS::Server
 
+  def flavor
+    # Return a hash with only flavor ID defined (mimics OpenStack behavior)
+    # Note: would normally return a Fog::Compute::AWS::Flavor object
+    {'id' => flavor_id}
+  end
+
   def name
     tags['Name']
   end
@@ -72,6 +79,23 @@ class Fog::Compute::AWS::Image
   end
 
   def status
-    ready? ? 'ACTIVE' : 'DELETED'
+    # possible states of an image in EC2: available, pending, failed
+    # this maps to: active, saving and error
+    case state
+    when 'available'
+      'active'
+    when 'pending'
+      'saving'
+    else
+      'error'
+    end
+  end
+end
+
+# Flavor unification classes
+# Mimic OpenStack
+class Fog::Compute::AWS::Flavor
+  def vcpus
+    cores
   end
 end
