@@ -168,6 +168,7 @@ ActiveRecord::Schema.define(version: 20140310130146) do
   end
 
   add_index "http_mappings", ["appliance_id"], name: "http_mappings_appliance_id_fk", using: :btree
+  add_index "http_mappings", ["compute_site_id"], name: "http_mappings_compute_site_id_fk", using: :btree
   add_index "http_mappings", ["port_mapping_template_id"], name: "http_mappings_port_mapping_template_id_fk", using: :btree
 
   create_table "port_mapping_properties", force: true do |t|
