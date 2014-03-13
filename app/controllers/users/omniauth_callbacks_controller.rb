@@ -1,6 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  def vph
+  def vphticket
     @user = User.vph_find_or_create(oauth)
     @user.remember_me = true if params[:remember_me]
     sign_in_and_redirect(@user)

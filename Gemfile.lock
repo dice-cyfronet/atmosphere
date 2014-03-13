@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: git://github.com/dice-cyfronet/redirus-worker.git
-  revision: 3624252e6c7625cd00a6eebed1385729d08234c2
+  revision: 0079761765916b57ef9402983cb4cd70529ddf41
   branch: master
   specs:
     redirus-worker (0.0.1)
@@ -24,10 +24,10 @@ GIT
 
 GIT
   remote: http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git
-  revision: 7d7fbacb670b0fa7967cd7551429e8c49422bed1
+  revision: 51d22964d7a3299fee08e956da20c92443c21497
   branch: master
   specs:
-    omniauth-vph (0.1.0)
+    omniauth-vph (1.0.0)
       faraday
       multi_json
       omniauth (~> 1.0)
@@ -186,7 +186,7 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.5.2)
     minitest (4.7.5)
-    multi_json (1.8.4)
+    multi_json (1.9.0)
     multipart-post (2.0.0)
     mysql2 (0.3.15)
     net-scp (1.1.2)
