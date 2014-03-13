@@ -24,10 +24,10 @@ GIT
 
 GIT
   remote: http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git
-  revision: 7d7fbacb670b0fa7967cd7551429e8c49422bed1
+  revision: 51d22964d7a3299fee08e956da20c92443c21497
   branch: master
   specs:
-    omniauth-vph (0.1.0)
+    omniauth-vph (1.0.0)
       faraday
       multi_json
       omniauth (~> 1.0)

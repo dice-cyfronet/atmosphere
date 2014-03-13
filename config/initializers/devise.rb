@@ -241,7 +241,7 @@ Devise.setup do |config|
   # config.omniauth_path_prefix = "/my_engine/users/auth"
 
   if Air.config.vph.enabled
-    config.omniauth :vph,
+    config.omniauth :vphticket,
       host: Air.config.vph.host,
       roles_map: Air.config.vph.roles_map,
       ssl_verify: Air.config.vph.ssl_verify
