@@ -2,10 +2,6 @@ class HttpMappingStatusWorker
 
   include Sidekiq::Worker
 
-  class << self
-    :spec
-  end
-
   @@spec = {}
   @@data = {}
 
