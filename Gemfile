@@ -47,7 +47,7 @@ gem 'devise', '~>3.2'
 gem 'cancan'
 gem 'role_model'
 gem 'omniauth'
-gem 'omniauth-vph', git: 'http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git', branch: :master
+gem 'omniauth-vph', '~>1.0'
 
 gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
