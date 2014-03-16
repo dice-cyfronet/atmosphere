@@ -101,22 +101,20 @@ end
 group :development, :test do
   gem 'pry-rails'
 
-  gem 'rspec-rails'
-  gem 'shoulda-matchers'
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'guard-rspec', require: false
+  gem 'guard-spring'
+end
 
-  # Guard
-  gem 'guard-rspec'
-  gem 'spork-rails', github: 'sporkrb/spork-rails'
-  gem 'guard-spork'
-  gem 'libnotify'
+group :test do
+  gem 'rspec-rails'
+  gem 'rspec-sidekiq'
+  gem 'shoulda-matchers'
 
   gem 'factory_girl'
   gem 'ffaker'
   gem 'database_cleaner'
-end
-
-group :test do
-  gem 'rspec-sidekiq'
 end
 
 # Use ActiveModel has_secure_password
