@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140317182127) do
+ActiveRecord::Schema.define(version: 20140317193550) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 20140317182127) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "compute_site_id",                           null: false
-    t.string   "monitoring_status"
+    t.string   "monitoring_status",        default: "NEW"
   end
 
   add_index "http_mappings", ["appliance_id"], name: "http_mappings_appliance_id_fk", using: :btree

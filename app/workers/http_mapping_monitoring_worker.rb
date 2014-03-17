@@ -12,7 +12,8 @@ class HttpMappingMonitoringWorker
 
     mapping = HttpMapping.find_by id: mapping_id
 
-    # By setting status to HttpMappingStatus::NOT_MONITORED one can disable monitoring
+    # By setting status to the HttpMappingStatus::NOT_MONITORED one can disable monitoring
+    # By setting status back to the HttpMappingStatus::NEW one can enable monitoring again
     if (mapping.nil? || mapping.monitoring_status != HttpMappingStatus::NOT_MONITORED)
       logger.info("Unregistering monitoring for http mapping")
       unregister(mapping_id)
