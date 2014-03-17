@@ -108,6 +108,8 @@ describe ApplianceVmsManager do
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
 
+    let(:vms_relation) { double }
+
     let(:tmpl)   { 'tmpl' }
     let(:flavor) { 'flavor' }
     let(:name)   { 'name' }
@@ -116,7 +118,8 @@ describe ApplianceVmsManager do
     subject { ApplianceVmsManager.new(appl, updater_class) }
 
     before do
-      allow(VirtualMachine).to receive(:create).and_return(vm)
+      allow(appl).to receive(:virtual_machines).and_return(vms_relation)
+      allow(vms_relation).to receive(:create).and_return(vm)
     end
 
     context 'when user can afford to spawn VM with selected flavor' do
@@ -128,7 +131,7 @@ describe ApplianceVmsManager do
       end
 
       it 'creates new VM' do
-        expect(VirtualMachine).to have_received(:create) do |params|
+        expect(vms_relation).to have_received(:create) do |params|
           expect(params[:name]).to eq name
           expect(params[:source_template]).to eq tmpl
           expect(params[:virtual_machine_flavor]).to eq flavor
@@ -154,7 +157,7 @@ describe ApplianceVmsManager do
       end
 
       it 'does not create any new VM' do
-        expect(VirtualMachine).to_not have_received(:create)
+        expect(vms_relation).to_not have_received(:create)
       end
 
       it_behaves_like 'not_enough_funds'
