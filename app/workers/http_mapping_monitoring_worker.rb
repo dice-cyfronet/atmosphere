@@ -10,12 +10,14 @@ class HttpMappingMonitoringWorker
 
   def perform(mapping_id, serial_no = nil)
 
+    logger.info("Starting monitoring job for http mapping #{mapping_id}")
+
     mapping = HttpMapping.find_by id: mapping_id
 
     # By setting status to the HttpMappingStatus::NOT_MONITORED one can disable monitoring
     # By setting status back to the HttpMappingStatus::NEW one can enable monitoring again
-    if (mapping.nil? || mapping.monitoring_status != HttpMappingStatus::NOT_MONITORED)
-      logger.info("Unregistering monitoring for http mapping")
+    if (mapping.nil? || mapping.monitoring_status == HttpMappingStatus::NOT_MONITORED)
+      logger.info("Unregistering monitoring for http mapping #{mapping_id}")
       unregister(mapping_id)
       return
     end
@@ -28,7 +30,7 @@ class HttpMappingMonitoringWorker
       perform_check(mapping)
       schedule_next(mapping, serial_no)
     else
-      logger.info("Worker not allowed to perform check. Monitoring already scheduled.")
+      logger.info("Worker not allowed to perform check. Monitoring has already been scheduled.")
     end
 
   end
