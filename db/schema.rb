@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140310130146) do
+ActiveRecord::Schema.define(version: 20140317131319) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +93,11 @@ ActiveRecord::Schema.define(version: 20140310130146) do
     t.string   "currency",      default: "EUR",                    null: false
     t.integer  "amount_billed", default: 0,                        null: false
     t.integer  "user_id"
+  end
+
+  create_table "compute_site_funds", force: true do |t|
+    t.integer "compute_site_id"
+    t.integer "fund_id"
   end
 
   create_table "compute_sites", force: true do |t|
