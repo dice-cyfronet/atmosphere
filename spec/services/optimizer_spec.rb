@@ -9,7 +9,8 @@ describe Optimizer do
   let!(:wf) { create(:workflow_appliance_set) }
   let!(:wf2) { create(:workflow_appliance_set) }
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
-  let!(:openstack) { create(:openstack_with_flavors) }
+  let!(:fund) { create(:fund) }
+  let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: openstack)}
 
   subject { Optimizer.instance }
@@ -26,8 +27,8 @@ describe Optimizer do
       let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not reuse available vm' do
         tmpl_of_shareable_at
-        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-        appl2 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
+        appl2 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
         vms = VirtualMachine.all
         expect(vms.size).to eql 2
         vm_1 = vms.first
@@ -40,8 +41,8 @@ describe Optimizer do
 
       it 'does not reuse available vm if it is in dev mode' do
           tmpl_of_shareable_at
-          appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+          appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
+          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
           vms = VirtualMachine.all
           expect(vms.size).to eql 2
           vm_1 = vms.first
@@ -65,7 +66,7 @@ describe Optimizer do
             expect(params[:name]).to eq name
           end
 
-          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance')
+          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance', fund: fund)
 
         end
 
@@ -74,7 +75,7 @@ describe Optimizer do
             expect(params[:name]).to eq shareable_appl_type.name
           end
 
-          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type)
+          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, fund: fund)
         end
 
       end
@@ -104,7 +105,7 @@ describe Optimizer do
       context 'vm cannot be reused' do
 
         it 'instantiates a new vm if there are no vms at all' do
-          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund)
           vms = VirtualMachine.all
           expect(vms.size).to eql 1
           vm = vms.first
@@ -113,7 +114,7 @@ describe Optimizer do
         end
 
         it 'sets appliance state to satisfied if vm was instantiated' do
-          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund)
           appl.reload
           expect(appl.state).to eql 'satisfied'
         end
@@ -121,8 +122,8 @@ describe Optimizer do
         it 'does not reuse avaiable vm if appliances use config with equal payload and different ids' do
           tmpl_of_shareable_at
           config_inst = create(:appliance_configuration_instance)
-          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload))
+          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
+          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload), fund: fund)
           vms = VirtualMachine.all
           expect(vms.size).to eql 2
           vm_1 = vms.first
@@ -141,8 +142,8 @@ describe Optimizer do
           end
 
           it 'instantiates a new vm if already running vm cannot accept more load' do
-            appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
-            appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst)
+            appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
+            appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund)
 
             vms = VirtualMachine.all
             expect(vms.size).to eql 2
@@ -160,8 +161,8 @@ describe Optimizer do
 
       context 'vm can be reused' do
         let(:config_inst) { create(:appliance_configuration_instance) }
-        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
-        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst) }
+        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund) }
+        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund) }
 
         context 'and user has emough funds to start appliance' do
           before do
@@ -201,12 +202,12 @@ describe Optimizer do
 
     context 'not shareable appliance type' do
       let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-      let(:cs) { create(:openstack_with_flavors) }
+      let(:cs) { create(:openstack_with_flavors, funds: [fund]) }
       let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, compute_site: cs)}
       let(:config_inst) { create(:appliance_configuration_instance) }
-      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst) }
+      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund) }
 
-      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst) }
+      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund) }
 
       context 'and user has emough funds to start appliance' do
         before do
@@ -260,20 +261,20 @@ describe Optimizer do
   context 'no template is available' do
     let(:at) { create(:appliance_type) }
     it 'sets appliance to unsatisfied state' do
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund)
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
 
     it 'sets state explanation' do
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund)
       appl.reload
       expect(appl.state_explanation).to eql "No matching template was found for appliance #{appl.name}"
     end
 
     it 'only saving tmpl exists' do
       saving_tmpl = create(:virtual_machine_template, appliance_type: at, state: :saving)
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance))
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund)
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
@@ -282,7 +283,7 @@ describe Optimizer do
 
   context 'flavor' do
 
-    let(:amazon) { create(:amazon_with_flavors) }
+    let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
       ApplianceVmsManager.any_instance.stub(:add_vm)
@@ -291,7 +292,7 @@ describe Optimizer do
         expect(params[:virtual_machine_flavor]).to eq selected_flavor
       end
 
-      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type)
+      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund)
     end
 
     context 'is selected optimaly' do
@@ -357,12 +358,12 @@ describe Optimizer do
 
           it 'sets state explanation' do
             [tmpl_at_amazon, tmpl_at_openstack]
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service')
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund)
             expect(appl.state_explanation).to eq "No matching flavor was found for appliance #{appl.name}"
           end
 
           it 'sets appliance as unsatisfied' do
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance))
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund)
             expect(appl.state).to eq 'unsatisfied'
           end
 
@@ -384,13 +385,13 @@ describe Optimizer do
             expect(hsh[:virtual_machine_flavor].cpu).to eq 2
           end
 
-          create(:appliance, appliance_type: at, appliance_set: as)
+          create(:appliance, appliance_type: at, appliance_set: as, fund: fund)
         end
       end
 
       context 'when preferences set in appliance' do
         before do
-          @appl = build(:appliance, appliance_type: at, appliance_set: as)
+          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund)
           @appl.dev_mode_property_set = DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end
