@@ -153,7 +153,7 @@ FactoryGirl.define do
     factory :amazon_with_flavors, traits: [:amazon_flavors] do
       site_type 'public'
       technology 'aws'
-      config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
+      #config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
     end
 
     factory :amazon_compute_site do
