@@ -113,8 +113,12 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def current_load_metrics
-      metrics=Zabbix.host_metrics(zabbix_host_id) if zabbix_host_id
+    if zabbix_host_id
+      metrics=Zabbix.host_metrics(zabbix_host_id)
       metrics.collect_last
+    else
+      nil
+    end
   end
 
   def save_load_metrics(metrics)
@@ -122,6 +126,9 @@ class VirtualMachine < ActiveRecord::Base
     cpu_load_1 = 'Processor load (1 min average per core)'
     cpu_load_5 = 'Processor load (5 min average per core)'
     cpu_load_15 = 'Processor load (15 min average per core)'
+
+    total_mem = 'Total memory'
+    available_mem = 'Available memory'
 
     metrics_hash = {}
     metrics.each {|m| metrics_hash.merge!(m)}
@@ -131,6 +138,10 @@ class VirtualMachine < ActiveRecord::Base
       tsdb_client.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
       tsdb_client.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
       tsdb_client.write_point('cpu_load_15', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
+      if metrics_hash[total_mem] > 0 && metrics_hash[available_mem] > 0
+        mem_usage = (metrics_hash[total_mem] - metrics_hash[available_mem]) / metrics_hash[total_mem]
+        tsdb_client.write_point('memory_usage', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: mem_usage})
+      end
     end
   end
 
