@@ -110,6 +110,9 @@ class VirtualMachine < ActiveRecord::Base
     end
     logger.debug "Params of instantiating server #{servers_params}"
     server = cloud_client.servers.create(servers_params)
+    if vm_tmpl.compute_site.technology == 'aws'
+      cloud_client.create_tags(server.id,{'Name' => name})
+    end
     logger.info "instantiated #{server.id}"
     self[:id_at_site] = server.id
     self[:compute_site_id] = vm_tmpl.compute_site_id
