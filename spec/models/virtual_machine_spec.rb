@@ -256,6 +256,20 @@ describe VirtualMachine do
 
     end
 
+    context 'setting name in AWS' do
+      let(:aws) {create(:amazon_with_flavors)}
+      let(:tmpl_at_aws) {create(:virtual_machine_template, compute_site: aws)}
+
+      it 'sets the Name tag' do
+        allow(cloud_client).to receive(:servers).and_return(servers)
+        expect(cloud_client).to receive(:create_tags).with(1,{'Name' => VM_NAME})
+        server_params = {flavor_ref: default_flavor.id_at_site, flavor_id: default_flavor.id_at_site, name: VM_NAME, image_ref: tmpl_at_aws.id_at_site, image_id: tmpl_at_aws.id_at_site}
+        allow(servers).to receive(:create).and_return(server)
+        allow(server).to receive(:id).exactly(3).and_return 1
+        create(:virtual_machine, appliances: [appl_dev_mode], id_at_site: nil, name: VM_NAME, source_template: tmpl_at_aws, virtual_machine_flavor: default_flavor)
+      end
+    end
+
     context 'initial configuration' do
 
       it 'is injected payload not blank' do

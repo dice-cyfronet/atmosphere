@@ -62,20 +62,21 @@ describe Optimizer do
 
         it 'to appliance name if it is not blank' do
           name = 'name full appliance'
-          expect(VirtualMachine).to receive(:create) do |params|
+          appl = build(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: name, fund: fund)
+          expect(appl.virtual_machines).to receive(:create) do |params|
             expect(params[:name]).to eq name
           end
 
-          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance', fund: fund)
-
+          appl.save!
         end
 
         it 'to appliance type name if appliance name is blank' do
-          expect(VirtualMachine).to receive(:create) do |params|
+          appl = build(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, fund: fund)
+          expect(appl.virtual_machines).to receive(:create) do |params|
             expect(params[:name]).to eq shareable_appl_type.name
           end
 
-          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, fund: fund)
+          appl.save!
         end
 
       end
@@ -288,11 +289,12 @@ describe Optimizer do
       VirtualMachine.stub(:create)
       ApplianceVmsManager.any_instance.stub(:add_vm)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
-      expect(VirtualMachine).to receive(:create) do |params|
+      appl = build(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund)
+      expect(appl.virtual_machines).to receive(:create) do |params|
         expect(params[:virtual_machine_flavor]).to eq selected_flavor
       end
 
-      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund)
+      appl.save!
     end
 
     context 'is selected optimaly' do
@@ -381,11 +383,12 @@ describe Optimizer do
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
+          appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund)
+          expect(appl.virtual_machines).to receive(:create) do |hsh|
             expect(hsh[:virtual_machine_flavor].cpu).to eq 2
           end
 
-          create(:appliance, appliance_type: at, appliance_set: as, fund: fund)
+          appl.save!
         end
       end
 
@@ -397,7 +400,7 @@ describe Optimizer do
         end
 
         it 'takes dev mode preferences memory into account' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
+          expect(@appl.virtual_machines).to receive(:create) do |hsh|
             expect(hsh[:virtual_machine_flavor].memory).to eq 7680
           end
           @appl.dev_mode_property_set.preference_memory = 4000
@@ -406,7 +409,7 @@ describe Optimizer do
         end
 
         it 'takes dev mode preferences cpu into account' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
+          expect(@appl.virtual_machines).to receive(:create) do |hsh|
             expect(hsh[:virtual_machine_flavor].cpu).to eq 4
           end
           @appl.dev_mode_property_set.preference_cpu = 4
@@ -415,7 +418,7 @@ describe Optimizer do
         end
 
         it 'takes dev mode preferences disk into account' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
+          expect(@appl.virtual_machines).to receive(:create) do |hsh|
             expect(hsh[:virtual_machine_flavor].hdd).to eq 840
           end
           @appl.dev_mode_property_set.preference_disk = 600

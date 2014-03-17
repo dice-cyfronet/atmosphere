@@ -33,7 +33,7 @@ class ApplianceVmsManager
   end
 
   def instantiate_vm(tmpl, flavor, name)
-    vm = VirtualMachine.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor, appliances: [appliance])
+    vm = appliance.virtual_machines.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor)
     appliance_satisfied(vm)
   end
 
