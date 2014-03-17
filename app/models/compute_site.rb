@@ -34,6 +34,9 @@ class ComputeSite < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :virtual_machine_flavors, dependent: :destroy
 
+  has_many :funds, through: :compute_site_funds
+  has_many :compute_site_funds, dependent: :destroy
+
   scope :with_appliance_type, ->(appliance_type) { joins(virtual_machines: {appliances: :appliance_set}).where(appliances: {appliance_type_id: appliance_type.id}, appliance_sets: {appliance_set_type: [:workflow, :portal]}).readonly(false) }
 
   scope :with_deployment, ->(deployment) { joins(virtual_machines: :deployments).where(deployments: {id: deployment.id}).readonly(false) }
