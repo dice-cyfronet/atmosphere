@@ -125,10 +125,11 @@ class BillingService
   end
 
   # Determines whether this appliance can afford to use a given VM (which may be shared)
+  # Requires this appliance's fund to be bound to the VM's compute_site
   def self.can_afford_vm?(appliance, vm)
     billable_time = self.calculate_billable_time(appliance, Time.now.utc, true)
     amt_due = (billable_time*(vm.virtual_machine_flavor.hourly_cost)/(vm.appliances.count+1)).round
-    if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit)
+    if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and appliance.fund.compute_sites.include? vm.compute_site
       true
     else
       false
@@ -136,10 +137,11 @@ class BillingService
   end
 
   # Determines whether this appliance can afford to fully use a VM of a given flavor (which may not be spawned yet)
+  # Requires this appliance's fund to be bound to the flavor's compute site
   def self.can_afford_flavor?(appliance, flavor)
     billable_time = self.calculate_billable_time(appliance, Time.now.utc, true)
     amt_due = (billable_time*(flavor.hourly_cost)).round
-    if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit)
+    if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and appliance.fund.compute_sites.include? flavor.compute_site
       true
     else
       false
