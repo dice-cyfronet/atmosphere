@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
+require 'zabbix'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -47,6 +48,8 @@ FactoryGirl.find_definitions
 
 # Mock fog for all tests
 Fog.mock!
+
+Zabbix.mock!
 
 RSpec::Core::MemoizedHelpers.module_eval do
   alias to should
