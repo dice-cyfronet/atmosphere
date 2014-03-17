@@ -1,20 +1,25 @@
 require 'spec_helper'
 
-describe 'My behaviour' do
+describe HttpMappingMonitoringWorker do
 
   include ApiHelpers
 
-
   let(:hm) { create(:http_mapping) }
 
-  it 'should do something' do
-    puts "#{hm}"
-
-    puts "#{hm.id}"
-    hm.save
+  it 'should set status for OK' do
 
     maping = HttpMapping.find_by id: hm.id
 
-    puts "#{maping.id}"
+    expect(maping.monitoring_status).to eq(HttpMappingStatus::NEW)
+
+    url_check = double()
+    url_check.stub(:is_available) { true }
+
+    HttpMappingMonitoringWorker.new(url_check).perform(maping.id)
+
+    maping = HttpMapping.find_by id: hm.id
+
+    expect(maping.monitoring_status).to eq(HttpMappingStatus::OK)
+
   end
 end
