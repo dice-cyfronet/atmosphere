@@ -377,7 +377,10 @@ describe Optimizer do
       let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
-      before { ApplianceVmsManager.any_instance.stub(:add_vm) } #smell
+      before do
+        ApplianceVmsManager.any_instance.stub(:add_vm)
+        ApplianceVmsManager.any_instance.stub(:start_vm_on_cloud)
+      end # ugly smell
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do

@@ -30,7 +30,6 @@ class VirtualMachine < ActiveRecord::Base
   enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving']
   validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)
 
-  before_create :instantiate_vm, unless: :id_at_site
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
   before_destroy :cant_destroy_non_managed_vm
@@ -89,32 +88,6 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   private
-
-  def instantiate_vm
-    logger.info 'Instantiating'
-    vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
-
-    server_id = Cloud::VmCreator.new(vm_tmpl,
-                  flavor: virtual_machine_flavor,
-                  name: name,
-                  user_data: user_data,
-                  user_key: user_key
-                ).spawn_vm!
-
-    logger.info "instantiated #{server_id}"
-    self[:id_at_site] = server_id
-    self[:compute_site_id] = vm_tmpl.compute_site_id
-    self[:state] = :build
-    self[:managed_by_atmosphere] = true
-  end
-
-  def user_data
-    appliances.first.user_data unless appliances.blank?
-  end
-
-  def user_key
-    appliances.first.user_key unless appliances.blank?
-  end
 
   def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
