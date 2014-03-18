@@ -105,7 +105,9 @@ describe ApplianceVmsManager do
         :state_explanation= => true,
 
         user_data: 'user data',
-        user_key: 'user key'
+        user_key: 'user key',
+
+        virtual_machines: double(create: vm)
       )
     end
     let(:updater) { double('updater', update: true) }
@@ -122,7 +124,6 @@ describe ApplianceVmsManager do
     subject { ApplianceVmsManager.new(appl, updater_class, vm_creator_class) }
 
     before do
-      allow(VirtualMachine).to receive(:create).and_return(vm)
       allow(vm_creator_class).to receive(:new).with(tmpl,
         {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
           .and_return(vm_creator)
@@ -135,11 +136,10 @@ describe ApplianceVmsManager do
       end
 
       it 'creates new VM' do
-        expect(VirtualMachine).to receive(:create) do |params|
+        expect(appl.virtual_machines).to receive(:create) do |params|
           expect(params[:name]).to eq name
           expect(params[:source_template]).to eq tmpl
           expect(params[:virtual_machine_flavor]).to eq flavor
-          expect(params[:appliances]).to eq [appl]
           expect(params[:managed_by_atmosphere]).to be_true
           expect(params[:id_at_site]).to eq 'server_id'
           expect(params[:compute_site]).to eq tmpl.compute_site
@@ -170,7 +170,7 @@ describe ApplianceVmsManager do
       end
 
       it 'does not create any new VM' do
-        expect(VirtualMachine).to_not have_received(:create)
+        expect(appl.virtual_machines).to_not have_received(:create)
       end
 
       it_behaves_like 'not_enough_funds'

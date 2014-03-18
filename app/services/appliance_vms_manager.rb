@@ -37,7 +37,7 @@ class ApplianceVmsManager
 
   def instantiate_vm(tmpl, flavor, name)
     server_id = start_vm_on_cloud(tmpl, flavor, name)
-    vm = VirtualMachine.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor, appliances: [appliance], managed_by_atmosphere: true, id_at_site: server_id, compute_site: tmpl.compute_site)
+    vm = appliance.virtual_machines.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor, managed_by_atmosphere: true, id_at_site: server_id, compute_site: tmpl.compute_site)
     appliance_satisfied(vm)
   end
 
