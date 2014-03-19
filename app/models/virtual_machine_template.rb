@@ -25,6 +25,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
   validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
+  validates :name, format: { with: /^([a-zA-Z]|\(|\)|\.|\-|\/|_|\d){3,128}$/, :multiline => true}
   before_update :release_source_vm, if: :saved?
   after_update :destroy_source_vm, if: :saved?
   before_destroy :cant_destroy_non_managed_vmt
@@ -40,7 +41,8 @@ class VirtualMachineTemplate < ActiveRecord::Base
   end
 
   def self.create_from_vm(virtual_machine, name=nil)
-    vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: name|| virtual_machine.name, managed_by_atmosphere: true)
+    tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name|| virtual_machine.name)
+    vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: tmpl_name, managed_by_atmosphere: true)
     logger.info "Saving template #{vm_template}"
     cs = vm_template.source_vm.compute_site
     cloud_client = cs.cloud_client
@@ -61,6 +63,17 @@ class VirtualMachineTemplate < ActiveRecord::Base
       raise $!
     end
     vm_template
+  end
+
+  def self.sanitize_tmpl_name(name)
+    l = name.length
+    if l < 3
+      (3 - l).times{name << '_'}
+    elsif l > 128
+      name = name[0, 128]
+    end
+    name.gsub!(/[^([a-zA-Z]|\(|\)|\.|\-|\/|_|\d)]/, '_')
+    name
   end
 
   def destroy(delete_in_cloud = true)

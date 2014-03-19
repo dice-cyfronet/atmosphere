@@ -15,6 +15,7 @@
 #
 
 require 'spec_helper'
+require 'securerandom'
 
 describe VirtualMachineTemplate do
 
@@ -23,6 +24,47 @@ describe VirtualMachineTemplate do
   end
 
   expect_it { to ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
+
+  context 'name sanitization' do
+    it 'appends underscores to name that is too short' do
+      expect(VirtualMachineTemplate.sanitize_tmpl_name('s')).to eq 's__'
+    end
+    
+    it 'trims too long name to 128 characters' do
+      expect(VirtualMachineTemplate.sanitize_tmpl_name(SecureRandom.hex(65)).length).to eq 128
+    end
+
+    it 'replaces illegal characters with underscore' do
+      expect(VirtualMachineTemplate.sanitize_tmpl_name('!@#$%^&* ')).to eq '_________'
+    end
+  end
+
+  context 'name validation' do
+
+    INVALID_NAME_MSG = "can contain letters, numbers, '(', ')', '.', '-', '/' and '_' and must be between 3 and 128 characters long."
+
+    it "adds 'invalid' message if name is too short" do
+      vmt = VirtualMachineTemplate.new(name:'sh', id_at_site: 'ID-AT-SITE', state: :active, compute_site: create(:compute_site))
+      saved = vmt.save
+      expect(saved).to be false
+      expect(vmt.errors.messages).to eq({:name => [INVALID_NAME_MSG]})
+    end
+    it "adds 'invalid' message if name is too long" do
+      too_long_name = SecureRandom.hex(65) # given a 130 characters long random string
+      vmt = VirtualMachineTemplate.new(name:too_long_name, id_at_site: 'ID-AT-SITE', state: :active, compute_site: create(:compute_site))
+      saved = vmt.save
+      expect(saved).to be false
+      expect(vmt.errors.messages).to eq({:name => [INVALID_NAME_MSG]})
+    end
+    it "adds 'invalid' message if name contatins illegal characters" do
+      invalid_name = 'i am so invalid!'
+      vmt = VirtualMachineTemplate.new(name:invalid_name, id_at_site: 'ID-AT-SITE', state: :active, compute_site: create(:compute_site))
+      saved = vmt.save
+      expect(saved).to be false
+      expected_msg = 'Name must be between 3 and 128 characters long.'
+      expect(vmt.errors.messages).to eq({:name => [INVALID_NAME_MSG]})
+    end
+  end
 
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
