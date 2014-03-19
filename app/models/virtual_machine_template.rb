@@ -66,14 +66,15 @@ class VirtualMachineTemplate < ActiveRecord::Base
   end
 
   def self.sanitize_tmpl_name(name)
-    l = name.length
+    tmpl_name = name.dup
+    l = tmpl_name.length
     if l < 3
-      (3 - l).times{name << '_'}
+      (3 - l).times{tmpl_name << '_'}
     elsif l > 128
-      name = name[0, 128]
+      tmpl_name = tmpl_name[0, 128]
     end
-    name.gsub!(/[^([a-zA-Z]|\(|\)|\.|\-|\/|_|\d)]/, '_')
-    name
+    tmpl_name.gsub!(/[^([a-zA-Z]|\(|\)|\.|\-|\/|_|\d)]/, '_')
+    tmpl_name
   end
 
   def destroy(delete_in_cloud = true)
