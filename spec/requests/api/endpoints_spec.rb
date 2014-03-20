@@ -166,7 +166,8 @@ describe Api::V1::EndpointsController do
           descriptor: '<heavy xml="document">here</heavy>',
           endpoint_type: 'rest',
           invocation_path: 'invocation_path',
-          port_mapping_template_id: pmt1.id
+          port_mapping_template_id: pmt1.id,
+          secured: true
         }
       }
     end
@@ -224,6 +225,7 @@ describe Api::V1::EndpointsController do
         expect(e_response['descriptor']).to eq '<heavy xml="document">here</heavy>'
         expect(e_response['endpoint_type']).to eq 'rest'
         expect(e_response['port_mapping_template_id']).to eq pmt1.id
+        expect(e_response['secured']).to eq true
       end
 
       it 'returns 422 when endpoint type is wrong' do
