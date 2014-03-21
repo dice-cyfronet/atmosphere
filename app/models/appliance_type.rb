@@ -123,6 +123,9 @@ class ApplianceType < ActiveRecord::Base
     MetadataRepositoryClient.instance.update_appliance_type self
   end
 
+  def development?
+    visible_to.developer?
+  end
 
   private
 
