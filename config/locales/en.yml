@@ -99,4 +99,3 @@ en:
         virtual_machine_template:
           attributes:
             name:
-              invalid: "can contain letters, numbers, '(', ')', '.', '-', '/' and '_' and must be between 3 and 128 characters long."

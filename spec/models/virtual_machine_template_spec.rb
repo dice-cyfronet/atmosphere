@@ -39,33 +39,6 @@ describe VirtualMachineTemplate do
     end
   end
 
-  context 'name validation' do
-
-    INVALID_NAME_MSG = "can contain letters, numbers, '(', ')', '.', '-', '/' and '_' and must be between 3 and 128 characters long."
-
-    it "adds 'invalid' message if name is too short" do
-      vmt = VirtualMachineTemplate.new(name:'sh', id_at_site: 'ID-AT-SITE', state: :active, compute_site: create(:compute_site))
-      saved = vmt.save
-      expect(saved).to be false
-      expect(vmt.errors.messages).to eq({:name => [INVALID_NAME_MSG]})
-    end
-    it "adds 'invalid' message if name is too long" do
-      too_long_name = SecureRandom.hex(65) # given a 130 characters long random string
-      vmt = VirtualMachineTemplate.new(name:too_long_name, id_at_site: 'ID-AT-SITE', state: :active, compute_site: create(:compute_site))
-      saved = vmt.save
-      expect(saved).to be false
-      expect(vmt.errors.messages).to eq({:name => [INVALID_NAME_MSG]})
-    end
-    it "adds 'invalid' message if name contatins illegal characters" do
-      invalid_name = 'i am so invalid!'
-      vmt = VirtualMachineTemplate.new(name:invalid_name, id_at_site: 'ID-AT-SITE', state: :active, compute_site: create(:compute_site))
-      saved = vmt.save
-      expect(saved).to be false
-      expected_msg = 'Name must be between 3 and 128 characters long.'
-      expect(vmt.errors.messages).to eq({:name => [INVALID_NAME_MSG]})
-    end
-  end
-
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
     subject { create(:virtual_machine_template, source_vm: vm, state: :saving) }
