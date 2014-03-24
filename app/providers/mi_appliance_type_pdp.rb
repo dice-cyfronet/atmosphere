@@ -1,3 +1,21 @@
+#
+# Integration with Master Interface (MI) sharing mechanism.
+# Basically user can have assigned three roles for every resource
+# registered using WP4 metadata mechanism: `reader`, `editor`
+# and `manager`.
+#
+# When `reader` role is assigned to the Appliance Type than user
+# is able to start new Appliance in production mode (`portal` or
+# `workflow` Appliance Set type) using this type. `editor` role
+# allows to start Appliance in development mode (`development`
+# Appliance Set type). `manager` role allows to start new Appliance
+# in both mentioned Appliance Set types.
+#
+# Additionally, when Appliance is started in production mode than
+# `visible_to` of Appliance Type is checked and it allows to start
+# Appliances created only from Appliance Type with `visible_to` set
+# to `all` or `owner`.
+#
 class MiApplianceTypePdp
   def initialize(ticket, resource_access_class=MiResourceAccess)
     @resource_access = resource_access_class.new('AtomicService', ticket: ticket)
