@@ -23,6 +23,7 @@ class HttpMapping < ActiveRecord::Base
 
   validates_inclusion_of :application_protocol, in: %w(http https)
   enumerize :application_protocol, in: [:http, :https]
+  enumerize :monitoring_status, in: [:pending, :ok, :lost, :not_monitored]
 
   after_destroy :rm_proxy
 

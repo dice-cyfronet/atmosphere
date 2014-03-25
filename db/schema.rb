@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140317193550) do
+ActiveRecord::Schema.define(version: 20140325144444) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"
@@ -158,14 +158,14 @@ ActiveRecord::Schema.define(version: 20140317193550) do
   end
 
   create_table "http_mappings", force: true do |t|
-    t.string   "application_protocol",     default: "http", null: false
-    t.string   "url",                      default: "",     null: false
+    t.string   "application_protocol",     default: "http",    null: false
+    t.string   "url",                      default: "",        null: false
     t.integer  "appliance_id"
     t.integer  "port_mapping_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "compute_site_id",                           null: false
-    t.string   "monitoring_status",        default: "NEW"
+    t.integer  "compute_site_id",                              null: false
+    t.string   "monitoring_status",        default: "pending"
   end
 
   add_index "http_mappings", ["appliance_id"], name: "http_mappings_appliance_id_fk", using: :btree

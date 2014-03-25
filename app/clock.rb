@@ -27,4 +27,13 @@ module Clockwork
   every(60.minutes, 'billing.bill') do
     BillingWorker.perform_async
   end
+
+  every(60.minutes, 'billing.bill') do
+    BillingWorker.perform_async
+  end
+
+  every(5.seconds, 'monitoring.http_mappings') do
+    HttpMappingMonitoringWorker.perform_async(:pending)
+  end
+
 end

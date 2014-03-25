@@ -6,82 +6,34 @@ describe HttpMappingMonitoringWorker do
 
   let(:url_check) { double() }
   let(:scheduler) { double() }
-  let(:hm) { create(:http_mapping) }
+  let(:hm_pending) { create(:http_mapping) }
+  let(:hm_ok) { create(:http_mapping, :monitoring_status => :ok) }
 
-  it 'should change status from NEW to OK' do
+  it 'should check pending' do
 
-    maping = HttpMapping.find_by id: hm.id
+    status_check = double()
+    status_check.stub(:submit){ |arg|
+      expect(arg).to eq(hm_pending.id)
+    }
 
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::NEW)
+    hm_pending.save
+    hm_ok.save
 
-    url_check.stub(:is_available) { true }
-    scheduler.stub(:schedule) do |mapping, serial_no|
-      expect(mapping.id).to eq hm.id
-    end
-
-    HttpMappingMonitoringWorker.new(url_check).perform(maping.id)
-
-    maping = HttpMapping.find_by id: hm.id
-
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::OK)
+    HttpMappingMonitoringWorker.new(status_check).perform(:pending)
 
   end
 
-  it 'should change status from NEW to PENDING' do
+  it 'should check ok' do
 
-    maping = HttpMapping.find_by id: hm.id
+    status_check = double()
+    status_check.stub(:submit){ |arg|
+      expect(arg).to eq(hm_ok.id)
+    }
 
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::NEW)
+    hm_pending.save
+    hm_ok.save
 
-    url_check.stub(:is_available) { false }
-    scheduler.stub(:schedule) do |mapping, serial_no|
-      expect(mapping.id).to eq hm.id
-    end
-
-    HttpMappingMonitoringWorker.new(url_check).perform(maping.id)
-
-    maping = HttpMapping.find_by id: hm.id
-
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::PENDING)
-
-  end
-
-  it 'should change status from OK to LOST' do
-
-    maping = HttpMapping.find_by id: hm.id
-
-    maping.monitoring_status = HttpMappingStatus::OK
-    maping.save
-
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::OK)
-
-    url_check.stub(:is_available) { false }
-    scheduler.stub(:schedule) do |mapping, serial_no|
-      expect(mapping.id).to eq hm.id
-    end
-
-    HttpMappingMonitoringWorker.new(url_check, scheduler).perform(maping.id)
-
-    maping = HttpMapping.find_by id: hm.id
-
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::LOST)
-
-  end
-
-  it 'should not perform monitoring' do
-
-    maping = HttpMapping.find_by id: hm.id
-
-    maping.monitoring_status = HttpMappingStatus::NOT_MONITORED
-    maping.save
-
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::NOT_MONITORED)
-
-    HttpMappingMonitoringWorker.new(url_check, scheduler).perform(maping.id)
-
-    maping = HttpMapping.find_by id: hm.id
-
-    expect(maping.monitoring_status).to eq(HttpMappingStatus::NOT_MONITORED)
+    HttpMappingMonitoringWorker.new(status_check).perform(:ok)
 
   end
 
