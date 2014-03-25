@@ -295,6 +295,7 @@ ActiveRecord::Schema.define(version: 20140317131319) do
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
     t.integer  "virtual_machine_flavor_id"
+    t.integer  "zabbix_host_id"
   end
 
   add_index "virtual_machines", ["compute_site_id", "id_at_site"], name: "index_virtual_machines_on_compute_site_id_and_id_at_site", unique: true, using: :btree
