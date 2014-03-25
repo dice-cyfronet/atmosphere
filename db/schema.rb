@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140325144444) do
+ActiveRecord::Schema.define(version: 20140325153430) do
 
   create_table "appliance_configuration_instances", force: true do |t|
     t.text     "payload"

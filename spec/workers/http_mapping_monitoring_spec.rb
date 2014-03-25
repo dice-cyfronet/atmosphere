@@ -4,20 +4,13 @@ describe HttpMappingMonitoringWorker do
 
   include ApiHelpers
 
-  let(:url_check) { double() }
-  let(:scheduler) { double() }
-  let(:hm_pending) { create(:http_mapping) }
-  let(:hm_ok) { create(:http_mapping, :monitoring_status => :ok) }
+  let(:status_check) { double() }
+  let(:hm_pending) { create(:http_mapping); hm_pending.save }
+  let(:hm_ok) { create(:http_mapping, :monitoring_status => :ok); hm_ok.save}
 
   it 'should check pending' do
 
-    status_check = double()
-    status_check.stub(:submit){ |arg|
-      expect(arg).to eq(hm_pending.id)
-    }
-
-    hm_pending.save
-    hm_ok.save
+    status_check.stub(:submit){ |id| expect(id).to eq(hm_pending.id) }
 
     HttpMappingMonitoringWorker.new(status_check).perform(:pending)
 
@@ -25,13 +18,7 @@ describe HttpMappingMonitoringWorker do
 
   it 'should check ok' do
 
-    status_check = double()
-    status_check.stub(:submit){ |arg|
-      expect(arg).to eq(hm_ok.id)
-    }
-
-    hm_pending.save
-    hm_ok.save
+    status_check.stub(:submit){ |id| expect(id).to eq(hm_ok.id) }
 
     HttpMappingMonitoringWorker.new(status_check).perform(:ok)
 
