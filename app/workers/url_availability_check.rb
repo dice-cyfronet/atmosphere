@@ -1,6 +1,6 @@
 class UrlAvailabilityCheck
 
-  def is_available(url, timeout = 10)
+  def is_available(url, timeout = 3)
     begin
       response = Faraday.get do |req|
         req.url url

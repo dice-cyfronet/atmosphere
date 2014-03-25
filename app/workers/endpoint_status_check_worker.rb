@@ -2,6 +2,9 @@ class EndpointStatusCheckWorker
 
   include Sidekiq::Worker
 
+  sidekiq_options queue: :monitoring
+  sidekiq_options :retry => false
+
   def initialize(check = UrlAvailabilityCheck.new)
     @check = check
   end

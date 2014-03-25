@@ -2,6 +2,9 @@ class HttpMappingMonitoringWorker
 
   include Sidekiq::Worker
 
+  sidekiq_options queue: :monitoring
+  sidekiq_options :retry => false
+
   def initialize(status_check = BasicStatusCheck.new)
      @status_check = status_check
   end
