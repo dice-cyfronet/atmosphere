@@ -1,11 +1,12 @@
 class MiResourceAccess
+
   def initialize(type, options={})
     @type = type
     @connection = options[:connection] || initialize_connection(options)
   end
 
   def has_role?(local_id, role)
-    response = @connection.get '/api/hasrole',
+    response = @connection.get '/api/hasrole/',
       {local_id: local_id, type: @type, role: role}
 
     response.status == 200 && response.body == 'True'

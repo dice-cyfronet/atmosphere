@@ -12,7 +12,7 @@ describe MiResourceAccess do
   subject { MiResourceAccess.new('AtomicService', connection: connection) }
 
   context '#has_role?' do
-    let(:url) { '/api/hasrole?local_id=1&type=AtomicService&role=reader' }
+    let(:url) { '/api/hasrole/?local_id=1&type=AtomicService&role=reader' }
 
     it 'has a role' do
       stubs.get(url) { [200, {}, 'True'] }
