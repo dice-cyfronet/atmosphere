@@ -24,7 +24,7 @@ class MiApplianceTypePdp
   #
   # User is allowed to start new appliance from AT in production
   # when AT can be started in production mode and user has
-  # `:reader` or `:manager` role assigned for this AT.
+  # `Reader` or `Manager` role assigned for this AT.
   #
   def can_start_in_production?(at)
     !at.development? && has_role?(at, :Reader, :Manager)
@@ -32,14 +32,14 @@ class MiApplianceTypePdp
 
   #
   # User is allowed to start new appliance from AT in development
-  # when user has `:reader` or `:manager` role assigned for this AT.
+  # when user has `Reader` or `Manager` role assigned for this AT.
   #
   def can_start_in_development?(at)
     has_role?(at, :Editor, :Manager)
   end
 
   #
-  # User is allowed to manage AT if user has `:manager` role is
+  # User is allowed to manage AT if user has `Manager` role is
   # assigned for this AT.
   #
   def can_manage?(at)
