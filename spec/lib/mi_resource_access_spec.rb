@@ -9,7 +9,7 @@ describe MiResourceAccess do
     end
   end
 
-  subject { MiResourceAccess.new('AtomicService', connection) }
+  subject { MiResourceAccess.new('AtomicService', connection: connection) }
 
   context '#has_role?' do
     let(:url) { '/api/hasrole?local_id=1&type=AtomicService&role=reader' }

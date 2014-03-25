@@ -1,7 +1,7 @@
 class MiResourceAccess
-  def initialize(type, connection=nil, options={})
+  def initialize(type, options={})
     @type = type
-    @connection = connection || initialize_connection
+    @connection = options[:connection] || initialize_connection(options)
   end
 
   def has_role?(local_id, role)
@@ -27,8 +27,9 @@ class MiResourceAccess
   def initialize_connection(options)
     mi_url = options[:mi_uri] || Air.config.vph.host
     mi_ticket = options[:mi_ticket]
+    verify = options[:verify]
 
-    Faraday.new(url: mi_url) do |faraday|
+    Faraday.new(url: mi_url, :ssl => {:verify => verify}) do |faraday|
       faraday.request :url_encoded
       faraday.response :logger
       faraday.adapter Faraday.default_adapter
