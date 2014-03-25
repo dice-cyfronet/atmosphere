@@ -26,15 +26,15 @@ class MiResourceAccess
   end
 
   def initialize_connection(options)
-    mi_url = options[:mi_uri] || Air.config.vph.host
-    mi_ticket = options[:mi_ticket]
+    url = options[:url] || Air.config.vph.host
+    ticket = options[:ticket]
     verify = options[:verify]
 
-    Faraday.new(url: mi_url, :ssl => {:verify => verify}) do |faraday|
+    Faraday.new(url: url, :ssl => {:verify => verify}) do |faraday|
       faraday.request :url_encoded
       faraday.response :logger
       faraday.adapter Faraday.default_adapter
-      faraday.basic_auth('', mi_ticket)
+      faraday.basic_auth('', ticket)
     end
   end
 end
