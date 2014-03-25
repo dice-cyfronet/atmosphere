@@ -27,7 +27,7 @@ class MiApplianceTypePdp
   # `:reader` or `:manager` role assigned for this AT.
   #
   def can_start_in_production?(at)
-    !at.development? && has_role?(at, :reader, :manager)
+    !at.development? && has_role?(at, :Reader, :Manager)
   end
 
   #
@@ -35,7 +35,7 @@ class MiApplianceTypePdp
   # when user has `:reader` or `:manager` role assigned for this AT.
   #
   def can_start_in_development?(at)
-    has_role?(at, :editor, :manager)
+    has_role?(at, :Editor, :Manager)
   end
 
   #
@@ -43,7 +43,7 @@ class MiApplianceTypePdp
   # assigned for this AT.
   #
   def can_manage?(at)
-    has_role?(at, :manager)
+    has_role?(at, :Manager)
   end
 
   #
@@ -83,10 +83,10 @@ class MiApplianceTypePdp
 
   def filter_roles(filter)
     case filter
-      when nil          then [:reader, :editor, :manager]
-      when :production  then [:reader, :manager]
-      when :development then [:editor, :manager]
-      else [:manager]
+      when nil          then [:Reader, :Editor, :Manager]
+      when :production  then [:Reader, :Manager]
+      when :development then [:Editor, :Manager]
+      else [:Manager]
     end
   end
 end

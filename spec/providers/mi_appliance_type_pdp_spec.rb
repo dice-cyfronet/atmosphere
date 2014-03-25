@@ -18,32 +18,32 @@ describe MiApplianceTypePdp do
     context '#can_start_in_production?' do
       it 'allows to start when user has reader role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :reader).and_return(true)
+          .with(1, :Reader).and_return(true)
 
         expect(subject.can_start_in_production?(at)).to be_true
       end
 
       it 'allows to start when user has manager role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :reader).and_return(false)
+          .with(1, :Reader).and_return(false)
         allow(resource_access).to receive(:has_role?)
-          .with(1, :manager).and_return(true)
+          .with(1, :Manager).and_return(true)
 
         expect(subject.can_start_in_production?(at)).to be_true
       end
 
       it 'does not allow to start when user does not have reader and editor role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :reader).and_return(false)
+          .with(1, :Reader).and_return(false)
         allow(resource_access).to receive(:has_role?)
-          .with(1, :manager).and_return(false)
+          .with(1, :Manager).and_return(false)
 
         expect(subject.can_start_in_production?(at)).to be_false
       end
 
       it 'does not allow to start when at visible_to is eq developer' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :reader).and_return(true)
+          .with(1, :Reader).and_return(true)
         at.visible_to = :developer
 
         expect(subject.can_start_in_production?(at)).to be_false
@@ -53,25 +53,25 @@ describe MiApplianceTypePdp do
     context '#can_start_in_development?' do
       it 'allows to start when user has editor role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :editor).and_return(true)
+          .with(1, :Editor).and_return(true)
 
         expect(subject.can_start_in_development?(at)).to be_true
       end
 
       it 'allows to start when user has manager role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :editor).and_return(false)
+          .with(1, :Editor).and_return(false)
         allow(resource_access).to receive(:has_role?)
-          .with(1, :manager).and_return(true)
+          .with(1, :Manager).and_return(true)
 
         expect(subject.can_start_in_development?(at)).to be_true
       end
 
       it 'does not allow when user does not have editor and manager roles' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :editor).and_return(false)
+          .with(1, :Editor).and_return(false)
         allow(resource_access).to receive(:has_role?)
-          .with(1, :manager).and_return(false)
+          .with(1, :Manager).and_return(false)
 
         expect(subject.can_start_in_development?(at)).to be_false
       end
@@ -80,14 +80,14 @@ describe MiApplianceTypePdp do
     context '#can_manage?' do
       it 'allows to start when user has manager role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :manager).and_return(true)
+          .with(1, :Manager).and_return(true)
 
         expect(subject.can_manage?(at)).to be_true
       end
 
       it 'does not allow when user does not have manager role' do
         allow(resource_access).to receive(:has_role?)
-          .with(1, :manager).and_return(false)
+          .with(1, :Manager).and_return(false)
 
         expect(subject.can_manage?(at)).to be_false
       end
@@ -102,11 +102,11 @@ describe MiApplianceTypePdp do
 
     before do
       allow(resource_access).to receive(:availabe_resource_ids)
-        .with(:reader).and_return([at1.id])
+        .with(:Reader).and_return([at1.id])
       allow(resource_access).to receive(:availabe_resource_ids)
-        .with(:editor).and_return([at2.id])
+        .with(:Editor).and_return([at2.id])
       allow(resource_access).to receive(:availabe_resource_ids)
-        .with(:manager).and_return([at3.id, at4.id])
+        .with(:Manager).and_return([at3.id, at4.id])
     end
 
     it 'filter all available appliance' do
@@ -137,7 +137,7 @@ describe MiApplianceTypePdp do
     end
 
     it 'filter available appliance types for manager' do
-      filtered_ats = subject.filter(ApplianceType.all, :manager)
+      filtered_ats = subject.filter(ApplianceType.all, :Manager)
 
       expect(filtered_ats.size).to eq 2
       expect(filtered_ats).to include at3
