@@ -8,10 +8,10 @@ class UrlAvailabilityCheck
         req.options.open_timeout = timeout
       end
       Rails.logger.debug("Status for url #{url} is #{response.status}")
-      if (response.status == 200)
-        return true
+      if (response.status == 502 || response.status == 404)
+        return false
       end
-      return false
+      return true
     rescue
       Rails.logger.debug("Status for url #{url} cannot be checked")
       return false
