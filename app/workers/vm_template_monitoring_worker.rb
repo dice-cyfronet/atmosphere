@@ -24,6 +24,7 @@ class VmTemplateMonitoringWorker
       template = site.virtual_machine_templates.find_or_initialize_by(id_at_site: image.id)
       template.id_at_site =  image.id
       template.name = image.name
+      template.architecture = image.architecture
       template.state = image.status.downcase.to_sym
 
       all_site_templates.delete template

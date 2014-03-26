@@ -4,6 +4,7 @@ require 'fog/aws/compute'
 require 'fog/aws/models/compute/flavor'
 require 'fog/openstack/models/compute/flavor'
 require 'fog/aws/models/compute/image'
+require 'fog/openstack/models/compute/image'
 require 'fog/aws/models/compute/server'
 
 
@@ -76,6 +77,12 @@ class Fog::Compute::AWS::Server
 
   def task_state
     nil #TODO
+  end
+end
+
+class Fog::Compute::OpenStack::Image
+  def architecture
+    'x86_64'
   end
 end
 
