@@ -40,4 +40,8 @@ module Clockwork
     HttpMappingMonitoringWorker.perform_async(:ok)
   end
 
+  every(15.seconds, 'monitoring.http_mappings.lost') do
+    HttpMappingMonitoringWorker.perform_async(:lost)
+  end
+
 end
