@@ -288,6 +288,7 @@ describe Optimizer do
   end
 
   context 'flavor' do
+    let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
     let(:appl_vm_manager) do
       double('appliance_vms_manager',
         :can_reuse_vm? => false,
@@ -305,6 +306,19 @@ describe Optimizer do
       end
 
       create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund)
+    end
+
+    context 'is selected with appropriate architecture' do
+      
+      it 'if cheaper flavor does not support architecture' do
+        cs = create(:compute_site)
+        tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, compute_site: cs)
+        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, hourly_cost: 10, compute_site: cs, supported_architectures: 'i386')
+        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, hourly_cost: 20, compute_site: cs, supported_architectures: 'x86_64')
+        selected_tmpl, selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_64b])
+        expect(selected_tmpl).to eq tmpl_64b
+        expect(selected_flavor).to eq fl_64b
+      end
     end
 
     context 'is selected optimaly' do
@@ -329,7 +343,6 @@ describe Optimizer do
 
       context 'appliance type preferences specified' do
 
-        let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
         let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
         let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
 

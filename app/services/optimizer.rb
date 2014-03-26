@@ -78,7 +78,7 @@ class Optimizer
     required_disk = options[:preference_disk] || tmpls.first.appliance_type.preference_disk || 0
     opt_flavors_and_tmpls_map = {}
     tmpls.each do |tmpl|
-      opt_fl = (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| f.memory >= required_mem and f.cpu >= required_cores and f.hdd >= required_disk}) {|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
+      opt_fl = (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| (f.supported_architectures == 'i386_and_x86_64' || f.supported_architectures == tmpl.architecture) && f.memory >= required_mem && f.cpu >= required_cores && f.hdd >= required_disk}) {|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
       opt_flavors_and_tmpls_map[opt_fl] = tmpl if opt_fl
     end
     globally_opt_flavor = (min_elements_by(opt_flavors_and_tmpls_map.keys){|f| f.hourly_cost}).sort{ |x,y| x.memory <=> y.memory }.last
