@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140317131319) do
+ActiveRecord::Schema.define(version: 20140325115017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -261,25 +261,27 @@ ActiveRecord::Schema.define(version: 20140317131319) do
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
 
   create_table "virtual_machine_flavors", force: true do |t|
-    t.string  "flavor_name",     null: false
+    t.string  "flavor_name",                                null: false
     t.float   "cpu"
     t.float   "memory"
     t.float   "hdd"
-    t.integer "hourly_cost",     null: false
+    t.integer "hourly_cost",                                null: false
     t.integer "compute_site_id"
     t.string  "id_at_site"
+    t.string  "supported_architectures", default: "x86_64"
   end
 
   create_table "virtual_machine_templates", force: true do |t|
-    t.string   "id_at_site",                            null: false
-    t.string   "name",                                  null: false
-    t.string   "state",                                 null: false
-    t.boolean  "managed_by_atmosphere", default: false, null: false
-    t.integer  "compute_site_id",                       null: false
+    t.string   "id_at_site",                               null: false
+    t.string   "name",                                     null: false
+    t.string   "state",                                    null: false
+    t.boolean  "managed_by_atmosphere", default: false,    null: false
+    t.integer  "compute_site_id",                          null: false
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "architecture",          default: "x86_64"
   end
 
   add_index "virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "index_vm_tmpls_on_cs_id_and_id_at_site", unique: true, using: :btree

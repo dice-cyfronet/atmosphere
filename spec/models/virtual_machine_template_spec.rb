@@ -39,6 +39,15 @@ describe VirtualMachineTemplate do
     end
   end
 
+  context 'architecture validation' do
+    it "adds 'invalid architexture' error message" do
+      vmt = build(:virtual_machine_template, architecture: 'invalid architecture')
+      saved = vmt.save
+      expect(saved).to be false
+      expect(vmt.errors.messages).to eq({:architecture => ['is not included in the list']})
+    end
+  end
+
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
     subject { create(:virtual_machine_template, source_vm: vm, state: :saving) }

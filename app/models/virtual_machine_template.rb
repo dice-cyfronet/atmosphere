@@ -25,6 +25,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
   enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
   validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
+  validates :architecture, inclusion: %w(i386 x86_64)
   before_update :release_source_vm, if: :saved?
   after_update :destroy_source_vm, if: :saved?
   before_destroy :cant_destroy_non_managed_vmt

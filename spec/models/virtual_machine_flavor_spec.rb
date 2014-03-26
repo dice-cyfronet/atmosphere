@@ -14,5 +14,12 @@
 require 'spec_helper'
 
 describe VirtualMachineFlavor do
-  pending "add some examples to (or delete) #{__FILE__}"
+  context 'supported architectures validation' do
+    it "adds 'invalid architexture' error message" do
+      fl = build(:virtual_machine_flavor, supported_architectures: 'invalid architecture')
+      saved = fl.save
+      expect(saved).to be false
+      expect(fl.errors.messages).to eq({:supported_architectures => ['is not included in the list']})
+    end
+  end
 end
