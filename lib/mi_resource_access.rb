@@ -9,10 +9,10 @@ class MiResourceAccess
     response = @connection.get '/api/hasrole/',
       {local_id: local_id, type: @type, role: role}
 
-    response.status == 200 && response.body == 'True'
+    response.status == 200 && response.body == 'true'
   end
 
-  def avaialbe_resource_ids(role)
+  def availabe_resource_ids(role)
     response = @connection.get '/api/resources',
       {type: @type, role: role}
 
