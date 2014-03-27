@@ -33,7 +33,7 @@ class MiApplianceTypePdp
   # `Reader` or `Manager` role assigned for this AT.
   #
   def can_start_in_production?(at)
-    !at.development? && has_role?(at, :Reader, :Manager)
+    !at.development? && has_role?(at, :Reader)
   end
 
   #
@@ -41,7 +41,7 @@ class MiApplianceTypePdp
   # when user has `Reader` or `Manager` role assigned for this AT.
   #
   def can_start_in_development?(at)
-    has_role?(at, :Editor, :Manager)
+    has_role?(at, :Editor)
   end
 
   #
@@ -66,10 +66,10 @@ class MiApplianceTypePdp
   #    - `:manager` AT available for manager (only manager role)
   #
   def filter(ats, filter=nil)
-    roles = filter_roles(filter)
+    role = filter_role(filter)
 
     where_condition = filter == :production ? {visible_to: :all} : {}
-    where_condition[:id] = availabe_resource_ids(roles)
+    where_condition[:id] = availabe_resource_ids(role)
 
     ats.where(where_condition)
   end
@@ -80,19 +80,15 @@ class MiApplianceTypePdp
     roles.detect { |role|  @resource_access.has_role?(at.id, role) }
   end
 
-  def availabe_resource_ids(roles)
-    roles.inject(Set.new) do |ids, role|
-      role_ids = @resource_access.availabe_resource_ids(role)
-      ids.merge(role_ids)
-    end.to_a
+  def availabe_resource_ids(role)
+    @resource_access.availabe_resource_ids(role)
   end
 
-  def filter_roles(filter)
+  def filter_role(filter)
     case filter
-      when nil          then [:Reader, :Editor, :Manager]
-      when :production  then [:Reader, :Manager]
-      when :development then [:Editor, :Manager]
-      else [:Manager]
+      when :manage  then :Manager
+      when :development then :Editor
+      else :Reader
     end
   end
 end
