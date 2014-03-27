@@ -2,7 +2,8 @@ class UrlAvailabilityCheck
 
   def is_available(url, timeout = 3)
     begin
-      response = Faraday.get do |req|
+      connection = Faraday.new url, :ssl => {:verify => false}
+      response = connection.get do |req|
         req.url url
         req.options.timeout = timeout
         req.options.open_timeout = timeout
