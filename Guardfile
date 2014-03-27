@@ -1,4 +1,4 @@
-guard 'spring', :rspec_cli => '--color' do
+guard :rspec, cmd: 'spring rspec' do
    watch('config/application.rb')
     watch('config/environment.rb')
     watch('config/environments/test.rb')
