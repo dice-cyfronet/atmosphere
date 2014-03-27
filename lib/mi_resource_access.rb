@@ -26,9 +26,9 @@ class MiResourceAccess
   end
 
   def initialize_connection(options)
-    url = options[:url] || Air.config.vph.host
-    ticket = options[:ticket]
+    url    = options[:url]
     verify = options[:verify]
+    ticket = options[:ticket]
 
     Faraday.new(url: url, :ssl => {:verify => verify}) do |faraday|
       faraday.request :url_encoded

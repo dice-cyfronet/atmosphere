@@ -7,7 +7,12 @@ describe MiApplianceTypePdp do
 
   before do
     allow(resource_access_class).to receive(:new)
-      .with('AtomicService', {ticket: ticket}).and_return(resource_access)
+      .with(
+        'AtomicService', {
+          ticket: ticket,
+          verify: Air.config.vph.ssl_verify,
+          url: Air.config.vph.host,
+      }).and_return(resource_access)
   end
 
   subject { MiApplianceTypePdp.new(ticket, resource_access_class) }

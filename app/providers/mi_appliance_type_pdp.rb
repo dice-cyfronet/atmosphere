@@ -1,3 +1,4 @@
+require 'mi_resource_access'
 #
 # Integration with Master Interface (MI) sharing mechanism.
 # Basically user can have assigned three roles for every resource
@@ -18,7 +19,12 @@
 #
 class MiApplianceTypePdp
   def initialize(ticket, resource_access_class=MiResourceAccess)
-    @resource_access = resource_access_class.new('AtomicService', ticket: ticket)
+    @resource_access = resource_access_class.new(
+                          'AtomicService',
+                          ticket: ticket,
+                          verify: Air.config.vph.ssl_verify,
+                          url: Air.config.vph.host,
+                        )
   end
 
   #
