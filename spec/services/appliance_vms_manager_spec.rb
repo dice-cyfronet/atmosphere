@@ -102,46 +102,62 @@ describe ApplianceVmsManager do
       double('appliance',
         :state= => true,
         :billing_state= => true,
-        :state_explanation= => true
+        :state_explanation= => true,
+
+        user_data: 'user data',
+        user_key: 'user key',
+
+        virtual_machines: double(create: vm)
       )
     end
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
 
-    let(:tmpl)   { 'tmpl' }
+    let(:vm_creator) { double('vm creator', :spawn_vm! => 'server_id') }
+    let(:vm_creator_class) { double('vm creator class') }
+
+    let(:tmpl)   { double('tmpl', compute_site: 'cs') }
     let(:flavor) { 'flavor' }
     let(:name)   { 'name' }
     let(:vm)     { 'vm' }
 
-    subject { ApplianceVmsManager.new(appl, updater_class) }
+    subject { ApplianceVmsManager.new(appl, updater_class, vm_creator_class) }
 
     before do
-      allow(VirtualMachine).to receive(:create).and_return(vm)
+      allow(vm_creator_class).to receive(:new).with(tmpl,
+        {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
+          .and_return(vm_creator)
     end
 
     context 'when user can afford to spawn VM with selected flavor' do
       before do
         allow(BillingService).to receive(:can_afford_flavor?)
           .with(appl, flavor).and_return(true)
+      end
+
+      it 'creates new VM' do
+        expect(appl.virtual_machines).to receive(:create) do |params|
+          expect(params[:name]).to eq name
+          expect(params[:source_template]).to eq tmpl
+          expect(params[:virtual_machine_flavor]).to eq flavor
+          expect(params[:managed_by_atmosphere]).to be_true
+          expect(params[:id_at_site]).to eq 'server_id'
+          expect(params[:compute_site]).to eq tmpl.compute_site
+        end
 
         subject.spawn_vm!(tmpl, flavor, name)
       end
 
-      it 'creates new VM' do
-        expect(VirtualMachine).to have_received(:create) do |params|
-          expect(params[:name]).to eq name
-          expect(params[:source_template]).to eq tmpl
-          expect(params[:virtual_machine_flavor]).to eq flavor
-          expect(params[:appliances]).to eq [appl]
-        end
-      end
-
       it 'sets state to satisfied' do
-        expect(appl).to have_received(:state=).with(:satisfied)
+        expect(appl).to receive(:state=).with(:satisfied)
+
+        subject.spawn_vm!(tmpl, flavor, name)
       end
 
       it 'updates appliance services with new VM hint' do
-        expect(updater).to have_received(:update).with({ new_vm: vm })
+        expect(updater).to receive(:update).with({ new_vm: vm })
+
+        subject.spawn_vm!(tmpl, flavor, name)
       end
     end
 
@@ -154,7 +170,7 @@ describe ApplianceVmsManager do
       end
 
       it 'does not create any new VM' do
-        expect(VirtualMachine).to_not have_received(:create)
+        expect(appl.virtual_machines).to_not have_received(:create)
       end
 
       it_behaves_like 'not_enough_funds'

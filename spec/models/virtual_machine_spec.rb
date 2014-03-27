@@ -88,7 +88,6 @@ describe VirtualMachine do
         vm_ipless.ip = priv_ip
         expect { vm_ipless.save }.to change {PortMapping.count}.by 1
       end
-
     end
 
     describe 'unregistration' do
@@ -133,7 +132,6 @@ describe VirtualMachine do
             create(:port_mapping, virtual_machine: vm)
             expect { vm.save }.to change {PortMapping.count}.by -2
           end
-
         end
       end
 
@@ -142,9 +140,7 @@ describe VirtualMachine do
         it 'is not performed after VM with blank IP was destroyed' do
           vm_ipless.destroy
         end
-
       end
-
     end
 
     context 'regeneration' do
@@ -168,8 +164,6 @@ describe VirtualMachine do
           vm.name = 'so much changed'
           vm.save
         end
-
-
       end
 
       context 'is performed' do
@@ -180,117 +174,6 @@ describe VirtualMachine do
           vm.save
         end
       end
-    end
-
-  end
-
-  context 'initital configuration' do
-
-
-
-  end
-
-
-  context 'instantiation' do
-
-    VM_NAME = 'key-tester'
-
-    let(:cloud_client) { double('cloud client') }
-    let(:servers) { double('servers') }
-    let(:server) { double('server') }
-    let(:appl_dev_mode) { create(:appl_dev_mode) }
-
-    before do
-      opt = double('optimizer')
-      allow(opt).to receive (:run)
-      Optimizer.stub(:instance).and_return(opt)
-      Fog::Compute.stub(:new).and_return(cloud_client)
-    end
-
-    let(:init_conf) { create(:appliance_configuration_instance) }
-    let(:tmpl) { create(:virtual_machine_template) }
-
-    context 'flavor' do
-
-      it 'is included in request to cloud' do
-        allow(cloud_client).to receive(:servers).and_return(servers)
-        server_params = {flavor_ref: default_flavor.id_at_site, flavor_id: default_flavor.id_at_site, name: VM_NAME, image_ref: tmpl.id_at_site, image_id: tmpl.id_at_site, user_data: appl_dev_mode.appliance_configuration_instance.payload}
-        expect(servers).to receive(:create).with(server_params).and_return(server)
-        expect(server).to receive(:id).twice.and_return 1
-        create(:virtual_machine, compute_site: cs, appliances: [appl_dev_mode], id_at_site: nil, name: VM_NAME, source_template: tmpl, virtual_machine_flavor: default_flavor)
-      end
-
-    end
-
-    context 'user key' do
-
-      it 'imports user key to compute site' do
-        allow(cloud_client).to receive(:servers).and_return(servers)
-        allow(servers).to receive(:create).and_return(server)
-        allow(server).to receive(:id).twice.and_return 1
-        key = create(:user_key)
-        expect(cloud_client).to receive(:import_key_pair).with(key.id_at_site, key.public_key)
-        appl = create(:appl_dev_mode, user_key: key)
-        create(:virtual_machine, compute_site: cs, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl)
-      end
-
-      it 'injects user key if key is defined' do
-        expect(cloud_client).to receive(:servers).and_return(servers)
-        allow(cloud_client).to receive(:import_key_pair)
-        key = create(:user_key)
-        appl = create(:appl_dev_mode, user_key: key)
-        server_params = {flavor_ref: default_flavor.id_at_site, flavor_id: default_flavor.id_at_site, name: VM_NAME, image_ref: tmpl.id_at_site, image_id: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload, key_name: key.id_at_site}
-        expect(servers).to receive(:create).with(server_params).and_return(server)
-        expect(server).to receive(:id).twice.and_return 1
-        create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl, virtual_machine_flavor: default_flavor)
-      end
-
-      it 'does not inject user key if key is undefined' do
-        expect(cloud_client).to receive(:servers).and_return(servers)
-        appl = create(:appl_dev_mode)
-        server_params = {flavor_ref: default_flavor.id_at_site, flavor_id: default_flavor.id_at_site, name: VM_NAME, image_ref: tmpl.id_at_site, image_id: tmpl.id_at_site, user_data: appl.appliance_configuration_instance.payload}
-        expect(servers).to receive(:create).with(server_params).and_return(server)
-        expect(server).to receive(:id).twice.and_return 1
-        create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl, virtual_machine_flavor: default_flavor)
-      end
-
-    end
-
-    context 'initial configuration' do
-
-      it 'is injected payload not blank' do
-        expect(cloud_client).to receive(:servers).and_return(servers)
-        server_params = {flavor_ref: default_flavor.id_at_site, flavor_id: default_flavor.id_at_site, name: VM_NAME, image_ref: tmpl.id_at_site, image_id: tmpl.id_at_site, user_data: appl_dev_mode.appliance_configuration_instance.payload}
-        expect(servers).to receive(:create).with(server_params).and_return(server)
-        expect(server).to receive(:id).twice.and_return 1
-        create(:virtual_machine, appliances: [appl_dev_mode], id_at_site: nil, name: VM_NAME, source_template: tmpl, virtual_machine_flavor: default_flavor)
-      end
-
-      it 'is not injected if payload is blank' do
-        expect(cloud_client).to receive(:servers).and_return(servers)
-        appl = create(:appl_dev_mode, appliance_configuration_instance: ApplianceConfigurationInstance.create())
-        server_params = {flavor_ref: default_flavor.id_at_site, flavor_id: default_flavor.id_at_site, name: VM_NAME, image_ref: tmpl.id_at_site, image_id: tmpl.id_at_site}
-        expect(servers).to receive(:create).with(server_params).and_return(server)
-        expect(server).to receive(:id).twice.and_return 1
-        create(:virtual_machine, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl, virtual_machine_flavor: default_flavor)
-      end
-
-    end
-  end
-
-  context 'creating new virtual machine' do
-    let(:appl) { create(:appliance) }
-    let(:tmpl) { create(:virtual_machine_template) }
-    let(:vm) { create(:virtual_machine, compute_site: cs, appliances: [appl], id_at_site: nil, name: VM_NAME, source_template: tmpl) }
-    let(:external_vm) { create(:virtual_machine, compute_site: cs, appliances: [appl], id_at_site: 'vm_id', name: VM_NAME, source_template: tmpl) }
-
-
-    it 'sets managed_by_atmosphere to true for spawned VM' do
-      expect(vm.managed_by_atmosphere).to be_true
-    end
-
-    it 'sets managed_by_atmosphere to false for external VM' do
-      expect(external_vm.managed_by_atmosphere).to be_false
     end
   end
 

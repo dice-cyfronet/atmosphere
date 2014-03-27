@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.3'
+gem 'rails', '4.0.4'
 
 # Supported DBs
 gem 'mysql2', group: :mysql
@@ -13,7 +13,7 @@ gem 'foreigner'
 gem 'enumerize'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.0'
+gem 'sass-rails', '~> 4.0.2'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -47,7 +47,7 @@ gem 'devise', '~>3.2'
 gem 'cancan'
 gem 'role_model'
 gem 'omniauth'
-gem 'omniauth-vph', git: 'http://gitlab.dev.cyfronet.pl/atmosphere/omniauth-vph.git', branch: :master
+gem 'omniauth-vph', '~>1.0'
 
 gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
@@ -101,22 +101,20 @@ end
 group :development, :test do
   gem 'pry-rails'
 
-  gem 'rspec-rails'
-  gem 'shoulda-matchers'
+  gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'guard-rspec', require: false
+  gem 'guard-spring'
+end
 
-  # Guard
-  gem 'guard-rspec'
-  gem 'spork-rails', github: 'sporkrb/spork-rails'
-  gem 'guard-spork'
-  gem 'libnotify'
+group :test do
+  gem 'rspec-rails'
+  gem 'rspec-sidekiq'
+  gem 'shoulda-matchers'
 
   gem 'factory_girl'
   gem 'ffaker'
   gem 'database_cleaner'
-end
-
-group :test do
-  gem 'rspec-sidekiq'
 end
 
 # Use ActiveModel has_secure_password

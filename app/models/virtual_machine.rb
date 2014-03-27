@@ -30,7 +30,6 @@ class VirtualMachine < ActiveRecord::Base
   enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving']
   validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)
 
-  before_create :instantiate_vm, unless: :id_at_site
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
   before_destroy :cant_destroy_non_managed_vm
@@ -89,33 +88,6 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   private
-
-  def instantiate_vm
-    logger.info 'Instantiating'
-    vm_tmpl = VirtualMachineTemplate.find(virtual_machine_template_id)
-    cloud_client = vm_tmpl.compute_site.cloud_client
-    flavor_id = (virtual_machine_flavor.id_at_site if virtual_machine_flavor) || compute_site.virtual_machine_flavors.first.id_at_site
-    servers_params = {flavor_ref: flavor_id, flavor_id: flavor_id, name: name, image_ref: vm_tmpl.id_at_site, image_id: vm_tmpl.id_at_site}
-    if vm_tmpl.compute_site.technology == 'aws'
-      servers_params[:groups] = ['mniec_permit_all']
-    end
-    unless appliances.blank?
-      user_data = appliances.first.appliance_configuration_instance.payload
-      servers_params[:user_data] = user_data if user_data
-      user_key = appliances.first.user_key
-      if user_key
-        user_key.import_to_cloud(vm_tmpl.compute_site)
-        servers_params[:key_name] = user_key.id_at_site
-      end
-    end
-    logger.debug "Params of instantiating server #{servers_params}"
-    server = cloud_client.servers.create(servers_params)
-    logger.info "instantiated #{server.id}"
-    self[:id_at_site] = server.id
-    self[:compute_site_id] = vm_tmpl.compute_site_id
-    self[:state] = :build
-    self[:managed_by_atmosphere] = true
-  end
 
   def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client

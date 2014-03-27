@@ -189,4 +189,17 @@ describe ComputeSite do
       expect(cs.site_id_previously_changed?).to be_true
     end
   end
+
+  context '#default_flavor' do
+    let(:first_flavor) { build(:virtual_machine_flavor) }
+    let(:cs) do
+      build(:compute_site).tap do |cs|
+        cs.virtual_machine_flavors = [first_flavor, build(:virtual_machine_flavor)]
+      end
+    end
+
+    it 'returns first flavor as default one' do
+      expect(cs.default_flavor).to eq first_flavor
+    end
+  end
 end

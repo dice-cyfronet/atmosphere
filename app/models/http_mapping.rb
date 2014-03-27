@@ -25,14 +25,14 @@ class HttpMapping < ActiveRecord::Base
   enumerize :application_protocol, in: [:http, :https]
   enumerize :monitoring_status, in: [:pending, :ok, :lost, :not_monitored]
 
-  after_destroy :rm_proxy
+  around_destroy :rm_proxy_after_destroy
 
   def update_proxy(ips = nil)
     create_or_update_proxy(ips) || rm_proxy
   end
 
   def proxy_name
-    "#{service_name}-#{appliance.id}"
+    "#{service_name}-#{appliance_id}"
   end
 
   def create_or_update_proxy(ips = nil)
@@ -51,8 +51,8 @@ class HttpMapping < ActiveRecord::Base
   delegate :service_name, :target_port, :properties, to: :port_mapping_template
   delegate :active_vms, to: :appliance
 
-  def rm_proxy
-    Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::RmProxy, 'args' => [proxy_name, application_protocol])
+  def rm_proxy(name=proxy_name)
+    Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::RmProxy, 'args' => [name, application_protocol])
   end
 
   def has_workers?(ips)
@@ -61,5 +61,11 @@ class HttpMapping < ActiveRecord::Base
 
   def workers_ips
     @workers_ips ||= active_vms.pluck(:ip)
+  end
+
+  def rm_proxy_after_destroy
+    p_name = proxy_name
+    yield
+    rm_proxy(p_name)
   end
 end

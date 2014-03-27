@@ -1,5 +1,5 @@
 module VphHelper
-  def vph_login_enabled?
-    Devise.omniauth_providers.include?(:vph)
+  def vphticket_login_enabled?
+    Devise.omniauth_providers.include?(:vphticket)
   end
 end

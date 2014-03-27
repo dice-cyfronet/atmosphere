@@ -1,8 +1,11 @@
 class ApplianceVmsManager
 
-  def initialize(appliance, updater_class=Proxy::ApplianceProxyUpdater)
+  def initialize(appliance,
+      updater_class=Proxy::ApplianceProxyUpdater,
+      vm_creator_class=Cloud::VmCreator)
     @appliance = appliance
     @updater = updater_class.new(appliance)
+    @vm_creator_class = vm_creator_class
   end
 
   def can_reuse_vm?
@@ -33,8 +36,17 @@ class ApplianceVmsManager
   end
 
   def instantiate_vm(tmpl, flavor, name)
-    vm = VirtualMachine.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor, appliances: [appliance])
+    server_id = start_vm_on_cloud(tmpl, flavor, name)
+    vm = appliance.virtual_machines.create(name: name, source_template: tmpl, state: :build, virtual_machine_flavor: flavor, managed_by_atmosphere: true, id_at_site: server_id, compute_site: tmpl.compute_site)
     appliance_satisfied(vm)
+  end
+
+  def start_vm_on_cloud(tmpl, flavor, name)
+    @vm_creator_class.new(tmpl,
+        flavor: flavor, name: name,
+        user_data: appliance.user_data,
+        user_key: appliance.user_key
+      ).spawn_vm!
   end
 
   def add_vm(vm)

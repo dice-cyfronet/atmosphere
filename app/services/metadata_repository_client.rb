@@ -35,6 +35,14 @@ class MetadataRepositoryClient
     status
   end
 
+  # Removes the MR entry regardless the fact it exists in our model or not; useful for sweeping the MR store
+  def purge_metadata_key(metadata_global_id)
+    return unless can_write
+    status, response = do_http(server_endpoint + metadata_global_id, :delete)
+    status ? logme("Response body: #{response.body}") : logme_problem
+    status
+  end
+
   # Gets all published, active AtomicServices globalID
   def get_active_global_ids(type = 'AtomicService')
     return unless can_read

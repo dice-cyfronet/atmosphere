@@ -15,6 +15,7 @@
 #
 
 require 'spec_helper'
+require 'securerandom'
 
 describe VirtualMachineTemplate do
 
@@ -23,6 +24,20 @@ describe VirtualMachineTemplate do
   end
 
   expect_it { to ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
+
+  context 'name sanitization' do
+    it 'appends underscores to name that is too short' do
+      expect(VirtualMachineTemplate.sanitize_tmpl_name('s')).to eq 's__'
+    end
+    
+    it 'trims too long name to 128 characters' do
+      expect(VirtualMachineTemplate.sanitize_tmpl_name(SecureRandom.hex(65)).length).to eq 128
+    end
+
+    it 'replaces illegal characters with underscore' do
+      expect(VirtualMachineTemplate.sanitize_tmpl_name('!@#$%^&* ')).to eq '_________'
+    end
+  end
 
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }

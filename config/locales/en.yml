@@ -92,3 +92,10 @@ en:
 
   api:
     e403: "You are not allowed to %{action} this %{type}"
+
+  activerecord:
+    errors:
+      models:
+        virtual_machine_template:
+          attributes:
+            name:
