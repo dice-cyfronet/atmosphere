@@ -16,11 +16,11 @@ describe Devise::Strategies::MiTokenAuthenticatable do
   let(:mi_user_info) { { "mi" => "user details" } }
 
   before do
-    Air.config.vph.stub(:host).and_return(host)
-    Air.config.vph.stub(:roles_map).and_return(roles_map)
-    Air.config.vph.stub(:ssl_verify).and_return(false)
+    allow(Air.config.vph).to receive(:host).and_return(host)
+    allow(Air.config.vph).to receive(:roles_map).and_return(roles_map)
+    allow(Air.config.vph).to receive(:ssl_verify).and_return(false)
 
-    ::OmniAuth::Vph::Adaptor.stub(:new).with({host: host, roles_map: roles_map, ssl_verify: false}).and_return(adaptor)
+    allow(::OmniAuth::Vph::Adaptor).to receive(:new).with({host: host, roles_map: roles_map, ssl_verify: false}).and_return(adaptor)
 
     allow(adaptor).to receive(:user_info).with(valid_mi_token).and_return(mi_user_info)
 
