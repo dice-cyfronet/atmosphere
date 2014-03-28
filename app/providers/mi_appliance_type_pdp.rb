@@ -66,9 +66,10 @@ class MiApplianceTypePdp
   #    - `:manager` AT available for manager (only manager role)
   #
   def filter(ats, filter=nil)
-    role = filter_role(filter)
+    filter_str = filter.to_s
+    role = filter_role(filter_str)
 
-    where_condition = filter == :production ? {visible_to: :all} : {}
+    where_condition = visibility_for_filter(filter_str)
     where_condition[:id] = availabe_resource_ids(role)
 
     ats.where(where_condition)
@@ -84,10 +85,14 @@ class MiApplianceTypePdp
     @resource_access.availabe_resource_ids(role)
   end
 
+  def visibility_for_filter(filter)
+    filter == 'production' ? {visible_to: :all} : {}
+  end
+
   def filter_role(filter)
     case filter
-      when :manage  then :Manager
-      when :development then :Editor
+      when 'manage'  then :Manager
+      when 'development' then :Editor
       else :Reader
     end
   end
