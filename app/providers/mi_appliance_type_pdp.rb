@@ -86,7 +86,7 @@ class MiApplianceTypePdp
   end
 
   def visibility_for_filter(filter)
-    filter == 'production' ? {visible_to: :all} : {}
+    filter == 'production' ? {visible_to: [:all, :owner]} : {}
   end
 
   def filter_role(filter)

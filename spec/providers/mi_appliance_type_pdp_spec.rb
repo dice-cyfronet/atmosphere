@@ -79,7 +79,7 @@ describe MiApplianceTypePdp do
 
   context 'with resources list' do
     let!(:at1) { create(:appliance_type, visible_to: :all) }
-    let!(:at2) { create(:appliance_type) }
+    let!(:at2) { create(:appliance_type, visible_to: :owner) }
     let!(:at3) { create(:appliance_type, visible_to: :all) }
     let!(:at4) { create(:appliance_type, visible_to: :developer) }
 
@@ -105,8 +105,9 @@ describe MiApplianceTypePdp do
     it 'filter available appliance types for production' do
       filtered_ats = subject.filter(ApplianceType.all, :production)
 
-      expect(filtered_ats.size).to eq 2
+      expect(filtered_ats.size).to eq 3
       expect(filtered_ats).to include at1
+      expect(filtered_ats).to include at2
       expect(filtered_ats).to include at3
     end
 
