@@ -6,12 +6,15 @@ describe MiApplianceTypePdp do
   let(:ticket) { 'ticket' }
 
   before do
+    allow(Air.config.vph).to receive(:host).and_return('https://mi.host')
+    allow(Air.config.vph).to receive(:ssl_verify).and_return(false)
+
     allow(resource_access_class).to receive(:new)
       .with(
         'AtomicService', {
           ticket: ticket,
-          verify: Air.config.vph.ssl_verify,
-          url: Air.config.vph.host,
+          verify: false,
+          url: 'https://mi.host',
       }).and_return(resource_access)
   end
 

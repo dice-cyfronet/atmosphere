@@ -25,9 +25,6 @@ development:
 
 test:
   <<: *defaults
-  vph:
-    host: 'https://mi.host'
-    ssl_verify: false
 
   # Simple config for MetadataRegistry setup
   metadata:
