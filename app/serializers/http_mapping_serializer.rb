@@ -1,7 +1,7 @@
 class HttpMappingSerializer < ActiveModel::Serializer
   include RecordFilter
   embed :ids
-  attributes :id, :application_protocol, :url
+  attributes :id, :application_protocol, :url, :monitoring_status
   has_one :appliance, :port_mapping_template
 
   can_filter_by :appliance_id
