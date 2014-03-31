@@ -101,7 +101,7 @@ module Api
       end
 
       def pdp
-        Air.config.at_pdp_class.new(mi_ticket)
+        Air.config.at_pdp_class.new(current_user)
       end
     end
   end

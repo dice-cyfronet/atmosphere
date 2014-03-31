@@ -69,6 +69,10 @@ module Api
       def in_set_context?
         !params[:appliance_set_id].blank?
       end
+
+      def mi_ticket
+        current_user ? current_user.mi_ticket : nil
+      end
     end
   end
 end

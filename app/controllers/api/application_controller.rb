@@ -80,9 +80,5 @@ module Api
     def user_token
       params[Air.config.token_authentication_key].presence || request.headers[Air.config.header_token_authentication_key].presence
     end
-
-    def mi_ticket
-      current_user ? current_user.mi_ticket : nil
-    end
   end
 end

@@ -4,6 +4,7 @@ describe MiApplianceTypePdp do
   let(:resource_access) { double('mi resource access') }
   let(:resource_access_class) { double }
   let(:ticket) { 'ticket' }
+  let(:current_user) { double(mi_ticket: ticket) }
 
   before do
     allow(Air.config.vph).to receive(:host).and_return('https://mi.host')
@@ -18,7 +19,7 @@ describe MiApplianceTypePdp do
       }).and_return(resource_access)
   end
 
-  subject { MiApplianceTypePdp.new(ticket, resource_access_class) }
+  subject { MiApplianceTypePdp.new(current_user, resource_access_class) }
 
   context 'with single resource' do
     let(:at) { build(:appliance_type, id: 1) }

@@ -18,10 +18,11 @@ require 'mi_resource_access'
 # to `all` or `owner`.
 #
 class MiApplianceTypePdp
-  def initialize(ticket, resource_access_class=MiResourceAccess)
+  def initialize(current_user, resource_access_class=MiResourceAccess)
+    @current_user = current_user
     @resource_access = resource_access_class.new(
                           'AtomicService',
-                          ticket: ticket,
+                          ticket: current_user.mi_ticket,
                           verify: Air.config.vph.ssl_verify,
                           url: Air.config.vph.host,
                         )
