@@ -13,7 +13,7 @@ class Settings < Settingslogic
 
     def at_pdp_class
       Settings['at_pdp'] ?
-        Settings.at_pdp.constantize : NullPdp
+        Settings.at_pdp.constantize : DefaultPdp
     end
 
     private

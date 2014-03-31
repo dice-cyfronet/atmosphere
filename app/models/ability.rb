@@ -2,6 +2,7 @@ class Ability
   include CanCan::Ability
 
   def initialize(user, load_admin_abilities = true)
+    @user = user
 
     ### Logged in user abilities
     if user
@@ -41,7 +42,11 @@ class Ability
     can [:read, :update, :destroy], ApplianceSet, user_id: user.id
 
     ## Appliances
-    can [:read, :create, :update, :destroy, :endpoints], Appliance, appliance_set: { user_id: user.id }
+    can [:read, :update, :destroy, :endpoints], Appliance, appliance_set: { user_id: user.id }
+    can :create, Appliance do |appl|
+      appl.appliance_set.user_id == user.id && can_start?(appl)
+    end
+
     can :index, ApplianceConfigurationInstance, appliances: { appliance_set: { user_id: user.id } }
     can :show, ApplianceConfigurationInstance do |conf_instance|
       ApplianceSet.joins(:appliances).where(appliances: {appliance_configuration_instance_id: conf_instance.id}, user_id: user.id).count > 0
@@ -50,22 +55,31 @@ class Ability
     ## Appliance types
     can [:read, :endpoint_payload], ApplianceType, visible_to: 'all'
     can [:read, :endpoint_payload], ApplianceType, user_id: user.id
-    can [:update, :destroy], ApplianceType, user_id: user.id
+    can [:update, :destroy], ApplianceType do |at|
+      pdp.can_manage?(at)
+    end
 
     ## Elements of Appliance Types
     can :read, ApplianceConfigurationTemplate, appliance_type: { user_id: user.id }
     can :read, ApplianceConfigurationTemplate, appliance_type: { visible_to: 'all' }
-    can [:create, :update, :destroy], ApplianceConfigurationTemplate, appliance_type: {user_id: user.id}
+    can [:create, :update, :destroy], ApplianceConfigurationTemplate do |act|
+      pdp.can_manage?(act.appliance_type)
+    end
 
     can :read, PortMappingTemplate, appliance_type: { user_id: user.id }
     can :read, PortMappingTemplate, appliance_type: { visible_to: 'all' }
-    can [:create, :update, :destroy], PortMappingTemplate, appliance_type: {user_id: user.id}
     can [:read, :create, :update, :destroy], PortMappingTemplate, dev_mode_property_set: { appliance: { appliance_set: { user_id: user.id } } }
+    can [:create, :update, :destroy], PortMappingTemplate do |pmt|
+      pmt.appliance_type && pdp.can_manage?(pmt.appliance_type)
+    end
 
     can [:read, :descriptor], Endpoint, port_mapping_template: { appliance_type: { user_id: user.id } }
     can :read, Endpoint, port_mapping_template: { appliance_type: { visible_to: 'all' } }
-    can [:create, :update, :destroy], Endpoint, port_mapping_template: { appliance_type: {user_id: user.id} }
     can [:read, :create, :update, :destroy], Endpoint, port_mapping_template: { dev_mode_property_set: { appliance: { appliance_set: { user_id: user.id } } } }
+    can [:create, :update, :destroy], Endpoint do |endpoint|
+      pmt = endpoint.port_mapping_template
+      pmt && pmt.appliance_type && pdp.can_manage?(pmt.appliance_type)
+    end
 
     can :read, PortMappingProperty, port_mapping_template: { appliance_type: { user_id: user.id } }
     can :read, PortMappingProperty, port_mapping_template: { appliance_type: { visible_to: 'all' } }
@@ -98,5 +112,15 @@ class Ability
 
   def owned_payloads
     [SecurityProxy, SecurityPolicy]
+  end
+
+  def pdp
+    Air.config.at_pdp_class.new(@user)
+  end
+
+  def can_start?(appliance)
+    appliance.development? ?
+      pdp.can_start_in_development?(appliance.appliance_type) :
+      pdp.can_start_in_production?(appliance.appliance_type)
   end
 end

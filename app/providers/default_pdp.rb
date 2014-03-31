@@ -1,6 +1,6 @@
-class NullPdp
-  def initialize(ticket)
-
+class DefaultPdp
+  def initialize(current_user)
+    @current_user = current_user
   end
 
   def can_start_in_production?(at)
@@ -12,7 +12,7 @@ class NullPdp
   end
 
   def can_manage?(at)
-    true
+    at.user_id == @current_user.id
   end
 
   def filter(ats, filter=nil)
