@@ -34,7 +34,7 @@ class MiApplianceTypePdp
   # `Reader` or `Manager` role assigned for this AT.
   #
   def can_start_in_production?(at)
-    !at.development? && has_role?(at, :Reader)
+    !at.development? && can_perform_as?(at, :Reader)
   end
 
   #
@@ -42,7 +42,7 @@ class MiApplianceTypePdp
   # when user has `Reader` or `Manager` role assigned for this AT.
   #
   def can_start_in_development?(at)
-    has_role?(at, :Editor)
+    can_perform_as?(at, :Editor)
   end
 
   #
@@ -50,7 +50,7 @@ class MiApplianceTypePdp
   # assigned for this AT.
   #
   def can_manage?(at)
-    has_role?(at, :Manager)
+    can_perform_as?(at, :Manager)
   end
 
   #
@@ -71,15 +71,19 @@ class MiApplianceTypePdp
     role = mode_role(mode_str)
 
     where_condition = visibility_for_mode(mode_str)
-    where_condition[:id] = availabe_resource_ids(role)
+    where_condition[:id] = availabe_resource_ids(role) unless show_all?
 
     ats.where(where_condition)
   end
 
   private
 
-  def has_role?(at, *roles)
-    roles.detect { |role|  @resource_access.has_role?(at.id, role) }
+  def can_perform_as?(at, role)
+    show_all? || has_role?(at, role)
+  end
+
+  def has_role?(at, role)
+    @resource_access.has_role?(at.id, role)
   end
 
   def availabe_resource_ids(role)
@@ -96,5 +100,13 @@ class MiApplianceTypePdp
       when 'development' then :Editor
       else :Reader
     end
+  end
+
+  def show_all?
+    Air.config.skip_pdp_for_admin && admin?
+  end
+
+  def admin?
+    @current_user.has_role?(:admin)
   end
 end

@@ -20,6 +20,9 @@ defaults: &defaults
   #token_authentication_key: private_token
   #mi_authentication_key: mi_ticket
 
+  #at_pdp: NullPdp
+  #skip_pdp_for_admin: false
+
 development:
   <<: *defaults
 
