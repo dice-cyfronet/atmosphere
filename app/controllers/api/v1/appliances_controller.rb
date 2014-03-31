@@ -62,10 +62,6 @@ module Api
         @appliance = @creator.appliance
       end
 
-      def mi_ticket
-        request.headers[Air.config.header_mi_authentication_key] || params[Air.config.mi_authentication_key]
-      end
-
       def load_admin_abilities?
         in_set_context? || super
       end

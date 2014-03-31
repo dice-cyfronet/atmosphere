@@ -11,6 +11,11 @@ class Settings < Settingslogic
       to_header_key(mi_authentication_key)
     end
 
+    def at_pdp_class
+      Settings['at_pdp'] ?
+        Settings.at_pdp.constantize : NullPdp
+    end
+
     private
 
     def to_header_key(key)

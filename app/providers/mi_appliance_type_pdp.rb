@@ -65,11 +65,11 @@ class MiApplianceTypePdp
   #      the user (roles editor or manager)
   #    - `:manager` AT available for manager (only manager role)
   #
-  def filter(ats, filter=nil)
-    filter_str = filter.to_s
-    role = filter_role(filter_str)
+  def filter(ats, mode=nil)
+    mode_str = mode.to_s
+    role = mode_role(mode_str)
 
-    where_condition = visibility_for_filter(filter_str)
+    where_condition = visibility_for_mode(mode_str)
     where_condition[:id] = availabe_resource_ids(role)
 
     ats.where(where_condition)
@@ -85,12 +85,12 @@ class MiApplianceTypePdp
     @resource_access.availabe_resource_ids(role)
   end
 
-  def visibility_for_filter(filter)
-    filter == 'production' ? {visible_to: [:all, :owner]} : {}
+  def visibility_for_mode(mode)
+    mode == 'production' ? {visible_to: [:all, :owner]} : {}
   end
 
-  def filter_role(filter)
-    case filter
+  def mode_role(mode)
+    case mode
       when 'manage'  then :Manager
       when 'development' then :Editor
       else :Reader

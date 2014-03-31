@@ -80,5 +80,9 @@ module Api
     def user_token
       params[Air.config.token_authentication_key].presence || request.headers[Air.config.header_token_authentication_key].presence
     end
+
+    def mi_ticket
+      request.headers[Air.config.header_mi_authentication_key] || params[Air.config.mi_authentication_key]
+    end
   end
 end
