@@ -37,6 +37,16 @@ describe Devise::Strategies::MiTokenAuthenticatable do
     expect(response.status).to eq 200
   end
 
+  it 'authenticate with valid master interface token key and value through header' do
+    get api('/appliance_sets'), nil, {'MI-TICKET' => valid_mi_token}
+    expect(response.status).to eq 200
+  end
+
+  it 'sets user mi ticket in current user object' do
+    get api("/appliance_sets?mi_ticket=#{valid_mi_token}")
+    expect(controller.current_user.mi_ticket).to eq valid_mi_token
+  end
+
   it 'does not authenticate with improper authentication token key' do
     get api("/appliance_sets?mi_ticket=NOT_VALID")
     expect(response.status).to eq 401

@@ -82,7 +82,7 @@ module Api
     end
 
     def mi_ticket
-      request.headers[Air.config.header_mi_authentication_key] || params[Air.config.mi_authentication_key]
+      current_user ? current_user.mi_ticket : nil
     end
   end
 end

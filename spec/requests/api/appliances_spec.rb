@@ -265,14 +265,27 @@ describe Api::V1::AppliancesController do
             }
           end
 
+          before do
+            adaptor = double
+            allow(::OmniAuth::Vph::Adaptor).to receive(:new).and_return(adaptor)
+            mi_user_info = { "mi" => "user details" }
+            allow(adaptor).to receive(:user_info).with('ticket').and_return(mi_user_info)
+            allow(adaptor).to receive(:map_user).with(mi_user_info).and_return({
+                'email' => user.email,
+                'login' => user.login,
+                'full_name' => user.full_name,
+                'roles' => user.roles.to_a
+              })
+          end
+
           it 'creates dynamic configuration with header mi ticket injected' do
-            post api("/appliances", user), dynamic_request_with_mi_ticket_body, {"MI-TICKET" => 'ticket'}
+            post api("/appliances"), dynamic_request_with_mi_ticket_body, {"MI-TICKET" => 'ticket'}
             config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
             expect(config_instance.payload).to eq 'dynamic config with mi_ticket: ticket'
           end
 
           it 'creates dynamic configuration with query param mi ticket injected' do
-            post api("/appliances?mi_ticket=ticket", user), dynamic_request_with_mi_ticket_body
+            post api("/appliances?mi_ticket=ticket"), dynamic_request_with_mi_ticket_body
             config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
             expect(config_instance.payload).to eq 'dynamic config with mi_ticket: ticket'
           end
