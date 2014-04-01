@@ -33,7 +33,7 @@ GET /appliance_types
 }
 ```
 
-You can use any field presented above to filter number of returned appliance types. Additionally, you can add `modes` query param, with one of following values: `production`, `development`, `manage`. As a results atomic services available in concrete mode will be returned.
+You can use any field presented above to filter number of returned appliance types. Additionally, you can add `mode` query param, with one of following values: `production`, `development`, `manage`. As a results atomic services available in concrete mode will be returned.
 
 ## Details of an appliance type
 
