@@ -22,6 +22,10 @@ class DefaultPdp
   private
 
   def visibility_for_filter(filter)
-    filter == 'production' ? {visible_to: [:all, :owner]} : {}
+    case filter
+      when 'production'  then {visible_to: [:all, :owner]}
+      when 'manage'      then {visible_to: :owner}
+      else {}
+    end
   end
 end
