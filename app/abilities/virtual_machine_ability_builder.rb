@@ -1,7 +1,8 @@
 class VirtualMachineAbilityBuilder < AbilityBuilder
 
   def add_user_abilities!
-    can :index, VirtualMachine, appliances: { appliance_set: { user_id: user.id } }
+    can :index, VirtualMachine,
+      appliances: { appliance_set: { user_id: user.id } }
 
     can :show, VirtualMachine do |vm|
       # There is a problem with hash query for getting resource with m2m relation.

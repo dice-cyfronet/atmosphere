@@ -10,7 +10,8 @@ class ApplianceAbilityBuilder < AbilityBuilder
   end
 
   def add_developer_abilities!
-    can :save_vm_as_tmpl, Appliance, appliance_set: {user_id: user.id, appliance_set_type: 'development'}
+    can :save_vm_as_tmpl, Appliance,
+      appliance_set: {user_id: user.id, appliance_set_type: 'development'}
   end
 
   private
