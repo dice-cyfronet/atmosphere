@@ -22,7 +22,6 @@ describe EndpointStatusCheckWorker do
 
     hm_after = HttpMapping.find_by :id => hm_before.id
     expect(hm_after.monitoring_status.ok?).to be true
-
   end
 
   it 'should set status from ok to lost' do
@@ -39,7 +38,6 @@ describe EndpointStatusCheckWorker do
 
     hm_after = HttpMapping.find_by :id => hm_before.id
     expect(hm_after.monitoring_status.lost?).to be true
-
   end
 
   it 'should leave pending' do
@@ -56,8 +54,10 @@ describe EndpointStatusCheckWorker do
 
     hm_after = HttpMapping.find_by :id => hm_before.id
     expect(hm_after.monitoring_status.pending?).to be true
-
   end
 
-
+  it 'does nothing, when mapping not found in db' do
+    expect(url_check).to_not receive(:is_available)
+    EndpointStatusCheckWorker.new(url_check).perform('nonexisting')
+  end
 end
