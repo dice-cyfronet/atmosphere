@@ -14,7 +14,8 @@ GET /http_mappings
             "application_protocol": "http",
             "url": "conn.ca",
             "appliance_id": 11,
-            "port_mapping_template_id": 11
+            "port_mapping_template_id": 11,
+            "monitoring_status": "ok"
         },
         ...
     ]
@@ -40,7 +41,14 @@ Parameters:
             "application_protocol": "http",
             "url": "jacobson.co.uk",
             "appliance_id": 13,
-            "port_mapping_template_id": 13
+            "port_mapping_template_id": 13,
+            "monitoring_status": "pending"
         }
 }
 ```
+
+`monitoring_status` is a field set by the endpoint monitoring system. It has following possible values:
++ `pending` - initial state after appliance is started. It means that appliance is starting and this endpoint is not reachable yet.
++ `ok` - endpoint is reachable
++ `lost` - endpoint was `ok` but right now it is unreachable
++ `not_monitored` - endpoint is not monitored
