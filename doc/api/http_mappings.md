@@ -48,6 +48,7 @@ Parameters:
 ```
 
 `monitoring_status` is a field set by the endpoint monitoring system. It has following possible values:
+
 + `pending` - initial state after appliance is started. It means that appliance is starting and this endpoint is not reachable yet.
 + `ok` - endpoint is reachable
 + `lost` - endpoint was `ok` but right now it is unreachable
