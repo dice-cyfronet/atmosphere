@@ -329,7 +329,7 @@ RSpec::Matchers.define :appl_endpoint_eq do |endpoint, urls|
   match do |actual|
     actual['id'] == endpoint.id &&
     actual['type'] == endpoint.endpoint_type.to_s &&
-    (actual['urls'] - urls).blank?
+    (urls - actual['urls']).blank?
   end
 end
 

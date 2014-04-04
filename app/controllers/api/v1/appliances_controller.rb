@@ -40,7 +40,7 @@ class Api::V1::AppliancesController < Api::ApplicationController
       {
         id: endpoint.id,
         type: endpoint.endpoint_type,
-        urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.id).collect do |mapping|
+        urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.port_mapping_template_id).collect do |mapping|
           "#{mapping.url}/#{endpoint.invocation_path}"
         end
       }
