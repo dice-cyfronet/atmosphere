@@ -43,6 +43,33 @@ describe Api::V1::ApplianceTypesController do
         expect(ats_response[0]).to appliance_type_eq at2
       end
 
+      context 'pdp' do
+        let(:pdp) { double('pdp') }
+        let(:pdp_class) { double('pdp class', new: pdp) }
+
+        before do
+          allow(Air.config).to receive(:at_pdp_class).and_return(pdp_class)
+        end
+
+        it 'uses pdp to limit number of returned ATs' do
+          allow(pdp).to receive(:filter).with(anything, nil).and_return([at2])
+
+          get api('/appliance_types', user)
+
+          expect(ats_response.size).to eq 1
+          expect(ats_response[0]).to appliance_type_eq at2
+        end
+
+        it 'uses pdp to limit number of returned ATs in production mode' do
+          allow(pdp).to receive(:filter).with(anything, 'production').and_return([at2])
+
+          get api('/appliance_types?mode=production', user)
+
+          expect(ats_response.size).to eq 1
+          expect(ats_response[0]).to appliance_type_eq at2
+        end
+      end
+
       context 'search' do
         let!(:second_user_at) { create(:appliance_type, visible_to: :all, author: user) }
 

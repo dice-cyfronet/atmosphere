@@ -11,6 +11,11 @@ class Settings < Settingslogic
       to_header_key(mi_authentication_key)
     end
 
+    def at_pdp_class
+      Settings['at_pdp'] ?
+        Settings.at_pdp.constantize : DefaultPdp
+    end
+
     private
 
     def to_header_key(key)
@@ -43,4 +48,5 @@ class Settings < Settingslogic
   Settings.metadata['remote_connect'] = false if Settings.metadata['remote_connect'].nil?
   Settings.metadata['remote_publish'] = false if Settings.metadata['remote_publish'].nil?
 
+  Settings['skip_pdp_for_admin'] = false if Settings['skip_pdp_for_admin'].nil?
 end

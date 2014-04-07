@@ -74,7 +74,8 @@ RSpec::Matchers.define :http_mapping_eq do |expected|
     actual['url'] == expected.url &&
     actual['application_protocol'] == expected.application_protocol &&
     actual['appliance_id'] == expected.appliance_id &&
-    actual['port_mapping_template_id'] == expected.port_mapping_template_id
+    actual['port_mapping_template_id'] == expected.port_mapping_template_id &&
+    actual['monitoring_status'] == expected.monitoring_status
   end
 end
 
@@ -328,7 +329,7 @@ RSpec::Matchers.define :appl_endpoint_eq do |endpoint, urls|
   match do |actual|
     actual['id'] == endpoint.id &&
     actual['type'] == endpoint.endpoint_type.to_s &&
-    (actual['urls'] - urls).blank?
+    (urls - actual['urls']).blank?
   end
 end
 

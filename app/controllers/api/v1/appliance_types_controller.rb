@@ -7,8 +7,8 @@ module Api
 
       def index
         process_active_query
-
-        respond_with @appliance_types.where(filter).order(:id)
+        ats = @appliance_types.where(filter).order(:id)
+        respond_with pdp.filter(ats, params[:mode])
       end
 
       def show
@@ -98,6 +98,10 @@ module Api
 
       def appliance_type_params
         params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id, :appliance_id)
+      end
+
+      def pdp
+        Air.config.at_pdp_class.new(current_user)
       end
     end
   end
