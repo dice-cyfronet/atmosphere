@@ -38,6 +38,12 @@ describe BillingService do
 
     let(:config_inst) { create(:appliance_configuration_instance) }
 
+    it 'throws exception for malformed appliance' do
+      appl = create(:appliance, fund: nil, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
+      expect{BillingService.can_afford_vm?(appl, not_shareable_vm1)}.to raise_exception(Air::BillingException)
+      expect{BillingService.can_afford_flavor?(appl, not_shareable_vm1.virtual_machine_flavor)}.to raise_exception(Air::BillingException)
+    end
+
     it 'creates new funded non-shareable appliance as default' do
       appl = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
 

@@ -34,7 +34,7 @@ describe HttpMapping do
   describe 'redirus worker jobs' do
     subject { build(:http_mapping) }
     before do
-      allow(subject.appliance).to receive(:id).and_return(1)
+      allow(subject).to receive(:appliance_id).and_return(1)
     end
 
     context 'on destroy' do

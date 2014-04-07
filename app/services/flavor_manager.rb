@@ -37,6 +37,7 @@ class FlavorManager
     vm_flavor.cpu = flavor.vcpus
     vm_flavor.memory = flavor.ram
     vm_flavor.hdd = flavor.disk
+    vm_flavor.supported_architectures = flavor.supported_architectures
     vm_flavor.hourly_cost = 0 if vm_flavor.new_record?
 
     unless vm_flavor.save

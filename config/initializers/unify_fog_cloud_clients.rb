@@ -2,7 +2,9 @@ require 'fog/openstack/compute'
 require 'fog/openstack/models/compute/server'
 require 'fog/aws/compute'
 require 'fog/aws/models/compute/flavor'
+require 'fog/openstack/models/compute/flavor'
 require 'fog/aws/models/compute/image'
+require 'fog/openstack/models/compute/image'
 require 'fog/aws/models/compute/server'
 
 
@@ -26,6 +28,12 @@ class Fog::Compute::OpenStack::Real
       # TODO raise specific exc
       raise "Failed to save vm #{instance_id} as template"
     end
+  end
+end
+
+class Fog::Compute::OpenStack::Flavor
+  def supported_architectures
+    'x86_64'
   end
 end
 
@@ -72,6 +80,12 @@ class Fog::Compute::AWS::Server
   end
 end
 
+class Fog::Compute::OpenStack::Image
+  def architecture
+    'x86_64'
+  end
+end
+
 # Image class does not implement destroy method
 class Fog::Compute::AWS::Image
   def destroy
@@ -97,5 +111,15 @@ end
 class Fog::Compute::AWS::Flavor
   def vcpus
     cores
+  end
+
+  def supported_architectures
+    case bits
+    when 0
+      'i386_and_x86_64'
+    when 32
+      'i386_and_x86_64'
+    else 'x86_64'
+    end
   end
 end

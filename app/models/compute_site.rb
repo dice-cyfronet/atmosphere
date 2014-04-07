@@ -67,6 +67,10 @@ class ComputeSite < ActiveRecord::Base
     previously_changed?('site_id')
   end
 
+  def default_flavor
+    virtual_machine_flavors.first
+  end
+
   private
 
   def register_cloud_client

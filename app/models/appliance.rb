@@ -77,6 +77,10 @@ class Appliance < ActiveRecord::Base
     virtual_machines.active
   end
 
+  def user_data
+    appliance_configuration_instance.payload
+  end
+
   private
 
   def assign_default_fund

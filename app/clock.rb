@@ -32,4 +32,17 @@ module Clockwork
     BillingWorker.perform_async
   end
 
+
+  every(5.seconds, 'monitoring.http_mappings.pending') do
+    HttpMappingMonitoringWorker.perform_async(:pending)
+  end
+
+  every(30.seconds, 'monitoring.http_mappings.ok') do
+    HttpMappingMonitoringWorker.perform_async(:ok)
+  end
+
+  every(15.seconds, 'monitoring.http_mappings.lost') do
+    HttpMappingMonitoringWorker.perform_async(:lost)
+  end
+
 end

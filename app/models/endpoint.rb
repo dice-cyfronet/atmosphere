@@ -25,6 +25,7 @@ class Endpoint < ActiveRecord::Base
   validates_presence_of :port_mapping_template, :invocation_path, :name
 
   before_validation :strip_invocation_path
+  around_update :manage_metadata
 
   scope :def_order, -> { order(:description) }
 
@@ -52,4 +53,13 @@ class Endpoint < ActiveRecord::Base
   def strip_invocation_path
     self.invocation_path.strip! if self.invocation_path
   end
+
+  # METADATA lifecycle methods
+
+  # Check if we need to update metadata regarding this endpoint's AT, if so, perform the task
+  def manage_metadata
+    yield
+    port_mapping_template.appliance_type.update_metadata if port_mapping_template.appliance_type and port_mapping_template.appliance_type.publishable?
+  end
+
 end

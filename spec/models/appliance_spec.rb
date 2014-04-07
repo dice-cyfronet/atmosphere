@@ -115,4 +115,17 @@ describe Appliance do
       end
     end
   end
+
+  context '#user_data' do
+    let(:appl) do
+      build(:appliance).tap do |appl|
+        appl.appliance_configuration_instance =
+          build(:appliance_configuration_instance, payload: 'user_data')
+      end
+    end
+
+    it 'returns user data from configuration instance' do
+      expect(appl.user_data).to eq 'user_data'
+    end
+  end
 end

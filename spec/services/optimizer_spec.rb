@@ -54,16 +54,22 @@ describe Optimizer do
       end
 
       context 'sets vm name' do
+        let(:appl_vm_manager) do
+          double('appliance_vms_manager',
+            :can_reuse_vm? => false,
+            :save => true
+          )
+        end
 
         before do
-          VirtualMachine.stub(:create)
-          ApplianceVmsManager.any_instance.stub(:add_vm)
+          allow(ApplianceVmsManager).to receive(:new)
+            .and_return(appl_vm_manager)
         end
 
         it 'to appliance name if it is not blank' do
           name = 'name full appliance'
-          expect(VirtualMachine).to receive(:create) do |params|
-            expect(params[:name]).to eq name
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, name|
+            expect(name).to eq name
           end
 
           create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance', fund: fund)
@@ -71,8 +77,8 @@ describe Optimizer do
         end
 
         it 'to appliance type name if appliance name is blank' do
-          expect(VirtualMachine).to receive(:create) do |params|
-            expect(params[:name]).to eq shareable_appl_type.name
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, name|
+            expect(name).to eq shareable_appl_type.name
           end
 
           create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, fund: fund)
@@ -282,17 +288,37 @@ describe Optimizer do
   end
 
   context 'flavor' do
+    let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
+    let(:appl_vm_manager) do
+      double('appliance_vms_manager',
+        :can_reuse_vm? => false,
+        :save => true
+      )
+    end
 
     let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
     it 'includes flavor in params of created vm' do
       VirtualMachine.stub(:create)
-      ApplianceVmsManager.any_instance.stub(:add_vm)
+      allow(ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
-      expect(VirtualMachine).to receive(:create) do |params|
-        expect(params[:virtual_machine_flavor]).to eq selected_flavor
+      expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+        expect(flavor).to eq selected_flavor
       end
 
       create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund)
+    end
+
+    context 'is selected with appropriate architecture' do
+      
+      it 'if cheaper flavor does not support architecture' do
+        cs = create(:compute_site)
+        tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, compute_site: cs)
+        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, hourly_cost: 10, compute_site: cs, supported_architectures: 'i386')
+        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, hourly_cost: 20, compute_site: cs, supported_architectures: 'x86_64')
+        selected_tmpl, selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_64b])
+        expect(selected_tmpl).to eq tmpl_64b
+        expect(selected_flavor).to eq fl_64b
+      end
     end
 
     context 'is selected optimaly' do
@@ -317,7 +343,6 @@ describe Optimizer do
 
       context 'appliance type preferences specified' do
 
-        let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
         let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
         let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
 
@@ -377,12 +402,22 @@ describe Optimizer do
       let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
-      before { ApplianceVmsManager.any_instance.stub(:add_vm) } #smell
+      let(:appl_vm_manager) do
+        double('appliance_vms_manager',
+          :can_reuse_vm? => false,
+          :save => true
+        )
+      end
+
+      before do
+        allow(ApplianceVmsManager).to receive(:new)
+          .and_return(appl_vm_manager)
+      end
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
-            expect(hsh[:virtual_machine_flavor].cpu).to eq 2
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.cpu).to eq 2
           end
 
           create(:appliance, appliance_type: at, appliance_set: as, fund: fund)
@@ -397,8 +432,8 @@ describe Optimizer do
         end
 
         it 'takes dev mode preferences memory into account' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
-            expect(hsh[:virtual_machine_flavor].memory).to eq 7680
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.memory).to eq 7680
           end
           @appl.dev_mode_property_set.preference_memory = 4000
 
@@ -406,8 +441,8 @@ describe Optimizer do
         end
 
         it 'takes dev mode preferences cpu into account' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
-            expect(hsh[:virtual_machine_flavor].cpu).to eq 4
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.cpu).to eq 4
           end
           @appl.dev_mode_property_set.preference_cpu = 4
 
@@ -415,8 +450,8 @@ describe Optimizer do
         end
 
         it 'takes dev mode preferences disk into account' do
-          expect(VirtualMachine).to receive(:create) do |hsh|
-            expect(hsh[:virtual_machine_flavor].hdd).to eq 840
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.hdd).to eq 840
           end
           @appl.dev_mode_property_set.preference_disk = 600
 

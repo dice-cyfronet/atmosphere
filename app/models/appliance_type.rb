@@ -115,6 +115,17 @@ class ApplianceType < ActiveRecord::Base
     MD_XML
   end
 
+  def publishable?
+    visible_to.developer? or visible_to.all?
+  end
+
+  def update_metadata
+    MetadataRepositoryClient.instance.update_appliance_type self
+  end
+
+  def development?
+    visible_to.developer?
+  end
 
   private
 
@@ -141,10 +152,6 @@ class ApplianceType < ActiveRecord::Base
 
   # METADATA lifecycle methods
 
-  def publishable?
-    visible_to.developer? or visible_to.all?
-  end
-
   # Check if we need to publish/update/unpublish metadata regarding this AT, if so, perform the task
   def manage_metadata
     was_published = ((visible_to_was == 'all') or (visible_to_was == 'developer'))
@@ -167,10 +174,6 @@ class ApplianceType < ActiveRecord::Base
   def publish_metadata
     mgid = MetadataRepositoryClient.instance.publish_appliance_type self
     update_column(:metadata_global_id, mgid) if mgid
-  end
-
-  def update_metadata
-    MetadataRepositoryClient.instance.update_appliance_type self
   end
 
 end
