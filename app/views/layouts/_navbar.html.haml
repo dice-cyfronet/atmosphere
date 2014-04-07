@@ -12,11 +12,6 @@
           = link_to 'Jobs', jobs_path, class: "has_bottom_tooltip", title: 'Background jobs'
 
     %ul.nav.navbar-nav.pull-right
-      %li
-        %a
-          %div.hide.turbolink-spinner
-            =fa_icon 'refresh spin'
-            = t 'loading'
       - if user_signed_in?
         = nav_link controller: :help do
           = link_to help_path, class: "has_bottom_tooltip", title: t('help.title') do

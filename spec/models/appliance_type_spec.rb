@@ -188,6 +188,7 @@ describe ApplianceType do
 
     it 'creates minimal valid metadata xml document' do
       xml = at.as_metadata_xml.strip
+      sleep 1
       expect(xml).to start_with('<resource_metadata>')
       expect(xml).to include('<atomicService>')
       expect(xml).to include('<name>'+at.name+'</name>')
@@ -196,8 +197,12 @@ describe ApplianceType do
       expect(xml).to include('<development>false</development>')
       expect(xml).to include('<description></description>')
       expect(xml).to include('<type>AtomicService</type>')
-      expect(xml).to include('<metadataUpdateDate>'+Time.now.strftime('%Y-%m-%d %H:%M:%S')+'</metadataUpdateDate>')
-      expect(xml).to include('<metadataCreationDate>'+Time.now.strftime('%Y-%m-%d %H:%M:%S')+'</metadataCreationDate>')
+      expect(xml).to include('<metadataUpdateDate>')
+      expect(xml).to include('<metadataCreationDate>')
+      update_time = Time.parse(xml.scan(/<metadataUpdateDate>(.*)<\/metadataUpdateDate>/).first.first)
+      creation_time = Time.parse(xml.scan(/<metadataCreationDate>(.*)<\/metadataCreationDate>/).first.first)
+      expect(update_time).to be_within(10.seconds).of(Time.now)
+      expect(creation_time).to be_within(10.seconds).of(Time.now)
       expect(xml).to include('<creationDate>'+at.created_at.strftime('%Y-%m-%d %H:%M:%S')+'</creationDate>')
       expect(xml).to include('<updateDate>'+at.updated_at.strftime('%Y-%m-%d %H:%M:%S')+'</updateDate>')
       expect(xml).to include('</atomicService>')

@@ -25,7 +25,7 @@ module Devise
 
           resource = mapping.to.vph_find_or_create(::OmniAuth::AuthHash.new({info: auth}))
           return fail(:invalid_mi_ticket) unless resource
-
+          resource.mi_ticket = mi_ticket
           success!(resource)
         rescue Exception => e
           return fail(:master_interface_error)

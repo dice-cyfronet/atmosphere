@@ -30,6 +30,8 @@ class User < ActiveRecord::Base
          :rememberable, :trackable, :recoverable,
          :validatable, :omniauthable
 
+  attr_accessor :mi_ticket
+
   validates :login, uniqueness: { case_sensitive: false }
 
   include LoginAndEmail
