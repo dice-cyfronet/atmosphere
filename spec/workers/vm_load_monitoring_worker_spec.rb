@@ -18,10 +18,11 @@ describe VmLoadMonitoringWorker do
   end
 
   context 'Zabbix' do
-    it 'queries Zabbix for each vm with zabbix id' do
-      vm1 = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1)
-      vm2 = create(:virtual_machine, ip: '10.100.0.2', zabbix_host_id: 2)
-      vm3 = create(:virtual_machine, ip: '10.100.0.3')
+    it 'queries Zabbix for each vm with zabbix id that are managed by atmosphere' do
+      vm1 = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1, managed_by_atmosphere: true)
+      vm2 = create(:virtual_machine, ip: '10.100.0.2', zabbix_host_id: 2, managed_by_atmosphere: true)
+      vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
+      vm4 = create(:virtual_machine, ip: '10.100.0.4', zabbix_host_id: 3)
       VirtualMachine.stub(:all).and_return [vm1, vm2, vm3]
 
       expect(vm1).to receive(:current_load_metrics)
@@ -33,10 +34,10 @@ describe VmLoadMonitoringWorker do
   end
 
   context 'metrics db' do
-    it 'saves metrics for each vm  with zabbix id' do
-      vm1 = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1)
-      vm2 = create(:virtual_machine, ip: '10.100.0.2', zabbix_host_id: 2)
-      vm3 = create(:virtual_machine, ip: '10.100.0.3')
+    it 'saves metrics for each vm  with zabbix id that is managed by atmo' do
+      vm1 = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1, managed_by_atmosphere: true)
+      vm2 = create(:virtual_machine, ip: '10.100.0.2', zabbix_host_id: 2, managed_by_atmosphere: true)
+      vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
       metrics_double_1 = double('metrics1')
       metrics_double_2 = double('metrics2')
       metrics_double_3 = double('metrics3')
