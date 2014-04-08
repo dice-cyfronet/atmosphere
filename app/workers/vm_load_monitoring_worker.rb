@@ -8,7 +8,7 @@ class VmLoadMonitoringWorker
 
   def perform
     VirtualMachine.all.each do |vm|
-      if vm.zabbix_host_id
+      if vm.managed_by_atmosphere && vm.zabbix_host_id
         metrics = vm.current_load_metrics 
         vm.save_load_metrics(metrics)
       end

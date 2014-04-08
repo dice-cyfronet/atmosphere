@@ -35,7 +35,7 @@ class VirtualMachine < ActiveRecord::Base
 
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
-  before_update :update_in_zabbix, if: :ip_changed?
+  before_update :update_in_zabbix, if: :ip_changed? && :managed_by_atmosphere?
   before_destroy :unregister_from_zabbix, if: :ip? && :zabbix_host_id?
   before_destroy :cant_destroy_non_managed_vm
 
@@ -137,7 +137,7 @@ class VirtualMachine < ActiveRecord::Base
       tsdb_client.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
       tsdb_client.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
       tsdb_client.write_point('cpu_load_15', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
-      if metrics_hash[total_mem] > 0 && metrics_hash[available_mem] > 0
+      if metrics_hash[total_mem] && metrics_hash[total_mem] > 0 && metrics_hash[available_mem] && metrics_hash[available_mem] > 0
         mem_usage = (metrics_hash[total_mem] - metrics_hash[available_mem]) / metrics_hash[total_mem]
         tsdb_client.write_point('memory_usage', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: mem_usage})
       end
