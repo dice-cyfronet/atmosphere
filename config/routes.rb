@@ -71,7 +71,7 @@ Air::Application.routes.draw do
       json_resources :appliance_configuration_templates
       resources :appliance_configuration_instances, only: [:index, :show]
       resources :http_mappings, only: [:index, :show]
-      resources :port_mappings, only: [:index, :show]
+      resources :port_mappings, only: [:index]
       json_resources :appliance_sets
 
       resources :appliances do
@@ -82,6 +82,7 @@ Air::Application.routes.draw do
 
       resources :dev_mode_property_sets, only: [:index, :show, :update]
       resources :virtual_machines, only: [:index, :show]
+      resources :virtual_machine_templates, only: [:index, :show]
       json_resources :users
       resources :user_keys, only: [:index, :show, :create, :destroy]
 
