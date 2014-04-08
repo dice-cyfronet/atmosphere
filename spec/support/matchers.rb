@@ -351,3 +351,16 @@ RSpec::Matchers.define :user_full_eq do |expected|
     actual['roles'] == expected.roles.to_a.collect(&:to_s)
   end
 end
+
+RSpec::Matchers.define :vmt_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['id_at_site'] == expected.id_at_site &&
+    actual['name'] == expected.name &&
+    actual['state'] == expected.state.to_s &&
+    actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
+    actual['compute_site_id'] == expected.compute_site_id &&
+    actual['appliance_type_id'] == expected.appliance_type_id &&
+    actual['architecture'] == expected.architecture.to_s
+  end
+end

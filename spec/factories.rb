@@ -249,6 +249,12 @@ FactoryGirl.define do
     name { Faker::Lorem.characters(5) }
     id_at_site { Faker::Internet.ip_v4_address }
     state :active
+
+    trait :managed_vmt do
+      managed_by_atmosphere true
+    end
+
+    factory :managed_vmt, traits: [:managed_vmt]
   end
 
   factory :virtual_machine do |f|
