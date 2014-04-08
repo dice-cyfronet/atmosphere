@@ -55,7 +55,11 @@ module Zabbix
     end
 
     def unregister(host_id)
-      client.api.hosts.delete host_id
+      begin
+        client.api.hosts.delete host_id
+      rescue
+        Rails.logger.error "Error while removing host #{host_id} from Zabbix"
+      end
     end
 
     def client
