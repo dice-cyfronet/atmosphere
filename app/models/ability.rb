@@ -15,6 +15,7 @@ class Ability
       ::PortMappingPropertyAbilityBuilder,
       ::DevModePropertySetAbilityBuilder,
       ::VirtualMachineAbilityBuilder,
+      ::VirtualMachineTemplateAbilityBuilder,
       ::HttpMappingAbilityBuilder,
       ::PortMappingAbilityBuilder,
       ::UserKeyAbilityBuilder
