@@ -6,11 +6,14 @@ class VmTemplateMonitoringWorker
 
   def perform(site_id)
     begin
+      logger.info "#{jid}: Starting VMTs monitoring for site #{site_id}"
       site = ComputeSite.find(site_id)
       filters = site.template_filters ? JSON.parse(site.template_filters) : nil
+      logger.info "#{jid}: getting images state for site #{site_id} from compute site"
       update_images(site, site.cloud_client.images.all(filters))
+      logger.info "#{jid}: updating VMTs finished for site #{site_id}"
     rescue Excon::Errors::HTTPStatusError => e
-      Rails.logger.error "Unable to perform Templates monitoring job: #{e}"
+      logger.error "#{jid}: Unable to perform VMTs monitoring job: #{e}"
     end
   end
 
@@ -19,6 +22,7 @@ class VmTemplateMonitoringWorker
   private
 
   def update_images(site, images)
+    logger.info "#{jid}: updating VMTs"
     all_site_templates = site.virtual_machine_templates.to_a
     images.each do |image|
       template = site.virtual_machine_templates.find_or_initialize_by(id_at_site: image.id)
@@ -30,7 +34,7 @@ class VmTemplateMonitoringWorker
       all_site_templates.delete template
 
       unless template.save
-        error("unable to create/update #{template.id} template because: #{template.errors.to_json}")
+        logger.error "#{jid}: unable to create/update #{template.id} template because: #{template.errors.to_json}"
       end
     end
 
@@ -38,7 +42,7 @@ class VmTemplateMonitoringWorker
     all_site_templates.each { |t| t.destroy(false) }
   end
 
-  def error(message)
-    Rails.logger.error "MONITORING: #{message}"
+  def logger
+    Air.monitoring_logger
   end
 end

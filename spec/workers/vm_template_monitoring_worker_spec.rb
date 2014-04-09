@@ -92,8 +92,9 @@ describe VmTemplateMonitoringWorker do
       let(:logger) { double }
 
       before do
-        Rails.stub(:logger).and_return(logger)
+        Air.stub(:monitoring_logger).and_return(logger)
         expect(logger).to receive(:error)
+        allow(logger).to receive(:info)
 
         ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
         allow(cloud_client).to receive(:images).and_raise(Excon::Errors::Unauthorized.new 'error')
