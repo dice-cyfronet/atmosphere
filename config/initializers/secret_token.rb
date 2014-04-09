@@ -19,4 +19,3 @@ def find_secure_token(file_name='.secret')
 end
 
 Air::Application.config.secret_key_base = find_secure_token('.secret')
-Devise.setup { |config| config.secret_key = find_secure_token('.devise_secret') }
