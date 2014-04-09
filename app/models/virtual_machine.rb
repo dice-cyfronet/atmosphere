@@ -35,7 +35,7 @@ class VirtualMachine < ActiveRecord::Base
 
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
-  before_update :update_in_zabbix, if: :ip_changed? && :managed_by_atmosphere?
+  before_update :update_in_zabbix, if: :ip_changed?
   before_destroy :unregister_from_zabbix, if: :ip? && :zabbix_host_id?
   before_destroy :cant_destroy_non_managed_vm
 
@@ -93,6 +93,7 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def update_in_zabbix
+    return unless managed_by_atmosphere?
     logger.info "Updating vm #{uuid} in Zabbix"
     if ip_was && zabbix_host_id
       unregister_from_zabbix
