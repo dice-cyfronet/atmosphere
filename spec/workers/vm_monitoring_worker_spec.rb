@@ -6,7 +6,7 @@ describe VmMonitoringWorker do
   let(:vm_destroyer_class) { double('destroyer') }
 
   before {
-    Fog.mock! 
+    Fog.mock!
     Zabbix.stub(:register_host).and_return 1
     Zabbix.stub(:unregister_host)
     Zabbix.stub(:host_metrics)
@@ -65,8 +65,9 @@ describe VmMonitoringWorker do
       let(:logger) { double }
 
       before do
-        Rails.stub(:logger).and_return(logger)
+        Air.stub(:monitoring_logger).and_return(logger)
         expect(logger).to receive(:error)
+        allow(logger).to receive(:info)
 
         allow(cloud_client).to receive(:servers).and_raise(Excon::Errors::Unauthorized.new 'error')
       end

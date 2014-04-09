@@ -22,4 +22,8 @@ module Air
   def self.action_logger
     @@action_logger ||= Logger.new(Rails.root.join('log', 'user_actions.log'))
   end
+
+  def self.monitoring_logger
+    @@monitoring_logger ||= Logger.new(Rails.root.join('log', 'monitoring.log'))
+  end
 end
