@@ -4,31 +4,38 @@ end
 
 FactoryGirl.define do
 
-  factory :user do
-    email { Faker::Internet.email }
-    login { rand_str }
-    password '12345678'
-    password_confirmation { password }
-    authentication_token { login }
+  factory :appliance do |f|
+    appliance_set
+    appliance_configuration_instance
+    appliance_type
+    name { rand_str }
 
-    # Create 2 funds for this user by default
-    funds { FactoryGirl.create_list(:fund, 2) }
+    # Create a rich fund by default so there's no risk of interfering with non-billing tests.
+    fund { FactoryGirl.create(:fund, :balance => 1000000) }
+    # Use arbitrary last billing date
+    last_billing Date.parse('2014-01-14 12:00')
+    prepaid_until Date.parse('2014-02-08 12:00')
 
-    trait :developer do
-      roles [:developer]
+    trait :dev_mode do
+      appliance_set { create(:dev_appliance_set) }
     end
 
-    trait :admin do
-      roles [:admin]
+    factory :appl_dev_mode, traits: [:dev_mode]
+  end
+
+  factory :appliance_configuration_instance do |f|
+    payload { Faker::Lorem.words(10).join(' ') }
+  end
+
+  factory :appliance_configuration_template do |f|
+    name { Faker::Lorem.words(10).join(' ') }
+    appliance_type
+
+    trait :static do
+      payload 'static initial configuration'
     end
 
-    trait :authentication_token do
-
-    end
-
-    factory :developer, traits: [:developer]
-    factory :admin, traits: [:admin]
-
+    factory :static_config_template, traits: [:static]
   end
 
   factory :appliance_set do |f|
@@ -50,72 +57,6 @@ FactoryGirl.define do
     factory :dev_appliance_set, traits: [:development]
     factory :workflow_appliance_set, traits: [:workflow]
     factory :portal_appliance_set, traits: [:portal]
-  end
-
-  factory :appliance_type do
-    name { Faker::Lorem.words(10).join(' ') }
-
-    trait :all_attributes_not_empty do
-      description { Faker::Lorem.words(10).join(' ') }
-      shared true
-      scalable true
-      preference_cpu 2
-      preference_memory 1024
-      preference_disk 10240
-      security_proxy
-    end
-
-    trait :shareable do
-      shared true
-    end
-
-    trait :not_shareable do
-      shared false
-    end
-
-    factory :filled_appliance_type, traits: [:all_attributes_not_empty]
-    factory :shareable_appliance_type, traits: [:shareable]
-    factory :not_shareable_appliance_type, traits: [:not_shareable]
-  end
-
-  factory :appliance do |f|
-    appliance_set
-    appliance_configuration_instance
-    appliance_type
-    name { rand_str }
-
-    # Create a rich fund by default so there's no risk of interfering with non-billing tests.
-    fund { FactoryGirl.create(:fund, :balance => 1000000) }
-    # Use arbitrary last billing date
-    last_billing Date.parse('2014-01-14 12:00')
-    prepaid_until Date.parse('2014-02-08 12:00')
-
-    trait :dev_mode do
-      appliance_set { create(:dev_appliance_set) }
-    end
-
-    factory :appl_dev_mode, traits: [:dev_mode]
-  end
-
-  factory :security_proxy do |f|
-    name 'security/proxy'
-    payload { Faker::Lorem.words(10).join(' ') }
-  end
-
-  factory :security_policy do |f|
-    name 'security/policy'
-    payload { Faker::Lorem.words(10).join(' ') }
-  end
-
-  factory :appliance_configuration_template do |f|
-    name { Faker::Lorem.words(10).join(' ') }
-    appliance_type
-
-    trait :static do
-      payload 'static initial configuration'
-    end
-
-    factory :static_config_template, traits: [:static]
   end
 
   factory :compute_site, aliases: [:openstack_compute_site] do |f|
@@ -163,23 +104,43 @@ FactoryGirl.define do
     end
 
     factory :openstack_with_flavors, traits: [:openstack_flavors]
-
   end
 
-  sequence :vm_flavor_name do |n|
-    "Flavor #{n}"
+  factory :appliance_type do
+    name { Faker::Lorem.words(10).join(' ') }
+
+    trait :all_attributes_not_empty do
+      description { Faker::Lorem.words(10).join(' ') }
+      shared true
+      scalable true
+      preference_cpu 2
+      preference_memory 1024
+      preference_disk 10240
+      security_proxy
+    end
+
+    trait :shareable do
+      shared true
+    end
+
+    trait :not_shareable do
+      shared false
+    end
+
+    factory :filled_appliance_type, traits: [:all_attributes_not_empty]
+    factory :shareable_appliance_type, traits: [:shareable]
+    factory :not_shareable_appliance_type, traits: [:not_shareable]
   end
 
-  factory :virtual_machine_flavor do
-    flavor_name { FactoryGirl.generate(:vm_flavor_name) }
-    cpu { rand(max=16) }
-    memory { rand(max=16384) }
-    hdd { rand(max=1000) }
-    hourly_cost { rand(max=100) }
+  factory :dev_mode_property_set do |f|
+    name 'AS'
+    appliance
   end
 
-  sequence :fund_name do |n|
-    "Fund #{n}"
+  factory :endpoint do |f|
+    name { rand_str }
+    port_mapping_template
+    invocation_path { rand_str }
   end
 
   factory :fund do
@@ -189,11 +150,16 @@ FactoryGirl.define do
     termination_policy { "suspend" }
   end
 
-  factory :user_key do |f|
-    name { Faker::Lorem.words(10).join(' ') }
-    public_key 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q== factorized@sting'
-    fingerprint 'rubbish! Real fingrprint is calculated in after_initialize method in model'
-    user
+  sequence :fund_name do |n|
+    "Fund #{n}"
+  end
+
+  factory :http_mapping do |f|
+    url  Faker::Internet.domain_name
+    application_protocol "http"
+    appliance
+    port_mapping_template
+    compute_site
   end
 
   factory :port_mapping do |f|
@@ -201,25 +167,6 @@ FactoryGirl.define do
     source_port { 2000 + Random.rand(20000) }
     port_mapping_template
     virtual_machine
-  end
-
-  factory :port_mapping_template do |f|
-    service_name { rand_str }
-    target_port { Random.rand(9999) }
-    appliance_type
-
-    trait :devel do
-      appliance_type nil
-      dev_mode_property_set
-    end
-
-    factory  :dev_port_mapping_template, traits: [:devel]
-  end
-
-  factory :endpoint do |f|
-    name { rand_str }
-    port_mapping_template
-    invocation_path { rand_str }
   end
 
   factory :port_mapping_property do |f|
@@ -235,26 +182,60 @@ FactoryGirl.define do
     factory :pmt_property, traits: [:pmt_property]
   end
 
-  factory :appliance_configuration_instance do |f|
+  factory :port_mapping_template do |f|
+    service_name { rand_str }
+    target_port { Random.rand(9999) }
+    appliance_type
+
+    trait :devel do
+      appliance_type nil
+      dev_mode_property_set
+    end
+
+    factory  :dev_port_mapping_template, traits: [:devel]
+  end
+
+  factory :security_policy do |f|
+    name 'security/policy'
     payload { Faker::Lorem.words(10).join(' ') }
   end
 
-  factory :dev_mode_property_set do |f|
-    name 'AS'
-    appliance
+  factory :security_proxy do |f|
+    name 'security/proxy'
+    payload { Faker::Lorem.words(10).join(' ') }
   end
 
-  factory :virtual_machine_template, aliases: [:source_template] do |f|
-    compute_site
-    name { Faker::Lorem.characters(5) }
-    id_at_site { Faker::Internet.ip_v4_address }
-    state :active
+  factory :user do
+    email { Faker::Internet.email }
+    login { rand_str }
+    password '12345678'
+    password_confirmation { password }
+    authentication_token { login }
 
-    trait :managed_vmt do
-      managed_by_atmosphere true
+    # Create 2 funds for this user by default
+    funds { FactoryGirl.create_list(:fund, 2) }
+
+    trait :developer do
+      roles [:developer]
     end
 
-    factory :managed_vmt, traits: [:managed_vmt]
+    trait :admin do
+      roles [:admin]
+    end
+
+    trait :authentication_token do
+
+    end
+
+    factory :developer, traits: [:developer]
+    factory :admin, traits: [:admin]
+  end
+
+  factory :user_key do |f|
+    name { Faker::Lorem.words(10).join(' ') }
+    public_key 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q== factorized@sting'
+    fingerprint 'rubbish! Real fingrprint is calculated in after_initialize method in model'
+    user
   end
 
   factory :virtual_machine do |f|
@@ -274,12 +255,28 @@ FactoryGirl.define do
     factory :active_vm, traits: [:active_vm]
   end
 
-  factory :http_mapping do |f|
-    url  Faker::Internet.domain_name
-    application_protocol "http"
-    appliance
-    port_mapping_template
-    compute_site
+  factory :virtual_machine_flavor do
+    flavor_name { FactoryGirl.generate(:vm_flavor_name) }
+    cpu { rand(max=16) }
+    memory { rand(max=16384) }
+    hdd { rand(max=1000) }
+    hourly_cost { rand(max=100) }
   end
 
+  factory :virtual_machine_template, aliases: [:source_template] do |f|
+    compute_site
+    name { Faker::Lorem.characters(5) }
+    id_at_site { Faker::Internet.ip_v4_address }
+    state :active
+
+    trait :managed_vmt do
+      managed_by_atmosphere true
+    end
+
+    factory :managed_vmt, traits: [:managed_vmt]
+  end
+
+  sequence :vm_flavor_name do |n|
+    "Flavor #{n}"
+  end
 end
