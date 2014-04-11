@@ -11,15 +11,13 @@ module Api
       # - a combination of compute_site_id, cpu, memory, hdd
       # or be empty.
       def index
-        #check_filters!
         @virtual_machine_flavors = []
         if filters_empty? ||requirements_filters?
           conditions_str = build_condition_str
           @virtual_machine_flavors = VirtualMachineFlavor.where(conditions_str, params)
-        elsif appliance_conf_inst_filters?
-
-        elsif appliance_type_filters?
-          tmpls = params['compute_site_id'] ? VirtualMachineTemplate.where(appliance_type_id: params['appliance_type_id'], state: 'active', compute_site_id: params['compute_site_id']) : VirtualMachineTemplate.where(appliance_type_id: params['appliance_type_id'], state: 'active')
+        elsif appliance_type_filters? || appliance_conf_inst_filters?
+          appl_type_id = params['appliance_type_id'] || get_appl_type_id_for_config_inst()
+          tmpls = params['compute_site_id'] ? VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active', compute_site_id: params['compute_site_id']) : VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active')
           unless tmpls.blank?
             tmpl, flavor = Optimizer.instance.select_tmpl_and_flavor(tmpls)
             @virtual_machine_flavors = [flavor]
@@ -39,10 +37,13 @@ module Api
         [cs_condition, cpu_condition, mem_condition, hdd_condition].reject{|e| e.blank?}.join(" AND ")
       end
 
-      
-      def check_filters!
-        return if (filters_empty? || appliance_conf_inst_filters? || appliance_type_filters? || requirements_filters?)
-        raise Air::Conflict.new("Illegal combination of filters")
+      def get_appl_type_id_for_config_inst()
+        config_inst = ApplianceConfigurationInstance.find(params['appliance_configuration_instance_id'])
+        config_tmpl = config_inst.appliance_configuration_template
+        if config_tmpl.nil?
+          raise ActiveRecord::RecordNotFound
+        end
+        config_tmpl.appliance_type_id
       end
 
       def filters_empty?

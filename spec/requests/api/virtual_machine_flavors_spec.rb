@@ -27,6 +27,7 @@ describe Api::V1::VirtualMachineFlavorsController do
       let!(:f4) { create(:virtual_machine_flavor, memory: required_mem - 256) }
       let!(:f5) { create(:virtual_machine_flavor, memory: required_mem) }
       let!(:f6) { create(:virtual_machine_flavor, memory: required_mem + 256, compute_site: cs2) }
+      let(:at) { create(:appliance_type, preference_memory:required_mem) }
 
       it 'returns 200' do
         get api('/virtual_machine_flavors', user)
@@ -82,7 +83,6 @@ describe Api::V1::VirtualMachineFlavorsController do
       end
 
       context 'filter for appliance type defined' do
-        let(:at) { create(:appliance_type, preference_memory:required_mem) }
 
         it "returns empty list if AT does not exist" do
           get api("/virtual_machine_flavors?appliance_type_id=#{at.id + 1}", user)
@@ -119,11 +119,27 @@ describe Api::V1::VirtualMachineFlavorsController do
       end
 
       context 'filter for appliance configuration instance specified' do
-        context 'vm can be reused' do
+        let(:aci) { create(:appliance_configuration_instance) }
+        
+        it "returns 404 if config instance does not exist" do
+          get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id + 1}", user)
+          expect(response.status).to eq 404
         end
 
-        context 'vm cannot be reused' do
+        it "returns 404 if aci does not have a config template" do
+          get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id}", user)
+          expect(response.status).to eq 404
+        end
 
+        it "returns one flavor with memory greater or equal to preference memory specified in at associated with config" do
+          tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs2, state: 'active')
+          config_tmpl = create(:appliance_configuration_template, appliance_configuration_instances: [aci], appliance_type: at)
+          get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id}", user)
+          expect(response.status).to eq 200
+          flavors = fls_response
+          expect(flavors.size).to eq 1
+          fl = flavors.first
+          expect(fl['memory']).to be >= required_mem
         end
       end
 
