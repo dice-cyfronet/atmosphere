@@ -27,12 +27,11 @@ GET /virtual_machine_flavors
 }
 ```
 
-It is possible to filter virtual machine flavors based on:
+It is possible to filter virtual machine flavors based on either:
++ appliance_configuration_instance_id and optionally compute_site_id
++ appliance_type_id and optionally compute_site_id
++ a combination of compute_site_id, cpu, memory, hdd
 
-+ appliance type id - selects flavors that are avaiable for templates of given ApplianceType.
-+ required cpu - selects flavors that have at least given number of cpus.
-+ required memory - selects flavors that have at least given memory size.
-+ required HDD - selects flavors that have at least given HDD size.
-+ compute site id - selects flavors available at given compu site.
+If invalid filters are given, for example both appliance_configuration_instance_id and appliance_type_id are provided a 409 Conflict is returned.
 
-Filters are expressed as query params. Filters can be combined together.
+Filters are expressed as query params.
