@@ -67,6 +67,7 @@ Add new appliance to the appliance set
       "name": "appliance name",
       "user_key_id": 1, #only in development mode
       "configuration_template_id": 1,
+      "compute_site_ids": [1, 2], # optional - if skipped, the appliance will be deployable to all existing compute sites.
       "params": {
         "param1": "param value",
         "param2": "another param",

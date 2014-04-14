@@ -27,8 +27,15 @@ class ApplianceCreator
   attr_reader :params, :mi_authentication_key
 
   def create_params
-    c_params = production? ? params.permit(:appliance_set_id, :name) : params.permit(:appliance_set_id, :user_key_id, :name)
+    c_params = production? ? params.permit(:appliance_set_id, :name, :compute_site_ids) : params.permit(:appliance_set_id, :user_key_id, :name, :compute_site_ids)
     c_params[:appliance_type_id] = config_template.appliance_type.id
+
+    if @params[:compute_site_ids].blank?
+      c_params[:compute_sites] = ComputeSite.all
+    else
+      c_params[:compute_sites] = ComputeSite.where(id: @params[:compute_site_ids])
+    end
+
     c_params
   end
 
