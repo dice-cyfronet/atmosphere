@@ -33,7 +33,7 @@ class DnatWrangler
       {proto: pmt.transport_protocol, port: pmt.target_port}
     }
     return [] if to_add.blank? or not vm.ip?
-    unless @wrangler_url.blank?
+    if use_wrangler?
       resp = dnat_client.post "/dnat/#{vm.ip}" do |req|
         req.headers['Content-Type'] = 'application/json'
         req.body = JSON.generate to_add
@@ -50,7 +50,7 @@ class DnatWrangler
   end
 
   def remove(ip, port = nil, protocol = nil)
-    return true unless @wrangler_url
+    return true unless use_wrangler?
     path = build_path_for_params(ip, port, protocol)
     resp = dnat_client.delete(path)
     if not resp.status == 204
@@ -62,6 +62,10 @@ class DnatWrangler
   end
 
   private
+
+  def use_wrangler?
+    !@wrangler_url.blank?
+  end
 
   def build_req_params_msg(ip, port, protocol)
     "IP #{ip}#{', port ' + port.to_s if port}#{', protocol ' + protocol if protocol}"
