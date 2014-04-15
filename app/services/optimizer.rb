@@ -23,7 +23,7 @@ class Optimizer
       if appl_manager.can_reuse_vm? && !(vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appl_manager.reuse_vm!(vm_to_be_reused)
       else
-        tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active')
+        tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active').reject{|tmpl| !appliance.compute_sites.include? tmpl.compute_site}
         if tmpls.blank?
           appliance.state = :unsatisfied
           err_msg = "No matching template was found for appliance #{appliance.name}"
@@ -62,7 +62,7 @@ class Optimizer
 
   def find_vm_that_can_be_reused(appliance)
     # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
-    VirtualMachine.manageable.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no or vm.appliances.first.development?}.first
+    VirtualMachine.manageable.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no or vm.appliances.first.development? or !appliance.compute_sites.include? vm.compute_site}.first
     #VirtualMachine.joins(appliances: :appliance_configuration_instance).where('appliance_configuration_instances.payload = ?', appliance.appliance_configuration_instance.payload).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no}.first
   end
 

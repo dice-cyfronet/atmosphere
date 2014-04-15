@@ -42,6 +42,9 @@ class Appliance < ActiveRecord::Base
   has_many :virtual_machines, through: :deployments, dependent: :destroy
   has_many :deployments
 
+  has_many :compute_sites, through: :appliance_compute_sites, dependent: :destroy
+  has_many :appliance_compute_sites
+
   has_one :dev_mode_property_set, dependent: :destroy, autosave: true
   attr_readonly :dev_mode_property_set
 

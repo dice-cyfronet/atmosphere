@@ -15,9 +15,10 @@ GET /appliances
       "appliance_set_id": 2,
       "appliance_type_id": 3,
       "appliance_configuration_instance_id": 4,
-      "state": "satisfied", (or "unsatisfied")
-      "state_explanation": "No matching flavor was found", (explanation why VM cannot be started for this appliance)
-      "amount_billed": 562123 (Amount billed for the use of this appliance since its creation, expressed in 1/10000 of base currency unit (which is defined in appliance.fund.currency and defaults to EUR. For example, 562123 stands for 56.21 Euro).
+      "state": "satisfied", # or "unsatisfied"
+      "state_explanation": "No matching flavor was found", # explanation why VM cannot be started for this appliance
+      "amount_billed": 562123, # Amount billed for the use of this appliance since its creation, expressed in 1/10000 of base currency unit (which is defined in appliance.fund.currency and defaults to EUR. For example, 562123 stands for 56.21 Euro
+      "compute_site_ids": [1, 2], # IDs of compute sites on which this appliance is authorized to run VMs
     }, {
       ...
     }
@@ -45,9 +46,10 @@ Parameters:
     "appliance_set_id": 2,
     "appliance_type_id": 3,
     "appliance_configuration_instance_id": 4,
-    "state": "satisfied", (or "unsatisfied")
-    "state_explanation": "No matching flavor was found", (explanation why VM cannot be started for this appliance)
-    "amount_billed": 562123 (Amount billed for the use of this appliance since its creation, expressed in 1/10000 of base currency unit (which is defined in appliance.fund.currency and defaults to EUR. For example, 562123 stands for 56.21 Euro).
+    "state": "satisfied", # or "unsatisfied"
+    "state_explanation": "No matching flavor was found", # explanation why VM cannot be started for this appliance
+    "amount_billed": 562123, # Amount billed for the use of this appliance since its creation, expressed in 1/10000 of base currency unit (which is defined in appliance.fund.currency and defaults to EUR. For example, 562123 stands for 56.21 Euro.
+    "compute_site_ids": [1, 2], # IDs of compute sites on which this appliance is authorized to run VMs
   }
 }
 ```
@@ -67,6 +69,7 @@ Add new appliance to the appliance set
       "name": "appliance name",
       "user_key_id": 1, #only in development mode
       "configuration_template_id": 1,
+      "compute_site_ids": [1, 2], # optional - if skipped, the appliance will be deployable to all existing compute sites.
       "params": {
         "param1": "param value",
         "param2": "another param",
