@@ -43,6 +43,9 @@ class ApplianceType < ActiveRecord::Base
   has_many :appliance_configuration_templates, dependent: :destroy
   has_many :virtual_machine_templates
 
+  # Required for API (returning all compute sites on which a given AT can be deployed)
+  has_many :compute_sites, through: :virtual_machine_templates
+
   scope :def_order, -> { order(:name) }
   scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }

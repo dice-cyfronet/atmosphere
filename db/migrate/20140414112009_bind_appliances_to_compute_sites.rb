@@ -7,5 +7,11 @@ class BindAppliancesToComputeSites < ActiveRecord::Migration
       t.belongs_to :appliance
       t.belongs_to :compute_site
     end
+
+    # Retroactively update all Appliances
+    Appliance.all.each do |a|
+      a.compute_sites = ComputeSite.all
+      a.save
+    end
   end
 end

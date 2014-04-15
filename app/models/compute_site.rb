@@ -33,6 +33,9 @@ class ComputeSite < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :virtual_machine_flavors, dependent: :destroy
 
+  # Required for API (returning all compute sites on which a given AT can be deployed)
+  has_many :appliance_types, through: :virtual_machine_templates
+
   has_many :funds, through: :compute_site_funds
   has_many :compute_site_funds, dependent: :destroy
 
