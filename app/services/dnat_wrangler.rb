@@ -33,7 +33,7 @@ class DnatWrangler
       {proto: pmt.transport_protocol, port: pmt.target_port}
     }
     return [] if to_add.blank? or not vm.ip?
-    if @wrangler_url
+    if use_wrangler?
       resp = dnat_client.post "/dnat/#{vm.ip}" do |req|
         req.headers['Content-Type'] = 'application/json'
         req.body = JSON.generate to_add
@@ -46,11 +46,11 @@ class DnatWrangler
       end
     else
       pmts.collect{|pmt| {port_mapping_template: pmt, virtual_machine:vm, public_ip: vm.ip, source_port: pmt.target_port}}
-    end 
+    end
   end
 
   def remove(ip, port = nil, protocol = nil)
-    return true unless @wrangler_url
+    return true unless use_wrangler?
     path = build_path_for_params(ip, port, protocol)
     resp = dnat_client.delete(path)
     if not resp.status == 204
@@ -63,6 +63,10 @@ class DnatWrangler
 
   private
 
+  def use_wrangler?
+    !@wrangler_url.blank?
+  end
+
   def build_req_params_msg(ip, port, protocol)
     "IP #{ip}#{', port ' + port.to_s if port}#{', protocol ' + protocol if protocol}"
   end
@@ -70,7 +74,7 @@ class DnatWrangler
   def dnat_client
     conn = Faraday.new(url: @wrangler_url) do |faraday|
       faraday.request :url_encoded
-      faraday.response :logger 
+      faraday.response :logger
       faraday.adapter Faraday.default_adapter
       faraday.basic_auth(@wrangler_username, @wrangler_password)
     end

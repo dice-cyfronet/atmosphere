@@ -98,6 +98,7 @@ class ApplianceType < ActiveRecord::Base
         <localID>#{id}</localID>
         <name>#{esc_xml name}</name>
         <type>AtomicService</type>
+        <category>None</category>
         <description>#{esc_xml description}</description>
         <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataUpdateDate>
         <creationDate>#{created_at.strftime('%Y-%m-%d %H:%M:%S')}</creationDate>

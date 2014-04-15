@@ -197,6 +197,7 @@ describe ApplianceType do
       expect(xml).to include('<development>false</development>')
       expect(xml).to include('<description></description>')
       expect(xml).to include('<type>AtomicService</type>')
+      expect(xml).to include('<category>None</category>')
       expect(xml).to include('<metadataUpdateDate>')
       expect(xml).to include('<metadataCreationDate>')
       update_time = Time.parse(xml.scan(/<metadataUpdateDate>(.*)<\/metadataUpdateDate>/).first.first)

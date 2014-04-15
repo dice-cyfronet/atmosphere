@@ -65,3 +65,4 @@ production:
       - t.gubala@cyfronet.pl
       - t.bartynski@cyfronet.pl
       - p.nowakowski@cyfronet.pl
+  #raven_dsn: sentry dsn
