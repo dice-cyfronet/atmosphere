@@ -43,6 +43,7 @@ gem 'gravtastic'
 
 # Sending email when 500 is thrown
 gem 'exception_notification'
+gem 'sentry-raven'
 
 # Security
 gem 'devise', '~>3.2'
