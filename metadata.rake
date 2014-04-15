@@ -1,7 +1,7 @@
 import 'Rakefile'
 
 
-task :purge_metadata_registry => :environment do
+task purge_metadata_registry: :environment do
 
   puts "PURGING METADATA REGISTRY. Env = #{Rails.env}."
 
@@ -13,16 +13,16 @@ task :purge_metadata_registry => :environment do
 end
 
 
-task :clean_metadata_registry => :environment do
+task clean_metadata_registry: :environment do
 
   puts "CLEANING METADATA REGISTRY. Env = #{Rails.env}."
 
-  if Rails.env.production?
-    puts 'NOT ALLOWED ON PRODUCTION. Exiting.'
-    exit 1
-  end
-
-  if Rails.env.development?
+  # if Rails.env.production?
+  #   puts 'NOT ALLOWED ON PRODUCTION. Exiting.'
+  #   exit 1
+  # end
+  #
+  # if Rails.env.development?
     global_ids = MetadataRepositoryClient.instance.get_active_global_ids
     puts global_ids
     ApplianceType.transaction do
@@ -35,11 +35,11 @@ task :clean_metadata_registry => :environment do
         end
       end
     end
-  end
+  # end
 end
 
 
-task :populate_metadata_registry => :environment do
+task populate_metadata_registry: :environment do
 
   puts "POPULATING METADATA REGISTRY. Env = #{Rails.env}."
 

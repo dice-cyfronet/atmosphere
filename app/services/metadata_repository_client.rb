@@ -47,7 +47,7 @@ class MetadataRepositoryClient
   def get_active_global_ids(type = 'AtomicService')
     return unless can_read
     #status, response = do_http(server_endpoint + "filter?logicalExpression=type:#{type}%20AND%20status:active")
-    status, response = do_http(server_endpoint + "facets/#{type}/status?value=active")
+    status, response = do_http(server_endpoint + "facets/#{type}/status?value=active&numResults=99999")
     logme_problem unless status
     if status
       doc = REXML::Document.new response.body.to_s
