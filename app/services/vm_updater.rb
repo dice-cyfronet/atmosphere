@@ -73,7 +73,9 @@ class VmUpdater
   end
 
   def update_ips
-    vm.ip = server.public_ip_address || (server.addresses['private'].first['addr'] if server.addresses and !server.addresses.blank?)
+    #{"vmnet"=>[{"version"=>4, "addr"=>"10.101.0.2"}]}   - ismop
+    #{"private"=>[{"version"=>4, "addr"=>"10.101.0.2"}]} - vph
+    vm.ip = server.public_ip_address || (server.addresses.first.last.first['addr'] if server.addresses and !server.addresses.blank?)
   end
 
   def vm_flavor
