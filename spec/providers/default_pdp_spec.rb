@@ -19,9 +19,9 @@ describe DefaultPdp do
   end
 
   context '#filter' do
-    let(:user) { create(:user) }
+    let(:user)  { create(:user) }
     let!(:a1)   { create(:appliance_type, visible_to: :all) }
-    let!(:a2)   { create(:appliance_type, visible_to: :developer) }
+    let!(:a2)   { create(:appliance_type, visible_to: :developer, author: user) }
     let!(:a3)   { create(:appliance_type, visible_to: :owner, author: user) }
 
     subject { DefaultPdp.new(user) }
@@ -37,7 +37,9 @@ describe DefaultPdp do
     it 'returns owned ATs for manage mode' do
       filtered = subject.filter(ApplianceType.all, 'manage')
 
-      expect(filtered.count).to eq 1
+      expect(filtered.count).to eq 2
+
+      expect(filtered).to include a2
       expect(filtered).to include a3
     end
 

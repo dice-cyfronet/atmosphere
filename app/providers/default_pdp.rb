@@ -12,7 +12,7 @@ class DefaultPdp
   end
 
   def can_manage?(at)
-    at.user_id == @current_user.id
+    at.user_id == current_user.id
   end
 
   def filter(ats, filter=nil)
@@ -21,10 +21,12 @@ class DefaultPdp
 
   private
 
+  attr_reader :current_user
+
   def visibility_for_filter(filter)
     case filter
       when 'production'  then {visible_to: [:all, :owner]}
-      when 'manage'      then {visible_to: :owner}
+      when 'manage'      then {user_id: current_user.id}
       else {}
     end
   end
