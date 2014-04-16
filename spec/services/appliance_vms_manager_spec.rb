@@ -176,4 +176,5 @@ describe ApplianceVmsManager do
       it_behaves_like 'not_enough_funds'
     end
   end
+
 end

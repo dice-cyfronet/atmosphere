@@ -33,8 +33,14 @@ class ComputeSite < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy
   has_many :virtual_machine_flavors, dependent: :destroy
 
+  # Required for API (returning all compute sites on which a given AT can be deployed)
+  has_many :appliance_types, through: :virtual_machine_templates
+
   has_many :funds, through: :compute_site_funds
   has_many :compute_site_funds, dependent: :destroy
+
+  has_many :appliances, through: :appliance_compute_sites
+  has_many :appliance_compute_sites, dependent: :destroy
 
   scope :with_appliance_type, ->(appliance_type) { joins(virtual_machines: {appliances: :appliance_set}).where(appliances: {appliance_type_id: appliance_type.id}, appliance_sets: {appliance_set_type: [:workflow, :portal]}).readonly(false) }
 

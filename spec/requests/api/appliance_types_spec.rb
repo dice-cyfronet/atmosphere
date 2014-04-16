@@ -134,6 +134,14 @@ describe Api::V1::ApplianceTypesController do
     end
 
     context 'when authenticated as user' do
+      let(:cs1) { create(:compute_site) }
+      let(:cs2) { create(:compute_site) }
+      let(:vmt1_1) { create(:virtual_machine_template, compute_site: cs1)}
+      let(:vmt2_1) { create(:virtual_machine_template, compute_site: cs1)}
+      let(:vmt2_2) { create(:virtual_machine_template, compute_site: cs2)}
+      let(:at_with_site) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
+      let(:at_with_two_sites) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
+
       it 'returns 200 Success' do
         get api("/appliance_types/#{at1.id}", user)
         expect(response.status).to eq 200
@@ -147,6 +155,14 @@ describe Api::V1::ApplianceTypesController do
       it 'returns 404 Not Found when appliance type is not found' do
         get api("/appliance_types/non_existing", user)
         expect(response.status).to eq 404
+      end
+
+      it 'returns compute sites for appliance type' do
+        get api("/appliance_types/#{at_with_site.id}", user)
+        expect(at_response["compute_site_ids"].length).to eq 1
+
+        get api("/appliance_types/#{at_with_two_sites.id}", user)
+        expect(at_response["compute_site_ids"].length).to eq 2
       end
     end
   end

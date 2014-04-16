@@ -156,6 +156,7 @@ describe Api::V1::AppliancesController do
 
     let(:development_set) { create(:appliance_set, user: developer, appliance_set_type: :development)}
 
+
     let(:static_dev_request_body) do
       {
         appliance: {
@@ -405,6 +406,58 @@ describe Api::V1::AppliancesController do
         expect(response.status).to eq 403
       end
     end
+
+    context 'with_selected_compute_sites' do
+
+      let!(:compute_site_1) {create(:compute_site)}
+      let!(:compute_site_2) {create(:compute_site)}
+
+      let!(:static_dev_request_body_with_one_cs) do
+        {
+            appliance: {
+                configuration_template_id: static_config.id,
+                appliance_set_id: development_set.id,
+                fund_id: fund.id,
+                compute_site_ids: [compute_site_1.id]
+            }
+        }
+      end
+
+      let!(:static_dev_request_body_with_two_cs) do
+        {
+            appliance: {
+                configuration_template_id: static_config.id,
+                appliance_set_id: development_set.id,
+                fund_id: fund.id,
+                compute_site_ids: [compute_site_1.id, compute_site_2.id]
+            }
+        }
+      end
+
+      before do
+        Optimizer.stub(:instance).and_return(optimizer)
+        expect(optimizer).to receive(:run).once
+      end
+
+      it 'creates new appliance with default cs binding' do
+        expect {
+          post api("/appliances", user), static_request_body
+        }.to change { ApplianceComputeSite.count}.by(2)
+      end
+
+      it 'creates new appliance bound to one cs' do
+        post api("/appliances", developer), static_dev_request_body_with_one_cs
+        a = Appliance.find(appliance_response['id'])
+        expect(a.compute_sites.count).to eq 1
+      end
+
+      it 'creates new appliance bound to two cs' do
+        post api("/appliances", developer), static_dev_request_body_with_two_cs
+        a = Appliance.find(appliance_response['id'])
+        expect(a.compute_sites.count).to eq 2
+      end
+    end
+
 
     context 'user keys' do
       context 'when in production mode' do

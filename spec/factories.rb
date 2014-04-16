@@ -10,6 +10,8 @@ FactoryGirl.define do
     appliance_type
     name { rand_str }
 
+    compute_sites ComputeSite.all
+
     # Create a rich fund by default so there's no risk of interfering with non-billing tests.
     fund { FactoryGirl.create(:fund, :balance => 1000000) }
     # Use arbitrary last billing date

@@ -25,7 +25,8 @@ GET /appliance_types
       "appliance_ids": [2, 4],
       "port_mapping_template_ids": [2, 3],
       "appliance_configuration_template_ids": [18, 23],
-      "virtual_machine_template_ids": [1, 4]
+      "virtual_machine_template_ids": [1, 4],
+      "compute_site_ids": [1, 2, 3]
     }, {
       ...
     }
@@ -65,7 +66,8 @@ Parameters:
     "appliance_ids": [2, 4],
     "port_mapping_template_ids": [2, 3],
     "appliance_configuration_template_ids": [18, 23],
-    "virtual_machine_template_ids": [1, 4]
+    "virtual_machine_template_ids": [1, 4],
+    "compute_site_ids": [1, 2, 3]
   }
 }
 ```
