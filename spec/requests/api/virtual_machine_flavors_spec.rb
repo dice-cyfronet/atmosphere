@@ -46,6 +46,11 @@ describe Api::V1::VirtualMachineFlavorsController do
           expect(response.status).to eq 409
         end
 
+        it "allows appliance type filters and requirements" do
+          get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{cs.id}", user)
+          expect(response.status).to eq 200
+        end
+
         it "returns 200 for empty filters" do
           get api('/virtual_machine_flavors', user)
           expect(response.status).to eq 200

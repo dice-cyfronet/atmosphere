@@ -12,14 +12,18 @@ module Api
       # or be empty.
       def index
         @virtual_machine_flavors = []
-        if filters_empty? ||requirements_filters?
+        if filters_empty? || requirements_filters?
           conditions_str = build_condition_str
           @virtual_machine_flavors = VirtualMachineFlavor.where(conditions_str, params)
         elsif appliance_type_filters? || appliance_conf_inst_filters?
           appl_type_id = params['appliance_type_id'] || get_appl_type_id_for_config_inst()
           tmpls = params['compute_site_id'] ? VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active', compute_site_id: params['compute_site_id']) : VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active')
+          options = {}
+          options[:preference_memory] = params['memory'] if params['memory']
+          options[:preference_cpu] = params['cpu'] if params['cpu']
+          options[:preference_disk] = params['hdd'] if params['hdd']
           unless tmpls.blank?
-            tmpl, flavor = Optimizer.instance.select_tmpl_and_flavor(tmpls)
+            tmpl, flavor = Optimizer.instance.select_tmpl_and_flavor(tmpls, options)
             @virtual_machine_flavors = [flavor]
           end
         else
@@ -52,12 +56,12 @@ module Api
 
       def appliance_conf_inst_filters?
         keys = params.keys
-        (keys.include? 'appliance_configuration_instance_id') && (keys & ['appliance_type_id', 'cpu', 'memory', 'hdd']).empty?
+        (keys.include? 'appliance_configuration_instance_id') && (keys & ['appliance_type_id']).empty?
       end
 
       def appliance_type_filters?
         keys = params.keys
-        (keys.include? 'appliance_type_id') && (keys & ['appliance_configuration_instance_id', 'cpu', 'memory', 'hdd']).empty?
+        (keys.include? 'appliance_type_id') && (keys & ['appliance_configuration_instance_id']).empty?
       end
 
       def requirements_filters?
