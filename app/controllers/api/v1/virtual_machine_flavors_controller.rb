@@ -19,9 +19,9 @@ module Api
           appl_type_id = params['appliance_type_id'] || get_appl_type_id_for_config_inst()
           tmpls = params['compute_site_id'] ? VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active', compute_site_id: params['compute_site_id']) : VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active')
           options = {}
-          options[:preference_memory] = params['memory'] if params['memory']
-          options[:preference_cpu] = params['cpu'] if params['cpu']
-          options[:preference_disk] = params['hdd'] if params['hdd']
+          options[:preference_memory] = params['memory'].to_i if params['memory']
+          options[:preference_cpu] = params['cpu'].to_i if params['cpu']
+          options[:preference_disk] = params['hdd'].to_i if params['hdd']
           unless tmpls.blank?
             tmpl, flavor = Optimizer.instance.select_tmpl_and_flavor(tmpls, options)
             @virtual_machine_flavors = [flavor]
