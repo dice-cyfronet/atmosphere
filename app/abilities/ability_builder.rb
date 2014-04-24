@@ -30,12 +30,13 @@ class AbilityBuilder
   protected
 
   attr_reader :ability, :user
+  delegate :can, to: :ability
 
+  #
+  # Pdp allowing to filter number of Appliance Types
+  # presented to the user.
+  #
   def pdp
     Air.config.at_pdp_class.new(@user)
-  end
-
-  def can(action = nil, subject = nil, conditions = nil, &block)
-    ability.can(action, subject, conditions, &block)
   end
 end
