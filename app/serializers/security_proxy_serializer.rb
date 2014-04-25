@@ -1,3 +1,6 @@
+#
+# Security proxy serializer.
+#
 class SecurityProxySerializer < ActiveModel::Serializer
   embed :ids
 

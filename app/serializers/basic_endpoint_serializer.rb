@@ -1,3 +1,6 @@
+#
+# Endpoint serializer returning only basic information.
+#
 class BasicEndpointSerializer < ActiveModel::Serializer
   attributes :id, :name, :description, :endpoint_type, :url
 

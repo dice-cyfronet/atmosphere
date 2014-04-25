@@ -1,3 +1,6 @@
+#
+# Appliance configuration template serializer.
+#
 class ApplianceConfigurationTemplateSerializer < ActiveModel::Serializer
   embed :ids
 
