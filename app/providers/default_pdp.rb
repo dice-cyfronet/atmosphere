@@ -1,3 +1,7 @@
+#
+# Default policy decission point. It does not have any
+# communication with external service.
+#
 class DefaultPdp
   def initialize(current_user)
     @current_user = current_user
@@ -15,7 +19,7 @@ class DefaultPdp
     at.user_id == current_user.id
   end
 
-  def filter(ats, filter=nil)
+  def filter(ats, filter = nil)
     ats.where(visibility_for_filter(filter.to_s))
   end
 
@@ -25,9 +29,9 @@ class DefaultPdp
 
   def visibility_for_filter(filter)
     case filter
-      when 'production'  then {visible_to: [:all, :owner]}
-      when 'manage'      then {user_id: current_user.id}
-      else {}
+    when 'production'  then { visible_to: [:all, :owner] }
+    when 'manage'      then { user_id: current_user.id }
+    else {}
     end
   end
 end
