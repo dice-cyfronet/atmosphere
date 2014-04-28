@@ -111,6 +111,16 @@ describe Api::V1::VirtualMachineFlavorsController do
           expect(fl['compute_site_id']).to eq tmpl.compute_site_id
         end
 
+        context 'reqiurements specified' do
+
+          it 'returns one flavor' do
+            tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs, state: 'active')
+            get api("virtual_machine_flavors?cpu=1&memory=1024&hdd=5&appliance_type_id=#{at.id}", user)
+            flavors = fls_response
+            expect(flavors.size).to eq 1
+          end
+        end
+
         context 'filter for cs specified' do
           it "applies compute site filtering" do
             tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs2, state: 'active')
