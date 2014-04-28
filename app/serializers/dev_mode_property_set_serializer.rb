@@ -1,3 +1,6 @@
+#
+# Dev mode property set serializer.
+#
 class DevModePropertySetSerializer < ActiveModel::Serializer
   embed :ids
 

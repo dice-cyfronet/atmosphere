@@ -1,3 +1,6 @@
+#
+# Http mapping serializer with filtering capability.
+#
 class HttpMappingSerializer < ActiveModel::Serializer
   include RecordFilter
   embed :ids

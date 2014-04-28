@@ -1,3 +1,6 @@
+#
+# Appliance set abilities.
+#
 class ApplianceSetAbilityBuilder < AbilityBuilder
   def add_user_abilities!
     can :create, ApplianceSet, appliance_set_type: 'portal'

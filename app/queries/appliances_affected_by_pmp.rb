@@ -1,3 +1,6 @@
+#
+# Find all appliances affected by given port mapping property.
+#
 class AppliancesAffectedByPmp
   def initialize(pmp)
     @pmp = pmp
@@ -5,15 +8,23 @@ class AppliancesAffectedByPmp
 
   def find
     joined_appliance.where(
-        port_mapping_properties: {id: @pmp.id}
+        port_mapping_properties: { id: @pmp.id }
       ).readonly(false)
   end
 
   private
 
   def joined_appliance
-    @pmp.port_mapping_template.dev_mode_property_set.blank? ?
-      Appliance.joins(appliance_type: {port_mapping_templates: :port_mapping_properties}) :
-      Appliance.joins(dev_mode_property_set:  {port_mapping_templates: :port_mapping_properties})
+    if prod_mode?
+      Appliance.joins(appliance_type:
+        { port_mapping_templates: :port_mapping_properties })
+    else
+      Appliance.joins(dev_mode_property_set:
+        { port_mapping_templates: :port_mapping_properties })
+    end
+  end
+
+  def prod_mode?
+    @pmp.port_mapping_template.dev_mode_property_set.blank?
   end
 end

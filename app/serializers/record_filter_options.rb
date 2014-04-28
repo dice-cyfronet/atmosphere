@@ -1,22 +1,25 @@
+#
+# Options for serializer record filter.
+#
 class RecordFilterOptions
-  attr_accessor :page, :page_size, :includes, :filters, :serializer, :model_class, :scope, :include_links
+  attr_accessor :page, :page_size, :includes, :filters,
+                :serializer, :model_class, :scope, :include_links
+
   DEFAULT_PAGE_SIZE = 5
 
   def initialize(serializer, params = {}, scope = nil)
     params.symbolize_keys! if params.respond_to?(:symbolize_keys!)
 
-    @page = 1
-    @page_size = nil;
-    @includes = []
-    @filters = filters_from_params(params, serializer)
+    @params = params
     @serializer = serializer
     @model_class = serializer.model_class
+    @filters = filters_from_params
     @scope = scope || model_class.send(:all)
     @include_links = true
 
-    @page = params[:page].to_i if params[:page]
-    @page_size = params[:page_size].to_i if params[:page_size]
-    @includes = params[:includes].split(',').map(&:to_sym) if params[:includes]
+    @page      = param_to_i(:page, default: 1)
+    @page_size = param_to_i(:page_size)
+    @includes  = param_to_sym_a(:includes, default: [])
   end
 
   def page?
@@ -27,9 +30,7 @@ class RecordFilterOptions
     scope_filter = {}
     @filters.keys.each do |filter|
       value = @filters[filter]
-      if value.is_a?(String)
-        value = value.split(',')
-      end
+      value = value.split(',') if value.is_a?(String)
       scope_filter[filter] = value
     end
 
@@ -37,12 +38,14 @@ class RecordFilterOptions
   end
 
   def filters_as_url_params
-    @filters.sort.map {|k,v| "#{k}=#{v.join(',')}" }.join('&')
+    @filters.sort.map { |k, v| "#{k}=#{v.join(',')}" }.join('&')
   end
 
   private
 
-  def filters_from_params(params, serializer)
+  attr_reader :params, :serializer
+
+  def filters_from_params
     filters = {}
     serializer.filterable_by.each do |filter|
       [filter, "#{filter}s".to_sym].each do |key|
@@ -52,5 +55,15 @@ class RecordFilterOptions
     filters
   end
 
-end
+  def param_to_i(key, options = {})
+    params[key] ? params[key].to_i : options[:default]
+  end
 
+  def param_to_sym_a(key, options = {})
+    if params[:includes]
+      params[key].split(',').map(&:to_sym)
+    else
+      options[:default]
+    end
+  end
+end

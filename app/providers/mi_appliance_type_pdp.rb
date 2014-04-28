@@ -18,13 +18,13 @@ require 'mi_resource_access'
 # to `all` or `owner`.
 #
 class MiApplianceTypePdp
-  def initialize(current_user, resource_access_class=MiResourceAccess)
+  def initialize(current_user, resource_access_class = MiResourceAccess)
     @current_user = current_user
     @resource_access = resource_access_class.new(
                           'AtomicService',
                           ticket: current_user.mi_ticket,
                           verify: Air.config.vph.ssl_verify,
-                          url: Air.config.vph.host,
+                          url: Air.config.vph.host
                         )
   end
 
@@ -66,7 +66,7 @@ class MiApplianceTypePdp
   #      the user (roles editor or manager)
   #    - `:manager` AT available for manager (only manager role)
   #
-  def filter(ats, mode=nil)
+  def filter(ats, mode = nil)
     mode_str = mode.to_s
     role = mode_role(mode_str)
 
@@ -79,10 +79,10 @@ class MiApplianceTypePdp
   private
 
   def can_perform_as?(at, role)
-    show_all? || has_role?(at, role)
+    show_all? || role?(at, role)
   end
 
-  def has_role?(at, role)
+  def role?(at, role)
     @resource_access.has_role?(at.id, role)
   end
 
@@ -91,14 +91,14 @@ class MiApplianceTypePdp
   end
 
   def visibility_for_mode(mode)
-    mode == 'production' ? {visible_to: [:all, :owner]} : {}
+    mode == 'production' ? { visible_to: [:all, :owner] } : {}
   end
 
   def mode_role(mode)
     case mode
-      when 'manage'  then :Manager
-      when 'development' then :Editor
-      else :Reader
+    when 'manage'  then :Manager
+    when 'development' then :Editor
+    else :Reader
     end
   end
 

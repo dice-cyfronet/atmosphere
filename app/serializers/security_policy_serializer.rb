@@ -1,3 +1,6 @@
+#
+# Security policy serializer.
+#
 class SecurityPolicySerializer < ActiveModel::Serializer
   embed :ids
 

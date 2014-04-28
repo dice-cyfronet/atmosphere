@@ -1,3 +1,8 @@
+#
+# Compute site serializer. For normal user basic compute site data
+# is returned. When current user has admin role than additionally
+# compute site configuration is returned.
+#
 class ComputeSiteSerializer < ActiveModel::Serializer
   embed :ids
 
@@ -5,9 +10,13 @@ class ComputeSiteSerializer < ActiveModel::Serializer
 
   def attributes
     hash = super
-    if scope.has_role? :admin
-      hash["config"] = object.config
-    end
+    hash['config'] = object.config if admin?
     hash
+  end
+
+  private
+
+  def admin?
+    scope.has_role? :admin
   end
 end

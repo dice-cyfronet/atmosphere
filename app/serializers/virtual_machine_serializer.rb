@@ -1,3 +1,6 @@
+#
+# Virtual machine serializer.
+#
 class VirtualMachineSerializer < ActiveModel::Serializer
   embed :ids
 

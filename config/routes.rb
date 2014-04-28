@@ -7,12 +7,15 @@ end
 
 def owned_payload_resources(name)
   json_resources name
-  get "#{name}/:name/payload" => "#{name}#payload", as: "#{name}_payload", constraints: {name: /#{OwnedPayloable.name_regex}/}, defaults: {format: :text}
+  get "#{name}/:name/payload" => "#{name}#payload",
+      as: "#{name}_payload",
+      constraints: { name: /#{OwnedPayloable.name_regex}/ },
+      defaults: { format: :text }
 end
 
 Air::Application.routes.draw do
 
-  get "jobs/show"
+  get 'jobs/show'
   resource :profile, only: [:show, :update] do
     member do
       put :update_password
@@ -20,12 +23,11 @@ Air::Application.routes.draw do
     end
   end
 
-  constraint = lambda { |request| request.env["warden"].authenticate? }
+  constraint = ->(request) { request.env['warden'].authenticate? }
   constraints constraint do
-    mount Sidekiq::Web, at: "/admin/sidekiq", as: :sidekiq
+    mount Sidekiq::Web, at: '/admin/sidekiq', as: :sidekiq
     get 'admin/jobs' => 'admin/jobs#show', as: :jobs
   end
-
 
   namespace :admin do
     resources :appliance_sets, only: [:index, :show, :edit, :update, :destroy]
@@ -50,17 +52,25 @@ Air::Application.routes.draw do
     resources :user_keys, except: [:edit, :update]
   end
 
-  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+  devise_for :users,
+             controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+
   root to: 'home#index'
 
-  namespace :api, defaults: {format: :json} do
+  namespace :api, defaults: { format: :json } do
     namespace :v1 do
       resources :compute_sites, only: [:index, :show]
 
       resources :virtual_machine_flavors, only: [:index]
 
       json_resources :appliance_types
-      get 'appliance_types/:id/endpoints/:service_name/:invocation_path' => 'appliance_types#endpoint_payload', as: 'appliance_types_endpoint_payload', constraints: {invocation_path: /#{OwnedPayloable.name_regex}/}, defaults: {format: :text}
+
+      get 'appliance_types/:id/endpoints/:service_name/:invocation_path' =>
+          'appliance_types#endpoint_payload',
+          as: 'appliance_types_endpoint_payload',
+          constraints: { invocation_path: /#{OwnedPayloable.name_regex}/ },
+          defaults: { format: :text }
+
       resources :appliance_endpoints, only: [:index, :show]
 
       json_resources :port_mapping_templates
