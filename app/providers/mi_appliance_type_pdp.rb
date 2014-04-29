@@ -70,16 +70,20 @@ class MiApplianceTypePdp
     mode_str = mode.to_s
     role = mode_role(mode_str)
 
-    where_condition = visibility_for_mode(mode_str)
-    where_condition[:id] = availabe_resource_ids(role) unless show_all?
+    pdp_condition = visibility_for_mode(mode_str)
+    pdp_condition = pdp_condition.and(mi_pdp_ids(role)) unless show_all?
 
-    ats.where(where_condition)
+    ats.where(owner.or(pdp_condition))
   end
 
   private
 
   def can_perform_as?(at, role)
-    show_all? || role?(at, role)
+    show_all? || owner?(at) || role?(at, role)
+  end
+
+  def owner?(at)
+    at.author == @current_user
   end
 
   def role?(at, role)
@@ -91,7 +95,23 @@ class MiApplianceTypePdp
   end
 
   def visibility_for_mode(mode)
-    mode == 'production' ? { visible_to: [:all, :owner] } : {}
+    if mode == 'production'
+      table[:visible_to].in([:all, :owner])
+    else
+      table[:visible_to].in([:all, :owner, :developer])
+    end
+  end
+
+  def mi_pdp_ids(role)
+    table[:id].in(availabe_resource_ids(role))
+  end
+
+  def owner
+    table[:user_id].eq(@current_user.id)
+  end
+
+  def table
+    ApplianceType.arel_table
   end
 
   def mode_role(mode)

@@ -4,7 +4,7 @@ describe MiApplianceTypePdp do
   let(:resource_access) { double('mi resource access') }
   let(:resource_access_class) { double }
   let(:ticket) { 'ticket' }
-  let(:current_user) { double(mi_ticket: ticket) }
+  let(:current_user) { build(:user, mi_ticket: ticket) }
 
   before do
     allow(Air.config.vph).to receive(:host).and_return('https://mi.host')
@@ -96,6 +96,12 @@ describe MiApplianceTypePdp do
 
         expect(subject.can_manage?(at)).to be_true
       end
+
+      it 'allow to start when user is AT author' do
+        at = build(:appliance_type, author: current_user, visible_to: :owner)
+
+        expect(subject.can_manage?(at)).to be_true
+      end
     end
   end
 
@@ -103,6 +109,7 @@ describe MiApplianceTypePdp do
   let!(:at2) { create(:appliance_type, visible_to: :owner) }
   let!(:at3) { create(:appliance_type, visible_to: :all) }
   let!(:at4) { create(:appliance_type, visible_to: :developer) }
+  let!(:at5) { create(:appliance_type, visible_to: :owner, author: current_user) }
 
   context 'when normal user' do
     before do
@@ -117,37 +124,41 @@ describe MiApplianceTypePdp do
     it 'filter all available appliance' do
       filtered_ats = subject.filter(ApplianceType.all)
 
-      expect(filtered_ats.size).to eq 4
+      expect(filtered_ats.size).to eq 5
       expect(filtered_ats).to include at1
       expect(filtered_ats).to include at2
       expect(filtered_ats).to include at3
       expect(filtered_ats).to include at4
+      expect(filtered_ats).to include at5
     end
 
     it 'filter available appliance types for production' do
       filtered_ats = subject.filter(ApplianceType.all, :production)
 
-      expect(filtered_ats.size).to eq 3
+      expect(filtered_ats.size).to eq 4
       expect(filtered_ats).to include at1
       expect(filtered_ats).to include at2
       expect(filtered_ats).to include at3
+      expect(filtered_ats).to include at5
     end
 
     it 'filter available appliance types for development' do
       filtered_ats = subject.filter(ApplianceType.all, :development)
 
-      expect(filtered_ats.size).to eq 3
+      expect(filtered_ats.size).to eq 4
       expect(filtered_ats).to include at2
       expect(filtered_ats).to include at3
       expect(filtered_ats).to include at4
+      expect(filtered_ats).to include at5
     end
 
     it 'filter available appliance types for manager' do
       filtered_ats = subject.filter(ApplianceType.all, :manage)
 
-      expect(filtered_ats.size).to eq 2
+      expect(filtered_ats.size).to eq 3
       expect(filtered_ats).to include at3
       expect(filtered_ats).to include at4
+      expect(filtered_ats).to include at5
     end
 
     it 'returns all resources when user is an admin' do
@@ -155,7 +166,7 @@ describe MiApplianceTypePdp do
 
       filtered_ats = subject.filter(ApplianceType.all, :manage)
 
-      expect(filtered_ats.size).to eq 4
+      expect(filtered_ats.size).to eq 5
     end
   end
 
