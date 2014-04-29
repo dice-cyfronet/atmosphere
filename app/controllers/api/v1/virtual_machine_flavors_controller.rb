@@ -29,6 +29,12 @@ module Api
         else
           raise Air::Conflict.new("Illegal combination of filters")
         end
+        if params['limit']
+          limit = params['limit'].to_i
+          if limit >= 1
+            @virtual_machine_flavors = @virtual_machine_flavors.first(limit)
+          end
+        end
         respond_with @virtual_machine_flavors
       end
 

@@ -85,6 +85,26 @@ describe Api::V1::VirtualMachineFlavorsController do
             expect(f['compute_site_id']).to eq cs2.id
           }
         end
+
+        context "limit specified" do
+          it "returns no more than limit flavors" do
+            create(:virtual_machine_flavor, memory: required_mem + 512, compute_site: cs2)
+            create(:virtual_machine_flavor, memory: required_mem + 1024, compute_site: cs2)
+            n = 2
+            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{cs2.id}&limit=#{n}", user)
+            flavors = fls_response
+            expect(flavors.size).to be <= n
+          end
+
+          it "ignores limit if it is not grater or equal 1" do
+            create(:virtual_machine_flavor, memory: required_mem + 512, compute_site: cs2)
+            create(:virtual_machine_flavor, memory: required_mem + 1024, compute_site: cs2)
+            n = -2
+            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{cs2.id}&limit=#{n}", user)
+            flavors = fls_response
+            expect(flavors.size).to be >= 0
+          end
+        end
       end
 
       context 'filter for appliance type defined' do
