@@ -40,6 +40,16 @@ describe Api::V1::VirtualMachineFlavorsController do
         expect(flavors.size).to eq VirtualMachineFlavor.count
       end
 
+      context 'params in invalid format' do
+        it 'returns 422 status' do
+          ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
+            get api("/virtual_machine_flavors?#{param_name}=INVALID", user)
+            expect(response.status).to eq 422
+            expect(response.body).to eq "{\"message\":\"Invalid parameter format for #{param_name}\"}"
+          end
+        end
+      end
+
       context 'filters validation' do
         it "returns 409 conflict for conflicting filters" do
           get api('/virtual_machine_flavors?appliance_configuration_instance_id=1&appliance_type_id=1', user)

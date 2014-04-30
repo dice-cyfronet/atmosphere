@@ -11,6 +11,7 @@ module Api
       # - a combination of compute_site_id, cpu, memory, hdd
       # or be empty.
       def index
+        validate_params
         @virtual_machine_flavors = []
         if filters_empty? || requirements_filters?
           conditions_str = build_condition_str
@@ -73,6 +74,15 @@ module Api
       def requirements_filters?
         keys = params.keys
         (not (keys & ['compute_site_id', 'cpu', 'memory', 'hdd']).empty?) && (keys & ['appliance_configuration_instance_id', 'appliance_type_id']).empty?
+      end
+
+      def validate_params
+        possitive_number_re = /^\d+$/
+        ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
+          if params[param_name] && !(params[param_name] =~ possitive_number_re)
+            raise Air::InvalidParameterFormat.new("Invalid parameter format for #{param_name}")
+          end
+        end
       end
 
     end
