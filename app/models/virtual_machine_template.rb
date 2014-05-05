@@ -41,7 +41,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
   end
 
   def self.create_from_vm(virtual_machine, name=nil)
-    tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name || virtual_machine.name) + "_" + VirtualMachineTemplate.generate_timestamp
+    tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name((name || virtual_machine.name) + "/" + VirtualMachineTemplate.generate_timestamp)
     vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: tmpl_name, managed_by_atmosphere: true)
     logger.info "Saving template #{vm_template}"
     cs = vm_template.source_vm.compute_site
@@ -93,7 +93,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
 
   def self.generate_timestamp
     t = Time.now;
-    t.strftime("%d/%m/%Y-%H:%M:%S.#{t.usec}")
+    t.strftime("%d-%m-%Y/%H-%M-%S/#{t.usec}")
   end
 
   def release_source_vm
