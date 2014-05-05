@@ -19,7 +19,7 @@ class UserKey < ActiveRecord::Base
   validates_presence_of :name, :public_key, :user
   validates_uniqueness_of :name, :scope => :user_id
   attr_readonly :name, :public_key, :fingerprint
-  validate :generate_fingerprint, unless: :persisted?
+  validate :check_key_type, :generate_fingerprint, unless: :persisted?
   before_destroy :disallow_if_used_in_running_vm
   before_destroy :delete_in_clouds
 
@@ -54,6 +54,13 @@ class UserKey < ActiveRecord::Base
       end
     end
 
+  end
+
+  def check_key_type
+    if !(self.public_key.starts_with?('ssh-rsa'))
+      logger.error "invalid type of provided public key #{public_key}"
+      self.errors.add(:public_key, 'is invalid - bad type of key')
+    end
   end
 
   def import_to_clouds

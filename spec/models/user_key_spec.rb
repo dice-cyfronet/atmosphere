@@ -41,6 +41,10 @@ describe UserKey do
     end
   end
 
+  it 'should import key to cloud site', :focus=>true do
+    ComputeSite.all.each { |cs| subject.import_to_cloud(cs) }
+  end
+
   it 'should not raise error if key is imported twice' do
     subject.name
     ComputeSite.all.each { |cs| subject.import_to_cloud(cs); subject.import_to_cloud(cs) }
