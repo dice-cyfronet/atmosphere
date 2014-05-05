@@ -14,7 +14,7 @@ class Optimizer
     terminate_unused_vms if hint[:destroyed_appliance]
   end
 
-  private
+  #private
   def satisfy_appliance(appliance)
     appl_manager = ApplianceVmsManager.new(appliance)
 
