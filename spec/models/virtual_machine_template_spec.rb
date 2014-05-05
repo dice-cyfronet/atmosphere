@@ -214,6 +214,7 @@ describe VirtualMachineTemplate do
   describe '::create_from_vm' do
     let(:cloud_client) { double(:cloud_client) }
     let(:vm) { create(:virtual_machine, id_at_site: 'id') }
+    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id') }
 
     before do
       allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))
@@ -231,6 +232,14 @@ describe VirtualMachineTemplate do
       vm.reload
 
       expect(vm.state).to eq 'saving'
+    end
+
+    it 'saves template from machines with identical names' do
+      tmpl1 = VirtualMachineTemplate.create_from_vm(vm)
+      tmpl2 = VirtualMachineTemplate.create_from_vm(vm2)
+
+      expect(vm.name).to eq(vm2.name)
+      expect(tmpl1.name).not_to eq(tmpl2.name)
     end
   end
 end
