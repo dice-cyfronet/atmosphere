@@ -78,6 +78,10 @@ class Fog::Compute::AWS::Server
   def task_state
     nil #TODO
   end
+
+  def created
+    created_at
+  end
 end
 
 class Fog::Compute::OpenStack::Image
