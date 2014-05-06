@@ -58,7 +58,7 @@ describe UserKey do
     saved = user_key.save
     expect(saved).to be_false
     errors = user_key.errors.messages
-    expect(errors).to eql({public_key: ["is invalid"]})
+    expect(errors).to eql({public_key: ["bad type of key", "is invalid"]})
   end
 
   describe '#describe' do
@@ -91,7 +91,7 @@ describe UserKey do
     end
   end
 
-  describe 'key validation', :focus=>true do
+  describe 'key validation' do
 
     it 'should pass on valid ssh-rsa key' do
       create(:user_key, public_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSUGPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XAt3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/EnmZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbxNrRFi9wrf+M7Q== factorized@sting')
