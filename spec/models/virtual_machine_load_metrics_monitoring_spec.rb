@@ -15,7 +15,7 @@ describe VirtualMachine do
     it 'queries Zabbix' do
       expect(Zabbix).to receive(:host_metrics)
       expect(metrics_double).to receive(:collect_last)
-      vm = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1)
+      vm = create(:virtual_machine, ip: '10.100.0.1', monitoring_id: 1)
       vm.current_load_metrics
     end
   end
