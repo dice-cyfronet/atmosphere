@@ -61,6 +61,8 @@ Air::Application.routes.draw do
     namespace :v1 do
       resources :compute_sites, only: [:index, :show]
 
+      resources :virtual_machine_flavors, only: [:index]
+
       json_resources :appliance_types
 
       get 'appliance_types/:id/endpoints/:service_name/:invocation_path' =>

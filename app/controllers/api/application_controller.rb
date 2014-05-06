@@ -20,7 +20,7 @@ module Api
       render json: {message: 'Record not found'}, status: :not_found
     end
 
-    rescue_from ActionController::ParameterMissing do |exception|
+    rescue_from ActionController::ParameterMissing, Air::InvalidParameterFormat do |exception|
       render json: {message: exception.to_s}, status: :unprocessable_entity
     end
 

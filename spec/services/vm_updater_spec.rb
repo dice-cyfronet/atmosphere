@@ -267,11 +267,22 @@ describe VmUpdater do
     end
   end
 
+  context 'when VM created 1s before' do
+    let(:server) { server_double(state: 'build', created: Time.now) }
+
+    it 'does not update VM data' do
+      expect {
+        subject.update
+      }.to change { VirtualMachine.count }.by(0)
+    end
+  end
+
   def server_double(options)
     double(
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
+      created: options[:created] || 5.seconds.ago,
       state: options[:state] || nil,
       flavor: options[:flavor] || {'id' => '1'},
       task_state: options[:task_state] || nil,
@@ -285,6 +296,7 @@ describe VmUpdater do
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
+      created: options[:created] || 5.seconds.ago,
       state: 'active',
       flavor: options[:flavor] || {'id' => '1'},
       task_state: nil,

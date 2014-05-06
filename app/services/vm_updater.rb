@@ -6,6 +6,16 @@ class VmUpdater
   end
 
   def update
+    perform_update! if old_enough?
+
+    vm
+  end
+
+  private
+
+  attr_reader :site, :server
+
+  def perform_update!
     vm.source_template = source_template
     vm.name = server.name || '[unnamed]'
     vm.state = map_saving_state(vm, server.task_state) ||
@@ -22,13 +32,11 @@ class VmUpdater
     else
       error
     end
-
-    vm
   end
 
-  private
-
-  attr_reader :site, :server
+  def old_enough?
+    server.created < Air.config.childhood_age.seconds.ago
+  end
 
   def furhter_update_requred?
     ip_changed? || state_changed_from_active? || turned_on?
