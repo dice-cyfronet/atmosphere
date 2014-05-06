@@ -12,6 +12,7 @@ GET /appliances
     {
       "id": 1,
       "name": "appliance name",
+      "description": "appliance description",
       "appliance_set_id": 2,
       "appliance_type_id": 3,
       "appliance_configuration_instance_id": 4,
@@ -43,6 +44,7 @@ Parameters:
   "appliance": {
     "id": 1,
     "name": "appliance name",
+    "description": "appliance description",
     "appliance_set_id": 2,
     "appliance_type_id": 3,
     "appliance_configuration_instance_id": 4,
@@ -67,6 +69,7 @@ Add new appliance to the appliance set
   "appliance": {
       "appliance_set_id": 2,
       "name": "appliance name",
+      "description": "appliance description",
       "user_key_id": 1, #only in development mode
       "configuration_template_id": 1,
       "compute_site_ids": [1, 2], # optional - if skipped, the appliance will be deployable to all existing compute sites.
@@ -82,7 +85,8 @@ Add new appliance to the appliance set
 Parameters:
 
 + `appliance_set_id` (required) - The ID of appliance set into which appliance will be added
-+ `name` (optional) - Appliance name
++ `name` (optional) - Appliance name (if empty than source Appliance Type name is used)
++ `description` (optional) - Appliance description (if empty than source Appliance Type description is used)
 + `user_key_id` (optional) - User key id. User key will be rejested for appliances started in production mode
 + `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
@@ -96,7 +100,7 @@ Not all appliance types can be added into all appliance sets. For details please
 
 ## Update appliance name
 
-Updates appliance name.
+Updates appliance name and description.
 
 ```
 PUT /appliances/:id
@@ -109,7 +113,8 @@ Parameters:
 ```json
 {
   "appliance": {
-      "name": "appliance name"
+      "name": "appliance name",
+      "description": "appliance description",
     }
 }
 ```
