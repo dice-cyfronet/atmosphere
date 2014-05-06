@@ -73,7 +73,7 @@ class MiApplianceTypePdp
     pdp_condition = visibility_for_mode(mode_str)
     pdp_condition = pdp_condition.and(mi_pdp_ids(role)) unless show_all?
 
-    ats.where(owner.or(pdp_condition))
+    ats.where(owner_at_in_mode(mode_str).or(pdp_condition))
   end
 
   private
@@ -104,6 +104,10 @@ class MiApplianceTypePdp
 
   def mi_pdp_ids(role)
     table[:id].in(availabe_resource_ids(role))
+  end
+
+  def owner_at_in_mode(mode)
+    owner.and(visibility_for_mode(mode))
   end
 
   def owner
