@@ -36,7 +36,7 @@ class VirtualMachine < ActiveRecord::Base
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
   before_update :update_in_zabbix, if: :ip_changed?
-  before_destroy :unregister_from_zabbix, if: :ip? && :zabbix_host_id?
+  before_destroy :unregister_from_zabbix, if: :ip? && :monitoring_id?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
@@ -95,7 +95,7 @@ class VirtualMachine < ActiveRecord::Base
   def update_in_zabbix
     return unless managed_by_atmosphere?
     logger.info "Updating vm #{uuid} in Zabbix"
-    if ip_was && zabbix_host_id
+    if ip_was && monitoring_id
       unregister_from_zabbix
     end
     register_in_zabbix if ip
@@ -103,18 +103,18 @@ class VirtualMachine < ActiveRecord::Base
 
   def register_in_zabbix
     logger.info "Registering vm #{uuid} in Zabbix"
-    self[:zabbix_host_id] = Zabbix.register_host(uuid, ip)
+    self[:monitoring_id] = Zabbix.register_host(uuid, ip)
   end
 
   def unregister_from_zabbix
-    logger.info "Unregistering vm #{uuid} with zabbix host id #{zabbix_host_id} from Zabbix"
-    Zabbix.unregister_host(self.zabbix_host_id)
-    self[:zabbix_host_id] = nil
+    logger.info "Unregistering vm #{uuid} with zabbix host id #{monitoring_id} from Zabbix"
+    Zabbix.unregister_host(self.monitoring_id)
+    self[:monitoring_id] = nil
   end
 
   def current_load_metrics
-    if zabbix_host_id
-      metrics=Zabbix.host_metrics(zabbix_host_id)
+    if monitoring_id
+      metrics=Zabbix.host_metrics(monitoring_id)
       metrics.collect_last
     else
       nil
