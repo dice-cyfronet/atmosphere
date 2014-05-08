@@ -59,7 +59,7 @@ class UserKey < ActiveRecord::Base
   def check_key_type
     if (!self.public_key.nil? && !self.public_key.starts_with?('ssh-rsa'))
       logger.error "invalid type of provided public key #{public_key}"
-      self.errors.add(:public_key, 'bad type of key')
+      self.errors.add(:public_key, 'bad type of key (only ssh-rsa is allowed)')
     end
   end
 

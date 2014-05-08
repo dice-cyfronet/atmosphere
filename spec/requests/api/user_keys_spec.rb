@@ -180,7 +180,7 @@ describe Api::V1::UserKeysController do
         }
         post api("/user_keys", user), invalid_user_key_req
         expect(response.status).to eq 422
-        expect(response.body).to eq '{"public_key":["bad type of key","is invalid"]}'
+        expect(response.body).to eq '{"public_key":["bad type of key (only ssh-rsa is allowed)","is invalid"]}'
       end
 
       it 'returns 402 Unprocessable Entity status if the request is incorrect' do

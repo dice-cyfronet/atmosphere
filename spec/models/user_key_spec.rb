@@ -58,7 +58,7 @@ describe UserKey do
     saved = user_key.save
     expect(saved).to be_false
     errors = user_key.errors.messages
-    expect(errors).to eql({public_key: ["bad type of key", "is invalid"]})
+    expect(errors).to eql({public_key: ["bad type of key (only ssh-rsa is allowed)", "is invalid"]})
   end
 
   describe '#describe' do
