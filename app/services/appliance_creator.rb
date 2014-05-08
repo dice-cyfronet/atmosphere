@@ -58,7 +58,7 @@ class ApplianceCreator
     if params[:compute_site_ids].blank?
       ComputeSite.all
     else
-      ComputeSite.where(id: @params[:compute_site_ids])
+      ComputeSite.where(id: params[:compute_site_ids])
     end
   end
 
