@@ -108,7 +108,12 @@ describe MiApplianceTypePdp do
   let!(:at1) { create(:appliance_type, visible_to: :all) }
   let!(:at2) { create(:appliance_type, visible_to: :owner) }
   let!(:at3) { create(:appliance_type, visible_to: :all) }
-  let!(:at4) { create(:appliance_type, visible_to: :developer) }
+  let!(:at4) do
+    create(:appliance_type,
+      visible_to: :developer,
+      author: current_user
+    )
+  end
   let!(:at5) { create(:appliance_type, visible_to: :owner, author: current_user) }
 
   context 'when normal user' do
