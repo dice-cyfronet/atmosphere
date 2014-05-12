@@ -93,7 +93,8 @@ class ApplianceType < ActiveRecord::Base
   def as_metadata_xml
     optional_elements = metadata_global_id ?
         "<globalID>#{metadata_global_id}</globalID>" :
-        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataCreationDate>"
+        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataCreationDate>
+         <category>None</category>"
 
     <<-MD_XML.strip_heredoc
     <resource_metadata>
@@ -101,7 +102,7 @@ class ApplianceType < ActiveRecord::Base
         <localID>#{id}</localID>
         <name>#{esc_xml name}</name>
         <type>AtomicService</type>
-        <category>None</category>
+
         <description>#{esc_xml description}</description>
         <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataUpdateDate>
         <creationDate>#{created_at.strftime('%Y-%m-%d %H:%M:%S')}</creationDate>
