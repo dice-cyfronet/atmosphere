@@ -60,7 +60,11 @@ class Cloud::VmCreator
   end
 
   def update_name(server_id)
-    client.create_tags(server_id, {'Name' => @name}) if amazon?
+    begin
+      client.create_tags(server_id, {'Name' => @name}) if amazon?
+    rescue Fog::Compute::AWS::NotFound
+      Raven.capture_exception($!)
+    end
   end
 
   def amazon?
