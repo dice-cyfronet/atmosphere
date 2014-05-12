@@ -26,4 +26,13 @@ module Air
   def self.monitoring_logger
     @@monitoring_logger ||= Logger.new(Rails.root.join('log', 'monitoring.log'))
   end
+
+  def self.monitoring_client
+    if config['zabbix']
+      'zabbix'
+    else
+      Monitoring::NullClient.new
+    end
+  end
+
 end
