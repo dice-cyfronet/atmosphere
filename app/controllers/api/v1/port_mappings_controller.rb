@@ -5,7 +5,7 @@ module Api
       respond_to :json
 
       def index
-        respond_with @port_mappings.where(filter)
+        respond_with @port_mappings.where(filter).order(:id)
       end
 
       def show
