@@ -384,7 +384,7 @@ describe Api::V1::ApplianceTypesController do
 
         it 'saves developer\'s virtual machine as template when creating new appliance type' do
           cloud_client = double('cloud client')
-          expect(cloud_client).to receive(:save_template).and_return(99)
+          expect(cloud_client).to receive(:save_template).and_return('99')
           Fog::Compute.stub(:new).and_return cloud_client
           vm = create(:virtual_machine)
           appl.virtual_machines << vm

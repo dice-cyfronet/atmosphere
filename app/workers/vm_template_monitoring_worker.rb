@@ -25,17 +25,9 @@ class VmTemplateMonitoringWorker
     logger.info "#{jid}: updating VMTs"
     all_site_templates = site.virtual_machine_templates.to_a
     images.each do |image|
-      template = site.virtual_machine_templates.find_or_initialize_by(id_at_site: image.id)
-      template.id_at_site =  image.id
-      template.name = image.name
-      template.architecture = image.architecture
-      template.state = image.status.downcase.to_sym
+      updated_vmt = Cloud::VmtUpdater.new(site, image).update
 
-      all_site_templates.delete template
-
-      unless template.save
-        logger.error "#{jid}: unable to create/update #{template.id} template because: #{template.errors.to_json}"
-      end
+      all_site_templates.delete(updated_vmt)
     end
 
     #remove deleted templates
