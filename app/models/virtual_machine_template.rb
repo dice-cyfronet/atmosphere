@@ -40,20 +40,27 @@ class VirtualMachineTemplate < ActiveRecord::Base
     "#{compute_site.site_id}-tmpl-#{id_at_site}"
   end
 
-  def self.create_from_vm(virtual_machine, name=nil)
-    tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name((name || virtual_machine.name) + "/" + VirtualMachineTemplate.generate_timestamp)
-    vm_template = VirtualMachineTemplate.new(source_vm: virtual_machine, name: tmpl_name, managed_by_atmosphere: true)
-    logger.info "Saving template #{vm_template}"
-    cs = vm_template.source_vm.compute_site
-    cloud_client = cs.cloud_client
-    id_at_site = cloud_client.save_template(vm_template.source_vm.id_at_site, vm_template.name)
+  def self.create_from_vm(virtual_machine, name = virtual_machine.name)
+    name_with_timestamp = "#{name}/#{VirtualMachineTemplate.generate_timestamp}"
+    tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
+    cs = virtual_machine.compute_site
+
+    id_at_site = cs.cloud_client
+      .save_template(virtual_machine.id_at_site, tmpl_name)
     logger.info "Created template #{id_at_site}"
-    vm_template.id_at_site = id_at_site
-    vm_template.compute_site = cs
+
+    vm_template = cs.virtual_machine_templates
+      .find_or_initialize_by(id_at_site: id_at_site)
+
+    vm_template.source_vm = virtual_machine
+    vm_template.name = tmpl_name
+    vm_template.managed_by_atmosphere = true
     vm_template.state = :saving
     virtual_machine.state = :saving
+
     begin
       vm_template.transaction do
+        logger.info "Saving template #{vm_template}"
         vm_template.save!
         virtual_machine.save!
       end
