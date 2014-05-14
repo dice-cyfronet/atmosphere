@@ -7,6 +7,7 @@ module Air
 
   @@cloud_clients = {}
   @@monitoring_clients = {'null' => Monitoring::NullClient.new}
+  @@metrics_store_clients = {'null' => Monitoring::NullMetricsStore.new}
 
   def self.register_cloud_client(site_id, cloud_client)
     @@cloud_clients[site_id] = {timestamp: Time.now, client: cloud_client}
@@ -39,6 +40,21 @@ module Air
       end
     else
       @@monitoring_clients['null']
+    end
+  end
+
+  def self.metrics_store
+    if config['influxdb']
+      if @@metrics_store_clients['influxdb']['client'] && (Time.now - @@metrics_store_clients['influxdb']['timestamp']) < 60.minutes
+        @@metrics_store_clients['influxdb']['client']
+      else
+        client = Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
+        @@metrics_store_clients['influxdb']['client'] = client
+        @@metrics_store_clients['influxdb']['timestamp'] = Time.now
+        client
+      end
+    else
+      @@metrics_store_clients['null']
     end
   end
 

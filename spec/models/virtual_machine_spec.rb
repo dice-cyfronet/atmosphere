@@ -21,9 +21,6 @@ describe VirtualMachine do
 
   before {
     Fog.mock! 
-    #Monitoring::ZabbixClient.stub(:register_host).and_return 1
-    #Monitoring::ZabbixClient.stub(:unregister_host)
-    #Monitoring::ZabbixClient.stub(:host_metrics)
   }
 
   let(:priv_ip) { '10.1.1.16' }
