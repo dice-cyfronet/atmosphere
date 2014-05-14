@@ -219,6 +219,7 @@ describe ApplianceType do
       xml = published_at.as_metadata_xml.strip
       expect(xml).to include('<globalID>MDGLID</globalID>')
       expect(xml).to_not include('metadataCreationDate')
+      expect(xml).to_not include('category')
     end
 
     it 'puts development state in metadata xml document' do
