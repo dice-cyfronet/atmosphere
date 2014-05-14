@@ -21,9 +21,9 @@ describe VirtualMachine do
 
   before {
     Fog.mock! 
-    Zabbix.stub(:register_host).and_return 1
-    Zabbix.stub(:unregister_host)
-    Zabbix.stub(:host_metrics)
+    #Monitoring::ZabbixClient.stub(:register_host).and_return 1
+    #Monitoring::ZabbixClient.stub(:unregister_host)
+    #Monitoring::ZabbixClient.stub(:host_metrics)
   }
 
   let(:priv_ip) { '10.1.1.16' }
@@ -70,67 +70,67 @@ describe VirtualMachine do
     end
   end
 
-  context 'zabbix' do
+  context 'monitoring' do
 
     it 'registers vm after IP was changed from blank to non blank' do
       vm_ipless = create(:virtual_machine, appliances: [appliance], managed_by_atmosphere: true)
-      expect(vm_ipless).to receive(:register_in_zabbix)
-      expect(vm_ipless).not_to receive(:unregister_in_zabbix)
+      expect(vm_ipless).to receive(:register_in_monitoring)
+      expect(vm_ipless).not_to receive(:unregister_in_monitoring)
       vm_ipless.ip = priv_ip
       vm_ipless.save
     end
 
     it 'unregisters and registeres after IP was changed from non blank to non blank and monitoring_id was not blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, monitoring_id: 1)
-      expect(vm).to receive(:unregister_from_zabbix).ordered
-      expect(vm).to receive(:register_in_zabbix).ordered
+      expect(vm).to receive(:unregister_from_monitoring).ordered
+      expect(vm).to receive(:register_in_monitoring).ordered
       vm.ip = priv_ip_2
       vm.save
     end
 
     it 'registeres after IP was changed from non blank to non blank but monitoring_id was blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
-      expect(vm).to_not receive(:unregister_from_zabbix)
-      expect(vm).to receive(:register_in_zabbix)
+      expect(vm).to_not receive(:unregister_from_monitoring)
+      expect(vm).to receive(:register_in_monitoring)
       vm.ip = priv_ip_2
       vm.save
     end
 
     it 'unregisters vm after non-blank IP was changed and is blank and monitoring_id was not blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, monitoring_id: 1)
-      expect(vm).to receive(:unregister_from_zabbix)
-      expect(vm).to_not receive(:register_in_zabbix)        
+      expect(vm).to receive(:unregister_from_monitoring)
+      expect(vm).to_not receive(:register_in_monitoring)        
       vm.ip = nil
       vm.save
     end
 
     it 'does not unregister vm after non-blank IP was changed and is blank but monitoring_id is blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
-      expect(vm).to_not receive(:unregister_from_zabbix)
-      expect(vm).to_not receive(:register_in_zabbix)        
+      expect(vm).to_not receive(:unregister_from_monitoring)
+      expect(vm).to_not receive(:register_in_monitoring)        
       vm.ip = nil
       vm.save
     end
 
     it 'unregisters vm before vm is destroyed if ip and monitoring_id are not blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, monitoring_id: 1)
-      expect(vm).to receive(:unregister_from_zabbix)
-      expect(vm).to_not receive(:register_in_zabbix)
+      expect(vm).to receive(:unregister_from_monitoring)
+      expect(vm).to_not receive(:register_in_monitoring)
       vm.destroy(false)
     end
 
     it 'does nothing before vm is destroyed if ip is present but monitoring_id is blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
-      expect(vm).to_not receive(:unregister_from_zabbix)
-      expect(vm).to_not receive(:register_in_zabbix)
+      expect(vm).to_not receive(:unregister_from_monitoring)
+      expect(vm).to_not receive(:register_in_monitoring)
       vm.destroy(false)
     end
 
     it 'does nothing before vm is destroyed if ip was blank' do
       vm_ipless = create(:virtual_machine, appliances: [appliance], managed_by_atmosphere: true)
       vm_ipless.stub(:destroy)
-      expect(vm_ipless).not_to receive(:register_in_zabbix)
-      expect(vm_ipless).not_to receive(:unregister_in_zabbix)
+      expect(vm_ipless).not_to receive(:register_in_monitoring)
+      expect(vm_ipless).not_to receive(:unregister_in_monitoring)
       vm_ipless.destroy
     end
 

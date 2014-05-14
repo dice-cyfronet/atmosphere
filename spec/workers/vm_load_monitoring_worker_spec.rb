@@ -4,8 +4,6 @@ describe VmLoadMonitoringWorker do
 
   before {
     Fog.mock!
-    Zabbix.stub(:register_host).and_return 'zabbix_host_id'
-    Zabbix.stub(:unregister_host)
   }
 
   context 'as a sidekiq worker' do

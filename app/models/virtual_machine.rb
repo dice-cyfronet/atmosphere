@@ -15,7 +15,6 @@
 #  virtual_machine_flavor_id   :integer
 #
 
-require 'zabbix'
 require 'tsdb_client'
 
 class VirtualMachine < ActiveRecord::Base
@@ -35,8 +34,8 @@ class VirtualMachine < ActiveRecord::Base
 
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
-  before_update :update_in_zabbix, if: :ip_changed?
-  before_destroy :unregister_from_zabbix, if: :ip? && :monitoring_id?
+  before_update :update_in_monitoring, if: :ip_changed?
+  before_destroy :unregister_from_monitoring, if: :ip? && :monitoring_id?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
@@ -92,30 +91,30 @@ class VirtualMachine < ActiveRecord::Base
     compute_site.dnat_client.remove_dnat_for_vm(self)
   end
 
-  def update_in_zabbix
+  def update_in_monitoring
     return unless managed_by_atmosphere?
-    logger.info "Updating vm #{uuid} in Zabbix"
+    logger.info "Updating vm #{uuid} in monitoring"
     if ip_was && monitoring_id
-      unregister_from_zabbix
+      unregister_from_monitoring
     end
-    register_in_zabbix if ip
+    register_in_monitoring if ip
   end
 
-  def register_in_zabbix
-    logger.info "Registering vm #{uuid} in Zabbix"
-    self[:monitoring_id] = Zabbix.register_host(uuid, ip)
+  def register_in_monitoring
+    logger.info "Registering vm #{uuid} in monitoring"
+    self[:monitoring_id] = Air.monitoring_client.register_host(uuid, ip)
   end
 
-  def unregister_from_zabbix
-    logger.info "Unregistering vm #{uuid} with zabbix host id #{monitoring_id} from Zabbix"
-    Zabbix.unregister_host(self.monitoring_id)
+  def unregister_from_monitoring
+    logger.info "Unregistering vm #{uuid} with monitoring host id #{monitoring_id} from monitoring"
+    Air.monitoring_client.unregister_host(self.monitoring_id)
     self[:monitoring_id] = nil
   end
 
   def current_load_metrics
     if monitoring_id
-      metrics=Zabbix.host_metrics(monitoring_id)
-      metrics.collect_last
+      metrics=Air.monitoring_client.host_metrics(monitoring_id)
+      metrics.collect_last if metrics
     else
       nil
     end

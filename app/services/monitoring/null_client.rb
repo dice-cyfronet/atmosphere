@@ -1,6 +1,6 @@
 class Monitoring::NullClient
 
-  def register_in_monitoring; end
+  def register_in_monitoring; nil end
   
   def unregister_from_monitoring; end
 

@@ -6,6 +6,7 @@ module Air
   end
 
   @@cloud_clients = {}
+  @@monitoring_clients = {'null' => Monitoring::NullClient.new}
 
   def self.register_cloud_client(site_id, cloud_client)
     @@cloud_clients[site_id] = {timestamp: Time.now, client: cloud_client}
@@ -16,7 +17,7 @@ module Air
   end
 
   def self.get_cloud_client(site_id)
-    (@@cloud_clients[site_id] and (Time.now - @@cloud_clients[site_id][:timestamp]) < 23.hours) ? @@cloud_clients[site_id][:client] : nil
+    (@@cloud_clients[site_id] && (Time.now - @@cloud_clients[site_id][:timestamp]) < 23.hours) ? @@cloud_clients[site_id][:client] : nil
   end
 
   def self.action_logger
@@ -29,9 +30,15 @@ module Air
 
   def self.monitoring_client
     if config['zabbix']
-      'zabbix'
+      if @@monitoring_clients['zabbix']
+        @@monitoring_clients['zabbix']
+      else
+        client = Monitoring::ZabbixClient.new
+        @@monitoring_clients['zabbix'] = client
+        client
+      end
     else
-      Monitoring::NullClient.new
+      @@monitoring_clients['null']
     end
   end
 

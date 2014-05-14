@@ -1,5 +1,3 @@
-require 'zabbix'
-
 class VmLoadMonitoringWorker
   include Sidekiq::Worker
 
