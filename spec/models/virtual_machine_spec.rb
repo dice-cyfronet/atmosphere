@@ -16,11 +16,12 @@
 #
 
 require 'spec_helper'
+require Rails.root.join("spec/shared_examples/childhoodable.rb")
 
 describe VirtualMachine do
 
   before {
-    Fog.mock! 
+    Fog.mock!
     Zabbix.stub(:register_host).and_return 1
     Zabbix.stub(:unregister_host)
     Zabbix.stub(:host_metrics)
@@ -99,7 +100,7 @@ describe VirtualMachine do
     it 'unregisters vm after non-blank IP was changed and is blank and zabbix_host_id was not blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, zabbix_host_id: 1)
       expect(vm).to receive(:unregister_from_zabbix)
-      expect(vm).to_not receive(:register_in_zabbix)        
+      expect(vm).to_not receive(:register_in_zabbix)
       vm.ip = nil
       vm.save
     end
@@ -107,7 +108,7 @@ describe VirtualMachine do
     it 'does not unregister vm after non-blank IP was changed and is blank but zabbix_host_id is blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
       expect(vm).to_not receive(:unregister_from_zabbix)
-      expect(vm).to_not receive(:register_in_zabbix)        
+      expect(vm).to_not receive(:register_in_zabbix)
       vm.ip = nil
       vm.save
     end
@@ -263,4 +264,6 @@ describe VirtualMachine do
       expect(vms[0]).to eq vm
     end
   end
+
+  it_behaves_like 'childhoodable'
 end

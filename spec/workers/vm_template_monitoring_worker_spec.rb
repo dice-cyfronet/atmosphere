@@ -77,7 +77,8 @@ describe VmTemplateMonitoringWorker do
         create(:virtual_machine_template, id_at_site: 'ubuntu', compute_site: cyfronet_folsom)
         create(:virtual_machine_template, id_at_site: 'arch', compute_site: cyfronet_folsom)
         create(:virtual_machine_template, id_at_site: 'centos', compute_site: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'windows', compute_site: cyfronet_folsom)
+        create(:virtual_machine_template, id_at_site: 'old_vmt', compute_site: cyfronet_folsom, created_at: 6.minutes.ago)
+        create(:virtual_machine_template, id_at_site: 'young_vmt', compute_site: cyfronet_folsom)
       end
 
       it 'removes deleted template' do

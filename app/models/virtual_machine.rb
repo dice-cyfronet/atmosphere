@@ -20,6 +20,8 @@ require 'tsdb_client'
 
 class VirtualMachine < ActiveRecord::Base
   extend Enumerize
+  include Childhoodable
+
 
   has_many :saved_templates, class_name: 'VirtualMachineTemplate', dependent: :nullify
   has_many :port_mappings, dependent: :delete_all

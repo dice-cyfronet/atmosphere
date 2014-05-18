@@ -31,7 +31,9 @@ class VmTemplateMonitoringWorker
     end
 
     #remove deleted templates
-    all_site_templates.each { |t| t.destroy(false) }
+    all_site_templates.each do |vmt|
+      vmt.destroy(false) if vmt.old?
+    end
   end
 
   def logger
