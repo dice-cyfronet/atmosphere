@@ -259,10 +259,10 @@ FactoryGirl.define do
 
   factory :virtual_machine_flavor do
     flavor_name { FactoryGirl.generate(:vm_flavor_name) }
-    cpu { rand(max=16) }
-    memory { rand(max=16384) }
-    hdd { rand(max=1000) }
-    hourly_cost { rand(max=100) }
+    cpu { rand(max=16) + 1 }
+    memory { rand(max=16384) + 1 }
+    hdd { rand(max=1000) + 1 }
+    hourly_cost { rand(max=100) + 1 }
   end
 
   factory :virtual_machine_template, aliases: [:source_template] do |f|
