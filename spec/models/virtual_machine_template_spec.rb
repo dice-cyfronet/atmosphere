@@ -16,6 +16,7 @@
 
 require 'spec_helper'
 require 'securerandom'
+require Rails.root.join("spec/shared_examples/childhoodable.rb")
 
 describe VirtualMachineTemplate do
 
@@ -29,7 +30,7 @@ describe VirtualMachineTemplate do
     it 'appends underscores to name that is too short' do
       expect(VirtualMachineTemplate.sanitize_tmpl_name('s')).to eq 's__'
     end
-    
+
     it 'trims too long name to 128 characters' do
       expect(VirtualMachineTemplate.sanitize_tmpl_name(SecureRandom.hex(65)).length).to eq 128
     end
@@ -242,4 +243,6 @@ describe VirtualMachineTemplate do
       expect(tmpl1.name).not_to eq(tmpl2.name)
     end
   end
+
+  it_behaves_like 'childhoodable'
 end
