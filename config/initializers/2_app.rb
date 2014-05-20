@@ -45,7 +45,7 @@ module Air
 
   def self.metrics_store
     if config['influxdb']
-      if @@metrics_store_clients['influxdb']['client'] && (Time.now - @@metrics_store_clients['influxdb']['timestamp']) < 60.minutes
+      if @@metrics_store_clients['influxdb'] && @@metrics_store_clients['influxdb']['client'] && (Time.now - @@metrics_store_clients['influxdb']['timestamp']) < 60.minutes
         @@metrics_store_clients['influxdb']['client']
       else
         client = Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
