@@ -7,7 +7,7 @@ class Monitoring::ZabbixClient
   end
 
   def unregister_host(monitoring_id)
-    Zabbix.unregister_host(self.monitoring_id)
+    Zabbix.unregister_host(monitoring_id)
   end
 
   def host_metrics(monitoring_id)
