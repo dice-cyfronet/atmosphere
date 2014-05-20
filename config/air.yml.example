@@ -57,6 +57,8 @@ production:
       - t.bartynski@cyfronet.pl
       - p.nowakowski@cyfronet.pl
   #raven_dsn: sentry dsn
+  monitoring:
+    query_interval: 5 # number of minutes between querying Monitoring for load metrics
   zabbix:
     url: 'https://vph.cyfronet.pl/zabbix/api_jsonrpc.php'
     user: 'zabbix_user'
@@ -64,4 +66,3 @@ production:
     atmo_template_name: 'Template OS Linux'
     atmo_group_name: 'Atmosphere Internal Monitoring'
     zabbix_agent_port: 10050
-    query_interval: 5 # number of minutes between querying Zabbix for load metrics
