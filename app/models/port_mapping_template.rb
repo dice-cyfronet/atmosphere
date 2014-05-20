@@ -12,8 +12,6 @@
 #  created_at               :datetime
 #  updated_at               :datetime
 #
-require 'utils'
-
 class PortMappingTemplate < ActiveRecord::Base
   extend Enumerize
   include Slugable
