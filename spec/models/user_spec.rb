@@ -142,7 +142,7 @@ describe User do
       user.login = 'cellophane' # No real change
       user.save
       expect(lazy_user).to receive(:update_appliance_type_metadata).once
-      lazy_user.login = 'cellophane'
+      lazy_user.login = 'cellophane2'
       lazy_user.save
     end
 
