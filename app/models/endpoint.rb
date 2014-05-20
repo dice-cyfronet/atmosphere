@@ -26,6 +26,8 @@ class Endpoint < ActiveRecord::Base
 
   before_validation :strip_invocation_path
   around_update :manage_metadata
+  after_destroy :update_appliance_metadata, if: 'port_mapping_template.appliance_type and port_mapping_template.appliance_type.publishable?'
+  after_create :update_appliance_metadata, if: 'port_mapping_template.appliance_type and port_mapping_template.appliance_type.publishable?'
 
   scope :def_order, -> { order(:description) }
 
@@ -58,8 +60,15 @@ class Endpoint < ActiveRecord::Base
 
   # Check if we need to update metadata regarding this endpoint's AT, if so, perform the task
   def manage_metadata
+    old_pmt = port_mapping_template_id_changed? ? PortMappingTemplate.find(port_mapping_template_id_was) : nil
     yield
     port_mapping_template.appliance_type.update_metadata if port_mapping_template.appliance_type and port_mapping_template.appliance_type.publishable?
+    if old_pmt and old_pmt.appliance_type and (old_pmt.appliance_type != port_mapping_template.appliance_type) and old_pmt.appliance_type.publishable?
+      old_pmt.appliance_type.update_metadata
+    end
   end
 
+  def update_appliance_metadata
+    port_mapping_template.appliance_type.update_metadata
+  end
 end
