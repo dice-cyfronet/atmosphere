@@ -49,6 +49,7 @@ module Air
         @@metrics_store_clients['influxdb']['client']
       else
         client = Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
+        @@metrics_store_clients['influxdb'] = {}
         @@metrics_store_clients['influxdb']['client'] = client
         @@metrics_store_clients['influxdb']['timestamp'] = Time.now
         client
