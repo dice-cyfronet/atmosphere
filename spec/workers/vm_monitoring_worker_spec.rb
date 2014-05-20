@@ -42,8 +42,10 @@ describe VmMonitoringWorker do
         subject.perform(1)
       end
 
-      it 'deletes VMs not found on compute site' do
-        old_vm = double
+      it 'deletes only old VMs not found on compute site' do
+        old_vm = double(old?: true)
+        young_vm = double(old?: false)
+
         destroyer = double
         allow(cloud_client).to receive(:servers).and_return([])
         allow(cs).to receive(:virtual_machines).and_return([old_vm])
@@ -51,6 +53,8 @@ describe VmMonitoringWorker do
         expect(destroyer).to receive(:destroy).with(false)
         expect(vm_destroyer_class).to receive(:new)
           .with(old_vm).and_return(destroyer)
+        expect(vm_destroyer_class).not_to receive(:new)
+          .with(young_vm)
 
         subject.perform(1)
       end

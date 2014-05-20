@@ -34,7 +34,9 @@ class VmMonitoringWorker
     end
 
     #remove deleted VMs without calling cloud callbacks
-    all_site_vms.each { |vm| vm_destroyer_class.new(vm).destroy(false) }
+    all_site_vms.each do |vm|
+      vm_destroyer_class.new(vm).destroy(false) if vm.old?
+    end
   end
 
   def logger

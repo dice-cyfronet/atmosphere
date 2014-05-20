@@ -16,6 +16,7 @@
 #
 
 require 'spec_helper'
+require Rails.root.join("spec/shared_examples/childhoodable.rb")
 
 describe VirtualMachine do
 
@@ -260,4 +261,6 @@ describe VirtualMachine do
       expect(vms[0]).to eq vm
     end
   end
+
+  it_behaves_like 'childhoodable'
 end
