@@ -13,6 +13,20 @@ task purge_metadata_registry: :environment do
 end
 
 
+# This removes from MDS all AtomicService elements which are no longer present in AIR
+# or were set as private (visible_to == owner)
+task remove_outdated_metadata: :environment do
+
+  puts "REMOVING OUTDATED METADATA. Env = #{Rails.env}."
+
+  global_ids = MetadataRepositoryClient.instance.get_active_global_ids
+  global_ids.each do |metadata_global_id|
+    # MetadataRepositoryClient.instance.purge_metadata_key(metadata_global_id)
+    puts metadata_global_id unless ApplianceType.where(metadata_global_id: metadata_global_id).present? and ApplianceType.where(metadata_global_id: metadata_global_id).first.publishable?
+  end
+end
+
+
 task clean_metadata_registry: :environment do
 
   puts "CLEANING METADATA REGISTRY. Env = #{Rails.env}."
