@@ -34,7 +34,7 @@ task sync_metadata: :environment do
     end
 
     ApplianceType.where(visible_to: ['all','developer']).all.each do |at|
-      if at.metadata_global_id and current_global_ids.include?(at.metadata_global_id)
+      if at.metadata_global_id and global_ids.include?(at.metadata_global_id)
         # puts "Updating ApplianceType #{at.name}."
         # MetadataRepositoryClient.instance.update_appliance_type at
       else
