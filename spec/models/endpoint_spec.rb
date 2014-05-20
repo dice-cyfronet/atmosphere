@@ -59,14 +59,14 @@ describe Endpoint do
 
   describe 'manage metadata' do
     let!(:endp11) { build(:endpoint, description: 'FIRST ENDP') }
-    let(:endp12) { build(:endpoint, description: 'ENDP_DESC') }
-    let(:endp21) { build(:endpoint) }
-    let(:pmt1) { build(:port_mapping_template, endpoints: [endp11, endp12]) }
-    let(:pmt2) { build(:port_mapping_template, endpoints: [endp21]) }
-    let(:pmt3) { build(:port_mapping_template) }
-    let(:other_pmt) { build(:port_mapping_template) }
-    let(:complex_at) { create(:appliance_type, port_mapping_templates: [pmt1, pmt2, pmt3], visible_to: :all, name: 'complex_at') }
-    let(:other_complex_at) { create(:appliance_type, port_mapping_templates: [other_pmt], visible_to: :developer, name: 'other_complex_at') }
+    let!(:endp12) { build(:endpoint, description: 'ENDP_DESC') }
+    let!(:endp21) { build(:endpoint) }
+    let!(:pmt1) { build(:port_mapping_template, endpoints: [endp11, endp12]) }
+    let!(:pmt2) { build(:port_mapping_template, endpoints: [endp21]) }
+    let!(:pmt3) { build(:port_mapping_template) }
+    let!(:other_pmt) { build(:port_mapping_template) }
+    let!(:complex_at) { create(:appliance_type, port_mapping_templates: [pmt1, pmt2, pmt3], visible_to: :all, name: 'complex_at') }
+    let!(:other_complex_at) { create(:appliance_type, port_mapping_templates: [other_pmt], visible_to: :developer, name: 'other_complex_at') }
 
     let!(:endp41) { build(:endpoint) }
     let!(:pmt4) { build(:port_mapping_template, endpoints: [endp41]) }
@@ -81,8 +81,7 @@ describe Endpoint do
     end
 
     it 'updates metadata when endpoint switched to different PMT' do
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(other_complex_at)
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at)
+      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).twice
       endp11.port_mapping_template = other_pmt
       endp11.save
       expect(complex_at.reload.as_metadata_xml.strip).not_to include('FIRST ENDP')
