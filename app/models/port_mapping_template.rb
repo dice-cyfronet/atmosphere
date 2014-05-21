@@ -12,9 +12,9 @@
 #  created_at               :datetime
 #  updated_at               :datetime
 #
-
 class PortMappingTemplate < ActiveRecord::Base
   extend Enumerize
+  include Slugable
 
   belongs_to :appliance_type
   belongs_to :dev_mode_property_set
@@ -45,7 +45,7 @@ class PortMappingTemplate < ActiveRecord::Base
   has_many :port_mapping_properties, dependent: :destroy, autosave: true
   has_many :endpoints, dependent: :destroy, autosave: true
 
-  before_validation :strip_service_name
+  before_validation :slug_service_name
 
   after_create :add_port_mappings_to_associated_vms
   after_update :update_port_mappings, if: :target_port_changed?
@@ -93,8 +93,8 @@ class PortMappingTemplate < ActiveRecord::Base
     }
   end
 
-  def strip_service_name
-    self.service_name.strip! if self.service_name
+  def slug_service_name
+    self.service_name = to_slug(self.service_name) if self.service_name
   end
 
   def type_changed_into_http?

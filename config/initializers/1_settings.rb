@@ -51,4 +51,5 @@ class Settings < Settingslogic
   Settings['skip_pdp_for_admin'] = false if Settings['skip_pdp_for_admin'].nil?
 
   Settings['childhood_age'] ||= 2 # seconds
+  Settings['cloud_object_protection_time'] = 300 # seconds
 end

@@ -257,10 +257,18 @@ describe PortMappingTemplate do
 
   describe '#service_name' do
     context 'with spaces at the beginning and at the end' do
-      subject { create(:port_mapping_template, service_name: ' with spaces ') }
+      subject { create(:port_mapping_template, service_name: ' with-spaces ') }
 
       it 'removes spaces on save' do
-        expect(subject.service_name).to eq 'with spaces'
+        expect(subject.service_name).to eq 'with-spaces'
+      end
+    end
+
+    context 'with not allowed chanrs' do
+      it 'sanitize name before save' do
+        pmt = create(:port_mapping_template, service_name: 'a b_c!@#')
+
+        expect(pmt.service_name).to eq 'a-b-c'
       end
     end
   end

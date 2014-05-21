@@ -254,7 +254,7 @@ describe Api::V1::PortMappingTemplatesController do
     let(:update_json) do {port_mapping_template: {
         transport_protocol: 'udp',
         application_protocol: 'none',
-        service_name: 'sth different'
+        service_name: 'sth-different'
     }} end
 
     let(:wrong_update_json) do {port_mapping_template: {
@@ -294,7 +294,7 @@ describe Api::V1::PortMappingTemplatesController do
         expect(updated_pmt.id).to eq pmt1.id
         expect(updated_pmt['transport_protocol']).to eq 'udp'
         expect(updated_pmt['application_protocol']).to eq 'none'
-        expect(updated_pmt['service_name']).to eq 'sth different'
+        expect(updated_pmt['service_name']).to eq 'sth-different'
         expect(updated_pmt['target_port']).to eq old_target_port
         expect(updated_pmt['appliance_type_id']).to eq old_appliance_type_id
         expect(updated_pmt['dev_mode_property_set_id']).to be_nil
