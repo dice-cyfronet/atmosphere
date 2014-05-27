@@ -52,7 +52,7 @@ class Api::V1::AppliancesController < Api::ApplicationController
   private
 
   def update_params
-    params.require(:appliance).permit(:name)
+    params.require(:appliance).permit(:name, :description)
   end
 
   def init_appliance
