@@ -15,9 +15,6 @@
 #  virtual_machine_flavor_id   :integer
 #
 
-require 'zabbix'
-require 'tsdb_client'
-
 class VirtualMachine < ActiveRecord::Base
   extend Enumerize
   include Childhoodable
@@ -37,8 +34,8 @@ class VirtualMachine < ActiveRecord::Base
 
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
-  before_update :update_in_zabbix, if: :ip_changed?
-  before_destroy :unregister_from_zabbix, if: :ip? && :zabbix_host_id?
+  before_update :update_in_monitoring, if: :ip_changed?
+  before_destroy :unregister_from_monitoring, if: :ip? && :monitoring_id?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
@@ -94,30 +91,30 @@ class VirtualMachine < ActiveRecord::Base
     compute_site.dnat_client.remove_dnat_for_vm(self)
   end
 
-  def update_in_zabbix
+  def update_in_monitoring
     return unless managed_by_atmosphere?
-    logger.info "Updating vm #{uuid} in Zabbix"
-    if ip_was && zabbix_host_id
-      unregister_from_zabbix
+    logger.info "Updating vm #{uuid} in monitoring"
+    if ip_was && monitoring_id
+      unregister_from_monitoring
     end
-    register_in_zabbix if ip
+    register_in_monitoring if ip
   end
 
-  def register_in_zabbix
-    logger.info "Registering vm #{uuid} in Zabbix"
-    self[:zabbix_host_id] = Zabbix.register_host(uuid, ip)
+  def register_in_monitoring
+    logger.info "Registering vm #{uuid} in monitoring"
+    self[:monitoring_id] = Air.monitoring_client.register_host(uuid, ip)
   end
 
-  def unregister_from_zabbix
-    logger.info "Unregistering vm #{uuid} with zabbix host id #{zabbix_host_id} from Zabbix"
-    Zabbix.unregister_host(self.zabbix_host_id)
-    self[:zabbix_host_id] = nil
+  def unregister_from_monitoring
+    logger.info "Unregistering vm #{uuid} with monitoring host id #{monitoring_id} from monitoring"
+    Air.monitoring_client.unregister_host(self.monitoring_id)
+    self[:monitoring_id] = nil
   end
 
   def current_load_metrics
-    if zabbix_host_id
-      metrics=Zabbix.host_metrics(zabbix_host_id)
-      metrics.collect_last
+    if monitoring_id
+      metrics=Air.monitoring_client.host_metrics(monitoring_id)
+      metrics.collect_last if metrics
     else
       nil
     end
@@ -135,14 +132,14 @@ class VirtualMachine < ActiveRecord::Base
     metrics_hash = {}
     metrics.each {|m| metrics_hash.merge!(m)}
 
-    tsdb_client = TsdbClient.client
+    metrics_store = Air.metrics_store
     appliances.each do |appl|
-      tsdb_client.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
-      tsdb_client.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
-      tsdb_client.write_point('cpu_load_15', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
+      metrics_store.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
+      metrics_store.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
+      metrics_store.write_point('cpu_load_15', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
       if metrics_hash[total_mem] && metrics_hash[total_mem] > 0 && metrics_hash[available_mem] && metrics_hash[available_mem] > 0
         mem_usage = (metrics_hash[total_mem] - metrics_hash[available_mem]) / metrics_hash[total_mem]
-        tsdb_client.write_point('memory_usage', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: mem_usage})
+        metrics_store.write_point('memory_usage', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: mem_usage})
       end
     end
   end
