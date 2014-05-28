@@ -16,7 +16,7 @@ GET /appliance_configuration_templates
       "id": 1,
       "name": "Foobar appliance configuration template",
       "payload": "Fobar appliance configuration template payload without dynamic payload",
-      "properties": []
+      "properties": [],
       "appliance_type_id": 2
     }, {
       ...
@@ -43,7 +43,7 @@ Parameters:
     "id": 1,
     "name": "Foobar appliance configuration template",
     "payload": "Fobar appliance configuration template payload with #{dynamic} #{payload}",
-    "properties": ["dynamic", "payload"]
+    "properties": ["dynamic", "payload"],
     "appliance_type_id": 2
   }
 }
