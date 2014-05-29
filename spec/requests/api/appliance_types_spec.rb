@@ -120,6 +120,17 @@ describe Api::V1::ApplianceTypesController do
             expect(ats_response[0]).to appliance_type_eq at2
             expect(ats_response[1]).to appliance_type_eq at3
           end
+
+          it 'don\'t duplicate ATs when VMT located on 2 compute sites' do
+            user = create(:user)
+            at1 = create(:filled_appliance_type, author: user)
+            create(:virtual_machine_template, state: :active, appliance_type: at1)
+            create(:virtual_machine_template, state: :active, appliance_type: at1)
+
+            get api("/appliance_types?active=true", user)
+
+            expect(ats_response.size).to eq 1
+          end
         end
       end
     end

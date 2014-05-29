@@ -47,7 +47,7 @@ class ApplianceType < ActiveRecord::Base
   has_many :compute_sites, through: :virtual_machine_templates
 
   scope :def_order, -> { order(:name) }
-  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
+  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}).uniq }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
 
   around_destroy :delete_vmts
