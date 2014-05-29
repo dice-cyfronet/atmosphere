@@ -19,7 +19,7 @@ class ApplianceTypeSerializer < ActiveModel::Serializer
   end
 
   def compute_site_ids
-    object.compute_sites.collect{|cs| cs.id}.uniq
+    object.compute_sites.uniq.map(&:id)
   end
 
 end
