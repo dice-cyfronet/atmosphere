@@ -109,6 +109,17 @@ describe Cloud::VmCreator do
       Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
     end
 
+    it 'handles tag creation errors' do
+      expect(cloud_client).to receive(:create_tags).and_raise(Fog::Compute::AWS::NotFound.new "The instance ID 'i-d657af95' does not exist")
+      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
+    end
+
+    it 'reports tag creation error' do
+      expect(Raven).to receive(:capture_exception)
+      expect(cloud_client).to receive(:create_tags).and_raise(Fog::Compute::AWS::NotFound.new "The instance ID 'i-d657af95' does not exist")
+      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
+    end
+
     it 'creates VM in "mniec_permit_all" secrutiry group' do
       expect(servers_cloud_client).to receive(:create) do |params|
         expect(params[:groups]).to include 'mniec_permit_all'

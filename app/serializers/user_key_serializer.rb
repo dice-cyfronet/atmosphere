@@ -1,3 +1,6 @@
+#
+# User key serializer.
+#
 class UserKeySerializer < ActiveModel::Serializer
   embed :ids
 

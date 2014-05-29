@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.4'
+gem 'rails', '4.0.5'
 
 # Supported DBs
 gem 'mysql2', group: :mysql
@@ -43,6 +43,7 @@ gem 'gravtastic'
 
 # Sending email when 500 is thrown
 gem 'exception_notification'
+gem 'sentry-raven'
 
 # Security
 gem 'devise', '~>3.2'

@@ -204,10 +204,26 @@ describe Api::V1::AppliancesController do
           expect(config_instance.payload).to eq config_instance.appliance_configuration_template.payload
         end
 
-        it 'sets appliance name' do
+        it 'sets appliance name and description' do
           post api("/appliances", user), static_request_body
           created_appliance = Appliance.find(appliance_response['id'])
-          expect(created_appliance.name).to eq static_request_body[:appliance][:name]
+
+          expect(created_appliance.name)
+            .to eq static_request_body[:appliance][:name]
+          expect(created_appliance.description)
+            .to eq static_request_body[:appliance][:description]
+        end
+
+        it 'copies name and descriptions from AT when not set' do
+          request_body = generic_start_request(static_config, portal_set)
+
+          post api("/appliances", user), request_body
+          created_appliance = Appliance.find(appliance_response['id'])
+
+          expect(created_appliance.name)
+            .to eq public_at.name
+          expect(created_appliance.description)
+            .to eq public_at.description
         end
 
         context 'and config instance already exists' do
@@ -485,7 +501,14 @@ describe Api::V1::AppliancesController do
   end
 
   describe 'PUT /appliances/:id' do
-    let(:update_request) { { appliance: { name: 'updated name' } } }
+    let(:update_request) do
+      {
+        appliance: {
+          name: 'updated name',
+          description: 'updated description'
+        }
+      }
+    end
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -504,6 +527,7 @@ describe Api::V1::AppliancesController do
         put api("/appliances/#{user_appliance1.id}", user), update_request
         user_appliance1.reload
         expect(user_appliance1.name).to eq update_request[:appliance][:name]
+        expect(user_appliance1.description).to eq update_request[:appliance][:description]
       end
 
       it 'returns information about updated appliance' do
@@ -575,11 +599,17 @@ describe Api::V1::AppliancesController do
   end
 
   def start_request(at_config, appliance_set)
+    generic_start_request(at_config, appliance_set,
+      name: 'my_name', description: 'my_description')
+  end
+
+  def generic_start_request(at_config, appliance_set, options = {})
     {
       appliance: {
         configuration_template_id: at_config.id,
         appliance_set_id: appliance_set.id,
-        name: 'my_name'
+        name: options[:name],
+        description: options[:description]
       }
     }
   end

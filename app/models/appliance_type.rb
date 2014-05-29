@@ -47,7 +47,7 @@ class ApplianceType < ActiveRecord::Base
   has_many :compute_sites, through: :virtual_machine_templates
 
   scope :def_order, -> { order(:name) }
-  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
+  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}).uniq }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
 
   around_destroy :delete_vmts
@@ -93,7 +93,8 @@ class ApplianceType < ActiveRecord::Base
   def as_metadata_xml
     optional_elements = metadata_global_id ?
         "<globalID>#{metadata_global_id}</globalID>" :
-        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataCreationDate>"
+        "<metadataCreationDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataCreationDate>
+         <category>None</category>"
 
     <<-MD_XML.strip_heredoc
     <resource_metadata>
@@ -101,6 +102,7 @@ class ApplianceType < ActiveRecord::Base
         <localID>#{id}</localID>
         <name>#{esc_xml name}</name>
         <type>AtomicService</type>
+
         <description>#{esc_xml description}</description>
         <metadataUpdateDate>#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}</metadataUpdateDate>
         <creationDate>#{created_at.strftime('%Y-%m-%d %H:%M:%S')}</creationDate>

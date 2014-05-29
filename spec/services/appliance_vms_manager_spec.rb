@@ -107,6 +107,9 @@ describe ApplianceVmsManager do
         user_data: 'user data',
         user_key: 'user key',
 
+        name: 'name',
+        id: 1,
+
         virtual_machines: double(create: vm)
       )
     end
@@ -119,7 +122,7 @@ describe ApplianceVmsManager do
     let(:tmpl)   { double('tmpl', compute_site: 'cs') }
     let(:flavor) { 'flavor' }
     let(:name)   { 'name' }
-    let(:vm)     { 'vm' }
+    let(:vm)     { double('vm', errors: { to_json: {} }) }
 
     subject { ApplianceVmsManager.new(appl, updater_class, vm_creator_class) }
 
@@ -136,6 +139,7 @@ describe ApplianceVmsManager do
       end
 
       it 'creates new VM' do
+        allow(vm).to receive(:valid?).and_return(true)
         expect(appl.virtual_machines).to receive(:create) do |params|
           expect(params[:name]).to eq name
           expect(params[:source_template]).to eq tmpl
@@ -143,19 +147,28 @@ describe ApplianceVmsManager do
           expect(params[:managed_by_atmosphere]).to be_true
           expect(params[:id_at_site]).to eq 'server_id'
           expect(params[:compute_site]).to eq tmpl.compute_site
-        end
+        end.and_return(vm)
 
         subject.spawn_vm!(tmpl, flavor, name)
       end
 
       it 'sets state to satisfied' do
+        allow(vm).to receive(:valid?).and_return(true)
         expect(appl).to receive(:state=).with(:satisfied)
 
         subject.spawn_vm!(tmpl, flavor, name)
       end
 
       it 'updates appliance services with new VM hint' do
+        allow(vm).to receive(:valid?).and_return(true)
         expect(updater).to receive(:update).with({ new_vm: vm })
+
+        subject.spawn_vm!(tmpl, flavor, name)
+      end
+
+      it 'sets state to unsatisfied when VM cannot be assigned to appliance' do
+        allow(vm).to receive(:valid?).and_return(false)
+        expect(appl).to receive(:state=).with(:unsatisfied)
 
         subject.spawn_vm!(tmpl, flavor, name)
       end

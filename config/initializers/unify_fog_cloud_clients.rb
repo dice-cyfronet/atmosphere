@@ -78,6 +78,10 @@ class Fog::Compute::AWS::Server
   def task_state
     nil #TODO
   end
+
+  def created
+    created_at
+  end
 end
 
 class Fog::Compute::OpenStack::Image
@@ -109,8 +113,41 @@ end
 # Flavor unification classes
 # Mimic OpenStack
 class Fog::Compute::AWS::Flavor
+  FLAVOR_VCPU_MAP = {
+    "t1.micro" => 1,
+    "m1.small" => 1,
+    "m1.medium" => 1,
+    "m1.large" => 2,
+    "m1.xlarge" => 4,
+    "c1.medium" => 2,
+    "c1.xlarge" => 8,
+    "c3.large" => 2,
+    "c3.xlarge" => 4,
+    "c3.2xlarge" => 8,
+    "c3.4xlarge" => 16,
+    "c3.8xlarge" => 32,
+    "g2.2xlarge" => 8,
+    "hs1.8xlarge" => 16,
+    "m2.xlarge" => 2,
+    "m2.2xlarge" => 4,
+    "m2.4xlarge" => 8,
+    "cr1.8xlarge" => 32,
+    "m3.medium" => 1,
+    "m3.large" => 2,
+    "m3.xlarge" => 4,
+    "m3.2xlarge" => 8,
+    "hi1.4xlarge" => 16,
+    "cc1.4xlarge" => 16,
+    "cc2.8xlarge" => 32,
+    "cg1.4xlarge" => 16,
+    "i2.xlarge" => 4,
+    "i2.2xlarge" => 8,
+    "i2.4xlarge" => 16,
+    "i2.8xlarge" => 32
+  }
+
   def vcpus
-    cores
+    FLAVOR_VCPU_MAP[id]
   end
 
   def supported_architectures

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'zabbix'
 
 describe VmUpdater do
   let(:cs)  { create(:compute_site) }
@@ -15,9 +14,9 @@ describe VmUpdater do
     VirtualMachineTemplate.stub(:find_by)
       .with(compute_site: cs, id_at_site: "vmt_id_at_site")
         .and_return(vmt)
-    Zabbix.stub(:register_host).and_return 1
-    Zabbix.stub(:unregister_host)
-    Zabbix.stub(:host_metrics)
+    #Zabbix.stub(:register_host).and_return 1
+    #Zabbix.stub(:unregister_host)
+    #Zabbix.stub(:host_metrics)
   end
 
   subject { VmUpdater.new(cs, server, updater_class) }
@@ -100,6 +99,33 @@ describe VmUpdater do
 
         subject.update
       end
+
+      it 'invokes updater when VM with IP changed state to active' do
+        vm = create(:virtual_machine,
+                id_at_site: 'id_at_site',
+                ip: '10.100.1.2',
+                compute_site: cs,
+                state: :shutoff)
+        appl1 = create(:appliance, virtual_machines: [vm])
+
+        expect(updater).to receive(:update)
+
+        subject.update
+      end
+
+      it 'does not invoke updter when VM without IP state changed to active' do
+        vm = create(:virtual_machine,
+                id_at_site: 'id_at_site',
+                ip: nil,
+                compute_site: cs,
+                state: :shutoff)
+        appl1 = create(:appliance, virtual_machines: [vm])
+        server = server_double(state: 'active', public_ip_address: nil)
+
+        expect(updater).not_to receive(:update)
+
+        VmUpdater.new(cs, server, updater_class).update
+      end
     end
 
     context 'when other than active state' do
@@ -132,7 +158,7 @@ describe VmUpdater do
         subject.update
       end
 
-      it 'does not invoke updater evern when ip changed' do
+      it 'does not invoke updater even when ip changed' do
         create(:virtual_machine,
           id_at_site: 'id_at_site',
           ip: '10.100.1.3',
@@ -240,11 +266,22 @@ describe VmUpdater do
     end
   end
 
+  context 'when VM created 1s before' do
+    let(:server) { server_double(state: 'build', created: Time.now) }
+
+    it 'does not update VM data' do
+      expect {
+        subject.update
+      }.to change { VirtualMachine.count }.by(0)
+    end
+  end
+
   def server_double(options)
     double(
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
+      created: options[:created] || 5.seconds.ago,
       state: options[:state] || nil,
       flavor: options[:flavor] || {'id' => '1'},
       task_state: options[:task_state] || nil,
@@ -258,6 +295,7 @@ describe VmUpdater do
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
+      created: options[:created] || 5.seconds.ago,
       state: 'active',
       flavor: options[:flavor] || {'id' => '1'},
       task_state: nil,

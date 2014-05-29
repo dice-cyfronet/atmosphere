@@ -49,4 +49,7 @@ class Settings < Settingslogic
   Settings.metadata['remote_publish'] = false if Settings.metadata['remote_publish'].nil?
 
   Settings['skip_pdp_for_admin'] = false if Settings['skip_pdp_for_admin'].nil?
+
+  Settings['childhood_age'] ||= 2 # seconds
+  Settings['cloud_object_protection_time'] = 300 # seconds
 end

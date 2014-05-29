@@ -1,3 +1,6 @@
+#
+# Port mapping property serializer.
+#
 class PortMappingPropertySerializer < ActiveModel::Serializer
   embed :ids
 

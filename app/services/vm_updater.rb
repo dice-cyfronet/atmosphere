@@ -6,22 +6,7 @@ class VmUpdater
   end
 
   def update
-    vm.source_template = source_template
-    vm.name = server.name || '[unnamed]'
-    vm.state = map_saving_state(vm, server.task_state) ||
-      map_state(server.state.downcase.to_sym)
-    vm.virtual_machine_flavor = vm_flavor
-    update_ips if update_ips?
-
-    # we need to check state before vm is saved
-    # to get prvious state
-    furhter_update_requred = furhter_update_requred?
-
-    if vm.save
-     update_affected_appliances if furhter_update_requred
-    else
-      error
-    end
+    perform_update! if old_enough?
 
     vm
   end
@@ -30,8 +15,31 @@ class VmUpdater
 
   attr_reader :site, :server
 
+  def perform_update!
+    vm.source_template = source_template
+    vm.name = server.name || '[unnamed]'
+    vm.state = map_saving_state(vm, server.task_state) ||
+      map_state(server.state.downcase.to_sym)
+    vm.virtual_machine_flavor = vm_flavor
+    update_ips if update_ips?
+
+    # we need to check state before vm is saved
+    # to get previous state
+    furhter_update_requred = furhter_update_requred?
+
+    if vm.save
+     update_affected_appliances if furhter_update_requred
+    else
+      error
+    end
+  end
+
+  def old_enough?
+    server.created < Air.config.childhood_age.seconds.ago
+  end
+
   def furhter_update_requred?
-    ip_changed? || state_changed_from_active?
+    ip_changed? || state_changed_from_active? || turned_on?
   end
 
   def ip_changed?
@@ -40,6 +48,10 @@ class VmUpdater
 
   def state_changed_from_active?
     vm.state_was == 'active' && vm.state_changed?
+  end
+
+  def turned_on?
+    vm.state_was != 'active' && vm.state.active? && !vm.ip.blank?
   end
 
   def update_affected_appliances
@@ -69,7 +81,9 @@ class VmUpdater
   end
 
   def update_ips
-    vm.ip = server.public_ip_address || (server.addresses['private'].first['addr'] if server.addresses and !server.addresses.blank?)
+    #{"vmnet"=>[{"version"=>4, "addr"=>"10.101.0.2"}]}   - ismop
+    #{"private"=>[{"version"=>4, "addr"=>"10.101.0.2"}]} - vph
+    vm.ip = server.public_ip_address || (server.addresses.first.last.first['addr'] if server.addresses and !server.addresses.blank?)
   end
 
   def vm_flavor

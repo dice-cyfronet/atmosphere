@@ -1,5 +1,7 @@
+#
+# Security proxy and policy abilities.
+#
 class OwnedPayloadAbilityBuilder < AbilityBuilder
-
   def add_user_abilities!
     can :create, owned_payloads
     can [:update, :destroy], owned_payloads do |item|

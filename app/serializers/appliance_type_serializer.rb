@@ -1,3 +1,6 @@
+#
+# Appliance type serializer.
+#
 class ApplianceTypeSerializer < ActiveModel::Serializer
   embed :ids
 

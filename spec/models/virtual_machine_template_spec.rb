@@ -16,6 +16,7 @@
 
 require 'spec_helper'
 require 'securerandom'
+require Rails.root.join("spec/shared_examples/childhoodable.rb")
 
 describe VirtualMachineTemplate do
 
@@ -29,7 +30,7 @@ describe VirtualMachineTemplate do
     it 'appends underscores to name that is too short' do
       expect(VirtualMachineTemplate.sanitize_tmpl_name('s')).to eq 's__'
     end
-    
+
     it 'trims too long name to 128 characters' do
       expect(VirtualMachineTemplate.sanitize_tmpl_name(SecureRandom.hex(65)).length).to eq 128
     end
@@ -214,6 +215,7 @@ describe VirtualMachineTemplate do
   describe '::create_from_vm' do
     let(:cloud_client) { double(:cloud_client) }
     let(:vm) { create(:virtual_machine, id_at_site: 'id') }
+    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id') }
 
     before do
       allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))
@@ -232,5 +234,15 @@ describe VirtualMachineTemplate do
 
       expect(vm.state).to eq 'saving'
     end
+
+    it 'saves template from machines with identical names' do
+      tmpl1 = VirtualMachineTemplate.create_from_vm(vm)
+      tmpl2 = VirtualMachineTemplate.create_from_vm(vm2)
+
+      expect(vm.name).to eq(vm2.name)
+      expect(tmpl1.name).not_to eq(tmpl2.name)
+    end
   end
+
+  it_behaves_like 'childhoodable'
 end

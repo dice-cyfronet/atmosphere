@@ -4,8 +4,6 @@ describe VmLoadMonitoringWorker do
 
   before {
     Fog.mock!
-    Zabbix.stub(:register_host).and_return 'zabbix_host_id'
-    Zabbix.stub(:unregister_host)
   }
 
   context 'as a sidekiq worker' do
@@ -19,10 +17,10 @@ describe VmLoadMonitoringWorker do
 
   context 'Zabbix' do
     it 'queries Zabbix for each vm with zabbix id that are managed by atmosphere' do
-      vm1 = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1, managed_by_atmosphere: true)
-      vm2 = create(:virtual_machine, ip: '10.100.0.2', zabbix_host_id: 2, managed_by_atmosphere: true)
+      vm1 = create(:virtual_machine, ip: '10.100.0.1', monitoring_id: 1, managed_by_atmosphere: true)
+      vm2 = create(:virtual_machine, ip: '10.100.0.2', monitoring_id: 2, managed_by_atmosphere: true)
       vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
-      vm4 = create(:virtual_machine, ip: '10.100.0.4', zabbix_host_id: 3)
+      vm4 = create(:virtual_machine, ip: '10.100.0.4', monitoring_id: 3)
       VirtualMachine.stub(:all).and_return [vm1, vm2, vm3]
 
       expect(vm1).to receive(:current_load_metrics)
@@ -35,8 +33,8 @@ describe VmLoadMonitoringWorker do
 
   context 'metrics db' do
     it 'saves metrics for each vm  with zabbix id that is managed by atmo' do
-      vm1 = create(:virtual_machine, ip: '10.100.0.1', zabbix_host_id: 1, managed_by_atmosphere: true)
-      vm2 = create(:virtual_machine, ip: '10.100.0.2', zabbix_host_id: 2, managed_by_atmosphere: true)
+      vm1 = create(:virtual_machine, ip: '10.100.0.1', monitoring_id: 1, managed_by_atmosphere: true)
+      vm2 = create(:virtual_machine, ip: '10.100.0.2', monitoring_id: 2, managed_by_atmosphere: true)
       vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
       metrics_double_1 = double('metrics1')
       metrics_double_2 = double('metrics2')

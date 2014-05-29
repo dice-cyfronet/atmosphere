@@ -1,5 +1,7 @@
+#
+# Appliance type abilities.
+#
 class ApplianceTypeAbilityBuilder < AbilityBuilder
-
   def add_user_abilities!
     can [:read, :endpoint_payload], ApplianceType, visible_to: 'all'
     can [:read, :endpoint_payload], ApplianceType, user_id: user.id

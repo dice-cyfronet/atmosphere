@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'zabbix'
 
 describe VmMonitoringWorker do
   let(:vm_updater_class) { double }
@@ -7,9 +6,6 @@ describe VmMonitoringWorker do
 
   before {
     Fog.mock!
-    Zabbix.stub(:register_host).and_return 1
-    Zabbix.stub(:unregister_host)
-    Zabbix.stub(:host_metrics)
   }
 
   subject { VmMonitoringWorker.new(vm_updater_class, vm_destroyer_class) }
@@ -32,30 +28,33 @@ describe VmMonitoringWorker do
     end
 
     context 'and cloud client returns information about VMs' do
-      before do
-        allow(cloud_client).to receive(:servers).and_return(['1', '2'])
+      it 'updates VMs' do
         updater1 = double
+        updater2 = double
+        allow(cloud_client).to receive(:servers).and_return(['1', '2'])
+        allow(cs).to receive(:virtual_machines).and_return([])
+
         expect(updater1).to receive(:update).and_return('1')
         expect(vm_updater_class).to receive(:new).with(cs, '1').and_return(updater1)
-
-        updater2 = double
         expect(updater2).to receive(:update).and_return('2')
         expect(vm_updater_class).to receive(:new).with(cs, '2').and_return(updater2)
-      end
-
-      it 'updates VMs' do
-        allow(cs).to receive(:virtual_machines).and_return([])
 
         subject.perform(1)
       end
 
-      it 'deletes VMs not found on compute site' do
-        old_vm = double
-        allow(cs).to receive(:virtual_machines).and_return(['1', old_vm, '2'])
+      it 'deletes only old VMs not found on compute site' do
+        old_vm = double(old?: true)
+        young_vm = double(old?: false)
+
         destroyer = double
+        allow(cloud_client).to receive(:servers).and_return([])
+        allow(cs).to receive(:virtual_machines).and_return([old_vm])
 
         expect(destroyer).to receive(:destroy).with(false)
-        expect(vm_destroyer_class).to receive(:new).with(old_vm).and_return(destroyer)
+        expect(vm_destroyer_class).to receive(:new)
+          .with(old_vm).and_return(destroyer)
+        expect(vm_destroyer_class).not_to receive(:new)
+          .with(young_vm)
 
         subject.perform(1)
       end

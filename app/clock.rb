@@ -20,7 +20,7 @@ module Clockwork
     end
   end
 
-  every(Air.config.zabbix.query_interval.minutes, 'monitoring.load') do
+  every(Air.config.monitoring.query_interval.minutes, 'monitoring.load') do
     VmLoadMonitoringWorker.perform_async
   end
 

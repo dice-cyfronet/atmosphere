@@ -197,6 +197,7 @@ describe ApplianceType do
       expect(xml).to include('<development>false</development>')
       expect(xml).to include('<description></description>')
       expect(xml).to include('<type>AtomicService</type>')
+      expect(xml).to include('<category>None</category>')
       expect(xml).to include('<metadataUpdateDate>')
       expect(xml).to include('<metadataCreationDate>')
       update_time = Time.parse(xml.scan(/<metadataUpdateDate>(.*)<\/metadataUpdateDate>/).first.first)
@@ -218,6 +219,7 @@ describe ApplianceType do
       xml = published_at.as_metadata_xml.strip
       expect(xml).to include('<globalID>MDGLID</globalID>')
       expect(xml).to_not include('metadataCreationDate')
+      expect(xml).to_not include('category')
     end
 
     it 'puts development state in metadata xml document' do
