@@ -48,12 +48,14 @@ describe VirtualMachine do
     it 'is not performed if it is being saved as template' do
       create(:virtual_machine_template, source_vm: vm, state: :saving)
       expect(servers_mock).to_not receive(:destroy)
+      expect(Raven).to_not receive(:capture_message)
       vm.compute_site.stub(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
     end
 
     it 'is performed if vm does not have saved templates' do
-      expect(servers_mock).to receive(:destroy).with(vm.id_at_site)
+      expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return true
+      expect(Raven).to_not receive(:capture_message)
       vm.compute_site.stub(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
     end
@@ -61,10 +63,33 @@ describe VirtualMachine do
     it 'does not allow to destroy not managed virtual machine' do
       external_vm.compute_site.stub(:cloud_client).and_return(cc_mock)
       expect(servers_mock).to_not receive(:destroy)
-
+      expect(Raven).to_not receive(:capture_message)
       external_vm.destroy(true)
 
       expect(external_vm.errors).not_to be_empty
+    end
+
+    it 'does not report error to Raven if succeds to delete vm' do
+      expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return true
+      expect(Raven).to_not receive(:capture_message)
+      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      vm.destroy(true)
+    end
+
+    it 'report error to Raven if fails to delete vm' do
+      expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return false
+      expect(Raven).to receive(:capture_message).with(
+        "Error destroying VM in cloud",
+        {
+          logger: 'error',
+          extra: {
+            id_at_site: vm.id_at_site,
+            compute_site_id: vm.compute_site_id
+          }
+        }
+      )
+      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      vm.destroy(true)
     end
   end
 

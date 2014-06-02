@@ -148,7 +148,18 @@ class VirtualMachine < ActiveRecord::Base
 
   def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
-    cloud_client.servers.destroy(id_at_site)
+    unless cloud_client.servers.destroy(id_at_site)
+      Raven.capture_message(
+        "Error destroying VM in cloud",
+        {
+          logger: 'error',
+          extra: {
+            id_at_site: id_at_site,
+            compute_site_id: compute_site_id
+          }
+        }
+      )
+    end
   end
 
   def cant_destroy_non_managed_vm
