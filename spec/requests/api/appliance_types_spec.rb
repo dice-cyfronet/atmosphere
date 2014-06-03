@@ -216,6 +216,19 @@ describe Api::V1::ApplianceTypesController do
         get api("/appliance_types/#{at.id}", user)
 
         expect(at_response["compute_site_ids"]).to include(cs1.id, cs2.id)
+
+      end
+
+      it 'does not return the same compute site twice for appliance type' do
+        user = create(:user)
+        cs1  = create(:compute_site)
+
+        at  = create(:appliance_type, visible_to: :all)
+        create(:virtual_machine_template, compute_site: cs1, appliance_type: at)
+        create(:virtual_machine_template, compute_site: cs1, appliance_type: at)
+
+        get api("/appliance_types/#{at.id}", user)
+        expect(at_response["compute_site_ids"]).to eq [cs1.id]
       end
     end
   end
