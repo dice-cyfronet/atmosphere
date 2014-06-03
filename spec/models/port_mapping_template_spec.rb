@@ -180,21 +180,48 @@ describe PortMappingTemplate do
       end
     end
 
-    context 'when http/https changed into none' do
-      let!(:appliance_type) { create(:appliance_type) }
-      let!(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http) }
-      let!(:vm) { create(:virtual_machine, ip: '10.100.1.2') }
-      let!(:appliance) { create(:appliance, appliance_type: appliance_type, virtual_machines: [vm]) }
+    it 'does not remove dnat mapping when type none not changed' do
+      allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+      appliance_type = create(:appliance_type)
+      pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
+      appliance = create(:appliance, appliance_type: appliance_type)
+      vm = create(:virtual_machine, ip: '10.100.1.2', appliances: [appliance])
+      create(:port_mapping, port_mapping_template: pmt, virtual_machine: vm)
+      pmt.reload
 
+      expect(dnat_client_mock).not_to receive(:remove_port_mapping)
+
+      pmt.save
+    end
+
+    it 'does not add dnat mapping when type none not changed' do
+      allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+      appliance_type = create(:appliance_type)
+      pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
+      appliance = create(:appliance, appliance_type: appliance_type)
+      vm = create(:virtual_machine, ip: '10.100.1.2', appliances: [appliance])
+
+      expect(dnat_client_mock).not_to receive(:add_dnat_for_vm)
+
+      pmt.save
+    end
+
+    context 'when http/https changed into none' do
       before do
-        pmt.application_protocol = :none
-        dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
         DnatWrangler.stub(:new).and_return(dnat_client_mock)
+        dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
       end
 
       it 'adds dnat port mapping' do
+        appliance_type = create(:appliance_type)
+        pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http)
+        vm = create(:virtual_machine, ip: '10.100.1.2')
+        appliance = create(:appliance, appliance_type: appliance_type, virtual_machines: [vm])
+
         expect(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([])
+
         pmt.reload
+        pmt.application_protocol = :none
         pmt.save
       end
     end
