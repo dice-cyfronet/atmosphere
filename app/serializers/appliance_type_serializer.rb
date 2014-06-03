@@ -20,4 +20,8 @@ class ApplianceTypeSerializer < ActiveModel::Serializer
 
     active_vmts.count > 0
   end
+
+  def compute_sites
+    object.compute_sites.active
+  end
 end
