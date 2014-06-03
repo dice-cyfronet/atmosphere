@@ -29,4 +29,7 @@ class VirtualMachineFlavor < ActiveRecord::Base
   validates_numericality_of :hourly_cost, greater_than_or_equal_to: 0
   validates :supported_architectures, inclusion: %w(i386 x86_64 i386_and_x86_64)
 
+  def active?
+    compute_site && compute_site.active
+  end
 end
