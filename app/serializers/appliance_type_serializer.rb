@@ -14,7 +14,10 @@ class ApplianceTypeSerializer < ActiveModel::Serializer
   has_many :appliances, :port_mapping_templates, :appliance_configuration_templates, :virtual_machine_templates, :compute_sites
 
   def active
-    object.virtual_machine_templates.where(state: :active).count > 0
-  end
+    active_vmts = object.virtual_machine_templates
+      .joins(:compute_site)
+      .where(state: :active, compute_sites: { active: true })
 
+    active_vmts.count > 0
+  end
 end
