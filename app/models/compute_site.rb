@@ -50,6 +50,8 @@ class ComputeSite < ActiveRecord::Base
 
   scope :with_appliance, ->(appliance) {joins(virtual_machines: :appliances).where(appliances: {id: appliance.id})}
 
+  scope :active, -> { where(active: true) }
+
   after_update :update_cloud_client, if: :config_changed?
   after_destroy :unregister_cloud_client
 
