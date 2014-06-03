@@ -180,7 +180,7 @@ describe PortMappingTemplate do
       end
     end
 
-    it 'does not remove dnat mapping when type none not changed', focus: true do
+    it 'does not remove dnat mapping when type none not changed' do
       allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
       appliance_type = create(:appliance_type)
       pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
