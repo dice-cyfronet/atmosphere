@@ -49,8 +49,8 @@ class PortMappingTemplate < ActiveRecord::Base
 
   after_create :add_port_mappings_to_associated_vms
   after_update :update_port_mappings, if: :target_port_changed?
-  after_update :remove_dnat_port_mappings if :type_changed_into_http?
-  after_update :add_port_mappings_to_associated_vms if :type_changed_into_dnat?
+  after_update :remove_dnat_port_mappings, if: :type_changed_into_http?
+  after_update :add_port_mappings_to_associated_vms, if: :type_changed_into_dnat?
 
   scope :def_order, -> { order(:service_name) }
 

@@ -25,21 +25,21 @@ task sync_metadata: :environment do
   ApplianceType.transaction do
     global_ids.each do |metadata_global_id|
       if ApplianceType.where(metadata_global_id: metadata_global_id).present? and ApplianceType.where(metadata_global_id: metadata_global_id).first.publishable?
-        # MetadataRepositoryClient.instance.update_appliance_type ApplianceType.where(metadata_global_id: metadata_global_id).first
+        MetadataRepositoryClient.instance.update_appliance_type ApplianceType.where(metadata_global_id: metadata_global_id).first
         puts "U: [#{metadata_global_id}]"
       else
-        # MetadataRepositoryClient.instance.purge_metadata_key(metadata_global_id)
+        MetadataRepositoryClient.instance.purge_metadata_key(metadata_global_id)
         puts "D: [#{metadata_global_id}]"
       end
     end
 
     ApplianceType.where(visible_to: ['all','developer']).all.each do |at|
       if at.metadata_global_id and global_ids.include?(at.metadata_global_id)
-        # puts "Updating ApplianceType #{at.name}."
-        # MetadataRepositoryClient.instance.update_appliance_type at
+        puts "Updating ApplianceType #{at.name}."
+        MetadataRepositoryClient.instance.update_appliance_type at
       else
-        # mgid = MetadataRepositoryClient.instance.publish_appliance_type at
-        # at.update_column(:metadata_global_id, mgid) if mgid
+        mgid = MetadataRepositoryClient.instance.publish_appliance_type at
+        at.update_column(:metadata_global_id, mgid) if mgid
         puts "A: [#{at.name}]"
       end
     end

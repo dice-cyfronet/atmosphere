@@ -7,14 +7,14 @@ require_relative "../config/environment"
 module Clockwork
 
   every(1.minute, 'monitoring.templates') do
-    ComputeSite.select(:id, :name).each do |cs|
+    ComputeSite.active.select(:id, :name).each do |cs|
       Rails.logger.info "Creating templates monitoring task for #{cs.name}"
       VmTemplateMonitoringWorker.perform_async(cs.id)
     end
   end
 
   every(30.seconds, 'monitoring.vms') do
-    ComputeSite.select(:id, :name).each do |cs|
+    ComputeSite.active.select(:id, :name).each do |cs|
       Rails.logger.info "Creating vms monitoring task for #{cs.name}"
       VmMonitoringWorker.perform_async(cs.id)
     end

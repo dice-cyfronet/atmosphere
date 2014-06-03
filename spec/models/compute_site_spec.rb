@@ -202,4 +202,18 @@ describe ComputeSite do
       expect(cs.default_flavor).to eq first_flavor
     end
   end
+
+  context 'when active and non active compute sites' do
+    it 'returns only active compute sites using default scope' do
+      cs1 = create(:compute_site, active: true)
+      create(:compute_site, active: false)
+      cs3 = create(:compute_site, active: true)
+
+      cses = ComputeSite.active
+
+      expect(cses.count).to eq 2
+      expect(cses).to include cs1
+      expect(cses).to include cs3
+    end
+  end
 end
