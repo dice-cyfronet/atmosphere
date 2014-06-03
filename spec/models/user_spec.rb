@@ -120,4 +120,40 @@ describe User do
       end
     end
   end
+
+
+  describe 'manage metadata' do
+    let(:user) { create(:user) }
+    let(:lazy_user) { create(:user) }
+    let!(:private_at) { create(:appliance_type, author: user, visible_to: :owner) }
+    let!(:public_at) { create(:appliance_type, author: user, visible_to: :all) }
+    let!(:devel_at) { create(:appliance_type, author: user, visible_to: :developer) }
+
+    it 'does not update metadata when nothing important changed' do
+      expect(user).not_to receive(:update_appliance_type_metadata)
+      user.full_name = 'Mr. Cellophane'
+      user.save
+    end
+
+    it 'updates metadata when something important changed' do
+      expect(user).to receive(:update_appliance_type_metadata).once
+      user.login = 'cellophane'
+      user.save
+      user.login = 'cellophane' # No real change
+      user.save
+      expect(lazy_user).to receive(:update_appliance_type_metadata).once
+      lazy_user.login = 'cellophane2'
+      lazy_user.save
+    end
+
+    it 'updates only public and developers appliance type metadata' do
+      allow(user).to receive(:appliance_types).and_return([public_at, devel_at, private_at])
+      expect(public_at).to receive(:update_metadata).once
+      expect(devel_at).to receive(:update_metadata).once
+      expect(private_at).not_to receive(:update_metadata)
+      user.login = 'cellophane'
+      user.save
+    end
+  end
+
 end

@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
   has_many :billing_logs, dependent: :nullify
 
   before_save :check_fund_assignment
+  around_update :manage_metadata
 
   include Gravtastic
   gravtastic default: 'mm'
@@ -99,4 +100,18 @@ class User < ActiveRecord::Base
       user_funds << UserFund.new(user: self, fund: Fund.first, default: true)
     end
   end
+
+  # METADATA lifecycle methods
+
+  # Check if we need to update metadata regarding this user's ATs, if so, perform the task
+  def manage_metadata
+    login_changed = login_changed?
+    yield
+    update_appliance_type_metadata if login_changed
+  end
+
+  def update_appliance_type_metadata
+    appliance_types.select(&:publishable?).each(&:update_metadata)
+  end
+
 end

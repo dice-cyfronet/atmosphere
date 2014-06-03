@@ -44,10 +44,10 @@ class ApplianceType < ActiveRecord::Base
   has_many :virtual_machine_templates
 
   # Required for API (returning all compute sites on which a given AT can be deployed)
-  has_many :compute_sites, through: :virtual_machine_templates
+  has_many :compute_sites, -> { uniq }, through: :virtual_machine_templates
 
   scope :def_order, -> { order(:name) }
-  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}) }
+  scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}).uniq }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
 
   around_destroy :delete_vmts
@@ -124,6 +124,10 @@ class ApplianceType < ActiveRecord::Base
     visible_to.developer? or visible_to.all?
   end
 
+  def metadata_changed?
+    name_changed? or description_changed? or visible_to_changed? or user_id_changed?
+  end
+
   def update_metadata
     MetadataRepositoryClient.instance.update_appliance_type self
   end
@@ -160,11 +164,12 @@ class ApplianceType < ActiveRecord::Base
   # Check if we need to publish/update/unpublish metadata regarding this AT, if so, perform the task
   def manage_metadata
     was_published = ((visible_to_was == 'all') or (visible_to_was == 'developer'))
+    important_change = metadata_changed?
 
     yield
 
     if metadata_global_id and was_published and publishable?
-      update_metadata
+      update_metadata if important_change
     elsif metadata_global_id and was_published
       remove_metadata
     elsif publishable?

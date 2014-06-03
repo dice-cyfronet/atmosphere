@@ -9,6 +9,7 @@ FactoryGirl.define do
     appliance_configuration_instance
     appliance_type
     name { rand_str }
+    description { rand_str }
 
     compute_sites ComputeSite.all
 

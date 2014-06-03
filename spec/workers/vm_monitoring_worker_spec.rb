@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'zabbix'
 
 describe VmMonitoringWorker do
   let(:vm_updater_class) { double }
@@ -7,9 +6,6 @@ describe VmMonitoringWorker do
 
   before {
     Fog.mock!
-    Zabbix.stub(:register_host).and_return 1
-    Zabbix.stub(:unregister_host)
-    Zabbix.stub(:host_metrics)
   }
 
   subject { VmMonitoringWorker.new(vm_updater_class, vm_destroyer_class) }

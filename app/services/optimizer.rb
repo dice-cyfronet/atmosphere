@@ -23,7 +23,7 @@ class Optimizer
       if appl_manager.can_reuse_vm? && !(vm_to_be_reused = find_vm_that_can_be_reused(appliance)).nil?
         appl_manager.reuse_vm!(vm_to_be_reused)
       else
-        tmpls = VirtualMachineTemplate.where(appliance_type: appliance.appliance_type, state: 'active').reject{|tmpl| !appliance.compute_sites.include? tmpl.compute_site}
+        tmpls = vmt_candidates_for(appliance)
         if tmpls.blank?
           appliance.state = :unsatisfied
           err_msg = "No matching template was found for appliance #{appliance.name}"
@@ -47,6 +47,14 @@ class Optimizer
         Rails.logger.error appliance.errors.to_json
       end
     end
+  end
+
+  def vmt_candidates_for(appliance)
+    VirtualMachineTemplate.where(
+      appliance_type: appliance.appliance_type,
+      state: 'active',
+      compute_site_id: appliance.compute_sites.active
+    )
   end
 
   def not_enough_funds(appliance)

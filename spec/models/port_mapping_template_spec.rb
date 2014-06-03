@@ -180,21 +180,48 @@ describe PortMappingTemplate do
       end
     end
 
-    context 'when http/https changed into none' do
-      let!(:appliance_type) { create(:appliance_type) }
-      let!(:pmt) { create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http) }
-      let!(:vm) { create(:virtual_machine, ip: '10.100.1.2') }
-      let!(:appliance) { create(:appliance, appliance_type: appliance_type, virtual_machines: [vm]) }
+    it 'does not remove dnat mapping when type none not changed' do
+      allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+      appliance_type = create(:appliance_type)
+      pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
+      appliance = create(:appliance, appliance_type: appliance_type)
+      vm = create(:virtual_machine, ip: '10.100.1.2', appliances: [appliance])
+      create(:port_mapping, port_mapping_template: pmt, virtual_machine: vm)
+      pmt.reload
 
+      expect(dnat_client_mock).not_to receive(:remove_port_mapping)
+
+      pmt.save
+    end
+
+    it 'does not add dnat mapping when type none not changed' do
+      allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+      appliance_type = create(:appliance_type)
+      pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
+      appliance = create(:appliance, appliance_type: appliance_type)
+      vm = create(:virtual_machine, ip: '10.100.1.2', appliances: [appliance])
+
+      expect(dnat_client_mock).not_to receive(:add_dnat_for_vm)
+
+      pmt.save
+    end
+
+    context 'when http/https changed into none' do
       before do
-        pmt.application_protocol = :none
-        dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
         DnatWrangler.stub(:new).and_return(dnat_client_mock)
+        dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
       end
 
       it 'adds dnat port mapping' do
+        appliance_type = create(:appliance_type)
+        pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :http)
+        vm = create(:virtual_machine, ip: '10.100.1.2')
+        appliance = create(:appliance, appliance_type: appliance_type, virtual_machines: [vm])
+
         expect(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([])
+
         pmt.reload
+        pmt.application_protocol = :none
         pmt.save
       end
     end
@@ -271,5 +298,47 @@ describe PortMappingTemplate do
         expect(pmt.service_name).to eq 'a-b-c'
       end
     end
+  end
+
+
+  describe 'manage metadata' do
+    let!(:endp11) { build(:endpoint, description: 'FIRST ENDP') }
+    let!(:endp12) { build(:endpoint, description: 'ENDP_DESC') }
+    let!(:endp21) { build(:endpoint) }
+    let!(:pmt1) { build(:port_mapping_template, endpoints: [endp11, endp12]) }
+    let!(:pmt2) { build(:port_mapping_template, endpoints: [endp21]) }
+    let!(:pmt3) { build(:port_mapping_template) }
+    let!(:pmt5) { build(:port_mapping_template) }
+    let!(:complex_at) { create(:appliance_type, port_mapping_templates: [pmt1, pmt5], visible_to: :all, name: 'complex_at') }
+
+    let!(:endp41) { build(:endpoint) }
+    let!(:pmt4) { build(:port_mapping_template, endpoints: [endp41]) }
+    let!(:private_complex_at) { create(:appliance_type, port_mapping_templates: [pmt4], visible_to: :owner) }
+
+    it 'updates metadata when PMT destroyed' do
+      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at).twice
+      pmt1.destroy
+    end
+
+    it 'updates metadata when PMT with endpoint added' do
+      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at)
+      complex_at.port_mapping_templates << pmt2
+    end
+
+    it 'does not update metadata when empty PMT added' do
+      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      complex_at.port_mapping_templates << pmt3
+    end
+
+    it 'does not update metadata when empty PMT destroyed' do
+      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      pmt5.destroy
+    end
+
+    it 'does not update appliance metadata when not published' do
+      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      pmt4.destroy
+    end
+
   end
 end
