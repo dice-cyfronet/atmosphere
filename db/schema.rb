@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140506124415) do
+ActiveRecord::Schema.define(version: 20140602070848) do
 
   create_table "appliance_compute_sites", force: true do |t|
     t.integer "appliance_id"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20140506124415) do
     t.string   "wrangler_url"
     t.string   "wrangler_username"
     t.string   "wrangler_password"
+    t.boolean  "active",            default: true
   end
 
   create_table "deployments", force: true do |t|
