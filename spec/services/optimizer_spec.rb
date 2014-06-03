@@ -240,6 +240,38 @@ describe Optimizer do
         it_behaves_like 'not_enough_funds'
       end
     end
+
+    context 'when one of compute site with VMTs is turned off' do
+      it 'failed when all VMTs are on inactive compute site' do
+       _, inactive_vmt = vmt_on_site(cs_active: false)
+        at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
+
+        appl = create(:appliance, appliance_set: wf, appliance_type: at)
+
+        expect(appl.state).to eql 'unsatisfied'
+        expect(appl.state_explanation).to start_with 'No matching template'
+      end
+
+      it 'chooses VMT from active compute site' do
+        inactive_cs, inactive_vmt = vmt_on_site(cs_active: false)
+        active_cs, active_vmt = vmt_on_site(cs_active: true)
+        flavor = create(:virtual_machine_flavor,
+          compute_site: active_cs, id_at_site: '123')
+        allow(BillingService).to receive(:can_afford_flavor?)
+          .with(anything, flavor).and_return(true)
+        at = create(:appliance_type,
+          virtual_machine_templates: [inactive_vmt, active_vmt])
+
+        appl = create(:appliance,
+          appliance_set: wf, appliance_type: at,
+          compute_sites: [inactive_cs, active_cs])
+
+        selected_vmt = appl.virtual_machines.first.source_template
+
+        expect(appl.state).to eql 'satisfied'
+        expect(selected_vmt).to eql active_vmt
+      end
+    end
   end
 
   context 'virtual machine is applianceless' do
@@ -304,7 +336,7 @@ describe Optimizer do
     end
 
     context 'is selected with appropriate architecture' do
-      
+
       it 'if cheaper flavor does not support architecture' do
         cs = create(:compute_site)
         tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, compute_site: cs)
@@ -501,5 +533,12 @@ describe Optimizer do
         end
       end
     end
+  end
+
+  def vmt_on_site(options = {})
+    cs = create(:compute_site, active: options[:cs_active])
+    vmt = create(:virtual_machine_template, compute_site: cs)
+
+    [cs, vmt]
   end
 end
