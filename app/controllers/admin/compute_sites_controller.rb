@@ -47,6 +47,10 @@ class Admin::ComputeSitesController < Admin::ApplicationController
   private
     # Only allow a trusted parameter "white list" through.
     def compute_site_params
-      params.require(:compute_site).permit(:site_id, :name, :location, :site_type, :technology, :config, :template_filters, :http_proxy_url, :https_proxy_url, :wrangler_url, :wrangler_username, :wrangler_password)
+      params.require(:compute_site).permit(
+        :site_id, :name, :active, :location, :site_type,
+        :technology, :config, :template_filters,
+        :http_proxy_url, :https_proxy_url, :wrangler_url,
+        :wrangler_username, :wrangler_password)
     end
 end
