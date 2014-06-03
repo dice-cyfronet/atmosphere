@@ -347,33 +347,6 @@ describe ApplianceType do
       published_at.save
     end
 
-    # context 'with endpoints' do
-    #   # let(:at) { create(:appliance_type) }
-    #   # let(:devel_at) { create(:appliance_type, visible_to: 'developer') }
-    #   # let(:evil_at) { create(:appliance_type, name: '</name></AtomicService>WE RULE!') }
-    #   # let(:user) { create(:user) }
-    #   # let(:owned_at) { create(:appliance_type, author: user) }
-    #   # let(:published_at) { create(:appliance_type, metadata_global_id: 'MDGLID') }
-    #   let(:endp11) { build(:endpoint) }
-    #   let(:endp12) { build(:endpoint, description: 'ENDP_DESC') }
-    #   let(:endp21) { build(:endpoint) }
-    #   let(:pmt1) { build(:port_mapping_template, endpoints: [endp11, endp12]) }
-    #   let(:pmt2) { build(:port_mapping_template, endpoints: [endp21]) }
-    #   let(:pmt3) { build(:port_mapping_template) }
-    #   let(:complex_at) { create(:appliance_type, port_mapping_templates: [pmt1, pmt2, pmt3], description: 'DESC', visible_to: :all) }
-    #
-    #   it 'updates metadata on endpoint destruction' do
-    #     p pmt1.endpoints.size
-    #     allow(endp11).to receive(:port_mapping_template).and_return(pmt1)
-    #     allow(pmt1).to receive(:appliance_type).and_return(complex_at)
-    #     expect(complex_at).to receive(:update_metadata)
-    #     endp11.destroy
-    #     # endp11.description = 'sth else'
-    #     # endp11.save
-    #     p pmt1.endpoints.size
-    #   end
-    # end
-
   end
 
   describe 'destroy object and relation to VMT' do
