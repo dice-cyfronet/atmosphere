@@ -18,7 +18,13 @@ module Api
           @virtual_machine_flavors = VirtualMachineFlavor.where(conditions_str, params)
         elsif appliance_type_filters? || appliance_conf_inst_filters?
           appl_type_id = params['appliance_type_id'] || get_appl_type_id_for_config_inst()
-          tmpls = params['compute_site_id'] ? VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active', compute_site_id: params['compute_site_id']) : VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active')
+
+          tmpls = VirtualMachineTemplate.active.on_active_cs
+            .where(appliance_type_id: appl_type_id)
+
+          tmpls = tmpls.where(compute_site_id: params['compute_site_id']) if
+            params['compute_site_id']
+
           options = {}
           options[:preference_memory] = params['memory'].to_i if params['memory']
           options[:preference_cpu] = params['cpu'].to_i if params['cpu']

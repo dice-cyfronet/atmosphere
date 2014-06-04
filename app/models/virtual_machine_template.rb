@@ -33,8 +33,15 @@ class VirtualMachineTemplate < ActiveRecord::Base
   after_destroy :destroy_source_vm
 
   scope :def_order, -> { order(:name) }
-  scope :active, -> { where(state: 'active') }
   scope :unassigned, -> { where(appliance_type_id: nil) }
+
+  scope :active, -> { where(state: 'active') }
+  scope :on_active_cs, -> do
+    joins(:compute_site)
+      .where(compute_sites: { active: true })
+  end
+
+
 
 
   def uuid
