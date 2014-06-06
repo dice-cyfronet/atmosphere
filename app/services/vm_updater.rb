@@ -6,7 +6,7 @@ class VmUpdater
   end
 
   def update
-    perform_update! if old_enough?
+    perform_update! if update_requred?
 
     vm
   end
@@ -22,16 +22,29 @@ class VmUpdater
       map_state(server.state.downcase.to_sym)
     vm.virtual_machine_flavor = vm_flavor
     update_ips if update_ips?
+    vm.updated_at_site = updated_at
 
     # we need to check state before vm is saved
     # to get previous state
     furhter_update_requred = furhter_update_requred?
 
     if vm.save
-     update_affected_appliances if furhter_update_requred
+      update_affected_appliances if furhter_update_requred
     else
       error
     end
+  end
+
+  def update_requred?
+    changed? && old_enough?
+  end
+
+  def changed?
+    !vm.updated_at_site || !updated_at || vm.updated_at_site < updated_at
+  end
+
+  def updated_at
+    @updated_at ||= server.respond_to?(:updated) && server.updated
   end
 
   def old_enough?
