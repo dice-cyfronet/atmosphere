@@ -40,7 +40,7 @@ class VirtualMachineTemplate < ActiveRecord::Base
     joins(:compute_site)
       .where(compute_sites: { active: true })
   end
-
+  scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
 
 
