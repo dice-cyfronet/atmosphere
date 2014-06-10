@@ -1,10 +1,10 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::ApplianceSetsController do
   include ApiHelpers
 
   before do
-    Optimizer.instance.stub(:run)
+    allow(Optimizer.instance).to receive(:run)
   end
 
   let(:user)           { create(:developer) }

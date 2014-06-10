@@ -13,7 +13,7 @@
 #  updated_at               :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe PortMappingTemplate do
 
@@ -23,23 +23,23 @@ describe PortMappingTemplate do
 
   subject { FactoryGirl.create(:port_mapping_template) }
 
-  expect_it { to be_valid }
+  it { should be_valid }
 
-  expect_it { to validate_presence_of :service_name }
-  expect_it { to validate_presence_of :target_port }
-  expect_it { to validate_presence_of :application_protocol }
-  expect_it { to validate_presence_of :transport_protocol }
+  it { should validate_presence_of :service_name }
+  it { should validate_presence_of :target_port }
+  it { should validate_presence_of :application_protocol }
+  it { should validate_presence_of :transport_protocol }
 
-  expect_it { to ensure_inclusion_of(:transport_protocol).in_array(%w(tcp udp)) }
+  it { should ensure_inclusion_of(:transport_protocol).in_array(%w(tcp udp)) }
 
   context 'if transport_protocol is tcp' do
-    before { subject.stub(:transport_protocol) { 'tcp' } }
-    expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
+    before { allow(subject).to receive(:transport_protocol).and_return('tcp') }
+    it { should ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
   end
 
   context 'if transport_protocol is udp' do
-    before { subject.stub(:transport_protocol) { 'udp' } }
-    expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(none)) }
+    before { allow(subject).to receive(:transport_protocol).and_return('udp') }
+    it { should ensure_inclusion_of(:application_protocol).in_array(%w(none)) }
   end
 
   it 'should set proper default values' do
@@ -48,40 +48,40 @@ describe PortMappingTemplate do
     expect(subject.transport_protocol).to eql 'tcp'
   end
 
-  expect_it { to have_many :http_mappings }
-  expect_it { to have_many(:port_mappings).dependent(:destroy) }
-  expect_it { to have_many(:port_mapping_properties).dependent(:destroy) }
-  expect_it { to have_many(:endpoints).dependent(:destroy) }
+  it { should have_many :http_mappings }
+  it { should have_many(:port_mappings).dependent(:destroy) }
+  it { should have_many(:port_mapping_properties).dependent(:destroy) }
+  it { should have_many(:endpoints).dependent(:destroy) }
 
-  expect_it { to validate_numericality_of :target_port }
-  expect_it { should_not allow_value(-1).for(:target_port) }
+  it { should validate_numericality_of :target_port }
+  it { should_not allow_value(-1).for(:target_port) }
 
-  expect_it { to validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id, :dev_mode_property_set_id) }
-  expect_it { to validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id, :dev_mode_property_set_id) }
+  it { should validate_uniqueness_of(:target_port).scoped_to(:appliance_type_id, :dev_mode_property_set_id) }
+  it { should validate_uniqueness_of(:service_name).scoped_to(:appliance_type_id, :dev_mode_property_set_id) }
 
-  expect_it { to belong_to :appliance_type }
-  expect_it { to belong_to :dev_mode_property_set }
+  it { should belong_to :appliance_type }
+  it { should belong_to :dev_mode_property_set }
 
   context 'if no appliance_type' do
-    before { subject.stub(:appliance_type) { nil } }
-    expect_it { to validate_presence_of(:dev_mode_property_set) }
+    before { allow(subject).to receive(:appliance_type).and_return(nil) }
+    it { should validate_presence_of(:dev_mode_property_set) }
   end
 
   context 'if no dev_mode_property_set' do
-    before { subject.stub(:dev_mode_property_set) { nil } }
-    expect_it { to validate_presence_of(:appliance_type) }
+    before { allow(subject).to receive(:dev_mode_property_set).and_return(nil) }
+    it { should validate_presence_of(:appliance_type) }
   end
 
   # Uncomment 2 bellow tests when this PR is acceptedhttps://github.com/thoughtbot/shoulda-matchers/pull/331 and than "belongs_to appliance_type or dev_mode_property_set" context can be removed
 
   # context 'if appliance_type is present' do
   #   before { subject.stub(:appliance_type_id) { 1 } }
-  #   expect_it { to validate_abesence_of(:dev_mode_property_set) }
+  #   it { should validate_abesence_of(:dev_mode_property_set) }
   # end
 
   # context 'if dev_mode_property_set is present' do
   #   before { subject.stub(:dev_mode_property_set_id) { 1 } }
-  #   expect_it { to validate_abesence_of(:appliance_type) }
+  #   it { should validate_abesence_of(:appliance_type) }
   # end
 
   context 'belongs_to appliance_type or dev_mode_property_set' do
@@ -129,11 +129,11 @@ describe PortMappingTemplate do
       subject { create(:port_mapping_template, application_protocol: :http) }
 
       it 'is http redirection' do
-        expect(subject.http?).to be_true
+        expect(subject.http?).to be_truthy
       end
 
       it 'is not https redirection' do
-        expect(subject.https?).to be_false
+        expect(subject.https?).to be_falsy
       end
     end
 
@@ -141,11 +141,11 @@ describe PortMappingTemplate do
       subject { create(:port_mapping_template, application_protocol: :https) }
 
       it 'is not http redirection' do
-        expect(subject.http?).to be_false
+        expect(subject.http?).to be_falsy
       end
 
       it 'is https redirection' do
-        expect(subject.https?).to be_true
+        expect(subject.https?).to be_truthy
       end
     end
 
@@ -153,11 +153,11 @@ describe PortMappingTemplate do
       subject { create(:port_mapping_template, application_protocol: :http_https) }
 
       it 'is http redirection' do
-        expect(subject.http?).to be_true
+        expect(subject.http?).to be_truthy
       end
 
       it 'is https redirection' do
-        expect(subject.https?).to be_true
+        expect(subject.https?).to be_truthy
       end
     end
 
@@ -170,7 +170,7 @@ describe PortMappingTemplate do
 
       before do
         pmt.application_protocol = :http
-        dnat_client_mock.stub(:remove_port_mapping)
+        allow(dnat_client_mock).to receive(:remove_port_mapping)
       end
 
       it 'remove dnat redirection' do
@@ -208,8 +208,8 @@ describe PortMappingTemplate do
 
     context 'when http/https changed into none' do
       before do
-        DnatWrangler.stub(:new).and_return(dnat_client_mock)
-        dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
+        allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+        allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([])
       end
 
       it 'adds dnat port mapping' do
@@ -230,7 +230,7 @@ describe PortMappingTemplate do
   context 'port mappings' do
 
     before do
-     dnat_client_mock.stub(:add_dnat_for_vm).and_return([])
+     allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([])
     end
 
     let(:public_ip) { '149.156.10.135' }
@@ -246,9 +246,9 @@ describe PortMappingTemplate do
     context 'adds port mapping using dnat wrangler when pmt is created' do
       let(:wrg) { double('wrangler') }
       before do
-        Optimizer.instance.stub(:run)
-        DnatWrangler.stub(:new).and_return(dnat_client_mock)
-        dnat_client_mock.stub(:add_dnat_for_vm).and_return([{port_mapping_template: PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
+        allow(Optimizer.instance).to receive(:run)
+        allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+        allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([{port_mapping_template: PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
       end
       let(:proto) { 'tcp' }
       let(:priv_port) { 8080 }
@@ -270,13 +270,13 @@ describe PortMappingTemplate do
 
     describe 'port mapping template is updated' do
       it 'creates mapping update jobs for each port mapping if target port changed' do
-        dnat_client_mock.stub(:remove)
-        dnat_client_mock.stub(:add_dnat_for_vm).and_return([], [])#([{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}], [{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_2}])
+        allow(dnat_client_mock).to receive(:remove)
+        allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([], [])#([{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}], [{port_mapping_template: pmt, virtual_machine: vm, public_ip: public_ip, source_port: public_port_2}])
         pmt.update_attribute(:target_port, 7777)
       end
 
       it 'does not create mapping update jobs if target port was not changed' do
-        expect(DnatWrangler).to_not receive(:remove)
+        expect(dnat_client_mock).to_not receive(:remove)
         pmt.update_attribute(:service_name, 'new service name')
       end
     end

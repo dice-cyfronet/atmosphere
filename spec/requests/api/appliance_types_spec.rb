@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::ApplianceTypesController do
   include ApiHelpers
@@ -260,7 +260,7 @@ describe Api::V1::ApplianceTypesController do
 
       get api("/appliance_types/#{at.id}", user)
 
-      expect(at_response['active']).to be_true
+      expect(at_response['active']).to be_truthy
     end
   end
 
@@ -346,7 +346,7 @@ describe Api::V1::ApplianceTypesController do
 
     before do
       Fog.mock!
-      Optimizer.instance.stub(:run)
+      allow(Optimizer.instance).to receive(:run)
     end
 
     context 'when unauthenticated' do
@@ -401,8 +401,8 @@ describe Api::V1::ApplianceTypesController do
 
         expect(at_response['name']).to eq msg[:appliance_type][:name]
         expect(at_response['description']).to be_nil
-        expect(at_response['shared']).to be_false
-        expect(at_response['scalable']).to be_false
+        expect(at_response['shared']).to be_falsy
+        expect(at_response['scalable']).to be_falsy
         expect(at_response['visible_to']).to eq 'owner'
       end
 
@@ -522,7 +522,7 @@ describe Api::V1::ApplianceTypesController do
           msg = create_msg(appliance_id: appl.id)
           cloud_client = double('cloud client')
           allow(cloud_client).to receive(:save_template).and_return('99')
-          Fog::Compute.stub(:new).and_return cloud_client
+          allow(Fog::Compute).to receive(:new).and_return cloud_client
           vm = create(:virtual_machine)
           appl.virtual_machines << vm
 

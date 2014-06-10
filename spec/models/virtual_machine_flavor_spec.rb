@@ -13,7 +13,7 @@
 #  supported_architectures :string(255)      default("x86_64")
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe VirtualMachineFlavor do
   context 'supported architectures validation' do

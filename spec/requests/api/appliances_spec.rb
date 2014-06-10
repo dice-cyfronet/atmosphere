@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::AppliancesController do
   include ApiHelpers
@@ -176,7 +176,7 @@ describe Api::V1::AppliancesController do
 
     context 'when authenticated as user' do
       before do
-        Optimizer.stub(:instance).and_return(optimizer)
+        allow(Optimizer).to receive(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
 
@@ -451,7 +451,7 @@ describe Api::V1::AppliancesController do
       end
 
       before do
-        Optimizer.stub(:instance).and_return(optimizer)
+        allow(Optimizer).to receive(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
 

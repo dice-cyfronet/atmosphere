@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Optimizer do
   include VmtOnCsHelpers
@@ -143,7 +143,7 @@ describe Optimizer do
           let(:config_inst) { create(:appliance_configuration_instance) }
 
           before do
-            Air.config.optimizer.stub(:max_appl_no).and_return 1
+            allow(Air.config.optimizer).to receive(:max_appl_no).and_return 1
           end
 
           it 'instantiates a new vm if already running vm cannot accept more load' do
@@ -158,7 +158,7 @@ describe Optimizer do
             expect(appl2.virtual_machines.size).to eql 1
             vm1 = appl1.virtual_machines.first
             vm2 = appl2.virtual_machines.first
-            expect(vm1 == vm2).to be_false
+            expect(vm1 == vm2).to be_falsy
           end
         end
       end
@@ -227,7 +227,7 @@ describe Optimizer do
           expect(appl2.virtual_machines.size).to eql 1
           vm1 = appl1.virtual_machines.first
           vm2 = appl2.virtual_machines.first
-          expect(vm1 == vm2).to be_false
+          expect(vm1 == vm2).to be_falsy
         end
       end
 
@@ -281,7 +281,8 @@ describe Optimizer do
 
     before do
       servers_double = double
-      vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+      allow(vm.compute_site.cloud_client)
+        .to receive(:servers).and_return(servers_double)
       allow(servers_double).to receive(:destroy)
     end
 
@@ -326,7 +327,7 @@ describe Optimizer do
 
     let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
     it 'includes flavor in params of created vm' do
-      VirtualMachine.stub(:create)
+      allow(VirtualMachine).to receive(:create)
       allow(ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
       expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
