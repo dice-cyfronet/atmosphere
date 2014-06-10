@@ -13,7 +13,7 @@ gem 'foreigner'
 gem 'enumerize'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.2'
+gem 'sass-rails', '~> 4.0.3'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -92,7 +92,7 @@ group :doc do
 end
 
 group :development do
-  gem 'annotate', github: 'ctran/annotate_models'
+  gem 'annotate'
   gem 'quiet_assets'
   gem 'letter_opener'
   # gem 'rack-mini-profiler'
