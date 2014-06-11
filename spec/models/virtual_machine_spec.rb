@@ -86,7 +86,7 @@ describe VirtualMachine do
       vm.save
     end
 
-    it 'registeres after IP was changed from non blank to non blank but monitoring_id was blank' do
+    it 'registers after IP was changed from non blank to non blank but monitoring_id was blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
       expect(vm).to_not receive(:unregister_from_monitoring)
       expect(vm).to receive(:register_in_monitoring)
