@@ -17,6 +17,7 @@
 #  wrangler_url      :string(255)
 #  wrangler_username :string(255)
 #  wrangler_password :string(255)
+#  active            :boolean          default(TRUE)
 #
 
 class ComputeSite < ActiveRecord::Base
@@ -49,6 +50,8 @@ class ComputeSite < ActiveRecord::Base
   scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}).readonly(false) }
 
   scope :with_appliance, ->(appliance) {joins(virtual_machines: :appliances).where(appliances: {id: appliance.id})}
+
+  scope :active, -> { where(active: true) }
 
   after_update :update_cloud_client, if: :config_changed?
   after_destroy :unregister_cloud_client

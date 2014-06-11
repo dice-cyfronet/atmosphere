@@ -4,6 +4,8 @@ module Api
     class VirtualMachineFlavorsController < Api::ApplicationController
       authorize_resource :virtual_machine_flavor
       respond_to :json
+      before_filter :validate_params!,
+                    :validate_filter_combination!, only: :index
 
       # Query params may include either:
       # - appliance_configuration_instance_id and optionally compute_site_id
@@ -11,81 +13,89 @@ module Api
       # - a combination of compute_site_id, cpu, memory, hdd
       # or be empty.
       def index
-        validate_params
-        @virtual_machine_flavors = []
-        if filters_empty? || requirements_filters?
-          conditions_str = build_condition_str
-          @virtual_machine_flavors = VirtualMachineFlavor.where(conditions_str, params)
-        elsif appliance_type_filters? || appliance_conf_inst_filters?
-          appl_type_id = params['appliance_type_id'] || get_appl_type_id_for_config_inst()
-          tmpls = params['compute_site_id'] ? VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active', compute_site_id: params['compute_site_id']) : VirtualMachineTemplate.where(appliance_type_id: appl_type_id, state: 'active')
-          options = {}
-          options[:preference_memory] = params['memory'].to_i if params['memory']
-          options[:preference_cpu] = params['cpu'].to_i if params['cpu']
-          options[:preference_disk] = params['hdd'].to_i if params['hdd']
+        flavors = []
+        cs_id = params[:compute_site_id]
+
+        if optimizer_query?
+          tmpls = VirtualMachineTemplate.active.on_active_cs
+            .where(appliance_type_id: appl_type_id)
+          tmpls = tmpls.on_cs(cs_id) if cs_id
+
           unless tmpls.blank?
-            tmpl, flavor = Optimizer.instance.select_tmpl_and_flavor(tmpls, options)
-            @virtual_machine_flavors = [flavor]
+            _, flavor = Optimizer.instance
+              .select_tmpl_and_flavor(tmpls, params)
+
+            flavors = [flavor]
           end
         else
-          raise Air::Conflict.new("Illegal combination of filters")
+          flavors = VirtualMachineFlavor.with_prefs(params)
+          flavors = flavors.on_cs(cs_id) if cs_id
         end
-        if params['limit']
-          limit = params['limit'].to_i
-          if limit >= 1
-            @virtual_machine_flavors = @virtual_machine_flavors.first(limit)
-          end
-        end
-        respond_with @virtual_machine_flavors
+        flavors = flavors.first(limit) if limit
+
+        respond_with flavors
       end
 
       private
-      def build_condition_str
-        cs_condition = params['compute_site_id'] ? "compute_site_id = :compute_site_id" : ''
-        cpu_condition = params['cpu'] ? "cpu >= :cpu" : ''
-        mem_condition = params['memory'] ? "memory >= :memory" : ''
-        hdd_condition = params['hdd'] ? "hdd >= :hdd" : ''
-        [cs_condition, cpu_condition, mem_condition, hdd_condition].reject{|e| e.blank?}.join(" AND ")
+
+      def appl_type_id
+        appliance_type_id || at_id_for_config_inst
       end
 
-      def get_appl_type_id_for_config_inst()
-        config_inst = ApplianceConfigurationInstance.find(params['appliance_configuration_instance_id'])
-        config_tmpl = config_inst.appliance_configuration_template
-        if config_tmpl.nil?
-          raise ActiveRecord::RecordNotFound
-        end
+      def at_id_for_config_inst
+        config_tmpl = ApplianceConfigurationTemplate.
+          with_config_instance(config_instance_id)
+
         config_tmpl.appliance_type_id
       end
 
-      def filters_empty?
-        (params.keys & ['appliance_configuration_instance_id', 'appliance_type_id','compute_site_id', 'cpu', 'memory', 'hdd']).empty?
-      end
-
-      def appliance_conf_inst_filters?
-        keys = params.keys
-        (keys.include? 'appliance_configuration_instance_id') && (keys & ['appliance_type_id']).empty?
-      end
-
-      def appliance_type_filters?
-        keys = params.keys
-        (keys.include? 'appliance_type_id') && (keys & ['appliance_configuration_instance_id']).empty?
-      end
-
-      def requirements_filters?
-        keys = params.keys
-        (not (keys & ['compute_site_id', 'cpu', 'memory', 'hdd']).empty?) && (keys & ['appliance_configuration_instance_id', 'appliance_type_id']).empty?
-      end
-
-      def validate_params
-        possitive_number_re = /^\d+$/
-        ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
-          if params[param_name] && !(params[param_name] =~ possitive_number_re)
-            raise Air::InvalidParameterFormat.new("Invalid parameter format for #{param_name}")
+      def validate_params!
+        allowed_query_params.each do |param_name|
+          if invalid_number_param?(params[param_name])
+            raise Air::InvalidParameterFormat.new(
+              "Invalid parameter format for #{param_name}")
           end
         end
       end
 
-    end
+      def allowed_query_params
+        [
+          'appliance_configuration_instance_id',
+          'appliance_type_id','compute_site_id',
+          'cpu', 'memory', 'hdd'
+        ]
+      end
 
+      def validate_filter_combination!
+        raise Air::Conflict,
+          "Illegal combination of filters" if conflicted_queries?
+      end
+
+      def conflicted_queries?
+        appliance_type_id && config_instance_id
+      end
+
+      def optimizer_query?
+        appliance_type_id || config_instance_id
+      end
+
+      def config_instance_id
+        params[:appliance_configuration_instance_id]
+      end
+
+      def appliance_type_id
+        params[:appliance_type_id]
+      end
+
+      def limit
+        if params[:limit] && (l = params[:limit].to_i) > 0
+          l
+        end
+      end
+
+      def invalid_number_param?(nr)
+        nr && !(nr =~ /^\d+$/)
+      end
+    end
   end
 end

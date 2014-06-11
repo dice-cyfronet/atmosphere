@@ -23,6 +23,8 @@ defaults: &defaults
     password: 'influxdbpassword'
     database: 'influxdbdatabase'
 
+
+
   #token_authentication_key: private_token
   #mi_authentication_key: mi_ticket
 

@@ -257,7 +257,9 @@ describe ApplianceType do
     let(:at) { create(:appliance_type) }
     let(:public_at) { create(:appliance_type, visible_to: :all) }
     let(:devel_at) { create(:appliance_type, visible_to: :developer) }
-    let(:published_at) { create(:appliance_type, visible_to: :all, metadata_global_id: 'mgid') }
+    let(:user) { create(:user) }
+    let(:other_user) { create(:user) }
+    let(:published_at) { create(:appliance_type, visible_to: :all, metadata_global_id: 'mgid', preference_memory: 500, author: user) }
     let(:published_devel_at) { create(:appliance_type, visible_to: :developer, metadata_global_id: 'mgid') }
 
     it 'does not publish private appliance types' do
@@ -312,6 +314,65 @@ describe ApplianceType do
       expect(published_devel_at).to receive(:remove_metadata).once
       published_devel_at.run_callbacks(:destroy)
     end
+
+    it 'updates metadata of published appliance type' do
+      expect(published_at).to receive(:update_metadata).twice
+      published_at.description = 'sth else'
+      published_at.save
+      published_at.name = 'new name'
+      published_at.save
+      expect(published_at).to receive(:update_metadata).once
+      published_at.visible_to = :all # No real change here
+      published_at.save
+      published_at.visible_to = :developer
+      published_at.save
+    end
+
+    it 'updates user login metadata on author change' do
+      expect(published_at).to receive(:update_metadata).once
+      published_at.author = other_user
+      published_at.save
+    end
+
+    it 'updates user login metadata on author login change' do
+      allow(user).to receive(:appliance_types).and_return([published_at])
+      expect(published_at).to receive(:update_metadata).once
+      user.login = 'Mr. Cellophane'
+      user.save
+    end
+
+    it 'does not update metadata of published appliance type when no metadata change occurred' do
+      expect(published_at).not_to receive(:update_metadata)
+      published_at.preference_memory = 600
+      published_at.save
+    end
+
+    # context 'with endpoints' do
+    #   # let(:at) { create(:appliance_type) }
+    #   # let(:devel_at) { create(:appliance_type, visible_to: 'developer') }
+    #   # let(:evil_at) { create(:appliance_type, name: '</name></AtomicService>WE RULE!') }
+    #   # let(:user) { create(:user) }
+    #   # let(:owned_at) { create(:appliance_type, author: user) }
+    #   # let(:published_at) { create(:appliance_type, metadata_global_id: 'MDGLID') }
+    #   let(:endp11) { build(:endpoint) }
+    #   let(:endp12) { build(:endpoint, description: 'ENDP_DESC') }
+    #   let(:endp21) { build(:endpoint) }
+    #   let(:pmt1) { build(:port_mapping_template, endpoints: [endp11, endp12]) }
+    #   let(:pmt2) { build(:port_mapping_template, endpoints: [endp21]) }
+    #   let(:pmt3) { build(:port_mapping_template) }
+    #   let(:complex_at) { create(:appliance_type, port_mapping_templates: [pmt1, pmt2, pmt3], description: 'DESC', visible_to: :all) }
+    #
+    #   it 'updates metadata on endpoint destruction' do
+    #     p pmt1.endpoints.size
+    #     allow(endp11).to receive(:port_mapping_template).and_return(pmt1)
+    #     allow(pmt1).to receive(:appliance_type).and_return(complex_at)
+    #     expect(complex_at).to receive(:update_metadata)
+    #     endp11.destroy
+    #     # endp11.description = 'sth else'
+    #     # endp11.save
+    #     p pmt1.endpoints.size
+    #   end
+    # end
 
   end
 

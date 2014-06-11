@@ -10,6 +10,7 @@
 #  created_at               :datetime
 #  updated_at               :datetime
 #  compute_site_id          :integer          not null
+#  monitoring_status        :string(255)      default("pending")
 #
 
 require 'spec_helper'
