@@ -12,6 +12,7 @@ GET /virtual_machine_flavors
     {
       "id": 1,
       "flavor_name": "Flavor 1",
+      "active": true,
       "cpu": 1.0,
       "memory": 1024.0,
       "hdd": 512.0,
@@ -35,3 +36,15 @@ It is possible to filter virtual machine flavors based on either:
 If invalid filters are given, for example both appliance_configuration_instance_id and appliance_type_id are provided a 409 Conflict is returned.
 
 Filters are expressed as query params.
+
+### JSON fields meanings
++ `id` - flavor identifier
++ `flavor_name` - flavor name taken from compute site
++ `active` - true if compute site connected with this flavor is active, false otherwise
++ `cpu` - number of guaranteed VCPU
++ `memory` - number of guaranteed memory (in MB)
++ `hdd` - number of guaranteed hdd (in GB)
++ `hourly_cost` - cost calculated for every started hour when machine is runnig (1 = 0.0001 $)
++ `compute_site_id` - compute site identifier, where this flavor is available
++ `id_at_site` - internal compute site identifier
++ `supported_architectures` - what kind of VM can be started using this flavor (32 or 64 bit architecture)

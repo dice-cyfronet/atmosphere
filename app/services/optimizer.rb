@@ -65,7 +65,7 @@ class Optimizer
 
   def preferences(appl)
     props = appl.dev_mode_property_set
-    props ? {preference_cpu: props.preference_cpu, preference_memory: props. preference_memory, preference_disk: props. preference_disk} : {}
+    props ? {cpu: props.preference_cpu, memory: props. preference_memory, hdd: props.preference_disk} : {}
   end
 
   def find_vm_that_can_be_reused(appliance)
@@ -81,9 +81,10 @@ class Optimizer
   end
 
   def select_tmpl_and_flavor(tmpls, options={})
-    required_mem = options[:preference_memory] || tmpls.first.appliance_type.preference_memory || (tmpls.first.compute_site.public? ? 1536 : 512)
-    required_cores = options[:preference_cpu] || tmpls.first.appliance_type.preference_cpu || 1
-    required_disk = options[:preference_disk] || tmpls.first.appliance_type.preference_disk || 0
+    required_mem = min_mem(tmpls, options[:memory])
+    required_cores = min_cpu(tmpls, options[:cpu])
+    required_disk = min_hdd(tmpls, options[:hdd])
+
     opt_flavors_and_tmpls_map = {}
     tmpls.each do |tmpl|
       opt_fl = (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| (f.supported_architectures == 'i386_and_x86_64' || f.supported_architectures == tmpl.architecture) && f.memory >= required_mem && f.cpu >= required_cores && f.hdd >= required_disk}) {|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
@@ -93,5 +94,23 @@ class Optimizer
     [opt_flavors_and_tmpls_map[globally_opt_flavor], globally_opt_flavor]
   end
 
+  def min_mem(tmpls, prefference)
+    to_i(prefference) || tmpls.first.appliance_type.preference_memory || (tmpls.first.compute_site.public? ? 1536 : 512)
+  end
 
+  def min_cpu(tmpls, prefference)
+    to_f(prefference) || tmpls.first.appliance_type.preference_cpu || 1
+  end
+
+  def min_hdd(tmpls, prefference)
+    to_i(prefference) || tmpls.first.appliance_type.preference_disk || 0
+  end
+
+  def to_i(obj)
+    obj ? obj.to_i : nil
+  end
+
+  def to_f(obj)
+    obj ? obj.to_f : nil
+  end
 end
