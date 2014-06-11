@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140602070848) do
+ActiveRecord::Schema.define(version: 20140611055320) do
 
   create_table "appliance_compute_sites", force: true do |t|
     t.integer "appliance_id"
@@ -332,6 +332,7 @@ ActiveRecord::Schema.define(version: 20140602070848) do
     t.integer  "virtual_machine_template_id"
     t.integer  "virtual_machine_flavor_id"
     t.integer  "monitoring_id"
+    t.datetime "updated_at_site"
   end
 
   add_index "virtual_machines", ["compute_site_id", "id_at_site"], name: "index_virtual_machines_on_compute_site_id_and_id_at_site", unique: true, using: :btree

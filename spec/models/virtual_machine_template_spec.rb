@@ -12,6 +12,7 @@
 #  appliance_type_id     :integer
 #  created_at            :datetime
 #  updated_at            :datetime
+#  architecture          :string(255)      default("x86_64")
 #
 
 require 'spec_helper'
