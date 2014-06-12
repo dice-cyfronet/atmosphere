@@ -1,5 +1,6 @@
 require 'devise/strategies/base'
 require 'omniauth-vph'
+require 'sudoable'
 
 module Devise
   module Strategies
@@ -10,6 +11,7 @@ module Devise
     #   http://myapp.example.com/?mi_ticket=MI_TOKEN
     #   http://myapp.example.com Header: MI_TOKEN: MI_TOKEN
     class MiTokenAuthenticatable < Authenticatable
+      include Sudoable
 
       def valid?
         super || mi_ticket
@@ -47,27 +49,8 @@ module Devise
       end
 
       def mi_ticket
-        params[Air.config.mi_authentication_key] || request.headers[Air.config.header_mi_authentication_key]
-      end
-
-      def sudo_as
-        params[:sudo] || request.headers['HTTP_SUDO']
-      end
-
-      def sudo!(user, sudo_as)
-        sudo_fail!(403, 'Must be admin to use sudo') unless user.admin?
-        user = User.find_by(login: sudo_as)
-        return sudo_fail!(404, "No user login for: #{sudo_as}") unless user
-
-        user
-      end
-
-      def sudo_fail!(status, msg)
-        body = {error: msg}
-        headers = {"Content-Type" => "application/json; charset=utf-8"}
-
-        custom! [status, headers, [body.to_json]]
-        throw :warden
+        params[Air.config.mi_authentication_key] ||
+          request.headers[Air.config.header_mi_authentication_key]
       end
     end
   end

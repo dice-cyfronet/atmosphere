@@ -7,8 +7,9 @@ module Devise
     # do is to pass the params in the URL:
     #
     #   http://myapp.example.com/?private_token=TOKEN
-    #   http://myapp.example.com Header: PRIVATE_TOKEN: TOKEN
+    #   http://myapp.example.com Header: PRIVATE-TOKEN: TOKEN
     class TokenAuthenticatable < Authenticatable
+      include Sudoable
 
       def valid?
         super || token
@@ -18,6 +19,7 @@ module Devise
         return fail(:invalid_ticket) unless token
         begin
           user = User.find_by(authentication_token: token)
+          user = sudo!(user, sudo_as) if sudo_as
 
           success!(user)
         rescue Exception => e
@@ -28,7 +30,8 @@ module Devise
       private
 
       def token
-        params[Air.config.token_authentication_key].presence || request.headers[Air.config.header_token_authentication_key].presence
+        params[Air.config.token_authentication_key].presence ||
+          request.headers[Air.config.header_token_authentication_key].presence
       end
     end
   end
