@@ -89,6 +89,10 @@ class User < ActiveRecord::Base
     "#{login} <#{email}>"
   end
 
+  def admin?
+    has_role? :admin
+  end
+
   private
 
   # Checks whether any fund has been assigned to this user.
