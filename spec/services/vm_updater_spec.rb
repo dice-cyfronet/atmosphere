@@ -276,6 +276,53 @@ describe VmUpdater do
     end
   end
 
+  context 'cloud client supports updated field' do
+    let(:server) { server_double(state: 'build', created: 2.hours.ago) }
+    let(:vm_update_at) { Time.new(2014, 6, 6, 14, 41, 2) }
+
+    it 'updates VM if vm.updated_at_site is nil' do
+      vm = create(:virtual_machine,
+          updated_at_site: nil,
+          id_at_site: 'id_at_site',
+          compute_site: cs
+        )
+      allow(server).to receive(:updated).and_return(vm_update_at)
+
+      VmUpdater.new(cs, server, updater_class).update
+      vm.reload
+
+      expect(vm.updated_at_site).to eq vm_update_at
+    end
+
+    it 'updates VM if server.updated > vm.updated_at_site' do
+      vm = create(:virtual_machine,
+          updated_at_site: vm_update_at,
+          id_at_site: 'id_at_site',
+          compute_site: cs
+        )
+      allow(server).to receive(:updated).and_return(vm_update_at + 1)
+
+      VmUpdater.new(cs, server, updater_class).update
+      vm.reload
+
+      expect(vm.updated_at_site).to be > vm_update_at
+    end
+
+    it 'does not update VM if server.updated_at_site < vm.updated_at' do
+      vm = create(:virtual_machine,
+          updated_at_site: vm_update_at,
+          id_at_site: 'id_at_site',
+          compute_site: cs
+        )
+      allow(server).to receive(:updated).and_return(vm_update_at - 1)
+
+      VmUpdater.new(cs, server, updater_class).update
+      vm.reload
+
+      expect(vm.updated_at_site).to eq vm_update_at
+    end
+  end
+
   def server_double(options)
     double(
       id: 'id_at_site',

@@ -18,10 +18,10 @@ describe UrlAvailabilityCheck do
     expect(subject.is_available(url)).to be_true
   end
 
-  it 'returns false if resource does not exist (404 response code)' do
+  it 'returns true if resource does not exist (404 response code)' do
     respond_with(404)
 
-    expect(subject.is_available(url)).to be_false
+    expect(subject.is_available(url)).to be_true
   end
 
   it 'returns false if bad gateway (502 response code)' do

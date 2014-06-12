@@ -2,13 +2,15 @@
 #
 # Table name: virtual_machine_flavors
 #
-#  id              :integer          not null, primary key
-#  flavor_name     :string(255)      not null
-#  cpu             :float
-#  memory          :float
-#  hdd             :float
-#  hourly_cost     :integer          not null
-#  compute_site_id :integer
+#  id                      :integer          not null, primary key
+#  flavor_name             :string(255)      not null
+#  cpu                     :float
+#  memory                  :float
+#  hdd                     :float
+#  hourly_cost             :integer          not null
+#  compute_site_id         :integer
+#  id_at_site              :string(255)
+#  supported_architectures :string(255)      default("x86_64")
 #
 
 # VirtualMachineFlavor
@@ -29,4 +31,16 @@ class VirtualMachineFlavor < ActiveRecord::Base
   validates_numericality_of :hourly_cost, greater_than_or_equal_to: 0
   validates :supported_architectures, inclusion: %w(i386 x86_64 i386_and_x86_64)
 
+  scope :with_prefs, ->(options) do
+    FlavorsWithRequirements.new(options).find
+  end
+
+  scope :on_cs, ->(cs) do
+    cs_id = cs.respond_to?(:id) ? cs.id : cs
+    where(compute_site_id: cs_id)
+  end
+
+  def active?
+    compute_site && compute_site.active
+  end
 end

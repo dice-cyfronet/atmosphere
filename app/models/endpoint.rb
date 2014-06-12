@@ -11,6 +11,7 @@
 #  port_mapping_template_id :integer          not null
 #  created_at               :datetime
 #  updated_at               :datetime
+#  secured                  :boolean          default(FALSE), not null
 #
 
 class Endpoint < ActiveRecord::Base

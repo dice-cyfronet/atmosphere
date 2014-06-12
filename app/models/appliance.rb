@@ -17,6 +17,7 @@
 #  amount_billed                       :integer          default(0), not null
 #  billing_state                       :string(255)      default("prepaid"), not null
 #  prepaid_until                       :datetime         not null
+#  description                         :text
 #
 
 class Appliance < ActiveRecord::Base

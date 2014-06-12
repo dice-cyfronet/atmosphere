@@ -1,6 +1,6 @@
 class AddApplianceDescription < ActiveRecord::Migration
   def change
-    add_column :appliances, :description, :text, default: ''
+    add_column :appliances, :description, :text
 
     Appliance.all.find_each do |appl|
       at = appl.appliance_type

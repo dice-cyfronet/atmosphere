@@ -17,6 +17,7 @@
 #  wrangler_url      :string(255)
 #  wrangler_username :string(255)
 #  wrangler_password :string(255)
+#  active            :boolean          default(TRUE)
 #
 
 require 'spec_helper'
