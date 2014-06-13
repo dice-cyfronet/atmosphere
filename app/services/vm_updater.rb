@@ -6,7 +6,7 @@ class VmUpdater
   end
 
   def update
-    perform_update! if update_requred?
+    perform_update! if old_enough?
 
     vm
   end
@@ -33,10 +33,6 @@ class VmUpdater
     else
       error
     end
-  end
-
-  def update_requred?
-    changed? && old_enough?
   end
 
   def changed?
@@ -78,7 +74,8 @@ class VmUpdater
   end
 
   def map_saving_state(vm, key)
-    (:saving if vm.saved_templates.count > 0) || ({image_snapshot: :saving}[key.to_sym] if key)
+    (:saving if vm.saved_templates.count > 0) ||
+      ({image_snapshot: :saving}[key.to_sym] if key)
   end
 
   def vm
@@ -90,7 +87,11 @@ class VmUpdater
   end
 
   def update_ips?
-    [:active, 'active', :error, 'error'].include? vm.state
+    # Updating up addresses triggers additional request to
+    # open stack nova api. That is why we are checking here
+    # if any change occurs. We cannot stop updating the rest
+    # of VM because of https://redmine.dev.cyfronet.pl/issues/3047.
+    changed? && [:active, 'active', :error, 'error'].include?(vm.state)
   end
 
   def update_ips

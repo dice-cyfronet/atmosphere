@@ -277,13 +277,20 @@ describe VmUpdater do
   end
 
   context 'cloud client supports updated field' do
-    let(:server) { server_double(state: 'build', created: 2.hours.ago) }
+    let(:server) do
+      server_double(
+        state: 'active',
+        created: 2.hours.ago,
+        public_ip_address: '1.2.3.4'
+      )
+    end
     let(:vm_update_at) { Time.new(2014, 6, 6, 14, 41, 2) }
 
-    it 'updates VM if vm.updated_at_site is nil' do
+    it 'updates VM IP if vm.updated_at_site is nil' do
       vm = create(:virtual_machine,
           updated_at_site: nil,
           id_at_site: 'id_at_site',
+          ip: nil,
           compute_site: cs
         )
       allow(server).to receive(:updated).and_return(vm_update_at)
@@ -291,13 +298,14 @@ describe VmUpdater do
       VmUpdater.new(cs, server, updater_class).update
       vm.reload
 
-      expect(vm.updated_at_site).to eq vm_update_at
+      expect(vm.ip).to eq '1.2.3.4'
     end
 
     it 'updates VM if server.updated > vm.updated_at_site' do
       vm = create(:virtual_machine,
           updated_at_site: vm_update_at,
           id_at_site: 'id_at_site',
+          ip: nil,
           compute_site: cs
         )
       allow(server).to receive(:updated).and_return(vm_update_at + 1)
@@ -305,13 +313,14 @@ describe VmUpdater do
       VmUpdater.new(cs, server, updater_class).update
       vm.reload
 
-      expect(vm.updated_at_site).to be > vm_update_at
+      expect(vm.ip).to eq '1.2.3.4'
     end
 
-    it 'does not update VM if server.updated_at_site < vm.updated_at' do
+    it 'does not update VM IP if server.updated_at_site < vm.updated_at' do
       vm = create(:virtual_machine,
           updated_at_site: vm_update_at,
           id_at_site: 'id_at_site',
+          ip: nil,
           compute_site: cs
         )
       allow(server).to receive(:updated).and_return(vm_update_at - 1)
@@ -319,7 +328,7 @@ describe VmUpdater do
       VmUpdater.new(cs, server, updater_class).update
       vm.reload
 
-      expect(vm.updated_at_site).to eq vm_update_at
+      expect(vm.ip).to be_nil
     end
   end
 
@@ -328,6 +337,7 @@ describe VmUpdater do
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
+      updated: Time.now,
       created: options[:created] || 5.seconds.ago,
       state: options[:state] || nil,
       flavor: options[:flavor] || {'id' => '1'},
@@ -342,6 +352,7 @@ describe VmUpdater do
       id: 'id_at_site',
       image_id: 'vmt_id_at_site',
       name: 'name',
+      updated: Time.now,
       created: options[:created] || 5.seconds.ago,
       state: 'active',
       flavor: options[:flavor] || {'id' => '1'},
