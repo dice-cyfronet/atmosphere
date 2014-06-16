@@ -42,6 +42,16 @@ class VirtualMachine < ActiveRecord::Base
   scope :manageable, -> { where(managed_by_atmosphere: true) }
   scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }
 
+  scope :reusable_by, ->(appliance) do
+    manageable.joins(:appliances).where(
+      appliances: {
+        appliance_configuration_instance_id:
+          appliance.appliance_configuration_instance_id
+      },
+      compute_site: appliance.compute_sites
+    )
+  end
+
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
   end

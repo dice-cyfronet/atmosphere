@@ -70,8 +70,7 @@ class Optimizer
 
   def find_vm_that_can_be_reused(appliance)
     # TODO ask PN for help SQL => HAVING COUNT() < MAX_APPLIANCES_NO
-    VirtualMachine.manageable.joins(:appliances).where('appliances.appliance_configuration_instance_id = ?', appliance.appliance_configuration_instance_id).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no or vm.appliances.first.development? or !appliance.compute_sites.include? vm.compute_site}.first
-    #VirtualMachine.joins(appliances: :appliance_configuration_instance).where('appliance_configuration_instances.payload = ?', appliance.appliance_configuration_instance.payload).reject {|vm| vm.appliances.count >= Air.config.optimizer.max_appl_no}.first
+    VirtualMachine.reusable_by(appliance).select { |vm| reuse?(vm) }.first
   end
 
   def terminate_unused_vms
@@ -87,11 +86,20 @@ class Optimizer
 
     opt_flavors_and_tmpls_map = {}
     tmpls.each do |tmpl|
-      opt_fl = (min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| (f.supported_architectures == 'i386_and_x86_64' || f.supported_architectures == tmpl.architecture) && f.memory >= required_mem && f.cpu >= required_cores && f.hdd >= required_disk}) {|f| f.hourly_cost}).sort!{ |x,y| y.memory <=> x.memory }.last
+      opt_fl = (
+        min_elements_by(tmpl.compute_site.virtual_machine_flavors.select {|f| (f.supported_architectures == 'i386_and_x86_64' || f.supported_architectures == tmpl.architecture) && f.memory >= required_mem && f.cpu >= required_cores && f.hdd >= required_disk}) {|f| f.hourly_cost}
+        ).sort!{ |x,y| y.memory <=> x.memory }.last
       opt_flavors_and_tmpls_map[opt_fl] = tmpl if opt_fl
     end
     globally_opt_flavor = (min_elements_by(opt_flavors_and_tmpls_map.keys){|f| f.hourly_cost}).sort{ |x,y| x.memory <=> y.memory }.last
     [opt_flavors_and_tmpls_map[globally_opt_flavor], globally_opt_flavor]
+  end
+
+  private
+
+  def reuse?(vm)
+    vm.appliances.count < Air.config.optimizer.max_appl_no &&
+    !vm.appliances.first.development?
   end
 
   def min_mem(tmpls, prefference)
