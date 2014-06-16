@@ -97,26 +97,14 @@ describe Cloud::VmCreator do
     end
 
     it 'creates VM with default name' do
-      expect(cloud_client).to receive(:create_tags).with(server_id, {'Name' => vmt.name})
+      expect(VmTagsCreatorWorker).to receive(:perform_async).with(server_id, cs.id, {'Name' => vmt.name})
 
       Cloud::VmCreator.new(vmt).spawn_vm!
     end
 
     it 'creates VM with custom name' do
-      expect(cloud_client).to receive(:create_tags).
-        with(server_id, {'Name' => 'custom name'})
-
-      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
-    end
-
-    it 'handles tag creation errors' do
-      expect(cloud_client).to receive(:create_tags).and_raise(Fog::Compute::AWS::NotFound.new "The instance ID 'i-d657af95' does not exist")
-      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
-    end
-
-    it 'reports tag creation error' do
-      expect(Raven).to receive(:capture_exception)
-      expect(cloud_client).to receive(:create_tags).and_raise(Fog::Compute::AWS::NotFound.new "The instance ID 'i-d657af95' does not exist")
+      expect(VmTagsCreatorWorker).to receive(:perform_async).with(server_id, cs.id, {'Name' => 'custom name'})
+      
       Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
     end
 
