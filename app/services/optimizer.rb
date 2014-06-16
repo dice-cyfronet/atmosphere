@@ -89,8 +89,7 @@ class Optimizer
       opt_fl = (
         min_elements_by(
           tmpl.compute_site.virtual_machine_flavors.select do |f|
-            (f.supported_architectures == 'i386_and_x86_64' ||
-              f.supported_architectures == tmpl.architecture) &&
+            f.supports_architecture?(tmpl.architecture) &&
             f.memory >= required_mem &&
             f.cpu >= required_cores &&
             f.hdd >= required_disk
