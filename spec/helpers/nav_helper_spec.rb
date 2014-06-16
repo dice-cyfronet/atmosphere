@@ -5,8 +5,8 @@ describe NavHelper do
 
   describe 'nav_ling' do
     before do
-      controller.stub(:controller_name).and_return('foo')
-      controller.stub(:action_name).and_return('foo')
+      allow(controller).to receive(:controller_name).and_return('foo')
+      allow(controller).to receive(:action_name).and_return('foo')
     end
 
     it "captures block output" do

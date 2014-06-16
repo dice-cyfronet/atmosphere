@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Cloud::VmCreator do
   let(:default_flavor) { build(:virtual_machine_flavor, id_at_site: 'def_f_id') }

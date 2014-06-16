@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe DnatWrangler do
 
@@ -50,8 +50,8 @@ describe DnatWrangler do
         stubbed_dnat_client = Faraday.new do |builder|
           builder.adapter :test, stubs
         end
-        subject.stub(:dnat_client).and_return stubbed_dnat_client
-        Rails.stub(:logger).and_return logger_mock
+        allow(subject).to receive(:dnat_client).and_return stubbed_dnat_client
+        allow(Rails).to receive(:logger).and_return logger_mock
       end
 
       it 'logs error if wrangler returns non 204 status when deleting DNAT for vm' do
@@ -61,7 +61,7 @@ describe DnatWrangler do
 
       it 'returns false if wrangler returns non 204 status when deleting DNAT for vm' do
         allow(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}.")
-        expect(subject.remove_dnat_for_vm(vm)).to be_false
+        expect(subject.remove_dnat_for_vm(vm)).to be_falsy
       end
 
       it 'logs error if wrangler returns non 204 status when deleting DNAT for mapping' do
@@ -71,7 +71,7 @@ describe DnatWrangler do
 
       it 'returns false if wrangler returns non 204 status when deleting DNAT for mapping' do
         allow(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}, port #{priv_port}, protocol #{protocol}.")
-        expect(subject.remove_port_mapping(pm)).to be_false
+        expect(subject.remove_port_mapping(pm)).to be_falsy
       end
 
     end
@@ -90,7 +90,8 @@ describe DnatWrangler do
           stubbed_dnat_client = Faraday.new do |builder|
             builder.adapter :test, stubs
           end
-          subject.stub(:dnat_client).and_return stubbed_dnat_client
+          allow(subject).to receive(:dnat_client)
+            .and_return stubbed_dnat_client
         end
 
         it 'calls remote wrangler service for vm' do
@@ -109,10 +110,10 @@ describe DnatWrangler do
           stubbed_dnat_client = Faraday.new do |builder|
             builder.adapter :test, stubs
           end
-          subject.stub(:dnat_client).and_return stubbed_dnat_client
+          allow(subject).to receive(:dnat_client).and_return stubbed_dnat_client
         end
 
-        it 'if vm does not have an IP' do      
+        it 'if vm does not have an IP' do
           subject.remove_dnat_for_vm(vm_ipless)
         end
 

@@ -8,21 +8,21 @@ describe ApplianceVmsManager do
       appl = appliance(development: false, shared: true)
       subject = ApplianceVmsManager.new(appl)
 
-      expect(subject.can_reuse_vm?).to be_true
+      expect(subject.can_reuse_vm?).to be_truthy
     end
 
     it 'does not reuse VM in dev mode' do
       appl = appliance(development: true, shared: true)
       subject = ApplianceVmsManager.new(appl)
 
-      expect(subject.can_reuse_vm?).to be_false
+      expect(subject.can_reuse_vm?).to be_falsy
     end
 
     it 'does not reuse not shareable VMs' do
       appl = appliance(development: false, shared: false)
       subject = ApplianceVmsManager.new(appl)
 
-      expect(subject.can_reuse_vm?).to be_false
+      expect(subject.can_reuse_vm?).to be_falsy
     end
   end
 
@@ -144,7 +144,7 @@ describe ApplianceVmsManager do
           expect(params[:name]).to eq name
           expect(params[:source_template]).to eq tmpl
           expect(params[:virtual_machine_flavor]).to eq flavor
-          expect(params[:managed_by_atmosphere]).to be_true
+          expect(params[:managed_by_atmosphere]).to be_truthy
           expect(params[:id_at_site]).to eq 'server_id'
           expect(params[:compute_site]).to eq tmpl.compute_site
         end.and_return(vm)

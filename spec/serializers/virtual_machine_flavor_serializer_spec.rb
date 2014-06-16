@@ -6,7 +6,7 @@ describe VirtualMachineFlavorSerializer do
 
     result = serialize(flavor)
 
-    expect(result['virtual_machine_flavor']['active']).to be_true
+    expect(result['virtual_machine_flavor']['active']).to be_truthy
   end
 
   it 'sets active flag to true for flavor on inactive compute site' do
@@ -14,7 +14,7 @@ describe VirtualMachineFlavorSerializer do
 
     result = serialize(flavor)
 
-    expect(result['virtual_machine_flavor']['active']).to be_false
+    expect(result['virtual_machine_flavor']['active']).to be_falsy
   end
 
   it 'sets active falg to false for flavor without compute site' do
@@ -22,7 +22,7 @@ describe VirtualMachineFlavorSerializer do
 
     result = serialize(flavor)
 
-    expect(result['virtual_machine_flavor']['active']).to be_false
+    expect(result['virtual_machine_flavor']['active']).to be_falsy
   end
 
   def serialize(flavor)

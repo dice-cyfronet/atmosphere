@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe DefaultPdp do
   context '#can_manage?' do
@@ -8,13 +8,13 @@ describe DefaultPdp do
     it 'allows to manage owned appliance types' do
       at = build(:appliance_type, user_id: user.id)
 
-      expect(subject.can_manage?(at)).to be_true
+      expect(subject.can_manage?(at)).to be_truthy
     end
 
     it 'does not allow to manage not owned appliance types' do
       at = build(:appliance_type)
 
-      expect(subject.can_manage?(at)).to be_false
+      expect(subject.can_manage?(at)).to be_falsy
     end
   end
 

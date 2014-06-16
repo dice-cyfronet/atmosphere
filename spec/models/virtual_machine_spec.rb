@@ -16,13 +16,13 @@
 #  monitoring_id               :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 require Rails.root.join("spec/shared_examples/childhoodable.rb")
 
 describe VirtualMachine do
 
   before {
-    Fog.mock! 
+    Fog.mock!
   }
 
   let(:priv_ip) { '10.1.1.16' }
@@ -36,33 +36,37 @@ describe VirtualMachine do
   let(:external_vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: false) }
   let(:default_flavor) { cs.virtual_machine_flavors.first }
 
-  expect_it { to have_many(:port_mappings).dependent(:delete_all) }
-  expect_it { to ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
+  it { should have_many(:port_mappings).dependent(:delete_all) }
+  it { should ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
 
   context 'destruction' do
     let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
     before do
-      cc_mock.stub(:servers).and_return(servers_mock)
+      allow(cc_mock).to receive(:servers).and_return(servers_mock)
     end
 
     it 'is not performed if it is being saved as template' do
       create(:virtual_machine_template, source_vm: vm, state: :saving)
+      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+
       expect(servers_mock).to_not receive(:destroy)
       expect(Raven).to_not receive(:capture_message)
-      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+
       vm.destroy(true)
     end
 
     it 'is performed if vm does not have saved templates' do
       expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return true
       expect(Raven).to_not receive(:capture_message)
-      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+
       vm.destroy(true)
     end
 
     it 'does not allow to destroy not managed virtual machine' do
-      external_vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      allow(external_vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
       expect(servers_mock).to_not receive(:destroy)
       expect(Raven).to_not receive(:capture_message)
       external_vm.destroy(true)
@@ -73,7 +77,7 @@ describe VirtualMachine do
     it 'does not report error to Raven if succeds to delete vm' do
       expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return true
       expect(Raven).to_not receive(:capture_message)
-      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
     end
 
@@ -89,7 +93,7 @@ describe VirtualMachine do
           }
         }
       )
-      vm.compute_site.stub(:cloud_client).and_return(cc_mock)
+      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
     end
   end
@@ -99,7 +103,7 @@ describe VirtualMachine do
     it 'registers vm after IP was changed from blank to non blank' do
       vm_ipless = create(:virtual_machine, appliances: [appliance], managed_by_atmosphere: true)
       expect(vm_ipless).to receive(:register_in_monitoring)
-      expect(vm_ipless).not_to receive(:unregister_in_monitoring)
+      expect(vm_ipless).not_to receive(:unregister_from_monitoring)
       vm_ipless.ip = priv_ip
       vm_ipless.save
     end
@@ -123,7 +127,7 @@ describe VirtualMachine do
     it 'unregisters vm after non-blank IP was changed and is blank and monitoring_id was not blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true, monitoring_id: 1)
       expect(vm).to receive(:unregister_from_monitoring)
-      expect(vm).to_not receive(:register_in_monitoring)        
+      expect(vm).to_not receive(:register_in_monitoring)
       vm.ip = nil
       vm.save
     end
@@ -131,7 +135,7 @@ describe VirtualMachine do
     it 'does not unregister vm after non-blank IP was changed and is blank but monitoring_id is blank' do
       vm = create(:virtual_machine, appliances: [appliance], ip: priv_ip, managed_by_atmosphere: true)
       expect(vm).to_not receive(:unregister_from_monitoring)
-      expect(vm).to_not receive(:register_in_monitoring)        
+      expect(vm).to_not receive(:register_in_monitoring)
       vm.ip = nil
       vm.save
     end
@@ -152,12 +156,13 @@ describe VirtualMachine do
 
     it 'does nothing before vm is destroyed if ip was blank' do
       vm_ipless = create(:virtual_machine, appliances: [appliance], managed_by_atmosphere: true)
-      vm_ipless.stub(:destroy)
+      allow(vm_ipless).to receive(:destroy)
+
       expect(vm_ipless).not_to receive(:register_in_monitoring)
-      expect(vm_ipless).not_to receive(:unregister_in_monitoring)
+      expect(vm_ipless).not_to receive(:unregister_from_monitoring)
+
       vm_ipless.destroy
     end
-
   end
 
   context 'DNAT' do
@@ -168,8 +173,8 @@ describe VirtualMachine do
     let(:wrg) { double('wrangler') }
 
     before do
-      vm.compute_site.stub(:dnat_client).and_return(wrg)
-      vm_ipless.compute_site.stub(:dnat_client).and_return(wrg)
+      allow(vm.compute_site).to receive(:dnat_client).and_return(wrg)
+      allow(vm_ipless.compute_site).to receive(:dnat_client).and_return(wrg)
     end
 
     context 'registration' do
@@ -191,8 +196,10 @@ describe VirtualMachine do
       before do
         # we are testing dnat unregistration not cloud action, thus we can mock it
         servers_double = double
-        vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
-        vm_ipless.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+        allow(vm.compute_site.cloud_client)
+          .to receive(:servers).and_return(servers_double)
+        allow(vm_ipless.compute_site.cloud_client)
+          .to receive(:servers).and_return(servers_double)
         allow(servers_double).to receive(:destroy)
       end
 

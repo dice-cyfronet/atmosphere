@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Proxy::ApplianceProxyUpdater do
   subject { Proxy::ApplianceProxyUpdater.new(appl) }
@@ -82,7 +82,7 @@ describe Proxy::ApplianceProxyUpdater do
       it 'generates 4 jobs' do
         subject.update
 
-        expect(Redirus::Worker::AddProxy).to have(4).jobs
+        expect(Redirus::Worker::AddProxy.jobs.size).to eq 4
       end
 
       it 'generates jobs to the same queue' do
@@ -101,14 +101,19 @@ describe Proxy::ApplianceProxyUpdater do
   context 'when port mapping template specified' do
     let(:vm1) { create(:active_vm) }
     let(:vm2) { create(:active_vm) }
-    let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm1, vm2]) }
+    let(:appl) do
+      create(:appliance,
+          appliance_type: at,
+          virtual_machines: [vm1, vm2]
+        )
+    end
 
     context 'http' do
       subject { Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(updated: http) }
 
       it 'updates only one proxy' do
-        expect(Redirus::Worker::AddProxy).to have(1).jobs
+        expect(Redirus::Worker::AddProxy.jobs.size).to eq 1
       end
 
       it 'creates new proxy in redirus' do
@@ -126,7 +131,7 @@ describe Proxy::ApplianceProxyUpdater do
       before { subject.update(saved: https) }
 
       it 'updates only one proxy' do
-        expect(Redirus::Worker::AddProxy).to have(1).jobs
+        expect(Redirus::Worker::AddProxy.jobs.size).to eq 1
       end
 
       it 'creates new proxy in redirus' do
@@ -141,11 +146,11 @@ describe Proxy::ApplianceProxyUpdater do
 
     context 'when deleting PMT' do
       subject { Proxy::ApplianceProxyUpdater.new(appl) }
-      before { subject.update(deleted: https) }
+      before { subject.update(destroyed: https) }
 
       it 'does nothing' do
-        expect(Redirus::Worker::AddProxy).to_not have_enqueued_job
-        expect(Redirus::Worker::RmProxy).to_not have_enqueued_job
+        expect(Redirus::Worker::AddProxy).not_to have_enqueued_job
+        expect(Redirus::Worker::RmProxy).not_to have_enqueued_job
       end
     end
 

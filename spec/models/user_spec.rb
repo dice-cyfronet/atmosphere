@@ -21,15 +21,15 @@
 #  updated_at             :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 require Rails.root.join("spec/shared_examples/token_authenticatable.rb")
 
 describe User do
-  expect_it { to have_many(:appliance_sets).dependent(:destroy) }
-  expect_it { to have_many(:user_keys).dependent(:destroy) }
-  expect_it { to have_many :appliance_types }
-  expect_it { to have_and_belong_to_many :security_proxies }
-  expect_it { to have_and_belong_to_many :security_policies }
+  it { should have_many(:appliance_sets).dependent(:destroy) }
+  it { should have_many(:user_keys).dependent(:destroy) }
+  it { should have_many :appliance_types }
+  it { should have_and_belong_to_many :security_proxies }
+  it { should have_and_belong_to_many :security_policies }
 
   it_behaves_like 'token_authenticatable'
 
@@ -37,7 +37,7 @@ describe User do
     before { subject.generate_password }
 
     it 'generates new random password' do
-      expect(subject.changed?).to be_true
+      expect(subject.changed?).to be_truthy
       expect(subject.password).to eq subject.password_confirmation
     end
   end

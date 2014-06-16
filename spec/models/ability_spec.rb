@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Ability do
 
@@ -19,25 +19,25 @@ describe Ability do
     it 'starts appl in production when pdp allows it' do
       appl = start_appl(:portal, :can_start_in_production?, true)
 
-      expect(ability.can?(:create, appl)).to be_true
+      expect(ability.can?(:create, appl)).to be_truthy
     end
 
     it 'does not allow to start AT in production when pdp does not allow it' do
       appl = start_appl(:portal, :can_start_in_production?, false)
 
-      expect(ability.can?(:create, appl)).to be_false
+      expect(ability.can?(:create, appl)).to be_falsy
     end
 
     it 'starts appl in development when pdp allows it' do
       appl = start_appl(:development, :can_start_in_development?, true)
 
-      expect(ability.can?(:create, appl)).to be_true
+      expect(ability.can?(:create, appl)).to be_truthy
     end
 
     it 'does not allow to start AT in development when pdp does not allow it' do
       appl = start_appl(:development, :can_start_in_development?, false)
 
-      expect(ability.can?(:create, appl)).to be_false
+      expect(ability.can?(:create, appl)).to be_falsy
     end
   end
 
@@ -47,15 +47,15 @@ describe Ability do
     it 'allows to update/destroy AT when user is a AT manager according to pdp' do
       allow(pdp).to receive(:can_manage?).with(at).and_return(true)
 
-      expect(ability.can?(:update, at)).to be_true
-      expect(ability.can?(:destroy, at)).to be_true
+      expect(ability.can?(:update, at)).to be_truthy
+      expect(ability.can?(:destroy, at)).to be_truthy
     end
 
     it 'does not allow to update/destroy AT when user is a AT manager according to pdp' do
       allow(pdp).to receive(:can_manage?).with(at).and_return(false)
 
-      expect(ability.can?(:update, at)).to be_false
-      expect(ability.can?(:destroy, at)).to be_false
+      expect(ability.can?(:update, at)).to be_falsy
+      expect(ability.can?(:destroy, at)).to be_falsy
     end
   end
 
@@ -66,17 +66,17 @@ describe Ability do
     it 'allows to manage PMT assigned to AT where user is a manager according to pdp' do
       allow(pdp).to receive(:can_manage?).with(at).and_return(true)
 
-      expect(ability.can?(:create, pmt)).to be_true
-      expect(ability.can?(:update, pmt)).to be_true
-      expect(ability.can?(:destroy, pmt)).to be_true
+      expect(ability.can?(:create, pmt)).to be_truthy
+      expect(ability.can?(:update, pmt)).to be_truthy
+      expect(ability.can?(:destroy, pmt)).to be_truthy
     end
 
     it 'does not allow to manage PMT assigned to AT where user is a manager according to pdp' do
       allow(pdp).to receive(:can_manage?).with(at).and_return(false)
 
-      expect(ability.can?(:create, pmt)).to be_false
-      expect(ability.can?(:update, pmt)).to be_false
-      expect(ability.can?(:destroy, pmt)).to be_false
+      expect(ability.can?(:create, pmt)).to be_falsy
+      expect(ability.can?(:update, pmt)).to be_falsy
+      expect(ability.can?(:destroy, pmt)).to be_falsy
     end
   end
 
@@ -88,17 +88,17 @@ describe Ability do
     it 'allows to manage endpoint assigned to AT where user is a manager according to pdp' do
        allow(pdp).to receive(:can_manage?).with(at).and_return(true)
 
-       expect(ability.can?(:create, endpoint)).to be_true
-       expect(ability.can?(:update, endpoint)).to be_true
-       expect(ability.can?(:destroy, endpoint)).to be_true
+       expect(ability.can?(:create, endpoint)).to be_truthy
+       expect(ability.can?(:update, endpoint)).to be_truthy
+       expect(ability.can?(:destroy, endpoint)).to be_truthy
      end
 
      it 'does not allow to manage endpoint assigned to AT where user is a manager according to pdp' do
        allow(pdp).to receive(:can_manage?).with(at).and_return(false)
 
-       expect(ability.can?(:create, endpoint)).to be_false
-       expect(ability.can?(:update, endpoint)).to be_false
-       expect(ability.can?(:destroy, endpoint)).to be_false
+       expect(ability.can?(:create, endpoint)).to be_falsy
+       expect(ability.can?(:update, endpoint)).to be_falsy
+       expect(ability.can?(:destroy, endpoint)).to be_falsy
      end
   end
 
@@ -109,17 +109,17 @@ describe Ability do
     it 'allows to manage ACT assigned to AT where user is a manager according to pdp' do
        allow(pdp).to receive(:can_manage?).with(at).and_return(true)
 
-       expect(ability.can?(:create, act)).to be_true
-       expect(ability.can?(:update, act)).to be_true
-       expect(ability.can?(:destroy, act)).to be_true
+       expect(ability.can?(:create, act)).to be_truthy
+       expect(ability.can?(:update, act)).to be_truthy
+       expect(ability.can?(:destroy, act)).to be_truthy
      end
 
      it 'does not allow to manage ACT assigned to AT where user is a manager according to pdp' do
        allow(pdp).to receive(:can_manage?).with(at).and_return(false)
 
-       expect(ability.can?(:create, act)).to be_false
-       expect(ability.can?(:update, act)).to be_false
-       expect(ability.can?(:destroy, act)).to be_false
+       expect(ability.can?(:create, act)).to be_falsy
+       expect(ability.can?(:update, act)).to be_falsy
+       expect(ability.can?(:destroy, act)).to be_falsy
      end
   end
 

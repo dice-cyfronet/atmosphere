@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe VirtualMachine do
 
@@ -7,7 +7,7 @@ describe VirtualMachine do
 
   before {
     Fog.mock!
-    Air.stub(:monitoring_client).and_return mon_cli_double
+    allow(Air).to receive(:monitoring_client).and_return mon_cli_double
   }
 
   context 'current load metrics' do
@@ -18,5 +18,4 @@ describe VirtualMachine do
       vm.current_load_metrics
     end
   end
-
 end

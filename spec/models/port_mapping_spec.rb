@@ -11,27 +11,28 @@
 #  updated_at               :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe PortMapping do
+  it { should validate_presence_of :public_ip }
+  it { should validate_presence_of :source_port }
+  it { should validate_presence_of :virtual_machine }
+  it { should validate_presence_of :port_mapping_template }
 
-  expect_it { to validate_presence_of :public_ip }
-  expect_it { to validate_presence_of :source_port }
-  expect_it { to validate_presence_of :virtual_machine }
-  expect_it { to validate_presence_of :port_mapping_template }
+  it { should belong_to :virtual_machine }
+  it { should belong_to :port_mapping_template }
 
-  expect_it { to belong_to :virtual_machine }
-  expect_it { to belong_to :port_mapping_template }
-
-  expect_it { to validate_numericality_of :source_port }
-  expect_it { should_not allow_value(-1).for(:source_port) }
+  it { should validate_numericality_of :source_port }
+  it { should_not allow_value(-1).for(:source_port) }
 
   it 'calls remove port mapping method of Dnat Wrangler service when it is destroyed' do
     pm = create(:port_mapping)
     wrg = double('wrangler')
+    allow(pm.virtual_machine.compute_site)
+      .to receive(:dnat_client).and_return(wrg)
+
     expect(wrg).to receive(:remove_port_mapping).with(pm)
-    pm.virtual_machine.compute_site.stub(:dnat_client).and_return(wrg)
+
     pm.destroy
   end
-
 end

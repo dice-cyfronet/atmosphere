@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe PortMappingPropertyAbilityBuilder do
   let(:user) { build(:user) }
@@ -19,16 +19,16 @@ describe PortMappingPropertyAbilityBuilder do
   it 'allows to manage PMP when pdp allows for it' do
     allow(pdp).to receive(:can_manage?).with(at).and_return(true)
 
-    expect(ability.can?(:create, pmp)).to be_true
-    expect(ability.can?(:update, pmp)).to be_true
-    expect(ability.can?(:destroy, pmp)).to be_true
+    expect(ability.can?(:create, pmp)).to be_truthy
+    expect(ability.can?(:update, pmp)).to be_truthy
+    expect(ability.can?(:destroy, pmp)).to be_truthy
   end
 
   it ' does not allow to manage PMP when pdp does not allow for it' do
     allow(pdp).to receive(:can_manage?).with(at).and_return(false)
 
-    expect(ability.can?(:create, pmp)).to be_false
-    expect(ability.can?(:update, pmp)).to be_false
-    expect(ability.can?(:destroy, pmp)).to be_false
+    expect(ability.can?(:create, pmp)).to be_falsy
+    expect(ability.can?(:update, pmp)).to be_falsy
+    expect(ability.can?(:destroy, pmp)).to be_falsy
   end
 end

@@ -20,24 +20,24 @@
 #  active            :boolean          default(TRUE)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe ComputeSite do
 
   before { Fog.mock! }
 
   subject { FactoryGirl.create(:compute_site, technology: 'openstack') }
-  expect_it { to be_valid }
+  it { should be_valid }
 
-  expect_it { to validate_presence_of :site_id }
-  expect_it { to validate_presence_of :site_type }
-  expect_it { to validate_presence_of :technology }
+  it { should validate_presence_of :site_id }
+  it { should validate_presence_of :site_type }
+  it { should validate_presence_of :technology }
 
-  expect_it { to have_many :port_mapping_properties }
-  expect_it { to have_many(:virtual_machine_templates).dependent(:destroy) }
-  expect_it { to have_many(:virtual_machines).dependent(:destroy) }
+  it { should have_many :port_mapping_properties }
+  it { should have_many(:virtual_machine_templates).dependent(:destroy) }
+  it { should have_many(:virtual_machines).dependent(:destroy) }
 
-  expect_it { to ensure_inclusion_of(:site_type).in_array(%w(public private))}
+  it { should ensure_inclusion_of(:site_type).in_array(%w(public private))}
 
   context 'cloud' do
     context 'openstack' do
@@ -57,8 +57,8 @@ describe ComputeSite do
 
   context 'if technology is present' do
     before { subject.technology = 'openstack' }
-    expect_it { to ensure_inclusion_of(:technology).in_array(%w(openstack aws))}
-    expect_it { to be_valid }
+    it { should ensure_inclusion_of(:technology).in_array(%w(openstack aws))}
+    it { should be_valid }
   end
 
   context 'if technology is invalid' do
@@ -71,14 +71,13 @@ describe ComputeSite do
   context 'compute site is updated' do
 
     it 'recreates cloud client if configuration was updated' do
-      Fog::Compute.stub(:new)
       expect(Fog::Compute).to receive(:new)
       subject.config = '{}'
       subject.save
     end
 
     it 'registers newly created cloud client in Air container if configuration was updated' do
-      Fog::Compute.stub(:new)
+      allow(Fog::Compute).to receive(:new)
       expect(Air).to receive(:register_cloud_client)
       subject.config = '{}'
       subject.save
@@ -99,7 +98,6 @@ describe ComputeSite do
     context 'config is blank' do
 
       it 'does not recreate cloud client' do
-        Fog::Compute.stub(:new)
         expect(Fog::Compute).to_not receive(:new)
         subject.config = ''
         subject.save
@@ -130,7 +128,7 @@ describe ComputeSite do
 
     it 'loads not readonly compute sites' do
       ComputeSite.with_appliance_type(at).each do |cs|
-        expect(cs.readonly?).to be_false
+        expect(cs.readonly?).to be_falsy
       end
     end
   end
@@ -143,7 +141,7 @@ describe ComputeSite do
 
     it 'loads not readonly compute sites' do
       ComputeSite.with_dev_property_set(appl.dev_mode_property_set).each do |cs|
-        expect(cs.readonly?).to be_false
+        expect(cs.readonly?).to be_falsy
       end
     end
   end
@@ -155,21 +153,21 @@ describe ComputeSite do
       cs.http_proxy_url = "updated"
       cs.save
 
-      expect(cs.proxy_urls_changed?).to be_true
+      expect(cs.proxy_urls_changed?).to be_truthy
     end
 
     it 'returns true when https proxy url changed' do
       cs.https_proxy_url = "updated"
       cs.save
 
-      expect(cs.proxy_urls_changed?).to be_true
+      expect(cs.proxy_urls_changed?).to be_truthy
     end
 
     it 'return false when other parameters updated' do
       cs.site_id = 'updated'
       cs.save
 
-      expect(cs.proxy_urls_changed?).to be_false
+      expect(cs.proxy_urls_changed?).to be_falsy
     end
   end
 
@@ -180,14 +178,14 @@ describe ComputeSite do
       cs.https_proxy_url = "updated"
       cs.save
 
-      expect(cs.site_id_previously_changed?).to be_false
+      expect(cs.site_id_previously_changed?).to be_falsy
     end
 
     it 'returns false when other attribues changed' do
       cs.site_id = 'updated'
       cs.save
 
-      expect(cs.site_id_previously_changed?).to be_true
+      expect(cs.site_id_previously_changed?).to be_truthy
     end
   end
 

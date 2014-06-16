@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe MiApplianceTypePdp do
   let(:resource_access) { double('mi resource access') }
@@ -29,14 +29,14 @@ describe MiApplianceTypePdp do
         allow(resource_access).to receive(:has_role?)
           .with(1, :Reader).and_return(true)
 
-        expect(subject.can_start_in_production?(at)).to be_true
+        expect(subject.can_start_in_production?(at)).to be_truthy
       end
 
       it 'does not allow to start when user does not have reader and editor role' do
         allow(resource_access).to receive(:has_role?)
           .with(1, :Reader).and_return(false)
 
-        expect(subject.can_start_in_production?(at)).to be_false
+        expect(subject.can_start_in_production?(at)).to be_falsy
       end
 
       it 'does not allow to start when at visible_to is eq developer' do
@@ -44,13 +44,13 @@ describe MiApplianceTypePdp do
           .with(1, :Reader).and_return(true)
         at.visible_to = :developer
 
-        expect(subject.can_start_in_production?(at)).to be_false
+        expect(subject.can_start_in_production?(at)).to be_falsy
       end
 
       it 'allow to start AT when admin' do
         current_user_is_admin
 
-        expect(subject.can_start_in_production?(at)).to be_true
+        expect(subject.can_start_in_production?(at)).to be_truthy
       end
     end
 
@@ -59,20 +59,20 @@ describe MiApplianceTypePdp do
         allow(resource_access).to receive(:has_role?)
           .with(1, :Editor).and_return(true)
 
-        expect(subject.can_start_in_development?(at)).to be_true
+        expect(subject.can_start_in_development?(at)).to be_truthy
       end
 
       it 'does not allow when user does not have editor and manager roles' do
         allow(resource_access).to receive(:has_role?)
           .with(1, :Editor).and_return(false)
 
-        expect(subject.can_start_in_development?(at)).to be_false
+        expect(subject.can_start_in_development?(at)).to be_falsy
       end
 
       it 'allow to start AT when admin' do
         current_user_is_admin
 
-        expect(subject.can_start_in_development?(at)).to be_true
+        expect(subject.can_start_in_development?(at)).to be_truthy
       end
     end
 
@@ -81,26 +81,26 @@ describe MiApplianceTypePdp do
         allow(resource_access).to receive(:has_role?)
           .with(1, :Manager).and_return(true)
 
-        expect(subject.can_manage?(at)).to be_true
+        expect(subject.can_manage?(at)).to be_truthy
       end
 
       it 'does not allow when user does not have manager role' do
         allow(resource_access).to receive(:has_role?)
           .with(1, :Manager).and_return(false)
 
-        expect(subject.can_manage?(at)).to be_false
+        expect(subject.can_manage?(at)).to be_falsy
       end
 
       it 'allow to start AT when admin' do
         current_user_is_admin
 
-        expect(subject.can_manage?(at)).to be_true
+        expect(subject.can_manage?(at)).to be_truthy
       end
 
       it 'allow to start when user is AT author' do
         at = build(:appliance_type, author: current_user, visible_to: :owner)
 
-        expect(subject.can_manage?(at)).to be_true
+        expect(subject.can_manage?(at)).to be_truthy
       end
     end
   end
@@ -176,7 +176,8 @@ describe MiApplianceTypePdp do
   end
 
   def current_user_is_admin
-    allow(Air.config).to receive(:skip_pdp_for_admin).and_return(true)
+    Air.config['skip_pdp_for_admin'] = true
+    # allow(Air.config).to receive(:skip_pdp_for_admin).and_return(true)
     allow(current_user).to receive(:has_role?).with(:admin).and_return(true)
   end
 end

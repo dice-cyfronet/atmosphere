@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::VirtualMachineFlavorsController do
   include ApiHelpers
@@ -155,7 +155,7 @@ describe Api::V1::VirtualMachineFlavorsController do
 
           expect(response.size).to eq 1
           first = response.first
-          expect(first['active']).to be_true
+          expect(first['active']).to be_truthy
           expect(first['compute_site_id']).to eq active_cs.id
         end
 
@@ -222,7 +222,7 @@ describe Api::V1::VirtualMachineFlavorsController do
 
           expect(response.size).to eq 1
           first = response.first
-          expect(first['active']).to be_true
+          expect(first['active']).to be_truthy
           expect(first['compute_site_id']).to eq active_cs.id
         end
       end
