@@ -40,7 +40,9 @@ class VirtualMachineFlavor < ActiveRecord::Base
     where(compute_site_id: cs_id)
   end
 
-  def active?
-    compute_site && compute_site.active
+  scope :active, -> { where(active: true) }
+
+  def usable?
+    active && compute_site && compute_site.active
   end
 end

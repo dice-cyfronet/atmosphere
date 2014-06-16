@@ -7,6 +7,6 @@ class VirtualMachineFlavorSerializer < ActiveModel::Serializer
     :supported_architectures, :active
 
   def active
-    object.active?
+    object.usable?
   end
 end
