@@ -100,9 +100,16 @@ class Optimizer
       opt_flavors_and_tmpls_map[opt_fl] = tmpl if opt_fl
     end
 
-    globally_opt_flavor = (min_elements_by(opt_flavors_and_tmpls_map.keys){|f| f.hourly_cost}).sort{ |x,y| x.memory <=> y.memory }.last
+    globally_opt_flavor = (
+      min_elements_by(
+        opt_flavors_and_tmpls_map.keys
+      ) { |f| f.hourly_cost}
+    ).sort { |x,y| x.memory <=> y.memory }.last
 
-    [opt_flavors_and_tmpls_map[globally_opt_flavor], globally_opt_flavor]
+    [
+      opt_flavors_and_tmpls_map[globally_opt_flavor],
+      globally_opt_flavor
+    ]
   end
 
   private
