@@ -9,7 +9,7 @@ describe Cloud::VmCreator do
       ]
     end
   end
-  let(:vmt) { build(:virtual_machine_template, compute_site: cs, id_at_site: 'vmt_id') }
+  let(:vmt) { build(:virtual_machine_template, compute_site: cs, id_at_site: 'vmt_id', appliance_type: build(:appliance_type)) }
 
   let(:servers_cloud_client) { double('server cloud client') }
   let(:cloud_client) { double('cloud_client', servers: servers_cloud_client) }
@@ -97,13 +97,15 @@ describe Cloud::VmCreator do
     end
 
     it 'creates VM with default name' do
-      expect(VmTagsCreatorWorker).to receive(:perform_async).with(server_id, cs.id, {'Name' => vmt.name})
+      expect(VmTagsCreatorWorker).to receive(:perform_async)
+        .with(server_id, cs.id, {'Name' => vmt.name, 'Appliance type name' => vmt.appliance_type.name})
 
       Cloud::VmCreator.new(vmt).spawn_vm!
     end
 
     it 'creates VM with custom name' do
-      expect(VmTagsCreatorWorker).to receive(:perform_async).with(server_id, cs.id, {'Name' => 'custom name'})
+      expect(VmTagsCreatorWorker).to receive(:perform_async)
+        .with(server_id, cs.id, {'Name' => 'custom name', 'Appliance type name' => vmt.appliance_type.name})
       
       Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
     end
