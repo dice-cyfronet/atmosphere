@@ -6,14 +6,14 @@ class VmTagsCreatorWorker
 
   def perform(server_id, site_id, tags_map)
     cs = ComputeSite.find(site_id)
-    return unless cs.technology == 'aws'
     cloud_client = cs.cloud_client
-    Rails.logger.info { "Creating tags #{tags_map} for server #{server_id}" }
+    Rails.logger.debug { "Creating tags #{tags_map} for server #{server_id}" }
     begin
-      cloud_client.create_tags(server_id, tags_map)
-    rescue Fog::Compute::AWS::NotFound => e
+      cloud_client.create_tags_for_vm(server_id, tags_map)
+    rescue Fog::Compute::AWS::NotFound, Fog::Compute::OpenStack::NotFound => e
       Raven.capture_exception(e)
     end
+    Rails.logger.debug { "Successfuly created tags for server #{server_id}" }
   end
 
 end
