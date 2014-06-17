@@ -2,7 +2,6 @@ module Api
   class ApplicationController < ActionController::Base
     protect_from_forgery with: :null_session
 
-    before_filter :authenticate_user_from_token!
     check_authorization
 
     include CancanStrongParams
@@ -63,22 +62,6 @@ module Api
 
     def load_admin_abilities?
       params[:action] != 'index' or to_boolean(params[:all])
-    end
-
-    def authenticate_user_from_token!
-      user = user_token && User.find_by(authentication_token: user_token)
-
-      if user
-        # Notice we are passing store false, so the user is not
-        # actually stored in the session and a token is needed
-        # for every request. If you want the token to work as a
-        # sign in token, you can simply remove store: false.
-        sign_in user, store: false
-      end
-    end
-
-    def user_token
-      params[Air.config.token_authentication_key].presence || request.headers[Air.config.header_token_authentication_key].presence
     end
   end
 end
