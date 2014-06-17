@@ -56,7 +56,7 @@ Return values:
 
 ## Sudo
 
-If you are an admin of the system, than you are able to sudo as other user. To do so simply add `sudo=other_user_name` query params or `HTTP_SUDO` header into request. E.g.:
+If you are an admin of the system, than you are able to sudo as other user. To do so simply add `sudo=other_user_name` query params or `HTTP-SUDO` header into request. E.g.:
 
 ```
 GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
@@ -64,6 +64,6 @@ GET http://example.com/api/v1/appliance_sets?mi_ticket=fd342hac4a=&sudo=other_us
 ```
 
 ```
-curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "HTTP_SUDO: other_user" http://example.com/api/v1/appliance_sets
-curl --header "MI-TICKET: fd342hac4a=" --header "HTTP_SUDO: other_user" http://example.com/api/v1/appliance_sets
+curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "HTTP-SUDO: other_user" http://example.com/api/v1/appliance_sets
+curl --header "MI-TICKET: fd342hac4a=" --header "HTTP-SUDO: other_user" http://example.com/api/v1/appliance_sets
 ```

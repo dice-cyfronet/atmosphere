@@ -2,7 +2,7 @@ module Sudoable
   private
 
   def sudo_as
-    params[:sudo] || request.headers['HTTP_SUDO']
+    params[:sudo] || request.headers['HTTP-SUDO']
   end
 
   def sudo!(user, sudo_as)
