@@ -24,4 +24,27 @@ describe VirtualMachineFlavor do
       expect(fl.errors.messages).to eq({:supported_architectures => ['is not included in the list']})
     end
   end
+
+  context 'architectures' do
+    it 'supports both architectures' do
+      flavor = build(:flavor, supported_architectures: 'i386_and_x86_64')
+
+      expect(flavor.supports_architecture?('i386')).to be_truthy
+      expect(flavor.supports_architecture?('x86_64')).to be_truthy
+    end
+
+    it 'supports only i386 architecture' do
+      flavor = build(:flavor, supported_architectures: 'i386')
+
+      expect(flavor.supports_architecture?('i386')).to be_truthy
+      expect(flavor.supports_architecture?('x86_64')).to be_falsy
+    end
+
+    it 'supports only x architecture' do
+      flavor = build(:flavor, supported_architectures: 'x86_64')
+
+      expect(flavor.supports_architecture?('i386')).to be_falsy
+      expect(flavor.supports_architecture?('x86_64')).to be_truthy
+    end
+  end
 end

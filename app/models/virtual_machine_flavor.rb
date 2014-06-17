@@ -43,4 +43,9 @@ class VirtualMachineFlavor < ActiveRecord::Base
   def active?
     compute_site && compute_site.active
   end
+
+  def supports_architecture?(arch)
+    supported_architectures == 'i386_and_x86_64' ||
+      supported_architectures == arch
+  end
 end
