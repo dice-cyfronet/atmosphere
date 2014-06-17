@@ -88,7 +88,7 @@ class Optimizer
     tmpls.each do |tmpl|
       opt_fl = (
         min_elements_by(
-          tmpl.compute_site.virtual_machine_flavors.select do |f|
+          tmpl.compute_site.virtual_machine_flavors.active.select do |f|
             f.supports_architecture?(tmpl.architecture) &&
             f.memory >= required_mem &&
             f.cpu >= required_cores &&

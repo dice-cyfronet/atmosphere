@@ -244,7 +244,7 @@ describe Optimizer do
 
     context 'when one of compute site with VMTs is turned off' do
       it 'failed when all VMTs are on inactive compute site' do
-       _, inactive_vmt = vmt_on_site(cs_active: false)
+        _, inactive_vmt = vmt_on_site(cs_active: false)
         at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
 
         appl = create(:appliance, appliance_set: wf, appliance_type: at)
@@ -271,6 +271,40 @@ describe Optimizer do
 
         expect(appl.state).to eql 'satisfied'
         expect(selected_vmt).to eql active_vmt
+      end
+    end
+
+    context 'when one of the flavor is turned off' do
+      it 'failed when there is not active flavor' do
+        cs, vmt = vmt_on_site(cs_active: true)
+        inactive_flavor = create(:flavor, active: false, compute_site: cs)
+        at = create(:appliance_type, virtual_machine_templates: [vmt])
+
+        appl = create(:appliance, appliance_set: wf,
+          appliance_type: at, compute_sites: [cs])
+
+        expect(appl.state).to eql 'unsatisfied'
+        expect(appl.state_explanation).to start_with 'No matching flavor'
+      end
+
+      it 'chooses VMT with active flavor' do
+        cs, vmt = vmt_on_site(cs_active: true)
+        inactive_flavor = create(:flavor, active: false, compute_site: cs)
+        active_flavor = create(:flavor,
+            active: true,
+            compute_site: cs,
+            id_at_site: '123'
+          )
+        at = create(:appliance_type, virtual_machine_templates: [vmt])
+        allow(BillingService).to receive(:can_afford_flavor?)
+          .with(anything, active_flavor).and_return(true)
+
+        appl = create(:appliance, appliance_set: wf,
+          appliance_type: at, compute_sites: [cs])
+
+        expect(appl.state).to eql 'satisfied'
+        expect(appl.virtual_machines
+          .first.virtual_machine_flavor).to eq active_flavor
       end
     end
   end
