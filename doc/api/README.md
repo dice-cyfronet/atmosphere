@@ -53,3 +53,17 @@ Return values:
 * `409 Conflict` - A conflicting resource already exists, e.g. creating a appliance type with a name that already exists
 * `422 Unprocessable Entity` - A required attribute of the API request is missing or in wrong format, e.g. the name of an appliance type is not given
 * `500 Server Error` - While handling the request something went wrong on the server side
+
+## Sudo
+
+If you are an admin of the system, than you are able to sudo as other user. To do so simply add `sudo=other_user_name` into request query params. E.g.:
+
+```
+GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
+GET http://example.com/api/v1/appliance_sets?mi_ticket=fd342hac4a=&sudo=other_user
+```
+
+```
+curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://example.com/api/v1/appliance_sets?sudo=other_user
+curl --header "MI-TICKET: fd342hac4a=" http://example.com/api/v1/appliance_sets?sudo=other_user
+```
