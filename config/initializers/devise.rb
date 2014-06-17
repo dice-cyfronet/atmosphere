@@ -249,12 +249,16 @@ Devise.setup do |config|
       ssl_verify: Air.config.vph.ssl_verify
 
     Warden::Strategies.add(:mi_token_authenticatable, Devise::Strategies::MiTokenAuthenticatable)
+
+    config.warden do |manager|
+      manager.default_strategies(:scope => :user).unshift :mi_token_authenticatable
+    end
+
     Warden::Strategies.add(:token_authenticatable, Devise::Strategies::TokenAuthenticatable)
 
     config.warden do |manager|
       manager.intercept_401 = false
       manager.default_strategies(:scope => :user).unshift :token_authenticatable
-      manager.default_strategies(:scope => :user).unshift :mi_token_authenticatable
     end
   end
 end
