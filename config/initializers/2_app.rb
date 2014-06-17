@@ -29,6 +29,10 @@ module Air
     @@monitoring_logger ||= Logger.new(Rails.root.join('log', 'monitoring.log'))
   end
 
+  def self.optimizer_logger
+    @@optimizer_logger ||= Logger.new(Rails.root.join('log', 'optimizer.log'))
+  end
+
   def self.monitoring_client
     if config['zabbix']
       if @@monitoring_clients['zabbix']
