@@ -28,7 +28,7 @@ module Api
             flavors = [flavor]
           end
         else
-          flavors = VirtualMachineFlavor.with_prefs(params)
+          flavors = VirtualMachineFlavor.with_prefs(params).where(filter)
           flavors = flavors.on_cs(cs_id) if cs_id
         end
         flavors = flavors.first(limit) if limit
@@ -37,6 +37,12 @@ module Api
       end
 
       private
+
+      def filter
+        filter = super
+        filter.reject!{ |k,v| [:cpu, :memory, :hdd].include?(k) }
+        filter
+      end
 
       def appl_type_id
         appliance_type_id || at_id_for_config_inst
