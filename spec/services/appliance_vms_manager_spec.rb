@@ -82,7 +82,7 @@ describe ApplianceVmsManager do
       end
 
       it 'calls method to tag vm' do
-        expect(tags_mng).to have_received(:create_tags_for_vm)
+        expect(tags_mng).to have_received(:create_tags_for_vm).with(vm)
       end
 
     end
