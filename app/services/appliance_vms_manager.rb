@@ -4,10 +4,12 @@
 class ApplianceVmsManager
   def initialize(appliance,
       updater_class = Proxy::ApplianceProxyUpdater,
-      vm_creator_class = Cloud::VmCreator)
+      vm_creator_class = Cloud::VmCreator,
+      tags_manager_class = Cloud::VmTagsManager)
     @appliance = appliance
     @updater = updater_class.new(appliance)
     @vm_creator_class = vm_creator_class
+    @tags_manager = tags_manager_class.new
   end
 
   def can_reuse_vm?
@@ -90,6 +92,7 @@ class ApplianceVmsManager
   def appliance_satisfied(vm)
     appliance.state = :satisfied
     updater.update(new_vm: vm)
+    @tags_manager.create_tags_for_vm(vm)
   end
 
   def bill

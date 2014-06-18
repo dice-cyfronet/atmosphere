@@ -55,16 +55,17 @@ describe ApplianceVmsManager do
         :state_explanation= => true
       )
     end
+    let(:tags_mng) { double('tags manager') }
+    let(:tags_manager_class) { double('tags manager class', new: tags_mng) }
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
     let(:vm) { double('vm') }
-
-    subject { ApplianceVmsManager.new(appl, updater_class) }
+    subject { ApplianceVmsManager.new(appl, updater_class, Cloud::VmCreator, tags_manager_class) }
 
     context 'when user can afford vm' do
       before do
         allow(BillingService).to receive(:can_afford_vm?).with(appl, vm).and_return(true)
-
+        allow(tags_mng).to receive(:create_tags_for_vm)
         subject.reuse_vm!(vm)
       end
 
@@ -79,6 +80,11 @@ describe ApplianceVmsManager do
       it 'updates appliance services with new VM hint' do
         expect(updater).to have_received(:update).with({ new_vm: vm })
       end
+
+      it 'calls method to tag vm' do
+        expect(tags_mng).to have_received(:create_tags_for_vm).with(vm)
+      end
+
     end
 
     context "when user can't afford vm" do
@@ -91,6 +97,10 @@ describe ApplianceVmsManager do
 
       it 'does not add VM to appliance' do
         expect(app_vms).to_not have_received(:<<).with(vm)
+      end
+
+      it 'does not tag vm' do
+        expect(tags_mng).not_to receive(:create_tags_for_vm)
       end
 
       it_behaves_like 'not_enough_funds'
@@ -113,6 +123,8 @@ describe ApplianceVmsManager do
         virtual_machines: double(create: vm)
       )
     end
+    let(:tags_mng) { double('tags manager') }
+    let(:tags_manager_class) { double('tags manager class', new: tags_mng) }
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
 
@@ -124,12 +136,13 @@ describe ApplianceVmsManager do
     let(:name)   { 'name' }
     let(:vm)     { double('vm', errors: { to_json: {} }) }
 
-    subject { ApplianceVmsManager.new(appl, updater_class, vm_creator_class) }
+    subject { ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
 
     before do
       allow(vm_creator_class).to receive(:new).with(tmpl,
         {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
           .and_return(vm_creator)
+      allow(tags_mng).to receive(:create_tags_for_vm)
     end
 
     context 'when user can afford to spawn VM with selected flavor' do
@@ -157,6 +170,12 @@ describe ApplianceVmsManager do
         expect(appl).to receive(:state=).with(:satisfied)
 
         subject.spawn_vm!(tmpl, flavor, name)
+      end
+
+      it 'calls method to tag vm' do
+        allow(vm).to receive(:valid?).and_return(true)
+        subject.spawn_vm!(tmpl, flavor, name)
+        expect(tags_mng).to have_received(:create_tags_for_vm)
       end
 
       it 'updates appliance services with new VM hint' do

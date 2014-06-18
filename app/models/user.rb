@@ -52,6 +52,11 @@ class User < ActiveRecord::Base
   before_save :check_fund_assignment
   around_update :manage_metadata
 
+  scope :with_vm, ->(vm) do
+    joins(appliance_sets: { appliances: :virtual_machines })
+      .where(virtual_machines: {id: vm.id})
+  end
+
   include Gravtastic
   gravtastic default: 'mm'
 
