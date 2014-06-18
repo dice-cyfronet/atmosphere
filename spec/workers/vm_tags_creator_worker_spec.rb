@@ -35,7 +35,8 @@ describe VmTagsCreatorWorker do
     expect(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
     exc = Fog::Compute::OpenStack::NotFound.new
     expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
-    expect { VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map) }.to raise_error(Fog::Compute::OpenStack::NotFound)
+    expect { VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map) }
+      .to raise_error(Fog::Compute::OpenStack::NotFound)
   end
 
 end

@@ -31,7 +31,8 @@ describe Cloud::VmTagsManager do
     allow(vm).to receive(:appliance_type).and_return at
     allow(cs).to receive(:id).and_return cs_id
     expect(VmTagsCreatorWorker).to receive(:perform_async)
-      .with(server_id, cs_id, {'Name' => vm.name, 'Appliance type name' => appl1.appliance_type.name, 'Users' => 'user1, user2'})
+      .with(server_id, cs_id, {'Name' => vm.name, 'Appliance type name' => appl1.appliance_type.name,
+        'Users' => 'user1, user2'})
     subject.create_tags_for_vm(vm)
   end
 end

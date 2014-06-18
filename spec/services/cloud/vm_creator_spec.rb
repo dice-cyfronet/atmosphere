@@ -9,7 +9,8 @@ describe Cloud::VmCreator do
       ]
     end
   end
-  let(:vmt) { build(:virtual_machine_template, compute_site: cs, id_at_site: 'vmt_id', appliance_type: build(:appliance_type)) }
+  let(:vmt) { build(:virtual_machine_template, compute_site: cs, id_at_site: 'vmt_id',
+    appliance_type: build(:appliance_type)) }
 
   let(:servers_cloud_client) { double('server cloud client') }
   let(:cloud_client) { double('cloud_client', servers: servers_cloud_client) }
