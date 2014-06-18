@@ -1,6 +1,7 @@
 class FlavorsWithRequirements
-  def initialize(options)
+  def initialize(flavors = VirtualMachineFlavor, options)
       @options = options
+      @flavors = flavors
   end
 
   def find
@@ -9,7 +10,7 @@ class FlavorsWithRequirements
     query = and_query(query, qteq_mem) if @options[:memory]
     query = and_query(query, qteq_hdd) if @options[:hdd]
 
-    VirtualMachineFlavor.where(query || {})
+    @flavors.where(query || {})
   end
 
   private

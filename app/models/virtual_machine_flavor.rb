@@ -32,7 +32,7 @@ class VirtualMachineFlavor < ActiveRecord::Base
   validates :supported_architectures, inclusion: %w(i386 x86_64 i386_and_x86_64)
 
   scope :with_prefs, ->(options) do
-    FlavorsWithRequirements.new(options).find
+    FlavorsWithRequirements.new(self, options).find
   end
 
   scope :with_arch, ->(arch) do

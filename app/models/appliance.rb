@@ -85,6 +85,10 @@ class Appliance < ActiveRecord::Base
     appliance_configuration_instance.payload
   end
 
+  def optimization_strategy
+    OptimizationStrategy::Default.new(self)
+  end
+
   private
 
   def assign_default_fund
@@ -101,8 +105,6 @@ class Appliance < ActiveRecord::Base
     # Perform one final billing action for this appliance prior to its destruction.
     BillingService::bill_appliance(self, Time.now.utc, "Final billing action prior to appliance destruction.", false)
   end
-
-  private
 
   def remove_appliance_configuration_instance_if_needed
     if appliance_configuration_instance && appliance_configuration_instance.appliances.blank?
