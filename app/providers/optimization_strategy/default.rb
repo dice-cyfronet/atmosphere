@@ -1,3 +1,5 @@
+require 'utils'
+
 module OptimizationStrategy
   class Default
     def initialize(appliance)

@@ -1,9 +1,5 @@
-require 'utils'
-
 class Optimizer
   include Singleton
-  include Utils
-
 
   # Runs optimization of resource allocation (i.e. virtual machines in cloud).
   # If hint is provided it is used to narrow the scope of optimization.
