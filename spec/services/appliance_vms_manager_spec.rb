@@ -100,7 +100,7 @@ describe ApplianceVmsManager do
       end
 
       it 'does not tag vm' do
-        expect(VmTagsCreatorWorker).not_to receive(:perform_async)
+        expect(tags_mng).not_to receive(:create_tags_for_vm)
       end
 
       it_behaves_like 'not_enough_funds'
