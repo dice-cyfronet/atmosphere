@@ -35,6 +35,10 @@ class VirtualMachineFlavor < ActiveRecord::Base
     FlavorsWithRequirements.new(options).find
   end
 
+  scope :with_arch, ->(arch) do
+    where(supported_architectures: ['i386_and_x86_64', arch])
+  end
+
   scope :on_cs, ->(cs) do
     cs_id = cs.respond_to?(:id) ? cs.id : cs
     where(compute_site_id: cs_id)
