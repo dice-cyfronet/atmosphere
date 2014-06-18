@@ -41,6 +41,13 @@ describe Api::V1::VirtualMachineFlavorsController do
         expect(flavors.size).to eq VirtualMachineFlavor.count
       end
 
+      it 'filters flavors if id param is provided' do
+        get api("/virtual_machine_flavors?id=#{f1.id},#{f2.id}", user)
+        flavors = fls_response
+        expect(flavors.size).to eq 2
+        expect([flavors.first['id'], flavors.last['id']]).to include(f1.id, f2.id)
+      end
+
       context 'params in invalid format' do
         it 'returns 422 status' do
           ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
