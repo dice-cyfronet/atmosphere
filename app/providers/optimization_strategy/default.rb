@@ -40,7 +40,15 @@ module OptimizationStrategy
 
     def preferences
       props = appliance.dev_mode_property_set
-      props ? {cpu: props.preference_cpu, memory: props. preference_memory, hdd: props.preference_disk} : {}
+      if props
+        {
+          cpu: props.preference_cpu,
+          memory: props. preference_memory,
+          hdd: props.preference_disk
+        }
+      else
+        {}
+      end
     end
 
     class VmAndFlavor
