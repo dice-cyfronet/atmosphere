@@ -254,6 +254,7 @@ RSpec::Matchers.define :vm_eq do |expected|
     # admin
     # actual['virtual_machine_template_id'] == expected.virtual_machine_template_id
     # actual['appliance_ids'] == TODO
+    actual['flavor_id'] == expected.virtual_machine_flavor_id
   end
 end
 
