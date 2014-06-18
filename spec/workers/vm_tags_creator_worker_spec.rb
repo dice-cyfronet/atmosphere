@@ -17,21 +17,25 @@ describe VmTagsCreatorWorker do
     VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
   end
 
-  it 'handles tag creation errors' do
-    expect(ComputeSite).to receive(:find).with(site_id).and_return cs_mock
-    expect(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
-    exc = Fog::Compute::AWS::NotFound.new
-    expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
-    VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
-  end
-
   it 'reports error to Raven' do
     expect(ComputeSite).to receive(:find).with(site_id).and_return cs_mock
     expect(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
     exc = Fog::Compute::AWS::NotFound.new
     expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
     expect(Raven).to receive(:capture_exception).with(exc)
-    VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
+    begin
+      VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
+    rescue
+      # exc is expected to be raised
+    end
+  end
+
+  it 'reraise exception' do
+    expect(ComputeSite).to receive(:find).with(site_id).and_return cs_mock
+    expect(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
+    exc = Fog::Compute::OpenStack::NotFound.new
+    expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
+    expect { VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map) }.to raise_error(Fog::Compute::OpenStack::NotFound)
   end
 
 end

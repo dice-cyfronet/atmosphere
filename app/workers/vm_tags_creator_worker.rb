@@ -12,6 +12,7 @@ class VmTagsCreatorWorker
       cloud_client.create_tags_for_vm(server_id, tags_map)
     rescue Fog::Compute::AWS::NotFound, Fog::Compute::OpenStack::NotFound => e
       Raven.capture_exception(e)
+      raise e
     end
     Rails.logger.debug { "Successfuly created tags for server #{server_id}" }
   end
