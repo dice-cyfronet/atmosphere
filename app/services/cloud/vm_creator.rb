@@ -22,7 +22,6 @@ class Cloud::VmCreator
 
     Rails.logger.debug "Params of instantiating server #{server_params}"
     server = servers_client.create(server_params)
-    create_tags(server.id)
 
     server.id
   end
@@ -57,14 +56,6 @@ class Cloud::VmCreator
 
   def register_user_key!
     @user_key.import_to_cloud(@tmpl.compute_site) if @user_key
-  end
-
-  def create_tags(server_id)
-    begin
-      VmTagsCreatorWorker.perform_async(server_id, @tmpl.compute_site.id, {'Name' => @name, 'Appliance type name' => @tmpl.appliance_type.name}) if amazon?
-    rescue Fog::Compute::AWS::NotFound => e
-      Raven.capture_exception(e)
-    end
   end
 
   def amazon?

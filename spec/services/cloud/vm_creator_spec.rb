@@ -93,21 +93,6 @@ describe Cloud::VmCreator do
       cs.technology = 'aws'
 
       allow(servers_cloud_client).to receive(:create).and_return(server)
-      allow(cloud_client).to receive(:create_tags)
-    end
-
-    it 'creates VM with default name' do
-      expect(VmTagsCreatorWorker).to receive(:perform_async)
-        .with(server_id, cs.id, {'Name' => vmt.name, 'Appliance type name' => vmt.appliance_type.name})
-
-      Cloud::VmCreator.new(vmt).spawn_vm!
-    end
-
-    it 'creates VM with custom name' do
-      expect(VmTagsCreatorWorker).to receive(:perform_async)
-        .with(server_id, cs.id, {'Name' => 'custom name', 'Appliance type name' => vmt.appliance_type.name})
-      
-      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
     end
 
     it 'creates VM in "mniec_permit_all" secrutiry group' do
