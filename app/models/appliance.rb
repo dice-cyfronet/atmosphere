@@ -113,7 +113,7 @@ class Appliance < ActiveRecord::Base
   end
 
   def optimize_saved_appliance
-    Optimizer.instance.run(created_appliance: self)
+    optimizer.run(created_appliance: self)
   end
 
   def initial_billing
@@ -123,7 +123,10 @@ class Appliance < ActiveRecord::Base
   end
 
   def optimize_destroyed_appliance
-    Optimizer.instance.run(destroyed_appliance: self)
+    optimizer.run(destroyed_appliance: self)
   end
 
+  def optimizer
+    Optimizer.instance
+  end
 end
