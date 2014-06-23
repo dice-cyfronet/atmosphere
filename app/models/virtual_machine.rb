@@ -36,7 +36,7 @@ class VirtualMachine < ActiveRecord::Base
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
   before_update :update_in_monitoring, if: :ip_changed?
-  before_destroy :unregister_from_monitoring, if: :ip? && :monitoring_id?
+  before_destroy :unregister_from_monitoring, if: :in_monitoring?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
@@ -156,6 +156,10 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   private
+
+  def in_monitoring?
+    ip? && monitoring_id?
+  end
 
   def perform_delete_in_cloud
     cloud_client = compute_site.cloud_client
