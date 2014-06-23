@@ -323,8 +323,7 @@ describe Optimizer do
     it 'terminates unused manageable vm' do
       subject.run(destroyed_appliance: true)
 
-      expect(VirtualMachine.count).to eq 1
-      expect(VirtualMachine.first).to eq external_vm
+      expect(Cloud::VmDestroyWorker).to have_enqueued_job(vm.id)
     end
   end
 

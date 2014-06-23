@@ -40,8 +40,8 @@ class Appliance < ActiveRecord::Base
   validates_numericality_of :amount_billed
 
   has_many :http_mappings, dependent: :destroy, autosave: true
-  has_many :virtual_machines, through: :deployments, dependent: :destroy
-  has_many :deployments
+  has_many :virtual_machines, through: :deployments
+  has_many :deployments, dependent: :destroy
 
   has_many :compute_sites, through: :appliance_compute_sites, dependent: :destroy
   has_many :appliance_compute_sites
