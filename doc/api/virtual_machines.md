@@ -16,7 +16,7 @@ GET /virtual_machines
       "state": "active",
       "ip": "10.100.1.24",
       "compute_site_id": 2,
-      "flavor_id": 1
+      "virtual_machine_flavor_id": 1
     }, {
       ...
     }
@@ -43,7 +43,7 @@ GET /virtual_machines/:id
     "state": "booting",
     "ip": "10.100.1.24",
     "compute_site_id": 2,
-    "flavor_id": 1
+    "virtual_machine_flavor_id": 1
   }
 }
 ```
