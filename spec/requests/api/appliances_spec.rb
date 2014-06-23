@@ -40,13 +40,26 @@ describe Api::V1::AppliancesController do
       end
 
       context 'search' do
-        let(:second_user_as) { create(:appliance_set, user: user) }
-        let!(:second_as_appliance) { create(:appliance, appliance_set: second_user_as) }
-
         it 'returns only appliances belonging to select appliance set' do
+          second_user_as = create(:appliance_set, user: user)
+          second_as_appliance = create(:appliance, appliance_set: second_user_as)
+
           get api("/appliances?appliance_set_id=#{second_user_as.id}", user)
           expect(appliances_response.size).to eq 1
           expect(appliances_response[0]).to appliance_eq second_as_appliance
+        end
+
+        it 'returns appliances connected with concrete VM' do
+          cs = create(:compute_site)
+          vm = create(:virtual_machine, compute_site: cs)
+          appliance = create(:appliance,
+            virtual_machines: [vm], appliance_set: user_as)
+          other_appliance = create(:appliance, appliance_set: user_as)
+
+          get api("/appliances?virtual_machine_ids=#{vm.id}", user)
+
+          expect(appliances_response.size).to eq 1
+          expect(appliances_response[0]).to appliance_eq appliance
         end
       end
     end
