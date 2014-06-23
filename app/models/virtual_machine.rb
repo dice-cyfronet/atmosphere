@@ -113,18 +113,18 @@ class VirtualMachine < ActiveRecord::Base
 
   def register_in_monitoring
     logger.info "Registering vm #{uuid} in monitoring"
-    self[:monitoring_id] = Air.monitoring_client.register_host(uuid, ip)
+    self[:monitoring_id] = monitoring_client.register_host(uuid, ip)
   end
 
   def unregister_from_monitoring
     logger.info "Unregistering vm #{uuid} with monitoring host id #{monitoring_id} from monitoring"
-    Air.monitoring_client.unregister_host(self.monitoring_id)
+    monitoring_client.unregister_host(self.monitoring_id)
     self[:monitoring_id] = nil
   end
 
   def current_load_metrics
     if monitoring_id
-      metrics=Air.monitoring_client.host_metrics(monitoring_id)
+      metrics = monitoring_client.host_metrics(monitoring_id)
       metrics.collect_last if metrics
     else
       nil
@@ -179,5 +179,9 @@ class VirtualMachine < ActiveRecord::Base
 
   def cant_destroy_non_managed_vm
     errors.add :base, 'Virtual Machine is not managed by atmosphere' unless managed_by_atmosphere
+  end
+
+  def monitoring_client
+    Air.monitoring_client
   end
 end
