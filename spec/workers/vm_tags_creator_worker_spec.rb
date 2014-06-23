@@ -23,7 +23,7 @@ describe VmTagsCreatorWorker do
   it 'reports error to Raven' do
     exc = Fog::Compute::AWS::NotFound.new
     expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
-    expect(Raven).to receive(:capture_exception).with(exc)
+    expect(Raven).to receive(:capture_message).with(start_with('Failed to annotate'), anything)
     begin
       VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
     rescue
