@@ -51,6 +51,11 @@ class Api::V1::AppliancesController < Api::ApplicationController
     render json: { endpoints: endpoints }
   end
 
+  def reboot
+    @appliance.virtual_machines.each { |vm| vm.reboot }
+    render json: {}, status: 200
+  end
+
   private
 
   def filter

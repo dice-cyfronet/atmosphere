@@ -593,6 +593,69 @@ describe Api::V1::AppliancesController do
     end
   end
 
+  context 'POST /appliances/:id/reboot' do
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        post api("/appliances/#{user_appliance1.id}/reboot")
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'reboots owned appliance started in dev mode' do
+        appliance = appliance_for(user, mode: :development)
+        vm = create(:virtual_machine, appliances: [appliance])
+
+        expect_any_instance_of(VirtualMachine).to receive(:reboot)
+
+        post api("/appliances/#{appliance.id}/reboot", user)
+
+        expect(response.status).to eq 200
+      end
+
+      it 'does not allow to reboot appliance started in production mode' do
+        appliance = appliance_for(user, mode: :workflow)
+
+        post api("/appliances/#{appliance.id}/reboot", user)
+
+        expect(response.status).to eq 403
+      end
+
+      it 'does not allow to reboot not owned appliance' do
+        appliance = appliance_for(other_user, mode: :development)
+
+        post api("/appliances/#{appliance.id}/reboot", user)
+
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'reboots not owned appliance' do
+        appliance = appliance_for(user, mode: :development)
+
+        post api("/appliances/#{appliance.id}/reboot", admin)
+
+        expect(response.status).to eq 200
+      end
+
+      it 'reboots appliance started in production mode' do
+        appliance = appliance_for(user, mode: :workflow)
+
+        post api("/appliances/#{appliance.id}/reboot", admin)
+
+        expect(response.status).to eq 200
+      end
+    end
+
+    def appliance_for(user, options = {})
+      as_mode = options[:mode] || :workflow
+      as = create(:appliance_set,
+        appliance_set_type: as_mode, user: user)
+      create(:appliance, appliance_set: as)
+    end
+  end
+
   def user_key_request(original_request, key)
     request = original_request
     request[:appliance][:user_key_id] = key.id
