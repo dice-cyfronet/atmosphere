@@ -136,6 +136,16 @@ Parameters:
 
 + `id` (required) - The ID of an appliance
 
+## Reboot appliance
+
+Owned appliance started in `development` mode can be rebooted. Administrator
+is able to reboot not owned appliance started in all modes.
+
+```
+POST /appliances/:id/reboot
+```
+
+
 ## Get appliance endpoints
 
 Get information about all endpoints registered into appliance. Http mappings generation is done in asynchronous way (once per 5s), thus information about endpoints will appear after http redirections into started virtual machine(s) are established.
