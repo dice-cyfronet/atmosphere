@@ -56,10 +56,9 @@ class Optimizer
 
   def terminate_unused_vms
     logger.info { "Terminating unused VMs started" }
-    not_used_vms.each do |vm|
-      logger.info { " - Destroying #{vm.id_at_site} VM" }
-      vm.destroy
-      logger.info { " - #{vm.id_at_site} VM destroyed" }
+    unused_vms.each do |vm|
+      logger.info { " - Destroying #{vm.id_at_site} VM scheduled" }
+      Cloud::VmDestroyWorker.perform_async(vm.id)
     end
     logger.info { "Terminating unused VMs ended" }
   end
@@ -70,7 +69,7 @@ class Optimizer
 
   private
 
-  def not_used_vms
+  def unused_vms
     # TODO ask PN for better query
     VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)')
   end
