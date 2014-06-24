@@ -119,7 +119,7 @@ describe Proxy::ApplianceProxyUpdater do
       it 'creates new proxy in redirus' do
         expect(Redirus::Worker::AddProxy).to have_enqueued_job(
           proxy_name(appl, http),
-          [worker(vm1, http), worker(vm2, http)],
+          include(worker(vm1, http), worker(vm2, http)),
           'http',
           []
         )
