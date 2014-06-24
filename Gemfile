@@ -4,7 +4,6 @@ source 'https://rubygems.org'
 gem 'rails', '4.1.1'
 
 # Supported DBs
-gem 'mysql2', group: :mysql
 gem 'pg', group: :postgres
 
 # ... and provide means for referential integrity ...
