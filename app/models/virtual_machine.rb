@@ -57,7 +57,6 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def reboot
-    cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
     cloud_client.reboot_server id_at_site
     state = :build
     save
@@ -162,7 +161,6 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def perform_delete_in_cloud
-    cloud_client = compute_site.cloud_client
     unless cloud_client.servers.destroy(id_at_site)
       Raven.capture_message(
         "Error destroying VM in cloud",
@@ -183,5 +181,9 @@ class VirtualMachine < ActiveRecord::Base
 
   def monitoring_client
     Air.monitoring_client
+  end
+
+  def cloud_client
+    @cloud_client ||= compute_site.cloud_client
   end
 end
