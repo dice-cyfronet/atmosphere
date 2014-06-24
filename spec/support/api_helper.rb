@@ -34,4 +34,14 @@ module ApiHelpers
   def json_response
     JSON.parse(response.body)
   end
+
+  def error_response(msg, type, options={})
+    error_response_json = {
+      'message' => msg,
+      'type' => type
+    }
+    error_response_json['details'] = options[:details] if options[:details]
+
+    error_response_json
+  end
 end

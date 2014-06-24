@@ -168,7 +168,11 @@ describe Api::V1::UserKeysController do
         }
         post api("/user_keys", user), invalid_user_key_req
         expect(response.status).to eq 422
-        expect(response.body).to eq '{"public_key":["can\'t be blank"]}'
+        expect(json_response['details']).to eq(
+          {
+            'public_key' => ['can\'t be blank']
+          }
+        )
       end
 
       it 'returns 402 Unprocessable Entity status if invalid public key is provided' do
@@ -180,7 +184,12 @@ describe Api::V1::UserKeysController do
         }
         post api("/user_keys", user), invalid_user_key_req
         expect(response.status).to eq 422
-        expect(response.body).to eq '{"public_key":["bad type of key (only ssh-rsa is allowed)","is invalid"]}'
+        expect(json_response['details']).to eq({
+          'public_key' => [
+            'bad type of key (only ssh-rsa is allowed)',
+            'is invalid'
+          ]
+        })
       end
 
       it 'returns 402 Unprocessable Entity status if the request is incorrect' do

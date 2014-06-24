@@ -491,7 +491,8 @@ describe Api::V1::ApplianceTypesController do
           post api('/appliance_types/', developer), msg
 
           expect(response.status).to eq 404
-          expect(response.body).to eq '{"message":"Record not found"}'
+          expect(json_response)
+            .to eq error_response('Record not found', 'general')
         end
 
         it 'returns error if appliance with given id does not belong to user' do
@@ -502,7 +503,8 @@ describe Api::V1::ApplianceTypesController do
           post api('/appliance_types/', other_developer), msg
 
           expect(response.status).to eq 403
-          expect(response.body).to eq '{"message":"403 Forbidden"}'
+          expect(json_response)
+            .to eq error_response('403 Forbidden', 'general')
         end
 
         it 'returns error if appliance is not on dev mode' do
@@ -514,7 +516,8 @@ describe Api::V1::ApplianceTypesController do
           post api('/appliance_types/', developer), msg
 
           expect(response.status).to eq 403
-          expect(response.body).to eq '{"message":"403 Forbidden"}'
+          expect(json_response)
+            .to eq error_response('403 Forbidden', 'general')
         end
 
         it 'saves developer\'s virtual machine as template when creating new appliance type' do

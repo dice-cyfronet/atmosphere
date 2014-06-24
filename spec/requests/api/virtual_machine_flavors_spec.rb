@@ -53,7 +53,10 @@ describe Api::V1::VirtualMachineFlavorsController do
           ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
             get api("/virtual_machine_flavors?#{param_name}=INVALID", user)
             expect(response.status).to eq 422
-            expect(response.body).to eq "{\"message\":\"Invalid parameter format for #{param_name}\"}"
+            expect(json_response)
+              .to eq error_response(
+                "Invalid parameter format for #{param_name}", 'general'
+              )
           end
         end
       end
