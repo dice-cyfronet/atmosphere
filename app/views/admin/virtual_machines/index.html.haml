@@ -1,24 +1,33 @@
 %h1 Listing virtual machines
 
-%table
-  %tr
-    %th Id at site
-    %th Name
-    %th State
-    %th Ip
-    %th Appliances
-    %th
-    %th
-    %th
-
-  - @virtual_machines.each do |virtual_machine|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= virtual_machine.id_at_site
-      %td= virtual_machine.name
-      %td= virtual_machine.state
-      %td= virtual_machine.ip
-      %td= model_collection_to_s virtual_machine.appliances
-      %td= link_to 'Show', admin_virtual_machine_path(virtual_machine)
-      %td= link_to 'Reboot', reboot_admin_virtual_machine_path(virtual_machine), :method => :post
-      %td= link_to 'Save as template', save_as_template_admin_virtual_machine_path(virtual_machine), :method => :post
-      %td= link_to 'Destroy', admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th UUID
+      %th Name
+      %th State
+      %th IP address
+      %th Appliances
+      %th Actions
+
+    - @virtual_machines.each do |virtual_machine|
+      %tr
+        %td= virtual_machine.id_at_site
+        %td= virtual_machine.name
+        %td= virtual_machine.state
+        %td= virtual_machine.ip
+        %td= model_collection_to_s virtual_machine.appliances
+        %td
+          .btn-group
+            = link_to admin_virtual_machine_path(virtual_machine),
+              class: 'btn btn-success btn-xs', title: 'Show the Virtual Machine' do
+              =fa_icon 'bars'
+            = link_to reboot_admin_virtual_machine_path(virtual_machine), :method => :post,
+              class: 'btn btn-danger btn-xs', title: 'Reboot the Virtual Machine' do
+              =fa_icon 'refresh'
+            = link_to save_as_template_admin_virtual_machine_path(virtual_machine), :method => :post,
+              class: 'btn btn-success btn-xs', title: 'Save the Virtual Machine as Template' do
+              =fa_icon 'save'
+            = link_to admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' },
+              class: 'btn btn-danger btn-xs', title: 'Destroy the Virtual Machine' do
+              =fa_icon 'trash-o'
