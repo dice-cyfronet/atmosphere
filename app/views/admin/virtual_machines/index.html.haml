@@ -20,14 +20,14 @@
         %td
           .btn-group
             = link_to admin_virtual_machine_path(virtual_machine),
-              class: 'btn btn-success btn-xs', title: 'Show the Virtual Machine' do
+              class: 'btn btn-success btn-xs', title: 'Show this Virtual Machine' do
               =fa_icon 'bars'
             = link_to reboot_admin_virtual_machine_path(virtual_machine), :method => :post,
-              class: 'btn btn-danger btn-xs', title: 'Reboot the Virtual Machine' do
+              class: 'btn btn-danger btn-xs', title: 'Reboot this Virtual Machine' do
               =fa_icon 'refresh'
             = link_to save_as_template_admin_virtual_machine_path(virtual_machine), :method => :post,
-              class: 'btn btn-success btn-xs', title: 'Save the Virtual Machine as Template' do
+              class: 'btn btn-success btn-xs', title: 'Save this Virtual Machine as Template' do
               =fa_icon 'save'
             = link_to admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' },
-              class: 'btn btn-danger btn-xs', title: 'Destroy the Virtual Machine' do
+              class: 'btn btn-danger btn-xs', title: 'Destroy this Virtual Machine' do
               =fa_icon 'trash-o'

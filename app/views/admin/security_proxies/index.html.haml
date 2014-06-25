@@ -1,17 +1,25 @@
 %h1 Security proxies
 
-%table
-  %tr
-    %th
-    %th
-    %th
+%p
+  = link_to new_admin_security_proxy_path,
+    class: 'btn btn-success btn-xs', title: 'New Security Proxy' do
+    =fa_icon 'plus'
+    Add new
 
-  - @security_proxies.each do |security_proxy|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= security_proxy.name
-      %td= link_to 'Edit', edit_admin_security_proxy_path(security_proxy)
-      %td= link_to 'Destroy', [:admin, security_proxy], :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th Name
+      %th Actions
 
-%br
-
-= link_to 'New Security Proxy', new_admin_security_proxy_path
+    - @security_proxies.each do |security_proxy|
+      %tr
+        %td= security_proxy.name
+        %td
+          .btn-group
+            = link_to edit_admin_security_proxy_path(security_proxy),
+              class: 'btn btn-warning btn-xs', title: 'Edit this Security Proxy' do
+              =fa_icon 'edit'
+            = link_to [:admin, security_proxy], :method => :delete, :data => { :confirm => 'Are you sure?' },
+              class: 'btn btn-danger btn-xs', title: 'Remove this Security Proxy' do
+              =fa_icon 'trash-o'

@@ -1,17 +1,25 @@
 %h1 Security policies
 
-%table
-  %tr
-    %th
-    %th
-    %th
+%p
+  = link_to new_admin_security_policy_path,
+    class: 'btn btn-success btn-xs', title: 'New Security Policy' do
+    =fa_icon 'plus'
+    Add new
 
-  - @security_policies.each do |security_policy|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= security_policy.name
-      %td= link_to 'Edit', edit_admin_security_policy_path(security_policy)
-      %td= link_to 'Destroy', [:admin, security_policy], :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th Name
+      %th Actions
 
-%br
-
-= link_to 'New Security Policy', new_admin_security_policy_path
+    - @security_policies.each do |security_policy|
+      %tr
+        %td= security_policy.name
+        %td
+          .btn-group
+            = link_to edit_admin_security_policy_path(security_policy),
+              class: 'btn btn-warning btn-xs', title: 'Edit this Security Policy' do
+              =fa_icon 'edit'
+            = link_to [:admin, security_policy], :method => :delete, :data => { :confirm => 'Are you sure?' },
+              class: 'btn btn-danger btn-xs', title: 'Remove this Security Policy' do
+              =fa_icon 'trash-o'

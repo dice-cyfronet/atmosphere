@@ -18,11 +18,11 @@
         %td
           .btn-group
             = link_to admin_virtual_machine_template_path(virtual_machine_template),
-              class: 'btn btn-success btn-xs', title: 'Show the Virtual Machine Template' do
+              class: 'btn btn-success btn-xs', title: 'Show this Virtual Machine Template' do
               =fa_icon 'bars'
             = link_to edit_admin_virtual_machine_template_path(virtual_machine_template),
               class: 'btn btn-warning btn-xs', title: 'Edit this Virtual Machine Template' do
               =fa_icon 'edit'
-            = link_to 'Destroy', admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' },
+            = link_to admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' },
               class: 'btn btn-danger btn-xs', title: 'Remove this Virtual Machine Template' do
               =fa_icon 'trash-o'
