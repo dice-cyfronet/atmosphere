@@ -1,20 +1,27 @@
-%h1 Listing compute sites
+%h1
+  = t('compute_sites.long_title')
 
 %p
   = link_to new_admin_compute_site_path,
-    class: 'btn btn-success btn-xs', title: 'New Compute site' do
+    class: 'btn btn-success btn-xs', title: t('compute_sites.new') do
     =fa_icon 'plus'
-    Add new
+    = t('add_new')
 
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th Site
-      %th Name
-      %th Location
-      %th Site type
-      %th Technology
-      %th Actions
+      %th
+        = t('compute_sites.site')
+      %th
+        = t('compute_sites.name')
+      %th
+        = t('compute_sites.location')
+      %th
+        = t('compute_sites.site_type')
+      %th
+        = t('compute_sites.technology')
+      %th
+        = t('actions')
 
     - @compute_sites.each do |compute_site|
       %tr
@@ -26,11 +33,11 @@
         %td
           .btn-group
             = link_to admin_compute_site_path(compute_site),
-              class: 'btn btn-success btn-xs', title: 'Show this Compute Site' do
+              class: 'btn btn-success btn-xs', title: t('compute_sites.show') do
               =fa_icon 'bars'
             = link_to edit_admin_compute_site_path(compute_site),
-              class: 'btn btn-warning btn-xs', title: 'Edit this Compute Site' do
+              class: 'btn btn-warning btn-xs', title: t('compute_sites.edit') do
               =fa_icon 'edit'
-            = link_to admin_compute_site_path(compute_site), method: :delete, :data => { confirm: 'Are you sure?' },
-              class: 'btn btn-danger btn-xs', title: 'Remove this Compute Site' do
+            = link_to admin_compute_site_path(compute_site), method: :delete, :data => { confirm: t('are_you_sure') },
+              class: 'btn btn-danger btn-xs', title: t('compute_sites.remove') do
               =fa_icon 'trash-o'

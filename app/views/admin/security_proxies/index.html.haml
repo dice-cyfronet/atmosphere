@@ -1,16 +1,19 @@
-%h1 Security proxies
+%h1
+  = t('security_proxies.long_title')
 
 %p
   = link_to new_admin_security_proxy_path,
-    class: 'btn btn-success btn-xs', title: 'New Security Proxy' do
+    class: 'btn btn-success btn-xs', title: t('security_proxies.new') do
     =fa_icon 'plus'
-    Add new
+    = t('add_new')
 
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th Name
-      %th Actions
+      %th
+        = t('security_proxies.name')
+      %th
+        = t('actions')
 
     - @security_proxies.each do |security_proxy|
       %tr
@@ -18,8 +21,8 @@
         %td
           .btn-group
             = link_to edit_admin_security_proxy_path(security_proxy),
-              class: 'btn btn-warning btn-xs', title: 'Edit this Security Proxy' do
+              class: 'btn btn-warning btn-xs', title: t('security_proxies.edit') do
               =fa_icon 'edit'
-            = link_to [:admin, security_proxy], :method => :delete, :data => { :confirm => 'Are you sure?' },
-              class: 'btn btn-danger btn-xs', title: 'Remove this Security Proxy' do
+            = link_to [:admin, security_proxy], :method => :delete, :data => { :confirm => t('are_you_sure') },
+              class: 'btn btn-danger btn-xs', title: t('security_proxies.remove') do
               =fa_icon 'trash-o'

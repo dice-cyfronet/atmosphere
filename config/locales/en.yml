@@ -32,6 +32,8 @@ en:
   keep_it_secret: Keep it secret, keep it safe!
   reset: Reset
   are_you_sure: Are you sure?
+  actions: Actions
+  add_new: Add new
 
   security_proxy:
     created: "Security proxy created"
@@ -56,21 +58,60 @@ en:
   compute_sites:
     title: Sites
     long_title: Compute Sites
+    site: Site
+    name: Name
+    location: Location
+    site_type: Site type
+    technology: Technology
+    new: New Compute Site
+    show: Show this Compute Site
+    edit: Edit this Compute Site
+    remove: Remove this Compute Site
   virtual_machines:
     title: VMs
     long_title: Virtual Machines
+    uuid: UUID
+    name: Name
+    state: State
+    ip_address: IP Address
+    appliances: Appliances
+    show: Show this Virtual Machine
+    reboot: Reboot this Virtual Machine
+    save: Save this Virtual Machine as Template
+    destroy: Destroy this Virtual Machine
   virtual_machine_templates:
     title: Templates
     long_title: Virtual Machine Templates
+    site: Site
+    uuid: UUID
+    name: Name
+    state: State
+    show: Show this Virtual Machine Template
+    edit: Edit this Virtual Machine Template
+    remove: Remove this Virtual Machine Template
   user_keys:
     title: User keys
     long_title: User keys
+    name: Name
+    fingerprint: Fingerprint
+    owner: Owner
+    new: New User key
+    show: Show this User Key
+    remove: Remove this User Key
   security_proxies:
     title: Proxies
     long_title: Security Proxies
+    name: Name
+    new: New Security Proxy
+    edit: Edit this Security Proxy
+    remove: Remove this Security Proxy
   security_policies:
     title: Policies
     long_title: Security Policies
+    name: Name
+    new: New Security Policy
+    edit: Edit this Security Policy
+    remove: Remove this Security Policy
 
   profiles:
     title: Profile

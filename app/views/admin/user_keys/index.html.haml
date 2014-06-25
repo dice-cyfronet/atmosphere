@@ -1,18 +1,23 @@
-%h1 Listing User Keys
+%h1
+  = t('user_keys.long_title')
 
 %p
   = link_to new_admin_user_key_path,
-    class: 'btn btn-success btn-xs', title: 'New User key' do
+    class: 'btn btn-success btn-xs', title: t('user_keys.new') do
     =fa_icon 'plus'
-    Add new
+    = t('add_new')
 
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th Name
-      %th Fingerprint
-      %th Owner
-      %th Actions
+      %th
+        = t('user_keys.name')
+      %th
+        = t('user_keys.fingerprint')
+      %th
+        = t('user_keys.owner')
+      %th
+        = t('actions')
 
     - @user_keys.each do |user_key|
       %tr
@@ -22,8 +27,8 @@
         %td
           .btn-group
             = link_to admin_user_key_path(user_key),
-              class: 'btn btn-success btn-xs', title: 'Show this User Key' do
+              class: 'btn btn-success btn-xs', title: t('user_keys.show') do
               =fa_icon 'bars'
-            = link_to admin_user_key_path(user_key), :method => :delete, :data => { :confirm => 'Are you sure?' },
-              class: 'btn btn-danger btn-xs', title: 'Remove this User Key' do
+            = link_to admin_user_key_path(user_key), :method => :delete, :data => { :confirm => t('are_you_sure') },
+              class: 'btn btn-danger btn-xs', title: t('user_keys.remove') do
               =fa_icon 'trash-o'
