@@ -1,21 +1,29 @@
-%h1 Listing user_keys
+%h1 Listing User Keys
 
-%table
-  %tr
-    %th Name
-    %th Fingerprint
-    %th Owner
-    %th
-    %th
+%p
+  = link_to new_admin_user_key_path,
+    class: 'btn btn-success btn-xs', title: 'New User key' do
+    =fa_icon 'plus'
+    Add new
 
-  - @user_keys.each do |user_key|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= user_key.name
-      %td= user_key.fingerprint
-      %td= user_key.user.login
-      %td= link_to 'Show', admin_user_key_path(user_key)
-      %td= link_to 'Destroy', admin_user_key_path(user_key), :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th Name
+      %th Fingerprint
+      %th Owner
+      %th Actions
 
-%br
-
-= link_to 'New User key', new_admin_user_key_path
+    - @user_keys.each do |user_key|
+      %tr
+        %td= user_key.name
+        %td= user_key.fingerprint
+        %td= user_key.user.login
+        %td
+          .btn-group
+            = link_to 'Show', admin_user_key_path(user_key),
+              class: 'btn btn-success btn-xs', title: 'Show this User Key' do
+              =fa_icon 'bars'
+            = link_to 'Destroy', admin_user_key_path(user_key), :method => :delete, :data => { :confirm => 'Are you sure?' },
+              class: 'btn btn-danger btn-xs', title: 'Remove this User Key' do
+              =fa_icon 'trash-o'
