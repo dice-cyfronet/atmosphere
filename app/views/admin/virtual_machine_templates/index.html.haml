@@ -1,23 +1,28 @@
-%h1 Listing virtual_machine_templates
+%h1 Listing Virtual Machine Templates
 
-%table
-  %tr
-    %th Site
-    %th Id at site
-    %th Name
-    %th State
-    %th
-    %th
-    %th
-
-  - @virtual_machine_templates.each do |virtual_machine_template|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= virtual_machine_template.compute_site.site_id
-      %td= virtual_machine_template.id_at_site
-      %td= virtual_machine_template.name
-      %td= virtual_machine_template.state
-      %td= link_to 'Show', admin_virtual_machine_template_path(virtual_machine_template)
-      %td= link_to 'Edit', edit_admin_virtual_machine_template_path(virtual_machine_template)
-      %td= link_to 'Destroy', admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th Site
+      %th UUID
+      %th Name
+      %th State
+      %th Actions
 
-%br
+    - @virtual_machine_templates.each do |virtual_machine_template|
+      %tr
+        %td= virtual_machine_template.compute_site.site_id
+        %td= virtual_machine_template.id_at_site
+        %td= virtual_machine_template.name
+        %td= virtual_machine_template.state
+        %td
+          .btn-group
+            = link_to admin_virtual_machine_template_path(virtual_machine_template),
+              class: 'btn btn-success btn-xs', title: 'Show the Virtual Machine Template' do
+              =fa_icon 'bars'
+            = link_to edit_admin_virtual_machine_template_path(virtual_machine_template),
+              class: 'btn btn-warning btn-xs', title: 'Edit this Virtual Machine Template' do
+              =fa_icon 'edit'
+            = link_to 'Destroy', admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' },
+              class: 'btn btn-danger btn-xs', title: 'Remove this Virtual Machine Template' do
+              =fa_icon 'trash-o'
