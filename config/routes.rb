@@ -89,7 +89,7 @@ Air::Application.routes.draw do
       resources :appliances do
         member do
           get :endpoints
-          post :reboot
+          post :action
         end
       end
 

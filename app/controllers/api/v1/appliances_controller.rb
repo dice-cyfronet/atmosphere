@@ -51,12 +51,25 @@ class Api::V1::AppliancesController < Api::ApplicationController
     render json: { endpoints: endpoints }
   end
 
+  def action
+    return reboot if reboot_action?
+    # place for other actions...
+
+    render_json_error('Action not found', status: :bad_request)
+  end
+
+  private
+
   def reboot
+    authorize!(:reboot, @appliance)
+
     @appliance.virtual_machines.each { |vm| vm.reboot }
     render json: {}, status: 200
   end
 
-  private
+  def reboot_action?
+    params.has_key? :reboot
+  end
 
   def filter
     filter = super

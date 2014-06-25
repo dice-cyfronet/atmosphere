@@ -136,15 +136,39 @@ Parameters:
 
 + `id` (required) - The ID of an appliance
 
-## Reboot appliance
+## Appliance actions
+
+All actions which can be performed on appliance level have the same format.
+Post message need to be sent to:
+
+```
+POST /appliances/:id/action
+```
+
+with following body:
+
+```json
+{
+  "action_name": "action params"
+}
+```
+
+Bellow you can find list of all actions which can be performed on appliance. If
+in requrest JSON contains invalid action name than `400` (Bad Request) status
+code is returned.
+
+### Restart appliance
 
 Owned appliance started in `development` mode can be rebooted. Administrator
 is able to reboot not owned appliance started in all modes.
 
-```
-POST /appliances/:id/reboot
-```
+Request body:
 
+```json
+{
+  "reboot": null
+}
+```
 
 ## Get appliance endpoints
 

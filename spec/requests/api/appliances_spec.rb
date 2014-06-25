@@ -593,10 +593,23 @@ describe Api::V1::AppliancesController do
     end
   end
 
-  context 'POST /appliances/:id/reboot' do
+  context 'POST /appliances/:id/action not_found' do
+    it 'returns 400 when action not found' do
+      appliance = appliance_for(user, mode: :development)
+      unknown_action_body = { not_found: nil }
+
+      post api("/appliances/#{user_appliance1.id}/action", user), unknown_action_body
+
+      expect(response.status).to eq 400
+    end
+  end
+
+  context 'POST /appliances/:id/action reboot' do
+    let(:reboot_action_body) { { reboot: nil } }
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/appliances/#{user_appliance1.id}/reboot")
+        post api("/appliances/#{user_appliance1.id}/action"), reboot_action_body
         expect(response.status).to eq 401
       end
     end
@@ -608,7 +621,7 @@ describe Api::V1::AppliancesController do
 
         expect_any_instance_of(VirtualMachine).to receive(:reboot)
 
-        post api("/appliances/#{appliance.id}/reboot", user)
+        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
 
         expect(response.status).to eq 200
       end
@@ -616,7 +629,7 @@ describe Api::V1::AppliancesController do
       it 'does not allow to reboot appliance started in production mode' do
         appliance = appliance_for(user, mode: :workflow)
 
-        post api("/appliances/#{appliance.id}/reboot", user)
+        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
 
         expect(response.status).to eq 403
       end
@@ -624,7 +637,7 @@ describe Api::V1::AppliancesController do
       it 'does not allow to reboot not owned appliance' do
         appliance = appliance_for(other_user, mode: :development)
 
-        post api("/appliances/#{appliance.id}/reboot", user)
+        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
 
         expect(response.status).to eq 403
       end
@@ -634,7 +647,7 @@ describe Api::V1::AppliancesController do
       it 'reboots not owned appliance' do
         appliance = appliance_for(user, mode: :development)
 
-        post api("/appliances/#{appliance.id}/reboot", admin)
+        post api("/appliances/#{appliance.id}/action", admin), reboot_action_body
 
         expect(response.status).to eq 200
       end
@@ -642,18 +655,18 @@ describe Api::V1::AppliancesController do
       it 'reboots appliance started in production mode' do
         appliance = appliance_for(user, mode: :workflow)
 
-        post api("/appliances/#{appliance.id}/reboot", admin)
+        post api("/appliances/#{appliance.id}/action", admin), reboot_action_body
 
         expect(response.status).to eq 200
       end
     end
+  end
 
-    def appliance_for(user, options = {})
-      as_mode = options[:mode] || :workflow
-      as = create(:appliance_set,
-        appliance_set_type: as_mode, user: user)
-      create(:appliance, appliance_set: as)
-    end
+  def appliance_for(user, options = {})
+    as_mode = options[:mode] || :workflow
+    as = create(:appliance_set,
+      appliance_set_type: as_mode, user: user)
+    create(:appliance, appliance_set: as)
   end
 
   def user_key_request(original_request, key)

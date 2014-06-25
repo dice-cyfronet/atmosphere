@@ -3,7 +3,7 @@
 #
 class ApplianceAbilityBuilder < AbilityBuilder
   def add_user_abilities!
-    can [:read, :update, :destroy, :endpoints],
+    can [:read, :update, :destroy, :endpoints, :action],
         ::Appliance, appliance_set: { user_id: user.id }
 
     can :create, ::Appliance do |appl|
