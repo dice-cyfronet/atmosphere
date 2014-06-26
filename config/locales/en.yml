@@ -34,6 +34,13 @@ en:
   are_you_sure: Are you sure?
   actions: Actions
   add_new: Add new
+  editing: Editing
+  edit: Edit
+  show: Show
+  save: Save
+  create: Create
+  new: New
+  uuid: UUID
 
   security_proxy:
     created: "Security proxy created"
@@ -55,14 +62,41 @@ en:
   appliance_sets:
     title: Sets
     long_title: Appliance Sets
+    long_title_single: Appliance Set
+    user: User
+    type: Type
+    appliance_type: Appliance Type
+    virtual_machines: Virtual Machines
+    site: Site
+    flavor: Flavor
+    fund: "Fund:"
+    no_fund_assigned: no fund assigned
+    amount_billed: "Amount billed:"
+    billing_state: "Billing state:"
+    state: "State:"
+    no_flavor: No flavor
+    no_appliances: No appliances.
+    new: New Appliance Set
+    show: Show this Appliance Set
+    edit: Edit this Appliance Set
+    remove: Remove this Appliance Set
   compute_sites:
     title: Sites
     long_title: Compute Sites
+    long_title_single: Compute Site
     site: Site
     name: Name
     location: Location
     site_type: Site type
     technology: Technology
+    http_proxy_url: HTTP Proxy URL
+    https_proxy_url: HTTPS Proxy URL
+    configuration: Configuration
+    template_filters: Template filters
+    active: Active
+    wrangler_url: IP Wrangler URL
+    wrangler_username: IP Wrangler Username
+    wrangler_password: IP Wrangler Password
     new: New Compute Site
     show: Show this Compute Site
     edit: Edit this Compute Site
@@ -82,6 +116,7 @@ en:
   virtual_machine_templates:
     title: Templates
     long_title: Virtual Machine Templates
+    long_title_single: Virtual Machine Template
     site: Site
     uuid: UUID
     name: Name
@@ -92,6 +127,7 @@ en:
   user_keys:
     title: User keys
     long_title: User keys
+    long_title_single: User key
     name: Name
     fingerprint: Fingerprint
     owner: Owner
@@ -101,6 +137,7 @@ en:
   security_proxies:
     title: Proxies
     long_title: Security Proxies
+    long_title_single: Security Proxy
     name: Name
     new: New Security Proxy
     edit: Edit this Security Proxy
@@ -108,6 +145,7 @@ en:
   security_policies:
     title: Policies
     long_title: Security Policies
+    long_title_single: Security Policy
     name: Name
     new: New Security Policy
     edit: Edit this Security Policy

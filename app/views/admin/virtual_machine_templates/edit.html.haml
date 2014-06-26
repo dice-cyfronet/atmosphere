@@ -1,7 +1,16 @@
-%h1 Editing virtual_machine_template
+%h1
+  = t('edit')
+  = t('virtual_machine_templates.long_title_single')
 
 = render 'form'
 
-= link_to 'Show', admin_virtual_machine_template_path(@virtual_machine_template)
-\|
-= link_to 'Back', admin_virtual_machine_templates_path
+%p
+  .btn-group
+    = link_to admin_virtual_machine_template_path(@virtual_machine_template),
+      class: 'btn btn-success', title: t('virtual_machine_templates.show') do
+      =fa_icon 'bars'
+      = t('show')
+    = link_to admin_virtual_machine_templates_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

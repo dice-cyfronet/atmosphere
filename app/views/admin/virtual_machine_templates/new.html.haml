@@ -1,5 +1,12 @@
-%h1 New virtual_machine_template
+%h1
+  = t('new')
+  = t('virtual_machine_templates.long_title_single')
 
 = render 'form'
 
-= link_to 'Back', admin_virtual_machine_templates_path
+%p
+  .btn-group
+    = link_to admin_virtual_machine_templates_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

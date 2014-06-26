@@ -1,18 +1,39 @@
 %p#notice= notice
 
 %p
-  %b Site
-  = @virtual_machine_template.compute_site
-%p
-  %b Id at site:
-  = @virtual_machine_template.id_at_site
-%p
-  %b Name:
-  = @virtual_machine_template.name
-%p
-  %b State:
-  = @virtual_machine_template.state
+  %table.table.table-hover.table-condensed
+    %tr
+      %td
+        %b
+          = t('virtual_machine_templates.site')
+      %td
+        = @virtual_machine_template.compute_site
+    %tr
+      %td
+        %b
+          = t('uuid')
+      %td
+        = @virtual_machine_template.id_at_site
+    %tr
+      %td
+        %b
+          = t('virtual_machine_templates.name')
+      %td
+        = @virtual_machine_template.name
+    %tr
+      %td
+        %b
+          = t('virtual_machine_templates.state')
+      %td
+        = @virtual_machine_template.state
 
-= link_to 'Edit', edit_admin_virtual_machine_template_path(@virtual_machine_template)
-\|
-= link_to 'Back', admin_virtual_machine_templates_path
+%p
+  .btn-group
+    = link_to edit_admin_virtual_machine_template_path(@virtual_machine_template),
+      class: 'btn btn-warning', title: t('edit') do
+      =fa_icon 'bars'
+      = t('edit')
+    = link_to admin_virtual_machine_templates_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

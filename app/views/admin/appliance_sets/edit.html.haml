@@ -1,7 +1,16 @@
-%h1 Editing appliance set
+%h1
+  = t('editing')
+  = t('appliance_sets.long_title_single')
 
 = render 'form'
 
-= link_to 'Show', [:admin, @appliance_set]
-\|
-= link_to 'Back', admin_appliance_sets_path
+%p
+  .btn-group
+    = link_to [:admin, @appliance_set],
+      class: 'btn btn-success', title: t('appliance_sets.show') do
+      =fa_icon 'bars'
+      = t('show')
+    = link_to admin_appliance_sets_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')
