@@ -2,10 +2,14 @@
   = f.error_notification
 
   .inputs
-    = f.input :compute_site_id, collection: @compute_sites
-    = f.input :id_at_site
-    = f.input :name
-    = f.input :state
+    = f.input :compute_site_id, collection: @compute_sites, label: t('virtual_machine_templates.site')
+    = f.input :id_at_site, label: t('uuid')
+    = f.input :name, label: t('virtual_machine_templates.name')
+    = f.input :state, label: t('virtual_machine_templates.state')
 
   .actions
-    = f.button :submit
+    .btn-group
+      %button.btn.btn-success{id: "action-button",  type: "submit"}
+        =fa_icon 'edit'
+        = t('save')
+    = link_to t('back'), admin_virtual_machine_templates_path, class: 'btn btn-default'

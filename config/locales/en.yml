@@ -41,6 +41,7 @@ en:
   create: Create
   new: New
   uuid: UUID
+  background_jobs: Background Jobs
 
   security_proxy:
     created: "Security proxy created"
@@ -130,6 +131,8 @@ en:
     long_title_single: User key
     name: Name
     fingerprint: Fingerprint
+    public_key: Public Key
+    user: User
     owner: Owner
     new: New User key
     show: Show this User Key
@@ -139,6 +142,8 @@ en:
     long_title: Security Proxies
     long_title_single: Security Proxy
     name: Name
+    payload: Payload
+    users: Users
     new: New Security Proxy
     edit: Edit this Security Proxy
     remove: Remove this Security Proxy
@@ -147,6 +152,8 @@ en:
     long_title: Security Policies
     long_title_single: Security Policy
     name: Name
+    payload: Payload
+    users: Users
     new: New Security Policy
     edit: Edit this Security Policy
     remove: Remove this Security Policy
