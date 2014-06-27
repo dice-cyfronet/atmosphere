@@ -98,6 +98,10 @@ class User < ActiveRecord::Base
     has_role? :admin
   end
 
+  def developer?
+    has_role? :developer
+  end
+
   private
 
   # Checks whether any fund has been assigned to this user.

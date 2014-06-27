@@ -81,6 +81,17 @@ describe Api::V1::EndpointsController do
         expect(es_response.size).to eq 1
         expect(es_response[0]).to endpoint_eq e3
       end
+
+      it 'returns development endpoints' do
+        at = create(:appliance_type, visible_to: :developer)
+        pmt = create(:port_mapping_template, appliance_type: at)
+        endpoint = create(:endpoint, port_mapping_template: pmt)
+
+        get api("/endpoints?port_mapping_template_id=#{pmt.id}", developer)
+
+        expect(es_response.size).to eq 1
+        expect(es_response[0]).to endpoint_eq endpoint
+      end
     end
   end
 

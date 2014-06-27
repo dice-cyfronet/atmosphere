@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.1.1'
+gem 'rails', '4.1.2'
 
 # Supported DBs
 gem 'pg', group: :postgres
@@ -54,7 +54,7 @@ gem 'omniauth-vph', '~>1.0'
 gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
 gem 'haml-rails'
-gem 'bootstrap-sass', '~>3.1'
+gem 'bootstrap-sass', '~>3.2'
 
 gem 'font-awesome-rails'
 
