@@ -58,7 +58,7 @@ class VirtualMachine < ActiveRecord::Base
 
   def reboot
     cloud_client.reboot_server id_at_site
-    state = :build
+    self.state = :reboot
     save
   end
 
