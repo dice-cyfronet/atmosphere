@@ -12,13 +12,15 @@
     %tr
       %th
         = t('security_policies.name')
-      %th
+      -# FIXME(paoolo) use styles from CSS
+      %th{ :style => "text-align: right" }
         = t('actions')
 
     - @security_policies.each do |security_policy|
       %tr
         %td= security_policy.name
-        %td
+        -# FIXME(paoolo) use styles from CSS
+        %td{ :style => "text-align: right" }
           .btn-group
             = link_to edit_admin_security_policy_path(security_policy),
               class: 'btn btn-warning btn-xs', title: t('security_policies.edit') do

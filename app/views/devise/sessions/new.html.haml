@@ -2,9 +2,9 @@
   .multi-login-box
     %ul.nav.nav-tabs
       %li.active
-        = link_to 'MI Token', '#tab-mi', 'data-toggle' => 'tab'
+        = link_to t('devise.mi_ticket'), '#tab-mi', 'data-toggle' => 'tab'
       %li
-        = link_to 'Standard', '#tab-signin', 'data-toggle' => 'tab'
+        = link_to t('devise.standard'), '#tab-signin', 'data-toggle' => 'tab'
     .tab-content
       %div#tab-mi.tab-pane.active
         = render partial: 'devise/sessions/new_mi'

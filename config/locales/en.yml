@@ -20,6 +20,11 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  yes: Yes
+  no: No
+  index: Index
+  admin: Admin
+  developer: Developer
   code_name: Atmosphere
   logout: Logout
   save: Save
@@ -39,10 +44,16 @@ en:
   show: Show
   save: Save
   create: Create
+  delete: Delete
   new: New
   uuid: UUID
   background_jobs: Background Jobs
+  forgot_your_password: Forgot your password?
 
+  devise:
+    mi_ticket: MI Token
+    standard: Standard
+    change_your_password: Change your password
   security_proxy:
     created: "Security proxy created"
     create_error: "Unable to create security proxy"
@@ -55,11 +66,28 @@ en:
     update_error: "Unable to update security policy"
   help:
     title: Help
+    content: Content
     back: "Back to help"
+  size:
+    MB: MB
+    GB: GB
 
   appliance_types:
     title: Types
     long_title: Appliance Types
+    long_title_single: Appliance Type
+    port_mappings: Port mappings
+    configurations: Configurations
+    templates: Templates
+    appliances: Appliances
+    only_for_owner: Only for owner
+    only_for_developers: Only for developers
+    for_all: For all
+    shared: Shared
+    scalable: Scalable
+    cpu: CPU
+    memory: Memory
+    data: Data
   appliance_sets:
     title: Sets
     long_title: Appliance Sets

@@ -2,9 +2,9 @@
   = f.error_notification
 
   .inputs
-    = f.input :name, label: t('user_keys.name')
+    = f.input :name
     = f.input :public_key, {readonly: !@user_key.id.nil?}
-    = f.input :user_id, collection: @users, label: t('user_keys.user')
+    = f.input :user_id, collection: @users
 
   .actions
     .btn-group

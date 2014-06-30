@@ -2,19 +2,19 @@
   = f.error_notification
 
   .inputs
-    = f.input :site_id, label: t('uuid')
-    = f.input :name, label: t('compute_sites.name')
-    = f.input :active, label: t('compute_sites.active')
-    = f.input :location, label: t('compute_sites.location')
-    = f.input :site_type, label: t('compute_sites.site_type')
-    = f.input :technology, label: t('compute_sites.technology')
-    = f.input :http_proxy_url, label: t('compute_sites.http_proxy_url')
-    = f.input :https_proxy_url, label: t('compute_sites.https_proxy_url')
-    = f.input :config, as: :text, label: t('compute_sites.configuration')
-    = f.input :template_filters, as: :text, label: t('compute_sites.template_filters')
-    = f.input :wrangler_url, label: t('compute_sites.wrangler_url')
-    = f.input :wrangler_username, label: t('compute_sites.wrangler_username')
-    = f.input :wrangler_password, as: :string, label: t('compute_sites.wrangler_password')
+    = f.input :site_id
+    = f.input :name
+    = f.input :active
+    = f.input :location
+    = f.input :site_type
+    = f.input :technology
+    = f.input :http_proxy_url
+    = f.input :https_proxy_url
+    = f.input :config, as: :text
+    = f.input :template_filters, as: :text
+    = f.input :wrangler_url
+    = f.input :wrangler_username
+    = f.input :wrangler_password, as: :string
 
   .actions
     = f.button :submit, class: 'btn btn-success'
