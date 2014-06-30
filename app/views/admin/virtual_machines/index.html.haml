@@ -16,7 +16,7 @@
         = t('virtual_machines.ip_address')
       %th
         = t('virtual_machines.appliances')
-      %th
+      %th{ :style => "text-align: right" }
         = t('actions')
 
     - @virtual_machines.joins(:compute_site).order('compute_sites.name').order('virtual_machines.name').group_by(&:compute_site).each do |compute_site, sets|
@@ -29,7 +29,7 @@
           %td= virtual_machine.state
           %td= virtual_machine.ip
           %td= model_collection_to_s virtual_machine.appliances
-          %td
+          %td{ :style => "text-align: right" }
             .btn-group
               = link_to admin_virtual_machine_path(virtual_machine),
                 class: 'btn btn-success btn-xs', title: t('virtual_machines.show') do

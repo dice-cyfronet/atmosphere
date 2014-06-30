@@ -20,7 +20,7 @@
         = t('compute_sites.site_type')
       %th
         = t('compute_sites.technology')
-      %th
+      %th{ :style => "text-align: right" }
         = t('actions')
 
     - @compute_sites.each do |compute_site|
@@ -30,7 +30,7 @@
         %td= compute_site.location
         %td= compute_site.site_type
         %td= compute_site.technology
-        %td
+        %td{ :style => "text-align: right" }
           .btn-group
             = link_to admin_compute_site_path(compute_site),
               class: 'btn btn-success btn-xs', title: t('compute_sites.show') do

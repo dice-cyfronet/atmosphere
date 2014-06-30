@@ -14,7 +14,7 @@
         = t('virtual_machine_templates.name')
       %th
         = t('virtual_machine_templates.state')
-      %th
+      %th{ :style => "text-align: right" }
         = t('actions')
 
     - @virtual_machine_templates.joins(:compute_site).order('compute_sites.name').order('virtual_machine_templates.name').group_by(&:compute_site).each do |compute_site, sets|
@@ -26,7 +26,7 @@
           %td= virtual_machine_template.id_at_site
           %td= virtual_machine_template.name
           %td= virtual_machine_template.state
-          %td
+          %td{ :style => "text-align: right" }
             .btn-group
               = link_to admin_virtual_machine_template_path(virtual_machine_template),
                 class: 'btn btn-success btn-xs', title: t('virtual_machine_templates.show') do

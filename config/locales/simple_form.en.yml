@@ -31,7 +31,7 @@ en:
         payload: Payload
         users: Users
       user_key:
-        name: name
+        name: Name
         public_key: Public key
         user: User
       virtual_machine_template:

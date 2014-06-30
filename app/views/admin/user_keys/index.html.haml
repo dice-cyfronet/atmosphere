@@ -16,7 +16,7 @@
         = t('user_keys.fingerprint')
       %th
         = t('user_keys.owner')
-      %th
+      %th{ :style => "text-align: right" }
         = t('actions')
 
     - @user_keys.each do |user_key|
@@ -24,7 +24,7 @@
         %td= user_key.name
         %td= user_key.fingerprint
         %td= user_key.user.login
-        %td
+        %td{ :style => "text-align: right" }
           .btn-group
             = link_to admin_user_key_path(user_key),
               class: 'btn btn-success btn-xs', title: t('user_keys.show') do
