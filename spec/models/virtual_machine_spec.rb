@@ -296,4 +296,31 @@ describe VirtualMachine do
   end
 
   it_behaves_like 'childhoodable'
+
+  context 'reboot actions' do
+    let(:cloud_client) { double }
+    before do
+      allow_any_instance_of(ComputeSite)
+        .to receive(:cloud_client).and_return(cloud_client)
+    end
+
+    it 'sends reboot action to underlying compute site' do
+      id_at_site = 'id_at_site'
+      vm = create(:virtual_machine, id_at_site: id_at_site)
+
+      expect(cloud_client).to receive(:reboot_server).with(id_at_site)
+
+      vm.reboot
+    end
+
+    it 'changes state into :reboot' do
+      vm = create(:virtual_machine)
+      allow(cloud_client).to receive(:reboot_server)
+
+      vm.reboot
+      vm.reload
+
+      expect(vm.state).to eq 'reboot'
+    end
+  end
 end
