@@ -15,7 +15,7 @@
       %th{ :style => "text-align: right" }
         = t('actions')
 
-    - @security_proxies.each do |security_proxy|
+    - @security_proxies.order('security_proxies.name').each do |security_proxy|
       %tr
         %td= security_proxy.name
         %td{ :style => "text-align: right" }

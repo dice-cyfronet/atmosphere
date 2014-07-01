@@ -25,7 +25,8 @@
 
     - @compute_sites.each do |compute_site|
       %tr
-        %td= compute_site.site_id
+        %td{ :style => "font-family: monospace;" }
+          = compute_site.site_id
         %td= compute_site.name
         %td= compute_site.location
         %td= compute_site.site_type

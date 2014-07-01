@@ -10,7 +10,7 @@
       %td
         %b
           = t('compute_sites.site')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.site_id
     %tr
       %td
@@ -40,23 +40,23 @@
       %td
         %b
           = t('compute_sites.http_proxy_url')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.http_proxy_url
     %tr
       %td
         %b
           = t('compute_sites.https_proxy_url')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.https_proxy_url
     %tr
       %td
         %b
           = t('compute_sites.configuration')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.config
     %tr
       %td
-        %b
+        %b{ :style => "font-family: monospace;" }
           = t('compute_sites.template_filters')
       %td
         = @compute_site.template_filters
