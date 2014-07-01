@@ -20,7 +20,7 @@ module Devise
       def authenticate!
         return fail(:invalid_ticket) unless mi_ticket
         begin
-          mi_user_info = adaptor.user_info mi_ticket
+          mi_user_info = user_info(mi_ticket)
           return fail!(:invalid_credentials) if !mi_user_info
 
           auth = adaptor.map_user(mi_user_info)
@@ -38,6 +38,10 @@ module Devise
         end
       end
 
+      def self.clean_cache!
+        @cache && @cache.select! { |_, v| v.valid? }
+      end
+
       private
 
       def adaptor
@@ -51,6 +55,49 @@ module Devise
       def mi_ticket
         params[Air.config.mi_authentication_key] ||
           request.headers[Air.config.header_mi_authentication_key]
+      end
+
+      def user_info(mi_ticket)
+        cached_data = cached_user_info(mi_ticket)
+        if cached_data.valid?
+          cached_data.user_info
+        else
+          load_user_info(mi_ticket)
+        end
+      end
+
+      def load_user_info(mi_ticket)
+        user_info = adaptor.user_info(mi_ticket)
+        cache[mi_ticket] = CacheEntry.new(user_info)
+        user_info
+      end
+
+      def cached_user_info(mi_ticket)
+        cached = cache[mi_ticket]
+        cached ? cached : NullCacheEntry.new
+      end
+
+      def cache
+        @@cache ||= {}
+      end
+
+      class CacheEntry
+        attr_reader :user_info
+
+        def initialize(user_info)
+          @user_info = user_info
+          @timestamp = Time.now
+        end
+
+        def valid?
+          (Time.now - @timestamp) < 5.minutes
+        end
+      end
+
+      class NullCacheEntry
+        def valid?
+          false
+        end
       end
     end
   end
