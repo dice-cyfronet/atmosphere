@@ -12,7 +12,7 @@
             .pull-right
               %button.btn.btn-success.btn-xs{title: 'Save', id: 'save-appliance-type'}
                 =fa_icon 'save'
-                Save
+                = t('save')
               :javascript
                 $(function() {
                   $('#save-appliance-type').on('click', function() {
@@ -21,7 +21,7 @@
                 });
 
               = link_to [:admin, @appliance_type], class: 'btn btn-default btn-xs', title: 'Cancel' do
-                Cancel
+                = t('cancel')
           %hr
           = render partial: 'admin/appliance_types/edit'
 

@@ -36,20 +36,29 @@ class VirtualMachine < ActiveRecord::Base
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
   before_update :update_in_monitoring, if: :ip_changed?
-  before_destroy :unregister_from_monitoring, if: :ip? && :monitoring_id?
+  before_destroy :unregister_from_monitoring, if: :in_monitoring?
   before_destroy :cant_destroy_non_managed_vm
 
   scope :manageable, -> { where(managed_by_atmosphere: true) }
   scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }
+
+  scope :reusable_by, ->(appliance) do
+    manageable.joins(:appliances).where(
+      appliances: {
+        appliance_configuration_instance_id:
+          appliance.appliance_configuration_instance_id
+      },
+      compute_site: appliance.compute_sites
+    )
+  end
 
   def uuid
     "#{compute_site.site_id}-vm-#{id_at_site}"
   end
 
   def reboot
-    cloud_client = VirtualMachine.get_cloud_client_for_site(compute_site.site_id)
     cloud_client.reboot_server id_at_site
-    state = :build
+    self.state = :reboot
     save
   end
 
@@ -103,18 +112,18 @@ class VirtualMachine < ActiveRecord::Base
 
   def register_in_monitoring
     logger.info "Registering vm #{uuid} in monitoring"
-    self[:monitoring_id] = Air.monitoring_client.register_host(uuid, ip)
+    self[:monitoring_id] = monitoring_client.register_host(uuid, ip)
   end
 
   def unregister_from_monitoring
     logger.info "Unregistering vm #{uuid} with monitoring host id #{monitoring_id} from monitoring"
-    Air.monitoring_client.unregister_host(self.monitoring_id)
+    monitoring_client.unregister_host(self.monitoring_id)
     self[:monitoring_id] = nil
   end
 
   def current_load_metrics
     if monitoring_id
-      metrics=Air.monitoring_client.host_metrics(monitoring_id)
+      metrics = monitoring_client.host_metrics(monitoring_id)
       metrics.collect_last if metrics
     else
       nil
@@ -147,8 +156,11 @@ class VirtualMachine < ActiveRecord::Base
 
   private
 
+  def in_monitoring?
+    ip? && monitoring_id?
+  end
+
   def perform_delete_in_cloud
-    cloud_client = compute_site.cloud_client
     unless cloud_client.servers.destroy(id_at_site)
       Raven.capture_message(
         "Error destroying VM in cloud",
@@ -165,5 +177,13 @@ class VirtualMachine < ActiveRecord::Base
 
   def cant_destroy_non_managed_vm
     errors.add :base, 'Virtual Machine is not managed by atmosphere' unless managed_by_atmosphere
+  end
+
+  def monitoring_client
+    Air.monitoring_client
+  end
+
+  def cloud_client
+    @cloud_client ||= compute_site.cloud_client
   end
 end

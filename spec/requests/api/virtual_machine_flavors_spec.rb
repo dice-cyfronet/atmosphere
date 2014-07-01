@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::VirtualMachineFlavorsController do
   include ApiHelpers
@@ -41,12 +41,22 @@ describe Api::V1::VirtualMachineFlavorsController do
         expect(flavors.size).to eq VirtualMachineFlavor.count
       end
 
+      it 'filters flavors if id param is provided' do
+        get api("/virtual_machine_flavors?id=#{f1.id},#{f2.id}", user)
+        flavors = fls_response
+        expect(flavors.size).to eq 2
+        expect([flavors.first['id'], flavors.last['id']]).to include(f1.id, f2.id)
+      end
+
       context 'params in invalid format' do
         it 'returns 422 status' do
           ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
             get api("/virtual_machine_flavors?#{param_name}=INVALID", user)
             expect(response.status).to eq 422
-            expect(response.body).to eq "{\"message\":\"Invalid parameter format for #{param_name}\"}"
+            expect(json_response)
+              .to eq error_response(
+                "Invalid parameter format for #{param_name}", 'general'
+              )
           end
         end
       end
@@ -155,7 +165,7 @@ describe Api::V1::VirtualMachineFlavorsController do
 
           expect(response.size).to eq 1
           first = response.first
-          expect(first['active']).to be_true
+          expect(first['active']).to be_truthy
           expect(first['compute_site_id']).to eq active_cs.id
         end
 
@@ -222,7 +232,7 @@ describe Api::V1::VirtualMachineFlavorsController do
 
           expect(response.size).to eq 1
           first = response.first
-          expect(first['active']).to be_true
+          expect(first['active']).to be_truthy
           expect(first['compute_site_id']).to eq active_cs.id
         end
       end

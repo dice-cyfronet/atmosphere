@@ -15,25 +15,25 @@ describe UrlAvailabilityCheck do
   it 'returns true when resource is availabe (200 response code)' do
     respond_with(200)
 
-    expect(subject.is_available(url)).to be_true
+    expect(subject.is_available(url)).to be_truthy
   end
 
   it 'returns true if resource does not exist (404 response code)' do
     respond_with(404)
 
-    expect(subject.is_available(url)).to be_true
+    expect(subject.is_available(url)).to be_truthy
   end
 
   it 'returns false if bad gateway (502 response code)' do
     respond_with(502)
 
-    expect(subject.is_available(url)).to be_false
+    expect(subject.is_available(url)).to be_falsy
   end
 
   it 'returns false if any error occurs' do
     stubs.get(url) { fail StandardError }
 
-    expect(subject.is_available(url)).to be_false
+    expect(subject.is_available(url)).to be_falsy
   end
 
   def respond_with(response_code)

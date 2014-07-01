@@ -8,4 +8,8 @@
     = f.input :state
 
   .actions
-    = f.button :submit
+    .btn-group
+      %button.btn.btn-success{id: "action-button",  type: "submit"}
+        =fa_icon 'edit'
+        = t('save')
+    = link_to t('back'), admin_virtual_machine_templates_path, class: 'btn btn-default'

@@ -17,7 +17,7 @@ module Api
         log_user_action "create new appliance set with following params #{params}"
         if conflicted? @appliance_set.appliance_set_type
           msg = "Unable to create two #{@appliance_set.appliance_set_type} appliance sets"
-          render json: {message: msg}, status: :conflict
+          render_json_error(msg, status: :conflict)
           log_user_action msg
         else
           @appliance_set.save!

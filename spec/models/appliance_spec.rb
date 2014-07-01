@@ -20,31 +20,31 @@
 #  description                         :text
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Appliance do
 
   let(:optimizer) {double}
 
-  expect_it { to belong_to :appliance_set }
-  expect_it { to validate_presence_of :appliance_set }
-  expect_it { to validate_presence_of :state }
-  expect_it { to ensure_inclusion_of(:state).in_array(%w(new satisfied unsatisfied))}
+  it { should belong_to :appliance_set }
+  it { should validate_presence_of :appliance_set }
+  it { should validate_presence_of :state }
+  it { should ensure_inclusion_of(:state).in_array(%w(new satisfied unsatisfied))}
 
-  expect_it { to belong_to :appliance_type }
-  expect_it { to validate_presence_of :appliance_type }
+  it { should belong_to :appliance_type }
+  it { should validate_presence_of :appliance_type }
 
-  expect_it { to belong_to :appliance_configuration_instance }
-  expect_it { to validate_presence_of :appliance_configuration_instance }
+  it { should belong_to :appliance_configuration_instance }
+  it { should validate_presence_of :appliance_configuration_instance }
 
-  expect_it { to have_many(:http_mappings).dependent(:destroy) }
+  it { should have_many(:http_mappings).dependent(:destroy) }
 
-  expect_it { to have_one(:dev_mode_property_set).dependent(:destroy) }
-  expect_it { to have_readonly_attribute :dev_mode_property_set }
+  it { should have_one(:dev_mode_property_set).dependent(:destroy) }
+  it { should have_readonly_attribute :dev_mode_property_set }
 
   context 'appliance configuration instances management' do
     before do
-      Optimizer.stub(:instance).and_return(optimizer)
+      allow(Optimizer).to receive(:instance).and_return(optimizer)
       expect(optimizer).to receive(:run).twice
     end
     let!(:appliance) { create(:appliance) }
@@ -72,7 +72,8 @@ describe Appliance do
 
 
     before {
-      DevModePropertySet.stub(:create_from).and_return(DevModePropertySet.new(name: 'dev'))
+      allow(DevModePropertySet).to receive(:create_from)
+        .and_return(DevModePropertySet.new(name: 'dev'))
     }
 
     context 'when development appliance set' do

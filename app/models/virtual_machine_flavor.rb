@@ -32,7 +32,11 @@ class VirtualMachineFlavor < ActiveRecord::Base
   validates :supported_architectures, inclusion: %w(i386 x86_64 i386_and_x86_64)
 
   scope :with_prefs, ->(options) do
-    FlavorsWithRequirements.new(options).find
+    FlavorsWithRequirements.new(self, options).find
+  end
+
+  scope :with_arch, ->(arch) do
+    where(supported_architectures: ['i386_and_x86_64', arch])
   end
 
   scope :on_cs, ->(cs) do
@@ -40,7 +44,14 @@ class VirtualMachineFlavor < ActiveRecord::Base
     where(compute_site_id: cs_id)
   end
 
-  def active?
-    compute_site && compute_site.active
+  scope :active, -> { where(active: true) }
+
+  def usable?
+    active && compute_site && compute_site.active
+  end
+
+  def supports_architecture?(arch)
+    supported_architectures == 'i386_and_x86_64' ||
+      supported_architectures == arch
   end
 end

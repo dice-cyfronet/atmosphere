@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::AppliancesController do
   include ApiHelpers
@@ -40,13 +40,26 @@ describe Api::V1::AppliancesController do
       end
 
       context 'search' do
-        let(:second_user_as) { create(:appliance_set, user: user) }
-        let!(:second_as_appliance) { create(:appliance, appliance_set: second_user_as) }
-
         it 'returns only appliances belonging to select appliance set' do
+          second_user_as = create(:appliance_set, user: user)
+          second_as_appliance = create(:appliance, appliance_set: second_user_as)
+
           get api("/appliances?appliance_set_id=#{second_user_as.id}", user)
           expect(appliances_response.size).to eq 1
           expect(appliances_response[0]).to appliance_eq second_as_appliance
+        end
+
+        it 'returns appliances connected with concrete VM' do
+          cs = create(:compute_site)
+          vm = create(:virtual_machine, compute_site: cs)
+          appliance = create(:appliance,
+            virtual_machines: [vm], appliance_set: user_as)
+          other_appliance = create(:appliance, appliance_set: user_as)
+
+          get api("/appliances?virtual_machine_ids=#{vm.id}", user)
+
+          expect(appliances_response.size).to eq 1
+          expect(appliances_response[0]).to appliance_eq appliance
         end
       end
     end
@@ -176,7 +189,7 @@ describe Api::V1::AppliancesController do
 
     context 'when authenticated as user' do
       before do
-        Optimizer.stub(:instance).and_return(optimizer)
+        allow(Optimizer).to receive(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
 
@@ -451,7 +464,7 @@ describe Api::V1::AppliancesController do
       end
 
       before do
-        Optimizer.stub(:instance).and_return(optimizer)
+        allow(Optimizer).to receive(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
 
@@ -578,6 +591,82 @@ describe Api::V1::AppliancesController do
         }.to change { Appliance.count }.by(-1)
       end
     end
+  end
+
+  context 'POST /appliances/:id/action not_found' do
+    it 'returns 400 when action not found' do
+      appliance = appliance_for(user, mode: :development)
+      unknown_action_body = { not_found: nil }
+
+      post api("/appliances/#{user_appliance1.id}/action", user), unknown_action_body
+
+      expect(response.status).to eq 400
+    end
+  end
+
+  context 'POST /appliances/:id/action reboot' do
+    let(:reboot_action_body) { { reboot: nil } }
+
+    context 'when unauthenticated' do
+      it 'returns 401 Unauthorized error' do
+        post api("/appliances/#{user_appliance1.id}/action"), reboot_action_body
+        expect(response.status).to eq 401
+      end
+    end
+
+    context 'when authenticated as user' do
+      it 'reboots owned appliance started in dev mode' do
+        appliance = appliance_for(user, mode: :development)
+        vm = create(:virtual_machine, appliances: [appliance])
+
+        expect_any_instance_of(VirtualMachine).to receive(:reboot)
+
+        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
+
+        expect(response.status).to eq 200
+      end
+
+      it 'does not allow to reboot appliance started in production mode' do
+        appliance = appliance_for(user, mode: :workflow)
+
+        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
+
+        expect(response.status).to eq 403
+      end
+
+      it 'does not allow to reboot not owned appliance' do
+        appliance = appliance_for(other_user, mode: :development)
+
+        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
+
+        expect(response.status).to eq 403
+      end
+    end
+
+    context 'when authenticated as admin' do
+      it 'reboots not owned appliance' do
+        appliance = appliance_for(user, mode: :development)
+
+        post api("/appliances/#{appliance.id}/action", admin), reboot_action_body
+
+        expect(response.status).to eq 200
+      end
+
+      it 'reboots appliance started in production mode' do
+        appliance = appliance_for(user, mode: :workflow)
+
+        post api("/appliances/#{appliance.id}/action", admin), reboot_action_body
+
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
+  def appliance_for(user, options = {})
+    as_mode = options[:mode] || :workflow
+    as = create(:appliance_set,
+      appliance_set_type: as_mode, user: user)
+    create(:appliance, appliance_set: as)
   end
 
   def user_key_request(original_request, key)

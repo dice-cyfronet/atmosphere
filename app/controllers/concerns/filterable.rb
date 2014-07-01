@@ -6,9 +6,13 @@ module Filterable
   def filter
     model_class.new.attributes.keys.inject({}) do |filter, attr|
       key = attr.to_sym
-      filter[key] = params[key].to_s.split(',') if params[key]
+      filter[key] = to_array(params[key]) if params[key]
       filter
     end
+  end
+
+  def to_array(param)
+    param.to_s.split(',')
   end
 
   def model_class

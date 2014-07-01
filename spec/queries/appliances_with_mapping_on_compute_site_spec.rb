@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe AppliancesWithMappingOnComputeSite do
   let(:cs) { create(:compute_site) }

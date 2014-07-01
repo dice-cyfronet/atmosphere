@@ -5,24 +5,46 @@ en:
     required:
       text: 'required'
       mark: '*'
-      # You can uncomment the line below if you need to overwrite the whole required html.
-      # When using html, text and mark won't be used.
-      # html: '<abbr title="required">*</abbr>'
     error_notification:
       default_message: "Please review the problems below:"
-    # Labels and hints examples
-    # labels:
-    #   defaults:
-    #     password: 'Password'
-    #   user:
-    #     new:
-    #       email: 'E-mail to sign in.'
-    #     edit:
-    #       email: 'E-mail.'
-    # hints:
-    #   defaults:
-    #     username: 'User name to sign in.'
-    #     password: 'No special characters, please.'
+    labels:
+      compute_site:
+        site_id: Site ID
+        name: Name
+        active: Active
+        location: Location
+        site_type: Site type
+        technology: Technology
+        http_proxy_url: HTTP Proxy URL
+        https_proxy_url: HTTPS Proxy URL
+        config: Configuration
+        template_filters: Template filters
+        wrangler_url: IP Wrangler URL
+        wrangler_username: IP Wrangler Username
+        wrangler_password: IP Wrangler Password
+      security_policy:
+        name: Name
+        payload: Payload
+        users: Users
+      security_proxy:
+        name: Name
+        payload: Payload
+        users: Users
+      user_key:
+        name: Name
+        public_key: Public key
+        user: User
+      virtual_machine_template:
+        site: Site
+        id_at_site: ID at site
+        name: Name
+        state: State
+    hints:
+      defaults:
+    placeholders:
+      defaults:
+    prompts:
+      defaults:
 
   enumerize:
     transport_protocol:

@@ -20,6 +20,11 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  yes: Yes
+  no: No
+  index: Index
+  admin: Admin
+  developer: Developer
   code_name: Atmosphere
   logout: Logout
   save: Save
@@ -32,7 +37,23 @@ en:
   keep_it_secret: Keep it secret, keep it safe!
   reset: Reset
   are_you_sure: Are you sure?
+  actions: Actions
+  add_new: Add new
+  editing: Editing
+  edit: Edit
+  show: Show
+  save: Save
+  create: Create
+  delete: Delete
+  new: New
+  uuid: UUID
+  background_jobs: Background Jobs
+  forgot_your_password: Forgot your password?
 
+  devise:
+    mi_ticket: MI Token
+    standard: Standard
+    change_your_password: Change your password
   security_proxy:
     created: "Security proxy created"
     create_error: "Unable to create security proxy"
@@ -45,32 +66,125 @@ en:
     update_error: "Unable to update security policy"
   help:
     title: Help
+    content: Content
     back: "Back to help"
+  size:
+    MB: MB
+    GB: GB
 
   appliance_types:
     title: Types
     long_title: Appliance Types
+    long_title_single: Appliance Type
+    port_mappings: Port mappings
+    configurations: Configurations
+    templates: Templates
+    appliances: Appliances
+    only_for_owner: Only for owner
+    only_for_developers: Only for developers
+    for_all: For all
+    shared: Shared
+    scalable: Scalable
+    cpu: CPU
+    memory: Memory
+    data: Data
   appliance_sets:
     title: Sets
     long_title: Appliance Sets
+    long_title_single: Appliance Set
+    user: User
+    type: Type
+    appliance_type: Appliance Type
+    virtual_machines: Virtual Machines
+    site: Site
+    flavor: Flavor
+    fund: "Fund:"
+    no_fund_assigned: no fund assigned
+    amount_billed: "Amount billed:"
+    billing_state: "Billing state:"
+    state: "State:"
+    no_flavor: No flavor
+    no_appliances: No appliances.
+    new: New Appliance Set
+    show: Show this Appliance Set
+    edit: Edit this Appliance Set
+    remove: Remove this Appliance Set
   compute_sites:
     title: Sites
     long_title: Compute Sites
+    long_title_single: Compute Site
+    site: Site
+    name: Name
+    location: Location
+    site_type: Site type
+    technology: Technology
+    http_proxy_url: HTTP Proxy URL
+    https_proxy_url: HTTPS Proxy URL
+    configuration: Configuration
+    template_filters: Template filters
+    active: Active
+    wrangler_url: IP Wrangler URL
+    wrangler_username: IP Wrangler Username
+    wrangler_password: IP Wrangler Password
+    new: New Compute Site
+    show: Show this Compute Site
+    edit: Edit this Compute Site
+    remove: Remove this Compute Site
   virtual_machines:
     title: VMs
     long_title: Virtual Machines
+    uuid: UUID
+    name: Name
+    state: State
+    ip_address: IP Address
+    appliances: Appliances
+    show: Show this Virtual Machine
+    reboot: Reboot this Virtual Machine
+    save: Save this Virtual Machine as Template
+    destroy: Destroy this Virtual Machine
   virtual_machine_templates:
     title: Templates
     long_title: Virtual Machine Templates
+    long_title_single: Virtual Machine Template
+    site: Site
+    uuid: UUID
+    name: Name
+    state: State
+    show: Show this Virtual Machine Template
+    edit: Edit this Virtual Machine Template
+    remove: Remove this Virtual Machine Template
   user_keys:
     title: User keys
     long_title: User keys
+    long_title_single: User key
+    name: Name
+    fingerprint: Fingerprint
+    public_key: Public Key
+    user: User
+    owner: Owner
+    new: New User key
+    show: Show this User Key
+    remove: Remove this User Key
   security_proxies:
     title: Proxies
     long_title: Security Proxies
+    long_title_single: Security Proxy
+    name: Name
+    payload: Payload
+    users: Users
+    new: New Security Proxy
+    edit: Edit this Security Proxy
+    remove: Remove this Security Proxy
   security_policies:
     title: Policies
     long_title: Security Policies
+    long_title_single: Security Policy
+    name: Name
+    payload: Payload
+    users: Users
+    new: New Security Policy
+    edit: Edit this Security Policy
+    remove: Remove this Security Policy
 
   profiles:
     title: Profile

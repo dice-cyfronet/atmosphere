@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe BillingService do
 
@@ -23,7 +23,7 @@ describe BillingService do
 
   before do
     allow(optimizer).to receive(:run)
-    Optimizer.stub(:instance).and_return(optimizer)
+    allow(Optimizer).to receive(:instance).and_return(optimizer)
   end
 
   context 'new user obtains default fund' do

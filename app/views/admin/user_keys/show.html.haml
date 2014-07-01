@@ -1,10 +1,23 @@
 %p#notice= notice
 
 %p
-  %b Name:
-  = @user_key.name
-%p
-  %b Fingerprint:
-  = @user_key.fingerprint
+  %table.table.table-hover.table-condensed
+    %tr
+      %td
+        %b
+          = t('user_keys.name')
+      %td
+        = @user_key.name
+    %tr
+      %td
+        %b
+          = t('user_keys.fingerprint')
+      %td
+        = @user_key.fingerprint
 
-= link_to 'Back', admin_user_keys_path
+%p
+  .btn-group
+    = link_to admin_user_keys_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

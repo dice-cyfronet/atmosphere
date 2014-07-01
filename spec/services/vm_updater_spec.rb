@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe VmUpdater do
   let(:cs)  { create(:compute_site) }
@@ -11,7 +11,7 @@ describe VmUpdater do
   let(:updated_vm) { VirtualMachine.find_by(id_at_site: 'id_at_site') }
 
   before do
-    VirtualMachineTemplate.stub(:find_by)
+    allow(VirtualMachineTemplate).to receive(:find_by)
       .with(compute_site: cs, id_at_site: "vmt_id_at_site")
         .and_return(vmt)
     #Zabbix.stub(:register_host).and_return 1

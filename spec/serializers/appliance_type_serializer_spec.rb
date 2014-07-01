@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe ApplianceTypeSerializer do
   include VmtOnCsHelpers
@@ -10,7 +10,7 @@ describe ApplianceTypeSerializer do
 
     result = JSON.parse(serializer.to_json)
 
-    expect(result['appliance_type']['active']).to be_false
+    expect(result['appliance_type']['active']).to be_falsy
   end
 
   it 'returns information about only active comptue sites' do

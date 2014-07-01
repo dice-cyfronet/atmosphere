@@ -40,8 +40,8 @@ class Appliance < ActiveRecord::Base
   validates_numericality_of :amount_billed
 
   has_many :http_mappings, dependent: :destroy, autosave: true
-  has_many :virtual_machines, through: :deployments, dependent: :destroy
-  has_many :deployments
+  has_many :virtual_machines, through: :deployments
+  has_many :deployments, dependent: :destroy
 
   has_many :compute_sites, through: :appliance_compute_sites, dependent: :destroy
   has_many :appliance_compute_sites
@@ -85,6 +85,10 @@ class Appliance < ActiveRecord::Base
     appliance_configuration_instance.payload
   end
 
+  def optimization_strategy
+    OptimizationStrategy::Default.new(self)
+  end
+
   private
 
   def assign_default_fund
@@ -102,8 +106,6 @@ class Appliance < ActiveRecord::Base
     BillingService::bill_appliance(self, Time.now.utc, "Final billing action prior to appliance destruction.", false)
   end
 
-  private
-
   def remove_appliance_configuration_instance_if_needed
     if appliance_configuration_instance && appliance_configuration_instance.appliances.blank?
       appliance_configuration_instance.destroy
@@ -111,7 +113,7 @@ class Appliance < ActiveRecord::Base
   end
 
   def optimize_saved_appliance
-    Optimizer.instance.run(created_appliance: self)
+    optimizer.run(created_appliance: self)
   end
 
   def initial_billing
@@ -121,7 +123,10 @@ class Appliance < ActiveRecord::Base
   end
 
   def optimize_destroyed_appliance
-    Optimizer.instance.run(destroyed_appliance: self)
+    optimizer.run(destroyed_appliance: self)
   end
 
+  def optimizer
+    Optimizer.instance
+  end
 end

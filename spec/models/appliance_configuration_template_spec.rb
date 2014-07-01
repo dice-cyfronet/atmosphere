@@ -10,13 +10,13 @@
 #  updated_at        :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe ApplianceConfigurationTemplate do
-  expect_it { to validate_presence_of :name }
-  expect_it { to validate_presence_of :appliance_type }
-  expect_it { to belong_to :appliance_type }
-  expect_it { to have_many(:appliance_configuration_instances).dependent(:nullify) }
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :appliance_type }
+  it { should belong_to :appliance_type }
+  it { should have_many(:appliance_configuration_instances).dependent(:nullify) }
 
   describe 'name uniques' do
     let(:appliance_type1) { create(:appliance_type) }

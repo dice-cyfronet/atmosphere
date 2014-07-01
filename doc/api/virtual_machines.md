@@ -15,7 +15,8 @@ GET /virtual_machines
       "name": "Foobar Appliance Set",
       "state": "active",
       "ip": "10.100.1.24",
-      "compute_site_id": 2
+      "compute_site_id": 2,
+      "virtual_machine_flavor_id": 1
     }, {
       ...
     }
@@ -41,7 +42,8 @@ GET /virtual_machines/:id
     "name": "Foobar Appliance Set",
     "state": "booting",
     "ip": "10.100.1.24",
-    "compute_site_id": 2
+    "compute_site_id": 2,
+    "virtual_machine_flavor_id": 1
   }
 }
 ```

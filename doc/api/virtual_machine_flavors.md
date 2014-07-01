@@ -29,15 +29,18 @@ GET /virtual_machine_flavors
 ```
 
 It is possible to filter virtual machine flavors based on either:
+
 + appliance_configuration_instance_id and optionally compute_site_id
 + appliance_type_id and optionally compute_site_id
-+ a combination of compute_site_id, cpu, memory, hdd
++ a combination of mimimum value of cpu, memory, hdd
++ a combination of other attributes available in JSON response
 
 If invalid filters are given, for example both appliance_configuration_instance_id and appliance_type_id are provided a 409 Conflict is returned.
 
 Filters are expressed as query params.
 
 ### JSON fields meanings
+
 + `id` - flavor identifier
 + `flavor_name` - flavor name taken from compute site
 + `active` - true if compute site connected with this flavor is active, false otherwise

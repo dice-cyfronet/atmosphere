@@ -1,8 +1,8 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe AppliancesAffectedByPmt do
   before do
-    Optimizer.stub(:instance).and_return(double(run: true))
+    allow(Optimizer).to receive(:instance).and_return(double(run: true))
   end
 
   let!(:at) { create(:appliance_type) }
@@ -23,7 +23,7 @@ describe AppliancesAffectedByPmt do
     it 'returns appliance which can be updated' do
       affected_appl = AppliancesAffectedByPmt.new(pmt).find.first
 
-      expect(affected_appl.readonly?).to be_false
+      expect(affected_appl.readonly?).to be_falsy
     end
   end
 

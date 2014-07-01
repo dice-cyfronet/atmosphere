@@ -1,5 +1,6 @@
 require 'devise/strategies/base'
 require 'omniauth-vph'
+require 'sudoable'
 
 module Devise
   module Strategies
@@ -8,7 +9,9 @@ module Devise
     # do is to pass the params in the URL:
     #
     #   http://myapp.example.com/?mi_ticket=MI_TOKEN
+    #   http://myapp.example.com Header: MI_TOKEN: MI_TOKEN
     class MiTokenAuthenticatable < Authenticatable
+      include Sudoable
 
       def valid?
         super || mi_ticket
@@ -23,7 +26,10 @@ module Devise
           auth = adaptor.map_user(mi_user_info)
           return fail(:invalid_mi_ticket) unless auth
 
-          resource = mapping.to.vph_find_or_create(::OmniAuth::AuthHash.new({info: auth}))
+          resource = mapping.to.vph_find_or_create(
+              ::OmniAuth::AuthHash.new({info: auth}))
+          resource = sudo!(resource, sudo_as) if sudo_as
+
           return fail(:invalid_mi_ticket) unless resource
           resource.mi_ticket = mi_ticket
           success!(resource)
@@ -43,7 +49,8 @@ module Devise
       end
 
       def mi_ticket
-        params[Air.config.mi_authentication_key] || request.headers[Air.config.header_mi_authentication_key]
+        params[Air.config.mi_authentication_key] ||
+          request.headers[Air.config.header_mi_authentication_key]
       end
     end
   end
