@@ -1,24 +1,45 @@
-%h1 Listing virtual machines
+%h1
+  = t('virtual_machines.long_title')
 
-%table
-  %tr
-    %th Id at site
-    %th Name
-    %th State
-    %th Ip
-    %th Appliances
-    %th
-    %th
-    %th
-
-  - @virtual_machines.each do |virtual_machine|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= virtual_machine.id_at_site
-      %td= virtual_machine.name
-      %td= virtual_machine.state
-      %td= virtual_machine.ip
-      %td= model_collection_to_s virtual_machine.appliances
-      %td= link_to 'Show', admin_virtual_machine_path(virtual_machine)
-      %td= link_to 'Reboot', reboot_admin_virtual_machine_path(virtual_machine), :method => :post
-      %td= link_to 'Save as template', save_as_template_admin_virtual_machine_path(virtual_machine), :method => :post
-      %td= link_to 'Destroy', admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th
+        = t('compute_sites.name')
+      %th
+        = t('virtual_machines.uuid')
+      %th
+        = t('virtual_machines.name')
+      %th
+        = t('virtual_machines.state')
+      %th
+        = t('virtual_machines.ip_address')
+      %th
+        = t('virtual_machines.appliances')
+      %th{ :style => "text-align: right" }
+        = t('actions')
+
+    - @virtual_machines.joins(:compute_site).order('compute_sites.name').order('virtual_machines.name').group_by(&:compute_site).each do |compute_site, sets|
+      - sets.each_with_index do |virtual_machine, i|
+        %tr
+          - if i==0
+            %td{rowspan: sets.count}= compute_site.name
+          %td= virtual_machine.id_at_site
+          %td= virtual_machine.name
+          %td= virtual_machine.state
+          %td= virtual_machine.ip
+          %td= model_collection_to_s virtual_machine.appliances
+          %td{ :style => "text-align: right" }
+            .btn-group
+              = link_to admin_virtual_machine_path(virtual_machine),
+                class: 'btn btn-success btn-xs', title: t('virtual_machines.show') do
+                =fa_icon 'bars'
+              = link_to reboot_admin_virtual_machine_path(virtual_machine), :method => :post,
+                class: 'btn btn-warning btn-xs', title: t('virtual_machines.reboot') do
+                =fa_icon 'refresh'
+              = link_to save_as_template_admin_virtual_machine_path(virtual_machine), :method => :post,
+                class: 'btn btn-success btn-xs', title: t('virtual_machines.save') do
+                =fa_icon 'save'
+              = link_to admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => t('are_you_sure') },
+                class: 'btn btn-danger btn-xs', title: t('virtual_machines.destroy') do
+                =fa_icon 'trash-o'

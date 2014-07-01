@@ -1,8 +1,9 @@
-%h1 Help
+%h1
+  = t('help.title')
 
 .row
   .col-md-3
     %ul.nav
       %li= link_to API, help_api_path
   .col-md-9
-    Help content
+    = t('help.content')

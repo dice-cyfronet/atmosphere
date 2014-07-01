@@ -1,7 +1,16 @@
-%h1 Editing compute_site
+%h1
+  = t('editing')
+  = t('compute_sites.long_title_single')
 
 = render 'form'
 
-= link_to 'Show', admin_compute_site_path(@compute_site)
-\|
-= link_to 'Back', admin_compute_sites_path
+%p
+  .btn-group
+    = link_to admin_compute_site_path(@compute_site),
+      class: 'btn btn-success', title: t('compute_sites.show') do
+      =fa_icon 'bars'
+      = t('show')
+    = link_to admin_compute_sites_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

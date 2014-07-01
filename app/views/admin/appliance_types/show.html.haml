@@ -21,13 +21,17 @@
 
         %ul.nav.nav-tabs#tabs
           %li.active
-            %a{href: '#port-mappings-tab', 'data-toggle' => 'tab'} Port mappings
+            %a{href: '#port-mappings-tab', 'data-toggle' => 'tab'}
+              = t('appliance_types.port_mappings')
           %li
-            %a{href: '#configurations-tab', 'data-toggle' => 'tab'} Configurations
+            %a{href: '#configurations-tab', 'data-toggle' => 'tab'}
+              = t('appliance_types.configurations')
           %li
-            %a{href: '#templates-tab', 'data-toggle' => 'tab'} Templates
+            %a{href: '#templates-tab', 'data-toggle' => 'tab'}
+              = t('appliance_types.templates')
           %li
-            %a{href: '#appliances-tab', 'data-toggle' => 'tab'} Appliances
+            %a{href: '#appliances-tab', 'data-toggle' => 'tab'}
+              = t('appliance_types.appliances')
 
         .tab-content
           #port-mappings-tab.tab-pane.active
