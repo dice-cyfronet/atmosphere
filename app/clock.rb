@@ -45,4 +45,7 @@ module Clockwork
     HttpMappingMonitoringWorker.perform_async(:lost)
   end
 
+  every(5.minutes, 'cleaning mi loging strategy cache') do
+    MiCacheCleanerWorker.perform_async
+  end
 end
