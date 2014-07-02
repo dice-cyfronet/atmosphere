@@ -10,7 +10,7 @@
       %td
         %b
           = t('compute_sites.site')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.site_id
     %tr
       %td
@@ -40,26 +40,44 @@
       %td
         %b
           = t('compute_sites.http_proxy_url')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.http_proxy_url
     %tr
       %td
         %b
           = t('compute_sites.https_proxy_url')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.https_proxy_url
     %tr
       %td
         %b
           = t('compute_sites.configuration')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.config
     %tr
       %td
         %b
           = t('compute_sites.template_filters')
-      %td
+      %td{ :style => "font-family: monospace;" }
         = @compute_site.template_filters
+    %tr
+      %td
+        %b
+          = t('compute_sites.wrangler_url')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.wrangler_url
+    %tr
+      %td
+        %b
+          = t('compute_sites.wrangler_username')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.wrangler_username
+    %tr
+      %td
+        %b
+          = t('compute_sites.wrangler_password')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.wrangler_password
 
 %p
   .btn-group

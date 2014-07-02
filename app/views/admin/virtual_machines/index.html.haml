@@ -24,10 +24,12 @@
         %tr
           - if i==0
             %td{rowspan: sets.count}= compute_site.name
-          %td= virtual_machine.id_at_site
+          %td{ :style => "font-family: monospace;" }
+            = virtual_machine.id_at_site
           %td= virtual_machine.name
           %td= virtual_machine.state
-          %td= virtual_machine.ip
+          %td{ :style => "font-family: monospace;" }
+            = virtual_machine.ip
           %td= model_collection_to_s virtual_machine.appliances
           %td{ :style => "text-align: right" }
             .btn-group

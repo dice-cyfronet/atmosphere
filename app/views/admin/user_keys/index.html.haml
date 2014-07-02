@@ -19,10 +19,11 @@
       %th{ :style => "text-align: right" }
         = t('actions')
 
-    - @user_keys.each do |user_key|
+    - @user_keys.order('user_keys.name').each do |user_key|
       %tr
         %td= user_key.name
-        %td= user_key.fingerprint
+        %td{ :style => "font-family: monospace;" }
+          = user_key.fingerprint
         %td= user_key.user.login
         %td{ :style => "text-align: right" }
           .btn-group
