@@ -7,8 +7,6 @@
       %th
         = t('compute_sites.name')
       %th
-        = t('virtual_machine_templates.site')
-      %th
         = t('virtual_machine_templates.uuid')
       %th
         = t('virtual_machine_templates.name')
@@ -22,8 +20,8 @@
         %tr
           - if i==0
             %td{rowspan: sets.count}= compute_site.name
-          %td= virtual_machine_template.compute_site.site_id
-          %td= virtual_machine_template.id_at_site
+          %td{ :style => "font-family: monospace;" }
+            = virtual_machine_template.id_at_site
           %td= virtual_machine_template.name
           %td= virtual_machine_template.state
           %td{ :style => "text-align: right" }

@@ -73,8 +73,7 @@ module Devise
       end
 
       def cached_user_info(mi_ticket)
-        cached = cache[mi_ticket]
-        cached ? cached : NullCacheEntry.new
+        cache[mi_ticket] || NullCacheEntry.new
       end
 
       def cache
