@@ -30,8 +30,8 @@ class VirtualMachine < ActiveRecord::Base
   has_many :deployments, dependent: :destroy
   validates_presence_of :name
   validates_uniqueness_of :id_at_site, :scope => :compute_site_id
-  enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving']
-  validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)
+  enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving', 'paused']
+  validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving paused)
 
   after_destroy :delete_dnat, if: :ip?
   after_update :regenerate_dnat, if: :ip_changed?
@@ -57,9 +57,23 @@ class VirtualMachine < ActiveRecord::Base
   end
 
   def reboot
-    cloud_client.reboot_server id_at_site
-    self.state = :reboot
-    save
+    cloud_action(:reboot, :reboot)
+  end
+
+  def stop
+    cloud_action(:stop, :shutoff)
+  end
+
+  def pause
+    cloud_action(:pause, :paused)
+  end
+
+  def suspend
+    cloud_action(:suspend, :suspended)
+  end
+
+  def start
+    cloud_action(:start, :active)
   end
 
   def appliance_type
@@ -183,7 +197,25 @@ class VirtualMachine < ActiveRecord::Base
     Air.monitoring_client
   end
 
+  def cloud_action(aciton_name, sucess_state)
+    action_status = cloud_server.send(aciton_name)
+    change_state_on_success(action_status, sucess_state)
+  end
+
+  def cloud_server
+    cloud_client.servers.get(id_at_site)
+  end
+
   def cloud_client
     @cloud_client ||= compute_site.cloud_client
+  end
+
+  def change_state_on_success(success, new_state)
+    if success
+      self.state = new_state
+      save
+    else
+      false
+    end
   end
 end
