@@ -57,4 +57,6 @@ class Settings < Settingslogic
   Settings['url_check'] ||= Settings.new({})
   Settings.url_check['unavail_statuses'] = [502]
 
+  Settings['monitoring'] ||= Settingslogic.new({})
+  Settings.monitoring['query_interval'] ||= 5
 end
