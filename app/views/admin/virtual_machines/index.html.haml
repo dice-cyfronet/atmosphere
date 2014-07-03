@@ -6,7 +6,7 @@
     %tr
       %th
         = t('compute_sites.name')
-      %th
+      %th{ :style => "min-width: 31rem;"}
         = t('virtual_machines.uuid')
       %th
         = t('virtual_machines.name')
@@ -16,7 +16,7 @@
         = t('virtual_machines.ip_address')
       %th
         = t('virtual_machines.appliances')
-      %th{ :style => "text-align: right" }
+      %th{ :style => "text-align: right; min-width: 10rem;" }
         = t('actions')
 
     - @virtual_machines.joins(:compute_site).order('compute_sites.name').order('virtual_machines.name').group_by(&:compute_site).each do |compute_site, sets|

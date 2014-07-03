@@ -16,7 +16,7 @@
         = t('user_keys.fingerprint')
       %th
         = t('user_keys.owner')
-      %th{ :style => "text-align: right" }
+      %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
     - @user_keys.order('user_keys.name').each do |user_key|
