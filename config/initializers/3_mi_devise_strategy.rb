@@ -1,6 +1,7 @@
 require 'devise/strategies/base'
 require 'omniauth-vph'
 require 'sudoable'
+require 'cache_entry'
 
 module Devise
   module Strategies
@@ -60,7 +61,7 @@ module Devise
       def user_info(mi_ticket)
         cached_data = cached_user_info(mi_ticket)
         if cached_data.valid?
-          cached_data.user_info
+          cached_data.value
         else
           load_user_info(mi_ticket)
         end
@@ -68,7 +69,7 @@ module Devise
 
       def load_user_info(mi_ticket)
         user_info = adaptor.user_info(mi_ticket)
-        cache[mi_ticket] = CacheEntry.new(user_info)
+        cache[mi_ticket] = CacheEntry.new(user_info, 5.minutes)
         user_info
       end
 
@@ -78,25 +79,6 @@ module Devise
 
       def cache
         @@cache ||= {}
-      end
-
-      class CacheEntry
-        attr_reader :user_info
-
-        def initialize(user_info)
-          @user_info = user_info
-          @timestamp = Time.now
-        end
-
-        def valid?
-          (Time.now - @timestamp) < 5.minutes
-        end
-      end
-
-      class NullCacheEntry
-        def valid?
-          false
-        end
       end
     end
   end
