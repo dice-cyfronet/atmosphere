@@ -52,7 +52,7 @@ class Settings < Settingslogic
 
   Settings['childhood_age'] ||= 2 # seconds
   Settings['cloud_object_protection_time'] = 300 # seconds
-
+  Settings['cloud_client_cache_time'] = 8 #hours
 
   Settings['url_check'] ||= Settings.new({})
   Settings.url_check['unavail_statuses'] = [502]
