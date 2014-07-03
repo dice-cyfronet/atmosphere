@@ -6,13 +6,13 @@
     %tr
       %th
         = t('compute_sites.name')
-      %th
+      %th{ :style => "min-width: 31rem;"}
         = t('virtual_machine_templates.uuid')
       %th
         = t('virtual_machine_templates.name')
       %th
         = t('virtual_machine_templates.state')
-      %th{ :style => "text-align: right" }
+      %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
     - @virtual_machine_templates.joins(:compute_site).order('compute_sites.name').order('virtual_machine_templates.name').group_by(&:compute_site).each do |compute_site, sets|

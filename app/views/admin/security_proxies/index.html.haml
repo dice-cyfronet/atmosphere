@@ -12,7 +12,7 @@
     %tr
       %th
         = t('security_proxies.name')
-      %th{ :style => "text-align: right" }
+      %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
     - @security_proxies.order('security_proxies.name').each do |security_proxy|
