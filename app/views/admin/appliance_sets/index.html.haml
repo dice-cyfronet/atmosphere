@@ -16,7 +16,7 @@
         = t('appliance_sets.site')
       %th
         = t('appliance_sets.flavor')
-      %th{ :style => "text-align: right" }
+      %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
     - @appliance_sets.joins(:user).order('users.login', priority: :desc).group_by(&:user).each do |user, sets|
