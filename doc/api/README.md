@@ -56,7 +56,7 @@ Return values:
 
 Error response body:
 
-All operations finied with error returns correct error code (described above) and
+All operations finished with error return correct error code (described above) and
 a JSON response body describing the problem in following format:
 
 ```json
@@ -71,8 +71,7 @@ a JSON response body describing the problem in following format:
 ```
 
 `message` and `type` sections are mandatory, `details` section is optional and
-it can contain detail information about the exception. `type` can be one of
-following:
+it can contain detailed information about the exception. `type` can be one of the following:
 
 * `general` - most generic type, in most cases in such case `details` section
 will be empty

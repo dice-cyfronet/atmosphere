@@ -31,6 +31,8 @@ defaults: &defaults
   #at_pdp: DefaultPdp
   #skip_pdp_for_admin: false
 
+  # cloud_client_cache_time: 8 #hours
+
 development:
   <<: *defaults
 
