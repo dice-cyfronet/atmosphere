@@ -41,17 +41,7 @@ module Air
   end
 
   def self.monitoring_client
-    if config['zabbix']
-      if @monitoring_clients['zabbix']
-        @monitoring_clients['zabbix']
-      else
-        client = Monitoring::ZabbixClient.new
-        @monitoring_clients['zabbix'] = client
-        client
-      end
-    else
-      @monitoring_clients['null']
-    end
+    self.zabbix_client || Monitoring::NullClient.new
   end
 
   def self.metrics_store
@@ -72,8 +62,13 @@ module Air
 
   private
 
-  @monitoring_clients = {'null' => Monitoring::NullClient.new}
   @metrics_store_clients = {'null' => Monitoring::NullMetricsStore.new}
+
+  def self.zabbix_client
+    if config['zabbix']
+      self.clients_cache['zabbix'] ||= Monitoring::ZabbixClient.new
+    end
+  end
 
   def self.clients_cache
     @clients_cache ||= {}

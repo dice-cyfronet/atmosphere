@@ -23,4 +23,27 @@ describe Air do
       [ site_id, client ]
     end
   end
+
+  context 'monitoring client' do
+    it 'returns null client when no configuration' do
+      Air.config['zabbix'] = nil
+
+      expect(Air.monitoring_client)
+        .to be_an_instance_of Monitoring::NullClient
+    end
+
+    it 'returns real client when configuration available' do
+      Air.config['zabbix'] = Settingslogic.new({})
+      Air.config.zabbix['url'] = 'https://host'
+      Air.config.zabbix['user'] = 'zabbix_user'
+      Air.config.zabbix['password'] = 'zabbix_pass'
+      Air.config.zabbix['atmo_template_name'] = 'Template OS Linux'
+      Air.config.zabbix['atmo_group_name'] = 'Atmosphere Internal Monitoring'
+      Air.config.zabbix['zabbix_agent_port'] = 10050
+      Air.config.zabbix['query_interval'] = 5
+
+      expect(Air.monitoring_client)
+        .to be_an_instance_of Monitoring::ZabbixClient
+    end
+  end
 end
