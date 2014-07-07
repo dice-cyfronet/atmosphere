@@ -16,4 +16,8 @@ class NullCacheEntry
   def valid?
     false
   end
+
+  def value
+    nil
+  end
 end

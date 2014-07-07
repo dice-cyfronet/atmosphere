@@ -8,9 +8,9 @@ describe Air do
       expect(Air.get_cloud_client(site_id)).to eq client
     end
 
-    it 'returns nil when cachec cloud client is outdated' do
+    it 'returns nil when cached cloud client is outdated' do
       site_id, client = register_cloud_cient
-      allow(Time).to receive(:now).and_return(Time.now + 8.hours)
+      time_travel(8.hours)
 
       expect(Air.get_cloud_client(site_id)).to be_nil
     end
@@ -45,5 +45,41 @@ describe Air do
       expect(Air.monitoring_client)
         .to be_an_instance_of Monitoring::ZabbixClient
     end
+  end
+
+  context 'metrics store' do
+    it 'returns null client when no configuration' do
+      Air.config['influxdb'] = nil
+
+      expect(Air.metrics_store)
+        .to be_an_instance_of Monitoring::NullMetricsStore
+    end
+
+    it 'returns real client when configuration available' do
+      create_influxdb_config!
+
+      expect(Air.metrics_store)
+        .to be_an_instance_of Monitoring::InfluxdbMetricsStore
+    end
+
+    it 'creates new client when client outdated' do
+      create_influxdb_config!
+      client = Air.metrics_store
+      time_travel(1.hour)
+
+      expect(Air.metrics_store).not_to eq client
+    end
+
+    def create_influxdb_config!
+      Air.config['influxdb'] = Settingslogic.new({})
+      Air.config.influxdb['host'] = 'influxdb.host.edu.pl'
+      Air.config.influxdb['username'] = 'influxdbuser'
+      Air.config.influxdb['password'] = 'influxdbpassword'
+      Air.config.influxdb['database'] = 'influxdbdatabase'
+    end
+  end
+
+  def time_travel(interval)
+    allow(Time).to receive(:now).and_return(Time.now + interval)
   end
 end

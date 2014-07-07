@@ -45,24 +45,10 @@ module Air
   end
 
   def self.metrics_store
-    if config['influxdb']
-      if @metrics_store_clients['influxdb'] && @metrics_store_clients['influxdb']['client'] && (Time.now - @metrics_store_clients['influxdb']['timestamp']) < 60.minutes
-        @metrics_store_clients['influxdb']['client']
-      else
-        client = Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
-        @metrics_store_clients['influxdb'] = {}
-        @metrics_store_clients['influxdb']['client'] = client
-        @metrics_store_clients['influxdb']['timestamp'] = Time.now
-        client
-      end
-    else
-      @metrics_store_clients['null']
-    end
+    self.influxdb_client || Monitoring::NullMetricsStore.new
   end
 
   private
-
-  @metrics_store_clients = {'null' => Monitoring::NullMetricsStore.new}
 
   def self.zabbix_client
     if config['zabbix']
@@ -76,5 +62,15 @@ module Air
 
   def self.client_cache_entry(key, null_client_class = NullCacheEntry)
     self.clients_cache[key] || null_client_class.new
+  end
+
+  def self.influxdb_client
+    cached_client = self.client_cache_entry('influxdb')
+    if config['influxdb'] && !cached_client.valid?
+      client = Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
+      cached_client = CacheEntry.new(client, 60.minutes)
+      self.clients_cache['influxdb'] = cached_client
+    end
+    cached_client.value
   end
 end
