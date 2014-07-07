@@ -11,6 +11,7 @@
 #  port_mapping_template_id :integer          not null
 #  created_at               :datetime
 #  updated_at               :datetime
+#  secured                  :boolean          default(FALSE), not null
 #
 
 class Endpoint < ActiveRecord::Base
@@ -35,7 +36,7 @@ class Endpoint < ActiveRecord::Base
 
   scope :appl_endpoints, ->(appl) { joins(port_mapping_template: :http_mappings).where(http_mappings: {appliance_id: appl.id}).uniq }
 
-  scope :visible_to, ->(user) { includes(port_mapping_template: { appliance_type: {}, dev_mode_property_set: { appliance: :appliance_set } }).where("appliance_types.visible_to = 'all' or appliance_types.user_id = :user_id or appliance_sets.user_id = :user_id", { user_id: user.id }).references(:appliance_types, :appliance_sets) }
+  scope :visible_to, ->(user) { EndpointsVisibleToUser.new(self, user).find }
 
 
   # This method is used to produce XML document that is being sent to the Metadata Registry

@@ -1,6 +1,8 @@
 class Api::V1::AppliancesController < Api::ApplicationController
   before_filter :init_appliance, only: :create
   load_and_authorize_resource :appliance
+  before_filter :init_vm_search, only: :index
+
   respond_to :json
 
   def index
@@ -49,7 +51,43 @@ class Api::V1::AppliancesController < Api::ApplicationController
     render json: { endpoints: endpoints }
   end
 
+  def action
+    return reboot if reboot_action?
+    # place for other actions...
+
+    render_json_error('Action not found', status: :bad_request)
+  end
+
   private
+
+  def reboot
+    authorize!(:reboot, @appliance)
+
+    @appliance.virtual_machines.each { |vm| vm.reboot }
+    render json: {}, status: 200
+  end
+
+  def reboot_action?
+    params.has_key? :reboot
+  end
+
+  def filter
+    filter = super
+    if vm_search?
+      vm_ids = to_array(params[:virtual_machine_ids])
+      filter[:deployments] = { virtual_machine_id: vm_ids}
+    end
+
+    filter
+  end
+
+  def vm_search?
+    params['virtual_machine_ids']
+  end
+
+  def init_vm_search
+    @appliances = @appliances.joins(:deployments) if vm_search?
+  end
 
   def update_params
     params.require(:appliance).permit(:name, :description)

@@ -11,7 +11,7 @@
 #  updated_at  :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe UserKey do
 
@@ -22,15 +22,15 @@ describe UserKey do
   end
 
   subject { create(:user_key) }
-  expect_it { to be_valid }
+  it { should be_valid }
   [:name, :public_key, :user].each do |attr|
-    expect_it { to validate_presence_of attr}
+    it { should validate_presence_of attr}
   end
-  expect_it { to validate_uniqueness_of(:name).scoped_to(:user_id) }
+  it { should validate_uniqueness_of(:name).scoped_to(:user_id) }
   it 'should calculate fingerprint' do
     expect(subject.fingerprint).to eql '43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a'
   end
-  expect_it { to belong_to :user }
+  it { should belong_to :user }
 
   it 'should import key to cloud site' do
     subject.name
@@ -49,14 +49,14 @@ describe UserKey do
   # there is no need for equivalent test for amazon because AWS does not raise error when trying to deleting key that was not imported
   it 'should handle key not found error when deleting key from openstack cloud site' do
     cs = create(:openstack_compute_site)
-    cs.cloud_client.stub(:delete_key_pair).and_raise(Fog::Compute::OpenStack::NotFound.new)
+    allow(cs.cloud_client).to receive(:delete_key_pair).and_raise(Fog::Compute::OpenStack::NotFound.new)
     subject.destroy
   end
 
   it 'saving user key with invalid public key should fail' do
     user_key = build(:user_key, public_key: 'so invalid public key!!')
     saved = user_key.save
-    expect(saved).to be_false
+    expect(saved).to be_falsy
     errors = user_key.errors.messages
     expect(errors).to eql({public_key: ["bad type of key (only ssh-rsa is allowed)", "is invalid"]})
   end
@@ -72,13 +72,13 @@ describe UserKey do
       end
 
       it 'throws error' do
-        expect(subject.destroy).to be_false
+        expect(subject.destroy).to be_falsy
       end
     end
 
     context 'when key is not assigned to any VM' do
       it 'it removed' do
-        expect(subject.destroy).to be_true
+        expect(subject.destroy).to be_truthy
       end
     end
   end

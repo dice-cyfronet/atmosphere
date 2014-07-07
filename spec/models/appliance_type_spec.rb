@@ -18,26 +18,26 @@
 #  metadata_global_id :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe ApplianceType do
 
   subject { FactoryGirl.create(:appliance_type) }
 
-  expect_it { to be_valid }
+  it { should be_valid }
 
-  expect_it { to validate_presence_of :name }
-  expect_it { to validate_presence_of :visible_to }
+  it { should validate_presence_of :name }
+  it { should validate_presence_of :visible_to }
 
-  expect_it { to validate_uniqueness_of :name }
+  it { should validate_uniqueness_of :name }
 
-  expect_it { to ensure_inclusion_of(:visible_to).in_array(%w(owner developer all)) }
+  it { should ensure_inclusion_of(:visible_to).in_array(%w(owner developer all)) }
 
-  expect_it { to have_db_index(:name).unique(true) }
+  it { should have_db_index(:name).unique(true) }
 
   [:preference_memory, :preference_disk, :preference_cpu].each do |attribute|
-    expect_it { to validate_numericality_of attribute }
-    expect_it { should_not allow_value(-1).for(attribute) }
+    it { should validate_numericality_of attribute }
+    it { should_not allow_value(-1).for(attribute) }
   end
 
 
@@ -47,12 +47,12 @@ describe ApplianceType do
     expect(subject.scalable).to eql false
   end
 
-  expect_it { to belong_to :security_proxy }
-  expect_it { to belong_to :author }
-  expect_it { to have_many :appliances }
-  expect_it { to have_many(:port_mapping_templates).dependent(:destroy) }
-  expect_it { to have_many(:appliance_configuration_templates).dependent(:destroy) }
-  expect_it { to have_many(:virtual_machine_templates) }
+  it { should belong_to :security_proxy }
+  it { should belong_to :author }
+  it { should have_many :appliances }
+  it { should have_many(:port_mapping_templates).dependent(:destroy) }
+  it { should have_many(:appliance_configuration_templates).dependent(:destroy) }
+  it { should have_many(:virtual_machine_templates) }
 
   context 'has virtual_machine_templates or appliances (aka "is used")' do
     let(:appliance_type) { create(:appliance_type) }
@@ -66,7 +66,7 @@ describe ApplianceType do
     end
 
     it 'has a proper dependencies detection' do
-      expect(appliance_type.has_dependencies?).to be_true
+      expect(appliance_type.has_dependencies?).to be_truthy
     end
 
     it 'is not destroyable without force' do

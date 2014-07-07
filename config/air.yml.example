@@ -23,11 +23,15 @@ defaults: &defaults
     password: 'influxdbpassword'
     database: 'influxdbdatabase'
 
+
+
   #token_authentication_key: private_token
   #mi_authentication_key: mi_ticket
 
   #at_pdp: DefaultPdp
   #skip_pdp_for_admin: false
+
+  # cloud_client_cache_time: 8 #hours
 
 development:
   <<: *defaults

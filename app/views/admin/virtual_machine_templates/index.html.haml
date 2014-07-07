@@ -1,23 +1,37 @@
-%h1 Listing virtual_machine_templates
+%h1
+  = t('virtual_machine_templates.long_title')
 
-%table
-  %tr
-    %th Site
-    %th Id at site
-    %th Name
-    %th State
-    %th
-    %th
-    %th
-
-  - @virtual_machine_templates.each do |virtual_machine_template|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= virtual_machine_template.compute_site.site_id
-      %td= virtual_machine_template.id_at_site
-      %td= virtual_machine_template.name
-      %td= virtual_machine_template.state
-      %td= link_to 'Show', admin_virtual_machine_template_path(virtual_machine_template)
-      %td= link_to 'Edit', edit_admin_virtual_machine_template_path(virtual_machine_template)
-      %td= link_to 'Destroy', admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th
+        = t('compute_sites.name')
+      %th{ :style => "min-width: 31rem;"}
+        = t('virtual_machine_templates.uuid')
+      %th
+        = t('virtual_machine_templates.name')
+      %th
+        = t('virtual_machine_templates.state')
+      %th{ :style => "text-align: right; min-width: 8rem;" }
+        = t('actions')
 
-%br
+    - @virtual_machine_templates.joins(:compute_site).order('compute_sites.name').order('virtual_machine_templates.name').group_by(&:compute_site).each do |compute_site, sets|
+      - sets.each_with_index do |virtual_machine_template, i|
+        %tr
+          - if i==0
+            %td{rowspan: sets.count}= compute_site.name
+          %td{ :style => "font-family: monospace;" }
+            = virtual_machine_template.id_at_site
+          %td= virtual_machine_template.name
+          %td= virtual_machine_template.state
+          %td{ :style => "text-align: right" }
+            .btn-group
+              = link_to admin_virtual_machine_template_path(virtual_machine_template),
+                class: 'btn btn-success btn-xs', title: t('virtual_machine_templates.show') do
+                =fa_icon 'bars'
+              = link_to edit_admin_virtual_machine_template_path(virtual_machine_template),
+                class: 'btn btn-warning btn-xs', title: t('virtual_machine_templates.edit') do
+                =fa_icon 'edit'
+              = link_to admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => t('are_you_sure') },
+                class: 'btn btn-danger btn-xs', title: t('virtual_machine_templates.remove') do
+                =fa_icon 'trash-o'

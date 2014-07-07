@@ -1,33 +1,91 @@
 %p#notice= notice
 
-%p
-  %b Site:
-  = @compute_site.site_id
-%p
-  %b Name:
-  = @compute_site.name
-%p
-  %b Location:
-  = @compute_site.location
-%p
-  %b Site type:
-  = @compute_site.site_type
-%p
-  %b Technology:
-  = @compute_site.technology
-%p
-  %b Http proxy url:
-  = @compute_site.http_proxy_url
-%p
-  %b Https proxy url:
-  = @compute_site.https_proxy_url
-%p
-  %b Configuration:
-  = @compute_site.config
-%p
-  %b Template filters:
-  = @compute_site.template_filters
+%h1
+  = t('show')
+  = t('compute_sites.long_title_single')
 
-= link_to 'Edit', edit_admin_compute_site_path(@compute_site)
-\|
-= link_to 'Back', admin_compute_sites_path
+%p
+  %table.table.table-hover.table-condensed
+    %tr
+      %td
+        %b
+          = t('compute_sites.site')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.site_id
+    %tr
+      %td
+        %b
+          = t('compute_sites.name')
+      %td
+        = @compute_site.name
+    %tr
+      %td
+        %b
+          = t('compute_sites.location')
+      %td
+        = @compute_site.location
+    %tr
+      %td
+        %b
+          = t('compute_sites.site_type')
+      %td
+        = @compute_site.site_type
+    %tr
+      %td
+        %b
+          = t('compute_sites.technology')
+      %td
+        = @compute_site.technology
+    %tr
+      %td
+        %b
+          = t('compute_sites.http_proxy_url')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.http_proxy_url
+    %tr
+      %td
+        %b
+          = t('compute_sites.https_proxy_url')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.https_proxy_url
+    %tr
+      %td
+        %b
+          = t('compute_sites.configuration')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.config
+    %tr
+      %td
+        %b
+          = t('compute_sites.template_filters')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.template_filters
+    %tr
+      %td
+        %b
+          = t('compute_sites.wrangler_url')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.wrangler_url
+    %tr
+      %td
+        %b
+          = t('compute_sites.wrangler_username')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.wrangler_username
+    %tr
+      %td
+        %b
+          = t('compute_sites.wrangler_password')
+      %td{ :style => "font-family: monospace;" }
+        = @compute_site.wrangler_password
+
+%p
+  .btn-group
+    = link_to edit_admin_compute_site_path(@compute_site),
+      class: 'btn btn-warning', title: t('edit') do
+      =fa_icon 'bars'
+      = t('edit')
+    = link_to admin_compute_sites_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

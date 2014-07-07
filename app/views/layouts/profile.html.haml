@@ -16,9 +16,11 @@
             %small= current_user.email
             %p
             - if current_user.has_role? :admin
-              %span.label.label-danger Admin
+              %span.label.label-danger
+                = t('admin')
             - if current_user.has_role? :developer
-              %span.label.label-info Developer
+              %span.label.label-info
+                = t('developer')
 
           %hr
         .col-md-10

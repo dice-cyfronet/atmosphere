@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Proxy::ComputeSiteUrlUpdater do
   let(:finder) { double('http_mapping_finder') }

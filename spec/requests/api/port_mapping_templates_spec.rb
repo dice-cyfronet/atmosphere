@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::PortMappingTemplatesController do
   include ApiHelpers
@@ -41,9 +41,12 @@ describe Api::V1::PortMappingTemplatesController do
     end
 
     context 'when authenticated as owner' do
-      it 'returns 200 Success' do
+      it 'returns 200 Success for AT owner' do
         get api("/port_mapping_templates?appliance_type_id=#{at1.id}", user)
         expect(response.status).to eq 200
+      end
+
+      it 'returns 200 Success for dev mode prop set owner' do
         get api("/port_mapping_templates?dev_mode_property_set_id=#{appl1.dev_mode_property_set.id}", developer)
         expect(response.status).to eq 200
       end
@@ -192,9 +195,12 @@ describe Api::V1::PortMappingTemplatesController do
     end
 
     context 'when authenticated as owner' do
-      it 'returns 201 Created on success' do
+      it 'return 201 when PMT added to AT' do
         post api("/port_mapping_templates", user), new_port_mapping_template_request
         expect(response.status).to eq 201
+      end
+
+      it 'return 201 when PMT added to dev mode prop set' do
         post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
         expect(response.status).to eq 201
       end

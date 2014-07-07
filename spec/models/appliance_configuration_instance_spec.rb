@@ -9,11 +9,11 @@
 #  updated_at                          :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe ApplianceConfigurationInstance do
-  expect_it { to have_many(:appliances) }
-  expect_it { to belong_to(:appliance_configuration_template) }
+  it { should have_many(:appliances) }
+  it { should belong_to(:appliance_configuration_template) }
 
   context '::get' do
     let(:act) { create(:appliance_configuration_template, payload: 'a #{param}') }
@@ -22,7 +22,7 @@ describe ApplianceConfigurationInstance do
       it 'creates new appliance configuration instance' do
         instance = ApplianceConfigurationInstance.get(act, {'param' => 'a' })
 
-        expect(instance.new_record?).to be_true
+        expect(instance.new_record?).to be_truthy
       end
     end
 
@@ -34,7 +34,7 @@ describe ApplianceConfigurationInstance do
       it 'reuses existing instance' do
         instance = ApplianceConfigurationInstance.get(act, {'param' => 'a' })
 
-        expect(instance.new_record?).to be_false
+        expect(instance.new_record?).to be_falsy
       end
     end
   end

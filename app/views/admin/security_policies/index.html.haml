@@ -1,17 +1,28 @@
-%h1 Security policies
+%h1
+  = t('security_policies.long_title')
 
-%table
-  %tr
-    %th
-    %th
-    %th
+%p
+  = link_to new_admin_security_policy_path,
+    class: 'btn btn-success btn-xs', title: t('security_policies.new') do
+    =fa_icon 'plus'
+    = t('add_new')
 
-  - @security_policies.each do |security_policy|
+%p
+  %table.table.table-hover.table-condensed
     %tr
-      %td= security_policy.name
-      %td= link_to 'Edit', edit_admin_security_policy_path(security_policy)
-      %td= link_to 'Destroy', [:admin, security_policy], :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %th
+        = t('security_policies.name')
+      %th{ :style => "text-align: right; min-width: 8rem;" }
+        = t('actions')
 
-%br
-
-= link_to 'New Security Policy', new_admin_security_policy_path
+    - @security_policies.order('security_policies.name').each do |security_policy|
+      %tr
+        %td= security_policy.name
+        %td{ :style => "text-align: right" }
+          .btn-group
+            = link_to edit_admin_security_policy_path(security_policy),
+              class: 'btn btn-warning btn-xs', title: t('security_policies.edit') do
+              =fa_icon 'edit'
+            = link_to [:admin, security_policy], :method => :delete, :data => { :confirm => t('are_you_sure') },
+              class: 'btn btn-danger btn-xs', title: t('security_policies.remove') do
+              =fa_icon 'trash-o'

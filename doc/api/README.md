@@ -53,3 +53,55 @@ Return values:
 * `409 Conflict` - A conflicting resource already exists, e.g. creating a appliance type with a name that already exists
 * `422 Unprocessable Entity` - A required attribute of the API request is missing or in wrong format, e.g. the name of an appliance type is not given
 * `500 Server Error` - While handling the request something went wrong on the server side
+
+Error response body:
+
+All operations finished with error return correct error code (described above) and
+a JSON response body describing the problem in following format:
+
+```json
+{
+  "message": "error message",
+  "type": "error_type",
+  "details": {
+    "key1": "value1",
+    'key2': 'value2'
+  }
+}
+```
+
+`message` and `type` sections are mandatory, `details` section is optional and
+it can contain detailed information about the exception. `type` can be one of the following:
+
+* `general` - most generic type, in most cases in such case `details` section
+will be empty
+* `record_invalid` - added when resource creation/update failed. In this case
+inside `details` section detailed validation errors are presented.
+
+```json
+{
+  "message": "Object is invalid",
+  "type": "record_invalid",
+  "details": {
+    "public_key": "can't be blank"
+  }
+}
+```
+
+* `conflict` - returned when conflict occurs, e.g. user is trying to add
+duplicated user key
+* `not_found` - returned when resource is not found.
+
+## Sudo
+
+If you are an admin of the system, than you are able to sudo as other user. To do so simply add `sudo=other_user_name` query params or `HTTP-SUDO` header into request. E.g.:
+
+```
+GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
+GET http://example.com/api/v1/appliance_sets?mi_ticket=fd342hac4a=&sudo=other_user
+```
+
+```
+curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "HTTP-SUDO: other_user" http://example.com/api/v1/appliance_sets
+curl --header "MI-TICKET: fd342hac4a=" --header "HTTP-SUDO: other_user" http://example.com/api/v1/appliance_sets
+```

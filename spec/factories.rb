@@ -258,7 +258,7 @@ FactoryGirl.define do
     factory :active_vm, traits: [:active_vm]
   end
 
-  factory :virtual_machine_flavor do
+  factory :virtual_machine_flavor, aliases: [:flavor] do
     flavor_name { FactoryGirl.generate(:vm_flavor_name) }
     cpu { rand(max=16) + 1 }
     memory { rand(max=16384) + 1 }

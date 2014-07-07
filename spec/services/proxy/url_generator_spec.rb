@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Proxy::UrlGenerator do
   describe '#url_for' do

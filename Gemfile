@@ -1,10 +1,9 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.5'
+gem 'rails', '4.1.4'
 
 # Supported DBs
-gem 'mysql2', group: :mysql
 gem 'pg', group: :postgres
 
 # ... and provide means for referential integrity ...
@@ -13,7 +12,7 @@ gem 'foreigner'
 gem 'enumerize'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.2'
+gem 'sass-rails', '~> 4.0.3'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -55,7 +54,7 @@ gem 'omniauth-vph', '~>1.0'
 gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
 gem 'haml-rails'
-gem 'bootstrap-sass', '~>3.1'
+gem 'bootstrap-sass', '~>3.2'
 
 gem 'font-awesome-rails'
 
@@ -92,7 +91,7 @@ group :doc do
 end
 
 group :development do
-  gem 'annotate', github: 'ctran/annotate_models'
+  gem 'annotate'
   gem 'quiet_assets'
   gem 'letter_opener'
   # gem 'rack-mini-profiler'
@@ -117,7 +116,8 @@ end
 
 group :test do
   gem 'rspec-rails'
-  gem 'rspec-sidekiq'
+  # gem 'rspec-sidekiq'
+  gem 'rspec-sidekiq', github: 'yelled3/rspec-sidekiq', branch: 'rspec3-beta'
   gem 'shoulda-matchers'
 
   gem 'factory_girl'
@@ -138,3 +138,5 @@ gem 'puma'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
+gem 'newrelic_rpm'

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Cloud::VmCreator do
   let(:default_flavor) { build(:virtual_machine_flavor, id_at_site: 'def_f_id') }
@@ -93,31 +93,6 @@ describe Cloud::VmCreator do
       cs.technology = 'aws'
 
       allow(servers_cloud_client).to receive(:create).and_return(server)
-      allow(cloud_client).to receive(:create_tags)
-    end
-
-    it 'creates VM with default name' do
-      expect(cloud_client).to receive(:create_tags).with(server_id, {'Name' => vmt.name})
-
-      Cloud::VmCreator.new(vmt).spawn_vm!
-    end
-
-    it 'creates VM with custom name' do
-      expect(cloud_client).to receive(:create_tags).
-        with(server_id, {'Name' => 'custom name'})
-
-      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
-    end
-
-    it 'handles tag creation errors' do
-      expect(cloud_client).to receive(:create_tags).and_raise(Fog::Compute::AWS::NotFound.new "The instance ID 'i-d657af95' does not exist")
-      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
-    end
-
-    it 'reports tag creation error' do
-      expect(Raven).to receive(:capture_exception)
-      expect(cloud_client).to receive(:create_tags).and_raise(Fog::Compute::AWS::NotFound.new "The instance ID 'i-d657af95' does not exist")
-      Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
     end
 
     it 'creates VM in "mniec_permit_all" secrutiry group' do

@@ -18,6 +18,7 @@ module Api
         filter = super
         appliance_id = params[:appliance_id]
         filter[:appliances] = {id: appliance_id} unless appliance_id.blank?
+        filter[:virtual_machine_flavor_id] = params[:flavor_id] if params[:flavor_id]
 
         filter
       end

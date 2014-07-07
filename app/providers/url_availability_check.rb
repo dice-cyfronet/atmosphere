@@ -9,7 +9,7 @@ class UrlAvailabilityCheck
       end
       Rails.logger.debug { "Status for url #{url} is #{response.status}" }
 
-      ![502, 404].include?(response.status)
+      !Air.config.url_check.unavail_statuses.include?(response.status)
   rescue
     Rails.logger.debug { "Status for url #{url} cannot be checked" }
     false

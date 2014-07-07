@@ -29,6 +29,10 @@ class Fog::Compute::OpenStack::Real
       raise "Failed to save vm #{instance_id} as template"
     end
   end
+
+  def create_tags_for_vm(server_id, tags_map)
+    set_metadata('servers', server_id, tags_map)
+  end
 end
 
 class Fog::Compute::OpenStack::Flavor
@@ -60,6 +64,9 @@ class Fog::Compute::AWS::Real
   end
   def reboot_server(server_id)
     reboot_instances([server_id])
+  end
+  def create_tags_for_vm(server_id, tags_map)
+    create_tags(server_id, tags_map)
   end
 end
 

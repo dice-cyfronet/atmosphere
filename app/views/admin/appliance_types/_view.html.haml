@@ -5,47 +5,52 @@
     = @appliance_type.author_name
 
   .pull-right
-    = link_to edit_admin_appliance_type_path(@appliance_type), class: 'btn btn-success btn-xs', title: 'Edit' do
+    = link_to edit_admin_appliance_type_path(@appliance_type), class: 'btn btn-success btn-xs', title: t('edit') do
       = fa_icon 'edit'
-      Edit
+      = t('edit')
     %span.btn.btn-danger.btn-xs.appliance-type-delete(title='Delete')
       = fa_icon 'trash-o'
-      Delete
+      = t('delete')
 
     .btn-group.hidden.appliance-type-delete-section
 
       = link_to admin_appliance_type_path(@appliance_type), method: :delete, class: 'btn btn-danger btn-xs', title: 'Yes, delete it.' do
         = fa_icon 'trash-o'
-        Yes
+        = t('yes')
 
       %span.btn.btn-default.btn-xs.appliance-type-delete-no(title='No, better not.')
-        No
+        = ('no')
 
   %h5
     - if @appliance_type.visible_to == 'owner'
-      %span.label.label-primary Only for owner
+      %span.label.label-primary
+        = t('appliance_types.only_for_owner')
     - elsif @appliance_type.visible_to == 'developer'
-      %span.label.label-warning Only for developers
+      %span.label.label-warning
+        = t('appliance_types.only_for_developers')
     - else
-      %span.label.label-success For all
+      %span.label.label-success
+        = t('appliance_types.for_all')
     - if @appliance_type.shared
-      %span.label.label-info Shared
+      %span.label.label-info
+        = t('appliance_types.shared')
     - if @appliance_type.scalable
-      %span.label.label-info Scalable
+      %span.label.label-info
+        = t('appliance_types.scalable')
     - if @appliance_type.preference_cpu
       %span.label.label-primary.dynamic-label
-        CPU
+        = t('appliance_types.cpu')
         = @appliance_type.preference_cpu
     - if @appliance_type.preference_memory
       %span.label.label-primary.dynamic-label
-        Memory
+        = t('appliance_types.memory')
         = @appliance_type.preference_memory
-        MB
+        = t('size.MB')
     - if @appliance_type.preference_disk
       %span.label.label-primary.dynamic-label
-        Data
+        = t('appliance_types.data')
         = @appliance_type.preference_disk
-        GB
+        = t('size.GB')
 
 %hr
 .description

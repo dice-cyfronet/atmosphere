@@ -12,9 +12,10 @@
 #  appliance_type_id     :integer
 #  created_at            :datetime
 #  updated_at            :datetime
+#  architecture          :string(255)      default("x86_64")
 #
 
-require 'spec_helper'
+require 'rails_helper'
 require 'securerandom'
 require Rails.root.join("spec/shared_examples/childhoodable.rb")
 
@@ -24,7 +25,7 @@ describe VirtualMachineTemplate do
     Fog.mock!
   end
 
-  expect_it { to ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
+  it { should ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
 
   context 'name sanitization' do
     it 'appends underscores to name that is too short' do
@@ -58,8 +59,8 @@ describe VirtualMachineTemplate do
     let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
     before do
-      Air.stub(:get_cloud_client).and_return(cc_mock)
-      cc_mock.stub(:servers).and_return(servers_mock)
+      allow(Air).to receive(:get_cloud_client).and_return(cc_mock)
+      allow(cc_mock).to receive(:servers).and_return(servers_mock)
     end
 
     context 'active' do
@@ -164,11 +165,12 @@ describe VirtualMachineTemplate do
     let(:cloud_client) { double(:cloud_client, images: images) }
 
     before do
-      ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
+      allow(cs).to receive(:cloud_client).and_return(cloud_client)
     end
 
     context 'when template is managed by atmosphere' do
-      let(:tmp) { build(:virtual_machine_template, managed_by_atmosphere: true) }
+      let(:cs) { build(:compute_site) }
+      let(:tmp) { build(:virtual_machine_template, managed_by_atmosphere: true, compute_site: cs) }
 
       it 'removes template from compute site' do
         expect(images).to receive(:destroy).with(tmp.id_at_site)
@@ -177,7 +179,8 @@ describe VirtualMachineTemplate do
     end
 
     context 'when template is not managed by atmosphere' do
-      let(:external_tmp) { build(:virtual_machine_template) }
+      let(:cs) { build(:compute_site) }
+      let(:external_tmp) { build(:virtual_machine_template, compute_site: cs) }
 
       it 'removes template from compute site' do
         expect(images).to_not receive(:destroy)
@@ -189,8 +192,9 @@ describe VirtualMachineTemplate do
     end
 
     context 'when tpl is in saving state' do
+      let(:cs) { create(:compute_site) }
       let(:vm) { create(:virtual_machine) }
-      let!(:tpl_in_saving_state) { create(:virtual_machine_template, source_vm: vm, state: :saving) }
+      let!(:tpl_in_saving_state) { create(:virtual_machine_template, source_vm: vm, state: :saving, compute_site: cs) }
 
       context 'and source VM is assigned to appliance' do
         before { create(:appliance, virtual_machines: [vm]) }
@@ -213,19 +217,20 @@ describe VirtualMachineTemplate do
   end
 
   describe '::create_from_vm' do
+    let(:cs) { create(:compute_site) }
     let(:cloud_client) { double(:cloud_client) }
-    let(:vm) { create(:virtual_machine, id_at_site: 'id') }
-    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id') }
+    let(:vm) { create(:virtual_machine, id_at_site: 'id', compute_site: cs) }
+    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id2', compute_site: cs) }
 
     before do
       allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))
-      ComputeSite.any_instance.stub(:cloud_client).and_return(cloud_client)
+      allow(cs).to receive(:cloud_client).and_return(cloud_client)
     end
 
     it 'sets managed_by_atmosphere to true' do
       tmpl = VirtualMachineTemplate.create_from_vm(vm)
 
-      expect(tmpl.managed_by_atmosphere).to be_true
+      expect(tmpl.managed_by_atmosphere).to be_truthy
     end
 
     it 'sets VM state to "saving"' do

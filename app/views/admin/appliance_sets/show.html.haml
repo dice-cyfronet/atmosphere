@@ -1,6 +1,16 @@
 %p#notice= notice
 
+%h1
+  = t('show')
+  = t('appliance_sets.long_title_single')
 
-= link_to 'Edit', edit_admin_appliance_set_path(@appliance_set)
-\|
-= link_to 'Back', admin_appliance_sets_path
+%p
+  .btn-group
+    = link_to edit_admin_appliance_set_path(@appliance_set),
+      class: 'btn btn-warning', title: t('appliance_sets.edit') do
+      =fa_icon 'edit'
+      = t('edit')
+    = link_to admin_appliance_sets_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

@@ -1,16 +1,35 @@
 %p#notice= notice
 
 %p
-  %b Id at site:
-  = @virtual_machine.id_at_site
-%p
-  %b Name:
-  = @virtual_machine.name
-%p
-  %b State:
-  = @virtual_machine.state
-%p
-  %b Ip:
-  = @virtual_machine.ip
+  %table.table.table-hover.table-condensed
+    %tr
+      %td
+        %b
+          = t('uuid')
+      %td{ :style => "font-family: monospace;" }
+        = @virtual_machine.id_at_site
+    %tr
+      %td
+        %b
+          = t('virtual_machines.name')
+      %td
+        = @virtual_machine.name
+    %tr
+      %td
+        %b
+          = t('virtual_machines.state')
+      %td
+        = @virtual_machine.state
+    %tr
+      %td
+        %b
+          = t('virtual_machines.ip_address')
+      %td{ :style => "font-family: monospace;" }
+        = @virtual_machine.ip
 
-= link_to 'Back', admin_virtual_machines_path
+%p
+  .btn-group
+    = link_to admin_virtual_machines_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

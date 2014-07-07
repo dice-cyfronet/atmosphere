@@ -1,4 +1,7 @@
+-# FIXME(any) use this or remove?
+
 =# simple_form_for([:admin, @appliance_type], remote: true, role: 'form', data: {target: '#appliance_type'}) do |f|
+
 = simple_form_for([:admin, @appliance_type], role: 'form') do |f|
   = f.error_notification
 
@@ -32,6 +35,9 @@
         .input-group
           = f.input_field :preference_disk
           %span.input-group-addon GB
+
+  -# FIXME(any) use this or remove?
+
   -#
   -#.actions
   -#  = f.button :submit

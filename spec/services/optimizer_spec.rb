@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Optimizer do
   include VmtOnCsHelpers
@@ -143,7 +143,7 @@ describe Optimizer do
           let(:config_inst) { create(:appliance_configuration_instance) }
 
           before do
-            Air.config.optimizer.stub(:max_appl_no).and_return 1
+            allow(Air.config.optimizer).to receive(:max_appl_no).and_return 1
           end
 
           it 'instantiates a new vm if already running vm cannot accept more load' do
@@ -158,7 +158,7 @@ describe Optimizer do
             expect(appl2.virtual_machines.size).to eql 1
             vm1 = appl1.virtual_machines.first
             vm2 = appl2.virtual_machines.first
-            expect(vm1 == vm2).to be_false
+            expect(vm1 == vm2).to be_falsy
           end
         end
       end
@@ -227,7 +227,7 @@ describe Optimizer do
           expect(appl2.virtual_machines.size).to eql 1
           vm1 = appl1.virtual_machines.first
           vm2 = appl2.virtual_machines.first
-          expect(vm1 == vm2).to be_false
+          expect(vm1 == vm2).to be_falsy
         end
       end
 
@@ -244,7 +244,7 @@ describe Optimizer do
 
     context 'when one of compute site with VMTs is turned off' do
       it 'failed when all VMTs are on inactive compute site' do
-       _, inactive_vmt = vmt_on_site(cs_active: false)
+        _, inactive_vmt = vmt_on_site(cs_active: false)
         at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
 
         appl = create(:appliance, appliance_set: wf, appliance_type: at)
@@ -273,6 +273,40 @@ describe Optimizer do
         expect(selected_vmt).to eql active_vmt
       end
     end
+
+    context 'when one of the flavor is turned off' do
+      it 'failed when there is not active flavor' do
+        cs, vmt = vmt_on_site(cs_active: true)
+        inactive_flavor = create(:flavor, active: false, compute_site: cs)
+        at = create(:appliance_type, virtual_machine_templates: [vmt])
+
+        appl = create(:appliance, appliance_set: wf,
+          appliance_type: at, compute_sites: [cs])
+
+        expect(appl.state).to eql 'unsatisfied'
+        expect(appl.state_explanation).to start_with 'No matching flavor'
+      end
+
+      it 'chooses VMT with active flavor' do
+        cs, vmt = vmt_on_site(cs_active: true)
+        inactive_flavor = create(:flavor, active: false, compute_site: cs)
+        active_flavor = create(:flavor,
+            active: true,
+            compute_site: cs,
+            id_at_site: '123'
+          )
+        at = create(:appliance_type, virtual_machine_templates: [vmt])
+        allow(BillingService).to receive(:can_afford_flavor?)
+          .with(anything, active_flavor).and_return(true)
+
+        appl = create(:appliance, appliance_set: wf,
+          appliance_type: at, compute_sites: [cs])
+
+        expect(appl.state).to eql 'satisfied'
+        expect(appl.virtual_machines
+          .first.virtual_machine_flavor).to eq active_flavor
+      end
+    end
   end
 
   context 'virtual machine is applianceless' do
@@ -281,15 +315,15 @@ describe Optimizer do
 
     before do
       servers_double = double
-      vm.compute_site.cloud_client.stub(:servers).and_return(servers_double)
+      allow(vm.compute_site.cloud_client)
+        .to receive(:servers).and_return(servers_double)
       allow(servers_double).to receive(:destroy)
     end
 
     it 'terminates unused manageable vm' do
       subject.run(destroyed_appliance: true)
 
-      expect(VirtualMachine.count).to eq 1
-      expect(VirtualMachine.first).to eq external_vm
+      expect(Cloud::VmDestroyWorker).to have_enqueued_job(vm.id)
     end
   end
 
@@ -326,7 +360,7 @@ describe Optimizer do
 
     let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
     it 'includes flavor in params of created vm' do
-      VirtualMachine.stub(:create)
+      allow(VirtualMachine).to receive(:create)
       allow(ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
       expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|

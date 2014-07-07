@@ -1,5 +1,12 @@
-%h1 New compute_site
+%h1
+  = t('new')
+  = t('compute_sites.long_title_single')
 
 = render 'form'
 
-= link_to 'Back', admin_compute_sites_path
+%p
+  .btn-group
+    = link_to admin_compute_sites_path,
+      class: 'btn btn-default', title: t('back') do
+      =fa_icon 'reply'
+      = t('back')

@@ -10,26 +10,27 @@
 #  created_at               :datetime
 #  updated_at               :datetime
 #  compute_site_id          :integer          not null
+#  monitoring_status        :string(255)      default("pending")
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe HttpMapping do
-  expect_it { to validate_presence_of :url }
-  expect_it { to validate_presence_of :application_protocol }
+  it { should validate_presence_of :url }
+  it { should validate_presence_of :application_protocol }
 
-  expect_it { to ensure_inclusion_of(:application_protocol).in_array(%w(http https)) }
+  it { should ensure_inclusion_of(:application_protocol).in_array(%w(http https)) }
 
   it 'should set proper default values' do
     expect(subject.application_protocol).to eql 'http'
     expect(subject.url).to eql ''
   end
 
-  expect_it { to belong_to :appliance }
-  expect_it { to validate_presence_of :appliance }
+  it { should belong_to :appliance }
+  it { should validate_presence_of :appliance }
 
-  expect_it { to belong_to :port_mapping_template }
-  expect_it { to validate_presence_of :port_mapping_template }
+  it { should belong_to :port_mapping_template }
+  it { should validate_presence_of :port_mapping_template }
 
   describe 'redirus worker jobs' do
     subject { build(:http_mapping) }
@@ -53,7 +54,7 @@ describe HttpMapping do
       it 'does not add redirection when no workers' do
         subject.update_proxy
 
-        expect(Redirus::Worker::AddProxy).to have(0).jobs
+        expect(Redirus::Worker::AddProxy).to_not have_enqueued_job
       end
 
       it 'adds http redirection into redirus' do

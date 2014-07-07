@@ -1,5 +1,7 @@
 require 'devise/strategies/base'
 require 'omniauth-vph'
+require 'sudoable'
+require 'cache_entry'
 
 module Devise
   module Strategies
@@ -8,7 +10,9 @@ module Devise
     # do is to pass the params in the URL:
     #
     #   http://myapp.example.com/?mi_ticket=MI_TOKEN
+    #   http://myapp.example.com Header: MI_TOKEN: MI_TOKEN
     class MiTokenAuthenticatable < Authenticatable
+      include Sudoable
 
       def valid?
         super || mi_ticket
@@ -17,19 +21,26 @@ module Devise
       def authenticate!
         return fail(:invalid_ticket) unless mi_ticket
         begin
-          mi_user_info = adaptor.user_info mi_ticket
+          mi_user_info = user_info(mi_ticket)
           return fail!(:invalid_credentials) if !mi_user_info
 
           auth = adaptor.map_user(mi_user_info)
           return fail(:invalid_mi_ticket) unless auth
 
-          resource = mapping.to.vph_find_or_create(::OmniAuth::AuthHash.new({info: auth}))
+          resource = mapping.to.vph_find_or_create(
+              ::OmniAuth::AuthHash.new({info: auth}))
+          resource = sudo!(resource, sudo_as) if sudo_as
+
           return fail(:invalid_mi_ticket) unless resource
           resource.mi_ticket = mi_ticket
           success!(resource)
         rescue Exception => e
           return fail(:master_interface_error)
         end
+      end
+
+      def self.clean_cache!
+        @cache && @cache.select! { |_, v| v.valid? }
       end
 
       private
@@ -43,7 +54,31 @@ module Devise
       end
 
       def mi_ticket
-        params[Air.config.mi_authentication_key] || request.headers[Air.config.header_mi_authentication_key]
+        params[Air.config.mi_authentication_key] ||
+          request.headers[Air.config.header_mi_authentication_key]
+      end
+
+      def user_info(mi_ticket)
+        cached_data = cached_user_info(mi_ticket)
+        if cached_data.valid?
+          cached_data.value
+        else
+          load_user_info(mi_ticket)
+        end
+      end
+
+      def load_user_info(mi_ticket)
+        user_info = adaptor.user_info(mi_ticket)
+        cache[mi_ticket] = CacheEntry.new(user_info, 5.minutes)
+        user_info
+      end
+
+      def cached_user_info(mi_ticket)
+        cache[mi_ticket] || NullCacheEntry.new
+      end
+
+      def cache
+        @@cache ||= {}
       end
     end
   end

@@ -7,11 +7,12 @@
 
         .edit
           %h4
-            Create new Appliance Type
+            = t('create')
+            = t('appliance_types.long_title_single')
             .pull-right
               %button.btn.btn-success.btn-xs{title: 'Create', id: 'save-appliance-type'}
                 =fa_icon 'save'
-                Save
+                = t('save')
               :javascript
                 $(function() {
                   $('#save-appliance-type').on('click', function() {
@@ -20,9 +21,11 @@
                 });
 
               = link_to admin_appliance_types_path, class: 'btn btn-default btn-xs', title: 'Cancel' do
-                Cancel
+                = t('cancel')
           %hr
           = render 'admin/appliance_types/edit'
+
+        -# FIXME(any) use this or remove?
 
         -#%ul.nav.nav-tabs#tabs
         -#  %li.active

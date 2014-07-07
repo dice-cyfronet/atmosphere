@@ -18,35 +18,35 @@ describe MiResourceAccess do
       stubs.get(url) { [200, {}, 'true'] }
       has_role = subject.has_role?(1, :reader)
 
-      expect(has_role).to be_true
+      expect(has_role).to be_truthy
     end
 
     it 'does not have a role' do
       stubs.get(url) { [200, {}, 'false'] }
       has_role = subject.has_role?(1, :reader)
 
-      expect(has_role).to be_false
+      expect(has_role).to be_falsy
     end
 
     it 'does not have a role when invalid ticket' do
       stubs.get(url) { [401, {}, 'true'] }
       has_role = subject.has_role?(1, :reader)
 
-      expect(has_role).to be_false
+      expect(has_role).to be_falsy
     end
 
     it 'does not have a role when resource not registered in mi' do
       stubs.get(url) { [404, {}, 'true'] }
       has_role = subject.has_role?(1, :reader)
 
-      expect(has_role).to be_false
+      expect(has_role).to be_falsy
     end
 
     it 'does not have a role when internal master interface error' do
       stubs.get(url) { [500, {}, 'true'] }
       has_role = subject.has_role?(1, :reader)
 
-      expect(has_role).to be_false
+      expect(has_role).to be_falsy
     end
   end
 

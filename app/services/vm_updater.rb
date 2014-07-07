@@ -22,16 +22,25 @@ class VmUpdater
       map_state(server.state.downcase.to_sym)
     vm.virtual_machine_flavor = vm_flavor
     update_ips if update_ips?
+    vm.updated_at_site = updated_at
 
     # we need to check state before vm is saved
     # to get previous state
     furhter_update_requred = furhter_update_requred?
 
     if vm.save
-     update_affected_appliances if furhter_update_requred
+      update_affected_appliances if furhter_update_requred
     else
       error
     end
+  end
+
+  def changed?
+    !vm.updated_at_site || !updated_at || vm.updated_at_site < updated_at
+  end
+
+  def updated_at
+    @updated_at ||= server.respond_to?(:updated) && server.updated
   end
 
   def old_enough?
@@ -65,7 +74,8 @@ class VmUpdater
   end
 
   def map_saving_state(vm, key)
-    (:saving if vm.saved_templates.count > 0) || ({image_snapshot: :saving}[key.to_sym] if key)
+    (:saving if vm.saved_templates.count > 0) ||
+      ({image_snapshot: :saving}[key.to_sym] if key)
   end
 
   def vm
@@ -77,7 +87,11 @@ class VmUpdater
   end
 
   def update_ips?
-    [:active, 'active', :error, 'error'].include? vm.state
+    # Updating up addresses triggers additional request to
+    # open stack nova api. That is why we are checking here
+    # if any change occurs. We cannot stop updating the rest
+    # of VM because of https://redmine.dev.cyfronet.pl/issues/3047.
+    changed? && [:active, 'active', :error, 'error'].include?(vm.state)
   end
 
   def update_ips

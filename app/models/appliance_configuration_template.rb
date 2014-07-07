@@ -21,6 +21,12 @@ class ApplianceConfigurationTemplate < ActiveRecord::Base
 
   has_many :appliance_configuration_instances, dependent: :nullify
 
+  scope :with_config_instance, ->(config_instance) do
+    ApplianceConfigurationTemplate.joins(
+      :appliance_configuration_instances).where(
+        appliance_configuration_instances: {id: config_instance}).first!
+  end
+
   def parameters
     params = ParamsRegexpable.parameters(payload)
     params.delete(Air.config.mi_authentication_key)

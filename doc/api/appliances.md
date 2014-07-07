@@ -19,7 +19,9 @@ GET /appliances
       "state": "satisfied", # or "unsatisfied"
       "state_explanation": "No matching flavor was found", # explanation why VM cannot be started for this appliance
       "amount_billed": 562123, # Amount billed for the use of this appliance since its creation, expressed in 1/10000 of base currency unit (which is defined in appliance.fund.currency and defaults to EUR. For example, 562123 stands for 56.21 Euro
+      "prepaid_until": "2014-05-20 12:37", # The datetime stamp which determines how long this appliance will be allowed to run before being billed again. All times are UTC.
       "compute_site_ids": [1, 2], # IDs of compute sites on which this appliance is authorized to run VMs
+      "virtual_machine_ids": [1, 2]
     }, {
       ...
     }
@@ -52,6 +54,7 @@ Parameters:
     "state_explanation": "No matching flavor was found", # explanation why VM cannot be started for this appliance
     "amount_billed": 562123, # Amount billed for the use of this appliance since its creation, expressed in 1/10000 of base currency unit (which is defined in appliance.fund.currency and defaults to EUR. For example, 562123 stands for 56.21 Euro.
     "compute_site_ids": [1, 2], # IDs of compute sites on which this appliance is authorized to run VMs
+    "virtual_machine_ids": [1, 2]
   }
 }
 ```
@@ -132,6 +135,40 @@ DELETE /appliances/:id
 Parameters:
 
 + `id` (required) - The ID of an appliance
+
+## Appliance actions
+
+All actions which can be performed on appliance level have the same format.
+Post message need to be sent to:
+
+```
+POST /appliances/:id/action
+```
+
+with following body:
+
+```json
+{
+  "action_name": "action params"
+}
+```
+
+Bellow you can find list of all actions which can be performed on appliance. If
+in requrest JSON contains invalid action name than `400` (Bad Request) status
+code is returned.
+
+### Restart appliance
+
+Owned appliance started in `development` mode can be rebooted. Administrator
+is able to reboot not owned appliance started in all modes.
+
+Request body:
+
+```json
+{
+  "reboot": null
+}
+```
 
 ## Get appliance endpoints
 
