@@ -55,7 +55,7 @@ class MetadataRepositoryClient
       doc.elements.each("resource_metadata_list/resource_metadata/atomicService/globalID") { |element| global_ids << element.text }
       global_ids
     else
-      []
+      nil
     end
   end
 
