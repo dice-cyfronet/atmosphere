@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Air do
+  before { Air.clear_cache! }
+
   context 'cloud client cache' do
     it 'returns cached client if valid' do
       site_id, client = register_cloud_cient

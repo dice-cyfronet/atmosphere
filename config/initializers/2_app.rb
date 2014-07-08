@@ -48,6 +48,10 @@ module Air
     influxdb_client || Monitoring::NullMetricsStore.new
   end
 
+  def self.clear_cache!
+    @clients_cache = nil
+  end
+
   private
 
   def self.zabbix_client
