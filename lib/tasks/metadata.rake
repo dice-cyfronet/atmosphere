@@ -1,5 +1,3 @@
-import 'Rakefile'
-
 
 task purge_metadata_registry: :environment do
 

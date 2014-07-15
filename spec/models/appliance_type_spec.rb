@@ -315,6 +315,10 @@ describe ApplianceType do
       published_devel_at.run_callbacks(:destroy)
     end
 
+    it 'does not try to update appliance type about to be destroyed' do
+      expect{published_at.destroy}.not_to raise_exception
+    end
+
     it 'updates metadata of published appliance type' do
       expect(published_at).to receive(:update_metadata).twice
       published_at.description = 'sth else'
@@ -326,6 +330,19 @@ describe ApplianceType do
       published_at.save
       published_at.visible_to = :developer
       published_at.save
+    end
+
+    it 'unregisters published appliance type made private' do
+      expect(published_at).to receive(:remove_metadata).once
+      published_at.visible_to = :owner
+      published_at.save
+    end
+
+    it 'sets published appliance type made private mgid to nil' do
+      expect(published_at.metadata_global_id).to eq 'mgid'
+      published_at.visible_to = :owner
+      published_at.save
+      expect(published_at.metadata_global_id).to eq nil
     end
 
     it 'updates user login metadata on author change' do
