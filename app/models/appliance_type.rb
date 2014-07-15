@@ -179,7 +179,7 @@ class ApplianceType < ActiveRecord::Base
 
   def remove_metadata
     MetadataRepositoryClient.instance.delete_metadata self
-    update_column(:metadata_global_id, nil)
+    update_column(:metadata_global_id, nil) unless destroyed?
   end
 
   def publish_metadata
