@@ -42,11 +42,13 @@ task sync_metadata: :environment do
 
   ApplianceType.all.select{|at| !global_ids.include?(at.metadata_global_id)}.each do |at|
     if at.publishable?
+      #at.update_column(:metadata_global_id, nil)  # In case AIR still thinks it is published all right, we need to fool it
       #mgid = MetadataRepositoryClient.instance.publish_appliance_type at
       #at.update_column(:metadata_global_id, mgid) if mgid
       puts "A: [#{at.name}]"
     elsif at.metadata_global_id
-      #update_column(:metadata_global_id, nil)
+      #at.update_column(:metadata_global_id, nil)
+      puts "C: [#{at.name}]"
     end
   end
 end
