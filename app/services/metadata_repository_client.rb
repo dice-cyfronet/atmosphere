@@ -139,6 +139,7 @@ class MetadataRepositoryClient
       logme 'Transport layer error in communication with MR.', true
       logme "Exception message: [#{e.message}]. Stacktrace:", true
       logme e.backtrace.inspect, true
+      Raven.capture_exception(e, tags: { type: 'mds' })
       [false,:access_problem]
     end
   end
