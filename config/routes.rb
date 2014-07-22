@@ -101,6 +101,9 @@ Air::Application.routes.draw do
 
       owned_payload_resources :security_proxies
       owned_payload_resources :security_policies
+
+      get 'clew/appliances' => 'clew#appliances'
+
     end
   end
 
