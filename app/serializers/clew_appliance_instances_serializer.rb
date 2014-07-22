@@ -5,7 +5,7 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
   attribute :appliances
 
   def appliances
-    object[:appliance_set].appliances.map { |appl| map_appliance(appl) }
+    object.appliances.map { |appl| map_appliance(appl) }
   end
 
   def map_appliance(appliance)
@@ -32,4 +32,6 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
     }
   end
 
+
 end
+
