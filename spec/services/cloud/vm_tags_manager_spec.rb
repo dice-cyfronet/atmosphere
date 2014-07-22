@@ -18,7 +18,7 @@ describe Cloud::VmTagsManager do
     vm = create(:virtual_machine, appliances: [appl1, appl2], compute_site: cs, id_at_site: server_id)
     
     expect(VmTagsCreatorWorker).to receive(:perform_async)
-      .with(server_id, cs.id, {'Name' => vm.name, 'Appliance type name' => appl1.appliance_type.name,
+      .with(vm.id, {'Name' => vm.name, 'Appliance type name' => appl1.appliance_type.name,
         'Users' => 'user1, user2'})
     subject.create_tags_for_vm(vm)
   end
