@@ -6,7 +6,7 @@ module Api
       respond_to :json
 
       def appliance_instances
-        appliance_sets = @appliance_set.where(:appliance_sets => { :appliance_set_type => :portal }).
+        appliance_sets = @appliance_sets.where(:appliance_sets => { :appliance_set_type => :portal }).
             includes(:appliances).references(:appliances).
             includes(:appliances => :deployments).references(:appliances => :deployments).
             includes(:appliances => :appliance_type).references(:appliances => :appliance_type).
