@@ -2,23 +2,22 @@ module Api
   module V1
     class ClewController < Api::ApplicationController
 
-      load_and_authorize_resource :appliance_set, :class => "ApplianceSet", :parent => false
-
-      #skip_authorization_check
+      load_and_authorize_resource :appliance_sets, :class => "ApplianceSet", :parent => false
       respond_to :json
 
       def appliance_instances
-        object = Hash.new
-
-        appliance_sets = ApplianceSet.where("appliance_sets.appliance_set_type = 'portal'").
-            joins(:appliances).references(:appliances).
-            joins(:appliances => :deployments).references(:appliances => :deployments).
-            includes(:appliances => { :deployments => :virtual_machine }).references(:appliances => { :deployments => :virtual_machine })
-
-        object[:appliance_set] = appliance_sets.first
-        object[:appliances] = appliance_set.appliances
-
-        render json: object, serializer: ClewApplianceInstancesSerializer
+        appliance_sets = @appliance_sets.where(:appliance_sets => { :appliance_set_type => :portal }).
+            includes(:appliances).references(:appliances).
+            includes(:appliances => :deployments).references(:appliances => :deployments).
+            includes(:appliances => :appliance_type).references(:appliances => :appliance_type).
+            includes(:appliances => :http_mappings).references(:appliances => :http_mappings).
+            includes(:appliances => { :appliance_type => :port_mapping_templates } ).references(:appliances => { :appliance_type => :port_mapping_templates } ).
+            includes(:appliances => { :deployments => :virtual_machine }).references(:appliances => { :deployments => :virtual_machine }).
+            includes(:appliances => { :appliance_type => { :port_mapping_templates => :http_mappings } } ).references(:appliances => { :appliance_type => { :port_mapping_templates => :http_mappings } }).
+            includes(:appliances => { :appliance_type => { :port_mapping_templates => :endpoints } } ).references(:appliances => { :appliance_type => { :port_mapping_templates => :endpoints } }).
+            includes(:appliances => { :deployments => { :virtual_machine => :port_mappings } } ).references(:appliances => { :deployments => { :virtual_machine => :port_mappings } }).
+            includes(:appliances => { :deployments => { :virtual_machine => :virtual_machine_flavor } }).references(:appliances => { :deployments => { :virtual_machine => :virtual_machine_flavor } })
+        render json: {:appliance_set => appliance_sets[0]}, serializer: ClewApplianceInstancesSerializer
       end
 
     end
