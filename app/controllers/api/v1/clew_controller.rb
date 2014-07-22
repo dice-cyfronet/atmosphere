@@ -7,11 +7,18 @@ module Api
       #skip_authorization_check
       respond_to :json
 
-      def appliances
-        #ApplianceSet.all.each { |x| puts "#{x.user}" }
-        puts "First: #{@appliance_sets.first}"
-        puts "Count #{@appliance_sets.count}"
-        render json: {appliance_sets: @appliance_sets}, serializer: ClewSerializer
+      def appliance_instances
+        object = Hash.new
+
+        appliance_sets = ApplianceSet.where("appliance_sets.appliance_set_type = 'portal'").
+            joins(:appliances).references(:appliances).
+            joins(:appliances => :deployments).references(:appliances => :deployments).
+            includes(:appliances => { :deployments => :virtual_machine }).references(:appliances => { :deployments => :virtual_machine })
+
+        object[:appliance_set] = appliance_sets.first
+        object[:appliances] = appliance_set.appliances
+
+        render json: object, serializer: ClewApplianceInstancesSerializer
       end
 
     end

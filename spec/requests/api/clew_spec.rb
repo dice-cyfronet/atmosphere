@@ -7,7 +7,7 @@ describe Api::V1::ClewController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        get api("/clew/appliances")
+        get api("/clew/appliance_instances")
         expect(response.status).to eq 401
       end
     end
@@ -22,10 +22,11 @@ describe Api::V1::ClewController do
       let!(:workflow1_set) { create(:appliance_set, user: user, appliance_set_type: :workflow)}
       let!(:differnt_user_workflow) { create(:appliance_set, user: different_user) }
 
+      let!(:appliance)     { create(:appliance, appliance_set: portal_set) }
 
       it 'returns 200 Unauthorized error' do
 
-        get api("/clew/appliances", user)
+        get api("/clew/appliance_instances", user)
 
         puts "#{response.body}"
 
