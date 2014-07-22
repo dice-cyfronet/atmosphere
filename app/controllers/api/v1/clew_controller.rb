@@ -2,18 +2,16 @@ module Api
   module V1
     class ClewController < Api::ApplicationController
 
-      load_resource :appliance_set, :class => "ApplianceSet"
+      load_and_authorize_resource :appliance_set, :class => "ApplianceSet", :parent => false
 
-      skip_authorization_check
+      #skip_authorization_check
       respond_to :json
 
       def appliances
-        object = Hash.new
-        object[:appliances] = "abc"
-        ApplianceSet.all.each { |x| puts "#{x.user}" }
-        puts "#{@appliance_sets.first}"
-        puts "#{@appliance_sets.count}"
-        render json: object, serializer: ClewSerializer
+        #ApplianceSet.all.each { |x| puts "#{x.user}" }
+        puts "First: #{@appliance_sets.first}"
+        puts "Count #{@appliance_sets.count}"
+        render json: {appliance_sets: @appliance_sets}, serializer: ClewSerializer
       end
 
     end

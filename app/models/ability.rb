@@ -19,7 +19,8 @@ class Ability
       ::HttpMappingAbilityBuilder,
       ::PortMappingAbilityBuilder,
       ::UserKeyAbilityBuilder,
-      ::VirtualMachineFlavorAbilityBuilder
+      ::VirtualMachineFlavorAbilityBuilder,
+      ::ClewAbilityBuilder
     ]
 
   def initialize(user, load_admin_abilities = true)
