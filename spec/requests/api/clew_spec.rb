@@ -23,6 +23,8 @@ describe Api::V1::ClewController do
       let!(:differnt_user_workflow) { create(:appliance_set, user: different_user) }
 
       let!(:appliance)     { create(:appliance, appliance_set: portal_set) }
+      let!(:vm1) { create(:virtual_machine, appliances: [ appliance ]) }
+
 
       it 'returns 200 Unauthorized error' do
 
