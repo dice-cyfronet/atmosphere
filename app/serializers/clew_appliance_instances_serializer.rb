@@ -27,8 +27,9 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
   def map_vm(vm)
     {
         :id => vm.id,
-        :port_mappings => vm.port_mappings,
-        :virtual_machine_flavor => vm.virtual_machine_flavor
+        :compute_site => vm.compute_site,
+        :virtual_machine_flavor => vm.virtual_machine_flavor,
+        :port_mappings => vm.port_mappings
     }
   end
 
