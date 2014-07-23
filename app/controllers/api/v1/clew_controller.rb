@@ -6,8 +6,8 @@ module Api
       respond_to :json
 
       def appliance_instances
-        set = @appliance_sets.clew_appliances(:portal)
-        render json: (set.size>0 ? set[0] : nil), serializer: ClewApplianceInstancesSerializer
+        appl_set = @appliance_sets.clew_appliances(:portal)
+        render json: {:appliance_set => appl_set[0]}, serializer: ClewApplianceInstancesSerializer
       end
 
     end

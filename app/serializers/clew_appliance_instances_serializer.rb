@@ -5,10 +5,11 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
   attribute :appliances
 
   def appliances
-    if object.nil?
+    appl_set = object[:appliance_set]
+    if appl_set.nil?
       []
     else
-      object.appliances.map { |appl| map_appliance(appl) }
+      appl_set.appliances.map { |appl| map_appliance(appl) }
     end
   end
 
