@@ -16,6 +16,12 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
   def map_appliance(appliance)
     {
       :id => appliance.id,
+      :name => appliance.name,
+      :description => appliance.description,
+      :state => appliance.state,
+      :state_explanation => appliance.state_explanation,
+      :amount_billed => appliance.amount_billed,
+      :prepaid_until => appliance.prepaid_until,
       :port_mapping_templates  => appliance.appliance_type.port_mapping_templates.map { |pmt| map_pmt(pmt) },
       :virtual_machines => appliance.deployments.map { |depl| map_vm(depl.virtual_machine) }
     }
@@ -32,6 +38,8 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
   def map_vm(vm)
     {
         :id => vm.id,
+        :ip => vm.ip,
+        :state => vm.state,
         :compute_site => vm.compute_site,
         :virtual_machine_flavor => vm.virtual_machine_flavor,
         :port_mappings => vm.port_mappings
