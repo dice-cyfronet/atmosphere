@@ -30,6 +30,9 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
   def map_pmt(pmt)
     {
         :id => pmt.id,
+        :service_name => pmt.service_name,
+        :target_port => pmt.target_port,
+        :transport_protocol => pmt.transport_protocol,
         :http_mappings => pmt.http_mappings,
         :endpoints => pmt.endpoints
     }
