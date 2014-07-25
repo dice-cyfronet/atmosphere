@@ -29,24 +29,24 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
 
   def map_pmt(pmt)
     {
-        :id => pmt.id,
-        :service_name => pmt.service_name,
-        :target_port => pmt.target_port,
-        :transport_protocol => pmt.transport_protocol,
-        :application_protocol => pmt.application_protocol,
-        :http_mappings => pmt.http_mappings,
-        :endpoints => pmt.endpoints
+      :id => pmt.id,
+      :service_name => pmt.service_name,
+      :target_port => pmt.target_port,
+      :transport_protocol => pmt.transport_protocol,
+      :application_protocol => pmt.application_protocol,
+      :http_mappings => pmt.http_mappings,
+      :endpoints => pmt.endpoints
     }
   end
 
   def map_vm(vm)
     {
-        :id => vm.id,
-        :ip => vm.ip,
-        :state => vm.state,
-        :compute_site => map_cs(vm.compute_site),
-        :virtual_machine_flavor => vm.virtual_machine_flavor,
-        :port_mappings => vm.port_mappings
+      :id => vm.id,
+      :ip => vm.ip,
+      :state => vm.state,
+      :compute_site => map_cs(vm.compute_site),
+      :virtual_machine_flavor => vm.virtual_machine_flavor,
+      :port_mappings => vm.port_mappings
     }
   end
 
