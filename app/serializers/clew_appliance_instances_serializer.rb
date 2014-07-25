@@ -1,6 +1,6 @@
 
 
-class ClewApplianceInstancesSerializer < ActiveModel::Serializer
+  class ClewApplianceInstancesSerializer < ActiveModel::Serializer
 
   attribute :appliances
 
