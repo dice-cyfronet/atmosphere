@@ -28,7 +28,7 @@ describe Api::V1::ClewController do
 
       it 'returns 200 Unauthorized error' do
 
-        get api("/clew/appliance_instances", user)
+        get api("/clew/appliance_instances?type=portal", user)
 
         puts "#{response.body}"
 
