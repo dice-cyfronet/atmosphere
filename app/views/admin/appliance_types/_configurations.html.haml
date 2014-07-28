@@ -1,32 +1,50 @@
 %p.description
-  FIXME: Configurations section description
+
+  NOT USED ANYMORE!!! DELETE!!!!!!!
 
 %table.table.table-hover
   %thead
     %tr
       %th Id
       %th Name
+      %th Payload
       %th Actions
   %tbody
-    %tr
-      %td 1
-      %td Static configuration
-      %td
-        .btn-group
-          %button.btn.btn-success.btn-xs{title: 'Edit'}
-            =fa_icon 'edit'
-          %button.btn.btn-danger.btn-xs{title: "Delete"}
-            =fa_icon 'trash-o'
+
+    - @appliance_type.appliance_configuration_templates.each do |acts|
+      %tr
+        %td= acts.id
+        %td= acts.name
+        %td= acts.payload
+        %td
+          .btn-group
+            %button.btn.btn-success.btn-xs{title: 'Edit'}
+              =fa_icon 'edit'
+            %button.btn.btn-danger.btn-xs{title: "Delete"}
+              =fa_icon 'trash-o'
+
+    - unless @appliance_type.appliance_configuration_templates.present?
+      %tr
+        %td(colspan='4')
+          .alert.alert-warning No Appliance Configuration Templates assigned to this Appliance Type.
 
     %tr
-      %td 2
-      %td Dynamic configuration
-      %td
-        %button.btn.btn-default.btn-xs{title: "Endpoints"}
-          Variables
+      %td(colspan='4')
+        = link_to [:new, :admin, @appliance_type, :appliance_configuration_template], remote: true,
+            class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-appliance-configuration-template'} do
+          =fa_icon 'plus'
+          Add
+          -#= 'first' unless pmts_present
 
-        .btn-group
-          %button.btn.btn-success.btn-xs{title: 'Edit'}
-            =fa_icon 'edit'
-          %button.btn.btn-danger.btn-xs{title: "Delete"}
-            =fa_icon 'trash-o'
+    -#%tr
+    -#  %td 2
+    -#  %td Dynamic configuration
+    -#  %td
+    -#    %button.btn.btn-default.btn-xs{title: "Endpoints"}
+    -#      Variables
+    -#
+    -#    .btn-group
+    -#      %button.btn.btn-success.btn-xs{title: 'Edit'}
+    -#        =fa_icon 'edit'
+    -#      %button.btn.btn-danger.btn-xs{title: "Delete"}
+    -#        =fa_icon 'trash-o'
