@@ -1,0 +1,38 @@
+- acts_present = @appliance_type.reload.appliance_configuration_templates.present?
+
+#appliance-configuration-templates
+  %p
+    - if @alert
+      .alert.alert-danger
+        %span= raw @alert
+
+    - elsif @notice
+      .alert.alert-info
+        %span= raw @notice
+
+  %p.description
+    -# TODO, FIXME: ACT section description
+
+  %table.table.table-hover
+    %thead
+      %tr
+        %th(style='width:25%') Template name
+        %th(style='width:60%') Payload
+        %th
+          .pull-right Actions
+
+    %tbody
+      = render partial: 'admin/appliance_configuration_templates/show', collection: @appliance_type.appliance_configuration_templates, as: :act
+
+      %tr#new-appliance-configuration-template
+
+        - unless acts_present
+          %td(colspan='4')
+            .alert.alert-warning No Appliance Configuration Templates created.
+
+        %td(colspan="#{acts_present ? '5' : ''}")
+          = link_to [:new, :admin, @appliance_type, :appliance_configuration_template], remote: true,
+              class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-appliance-configuration-template'} do
+            =fa_icon 'plus'
+            Add
+            = 'first' unless acts_present
