@@ -4,23 +4,30 @@
 %table.table.table-hover
   %thead
     %tr
-      %th Appliance Set Id
       %th Author
+      %th Appliance Set Type
       %th Configuration
-      %th Actions
+      %th State
+      %th Billing state
   %tbody
-    %tr
-      %td 123
-      %td Marek
-      %td Static configuration
-      %td
-        %button.btn.btn-danger.btn-xs{title: 'Delete'}
-          =fa_icon 'trash-o'
 
-    %tr
-      %td 233
-      %td Tomek
-      %td Dynamic configuration
-      %td
-        %button.btn.btn-danger.btn-xs{title: 'Delete'}
-          =fa_icon 'trash-o'
+    - @appliance_type.appliances.each do |appliance|
+      %tr
+        %td= appliance.appliance_set.user.login
+        %td= appliance.appliance_set.appliance_set_type
+        %td= (appliance.appliance_configuration_instance.payload if appliance.appliance_configuration_instance)
+
+        - label_map = {new: :primary, satisfied: :success, unsatisfied: :danger}
+        %td
+          %span(class="label label-#{label_map[appliance.state.to_sym]}")
+            = appliance.state
+
+        - label_map = {initial: :primary, prepaid: :success, expired: :danger, error: :danger}
+        %td
+          %span(class="label label-#{label_map[appliance.billing_state.to_sym]}")
+            = appliance.billing_state
+
+    - unless @appliance_type.appliances.present?
+      %tr
+        %td(colspan='5')
+          .alert.alert-warning No Appliances of this Appliance Type.
