@@ -1,11 +1,17 @@
 
-
-  class ClewApplianceInstancesSerializer < ActiveModel::Serializer
+class ClewApplianceInstancesSerializer < ActiveModel::Serializer
 
   attribute :appliances
 
   def appliances
-    object.appliances.map { |appl| map_appliance(appl) }
+    appl_sets = object[:appliance_sets]
+    appliances = Set.new
+    appl_sets.each do |appl_set|
+      appl_set.appliances.each do |appl|
+        appliances.add(map_appliance(appl))
+      end
+    end
+    appliances
   end
 
   def map_appliance(appliance)
@@ -62,7 +68,6 @@
       :active => cs.active
     }
   end
-
 
 end
 
