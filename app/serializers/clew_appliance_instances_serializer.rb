@@ -5,14 +5,7 @@
   attribute :appliances
 
   def appliances
-    appl_sets = object
-    appliances = Set.new
-    appl_sets.each do |set|
-      set.appliances.each do |appl|
-        appliances.add(map_appliance(appl))
-      end
-    end
-    appliances
+    object.appliances.map { |appl| map_appliance(appl) }
   end
 
   def map_appliance(appliance)
