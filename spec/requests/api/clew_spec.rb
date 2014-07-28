@@ -30,7 +30,7 @@ describe Api::V1::ClewController do
 
         get api("/clew/appliance_instances?appliance_set_type=portal", user)
 
-        puts "#{response.body}"
+        #puts "#{response.body}"
 
         expect(response.status).to eq 200
       end
