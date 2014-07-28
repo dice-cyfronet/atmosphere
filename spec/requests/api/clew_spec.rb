@@ -12,7 +12,7 @@ describe Api::V1::ClewController do
       end
     end
 
-    context 'when authenticated', :focus => true do
+    context 'when authenticated' do
 
       let(:user)           { create(:developer) }
       let(:different_user) { create(:user) }
