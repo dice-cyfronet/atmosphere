@@ -38,6 +38,7 @@ Air::Application.routes.draw do
       resources :port_mapping_templates, except: [:show] do
         resources :endpoints, except: [:show]
       end
+      resources :appliance_configuration_templates, except: [:show]
     end
     resources :security_proxies
     resources :security_policies
