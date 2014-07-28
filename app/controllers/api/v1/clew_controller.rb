@@ -7,8 +7,8 @@ module Api
 
       def appliance_instances
         appliance_set_type = params[:appliance_set_type] || :portal
-        appl_set = @appliance_sets.clew_appliances(appliance_set_type).where(:user_id => current_user.id)
-        render json: {:appliance_set => appl_set[0]}, serializer: ClewApplianceInstancesSerializer
+        appl_sets = @appliance_sets.clew_appliances(appliance_set_type).where(:user_id => current_user.id)
+        render json: appl_sets, serializer: ClewApplianceInstancesSerializer
       end
 
     end

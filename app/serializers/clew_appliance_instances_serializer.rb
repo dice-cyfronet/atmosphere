@@ -5,25 +5,28 @@
   attribute :appliances
 
   def appliances
-    appl_set = object[:appliance_set]
-    if appl_set.nil?
-      []
-    else
-      appl_set.appliances.map { |appl| map_appliance(appl) }
+    appl_sets = object
+    appliances = Set.new
+    appl_sets.each do |set|
+      set.appliances.each do |appl|
+        appliances.add(map_appliance(appl))
+      end
     end
+    appliances
   end
 
   def map_appliance(appliance)
     {
       :id => appliance.id,
       :name => appliance.name,
+      :appliance_set_id => appliance.appliance_set_id,
       :description => appliance.description,
       :state => appliance.state,
       :state_explanation => appliance.state_explanation,
       :amount_billed => appliance.amount_billed,
       :prepaid_until => appliance.prepaid_until,
       :port_mapping_templates  => appliance.appliance_type.port_mapping_templates.map { |pmt| map_pmt(pmt) },
-      :virtual_machines => appliance.deployments.map { |depl| map_vm(depl.virtual_machine) }
+      :virtual_machines => appliance.deployments.map { |depl| map_vm(depl.virtual_machine) },
     }
   end
 
