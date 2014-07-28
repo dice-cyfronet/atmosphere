@@ -1,0 +1,29 @@
+- act ||= @appliance_configuration_template
+
+%tr(data-appliance-configuration-template-id="#{act.id}")
+  %td= act.name
+  %td
+    - size = (act.payload || '').size
+    - if size>120
+      %span.short-payload(title='Click for full payload.')= act.payload[0..100]
+      %span.full-payload.hidden= act.payload
+    - else
+      = act.payload
+
+  %td
+
+    .btn-group.pull-right
+
+      = link_to [:edit, :admin, act.appliance_type, act], remote: true, action: :edit,
+          class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-appliance-configuration-template-id='#{act.id}']"} do
+        =fa_icon 'edit'
+
+      = link_to [:admin, act.appliance_type, act], method: :delete, remote: true,
+          class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#appliance-configuration-templates'} do
+        =fa_icon 'trash-o'
+
+:javascript
+  $('body').on('click', '.short-payload', function() {
+    $(this).siblings('.full-payload').removeClass('hidden');
+    $(this).addClass('hidden');
+  });

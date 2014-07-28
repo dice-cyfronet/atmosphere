@@ -20,24 +20,16 @@
         -#    = hb "partial 'appliance_types/edit'"
 
         %ul.nav.nav-tabs#tabs
-          %li.active
-            %a{href: '#port-mappings-tab', 'data-toggle' => 'tab'}
-              = t('appliance_types.port_mappings')
-          %li
-            %a{href: '#configurations-tab', 'data-toggle' => 'tab'}
-              = t('appliance_types.configurations')
-          %li
-            %a{href: '#templates-tab', 'data-toggle' => 'tab'}
-              = t('appliance_types.templates')
-          %li
-            %a{href: '#appliances-tab', 'data-toggle' => 'tab'}
-              = t('appliance_types.appliances')
+          - %w(port-mappings configurations templates appliances).each_with_index do |tab_name, i|
+            %li{class: ('active' if i==0)}
+              %a(href="##{tab_name}-tab" data-toggle='tab')
+                = t "appliance_types.#{tab_name}"
 
         .tab-content
           #port-mappings-tab.tab-pane.active
-            = render partial: 'admin/port_mapping_templates/index'
+            = render 'admin/port_mapping_templates/index'
           #configurations-tab.tab-pane
-            = render 'admin/appliance_types/configurations'
+            = render 'admin/appliance_configuration_templates/index'
           #templates-tab.tab-pane
             = render 'admin/appliance_types/templates'
           #appliances-tab.tab-pane
