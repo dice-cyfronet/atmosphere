@@ -104,6 +104,7 @@ Air::Application.routes.draw do
       owned_payload_resources :security_policies
 
       get 'clew/appliance_instances' => 'clew#appliance_instances'
+      get 'clew/appliance_types' => 'clew#appliance_types'
 
     end
   end
