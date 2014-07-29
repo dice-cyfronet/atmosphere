@@ -10,7 +10,22 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
   end
 
   def map_at(at)
-    at
+    options = {}
+    options[:cpu] &&= at.preference_cpu
+    options[:memory] &&= at.preference_memory
+    options[:hdd] &&= at.preference_disk
+    flavor = VirtualMachineFlavor.with_prefs(options).first
+    {
+      :id => at.id,
+      :name => at.name,
+      :description => at.description,
+      :preference_cpu => at.preference_cpu,
+      :preference_memory => at.preference_memory,
+      :preference_disk => at.preference_disk,
+      :matched_flavor  => flavor,
+      :compute_site_ids => at.compute_site_ids,
+      :appliance_configuration_templates => at.appliance_configuration_templates
+    }
   end
 
   def compute_sites
@@ -20,7 +35,24 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
         compute_sites[cs.id] ||= cs
       end
     end
-    compute_sites.values
+    compute_sites.values.map { |cs| map_cs(cs) }
+  end
+
+  def map_cs(cs)
+    { :id => cs.id,
+      :site_id => cs.site_id,
+      :name => cs.name,
+      :location => cs.location,
+      :site_type => cs.site_type,
+      :technology => cs.technology,
+      :http_proxy_url => cs.http_proxy_url,
+      :https_proxy_url => cs.https_proxy_url,
+      :config => cs.config,
+      :template_filters => cs.template_filters,
+      :updated_at => cs.updated_at,
+      :created_at => cs.created_at,
+      :active => cs.active
+    }
   end
 
 end

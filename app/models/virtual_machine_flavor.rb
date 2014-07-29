@@ -1,3 +1,5 @@
+
+
 # == Schema Information
 #
 # Table name: virtual_machine_flavors
@@ -52,6 +54,6 @@ class VirtualMachineFlavor < ActiveRecord::Base
 
   def supports_architecture?(arch)
     supported_architectures == 'i386_and_x86_64' ||
-      supported_architectures == arch
+        supported_architectures == arch
   end
 end

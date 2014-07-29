@@ -56,11 +56,14 @@ describe Api::V1::ClewController do
       let!(:at3)   { create(:active_appliance_type, author: user) }
       let!(:at4)   { create(:active_appliance_type, visible_to: :all) }
 
+      let!(:flavor)   { create(:flavor) }
+
       it 'returns 200' do
         get api("/clew/appliance_types", user)
         expect(response.status).to eq 200
         expect(at_response.size).to eq 2
         expect(cs_response.size).to eq 2
+        puts JSON.parse(response.body)
       end
     end
 
