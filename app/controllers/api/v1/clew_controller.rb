@@ -2,8 +2,8 @@ module Api
   module V1
     class ClewController < Api::ApplicationController
 
-      load_and_authorize_resource :appliance_sets, :class => "ApplianceSet", :parent => false
-      load_and_authorize_resource :appliance_types, :class => "ApplianceType", :parent => false
+      load_and_authorize_resource :appliance_sets, :class => "ApplianceSet", :parent => false, :only => :appliance_instances
+      load_and_authorize_resource :appliance_types, :class => "ApplianceType", :parent => false, :only => :appliance_types
 
       respond_to :json
 
@@ -14,10 +14,9 @@ module Api
       end
 
       def appliance_types
-        puts "Dsadasd"
-        @appliance_types = @appliance_types.includes(:compute_sites).references(:compute_sites).active
-        ats = pdp.filter(@appliance_types, params[:mode])
-        render json: { :appliance_types => @appliance_types }, serializer: ClewApplianceTypesSerializer
+        appliance_types = @appliance_types.active.includes(:compute_sites).references(:compute_sites)
+        appliance_types = pdp.filter(appliance_types, params[:mode])
+        render json: { :appliance_types => appliance_types}, serializer: ClewApplianceTypesSerializer
       end
 
       def pdp

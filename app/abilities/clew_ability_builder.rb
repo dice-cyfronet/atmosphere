@@ -10,6 +10,4 @@ class ClewAbilityBuilder < AbilityBuilder
   end
 
 
-
-
 end

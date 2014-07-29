@@ -20,7 +20,7 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
         compute_sites[cs.id] ||= cs
       end
     end
-    compute_sites
+    compute_sites.values
   end
 
 end

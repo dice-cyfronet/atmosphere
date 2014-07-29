@@ -50,20 +50,36 @@ describe Api::V1::ClewController do
 
     context 'when authenticated' do
 
-      let(:user)  { create(:user) }
-      let(:at1)   { create(:filled_appliance_type, author: user) }
-      let(:at2)   { create(:appliance_type, visible_to: :all) }
+      let!(:user)  { create(:user) }
+      let!(:at1)   { create(:filled_appliance_type, author: user) }
+      let!(:at2)   { create(:appliance_type, visible_to: :all) }
+      let!(:at3)   { create(:active_appliance_type, author: user) }
+      let!(:at4)   { create(:active_appliance_type, visible_to: :all) }
 
       it 'returns 200' do
-
         get api("/clew/appliance_types", user)
-
         expect(response.status).to eq 200
-
+        expect(at_response.size).to eq 2
+        expect(cs_response.size).to eq 2
       end
     end
 
+
+    def at_response
+      clew_at_response['appliance_types']
+    end
+
+    def cs_response
+      clew_at_response['compute_sites']
+    end
+
+    def clew_at_response
+      json_response['clew_appliance_types']
+    end
+
   end
+
+
 
 
 end

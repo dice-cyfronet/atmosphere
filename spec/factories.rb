@@ -130,9 +130,16 @@ FactoryGirl.define do
       shared false
     end
 
+    trait :active do
+      virtual_machine_templates { [ build(:virtual_machine_template)] }
+    end
+
     factory :filled_appliance_type, traits: [:all_attributes_not_empty]
     factory :shareable_appliance_type, traits: [:shareable]
     factory :not_shareable_appliance_type, traits: [:not_shareable]
+
+    factory :active_appliance_type, traits: [:active]
+
   end
 
   factory :dev_mode_property_set do |f|
