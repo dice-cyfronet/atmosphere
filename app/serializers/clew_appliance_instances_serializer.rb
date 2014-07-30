@@ -61,10 +61,7 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
       :technology => cs.technology,
       :http_proxy_url => cs.http_proxy_url,
       :https_proxy_url => cs.https_proxy_url,
-      :config => cs.config,
       :template_filters => cs.template_filters,
-      :updated_at => cs.updated_at,
-      :created_at => cs.created_at,
       :active => cs.active
     }
   end

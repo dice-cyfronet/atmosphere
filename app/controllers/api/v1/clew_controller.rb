@@ -15,7 +15,7 @@ module Api
 
       def appliance_types
         appliance_types = @appliance_types.active.includes(:compute_sites).references(:compute_sites).
-            includes(:appliance_configuration_templates).references(:appliance_configuration_templates)
+            includes(:appliance_configuration_templates).references(:appliance_configuration_templates).order(:id)
         appliance_types = pdp.filter(appliance_types, params[:mode])
         render json: { :appliance_types => appliance_types }, serializer: ClewApplianceTypesSerializer
       end

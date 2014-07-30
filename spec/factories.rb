@@ -137,7 +137,6 @@ FactoryGirl.define do
     factory :filled_appliance_type, traits: [:all_attributes_not_empty]
     factory :shareable_appliance_type, traits: [:shareable]
     factory :not_shareable_appliance_type, traits: [:not_shareable]
-
     factory :active_appliance_type, traits: [:active]
 
   end
