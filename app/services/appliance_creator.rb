@@ -56,9 +56,9 @@ class ApplianceCreator
 
   def allowed_compute_sites
     if params[:compute_site_ids].blank?
-      ComputeSite.all
+      ComputeSite.active
     else
-      ComputeSite.where(id: params[:compute_site_ids])
+      ComputeSite.where(id: params[:compute_site_ids], active: true)
     end
   end
 
