@@ -92,6 +92,7 @@ describe Api::V1::ClewController do
                                    "technology"=>cs.technology,
                                    "http_proxy_url"=>cs.http_proxy_url,
                                    "https_proxy_url"=>cs.https_proxy_url,
+                                   "config"=>"SANITIZED",
                                    "template_filters"=>cs.template_filters,
                                    "active"=>cs.active},
                               "virtual_machine_flavor"=>nil,
