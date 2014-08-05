@@ -16,15 +16,15 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
     options[:hdd] &&= at.preference_disk
     flavor = VirtualMachineFlavor.with_prefs(options).first
     {
-      :id => at.id,
-      :name => at.name,
-      :description => at.description,
-      :preference_cpu => at.preference_cpu,
-      :preference_memory => at.preference_memory,
-      :preference_disk => at.preference_disk,
-      :matched_flavor  => flavor,
-      :compute_site_ids => at.compute_site_ids,
-      :appliance_configuration_templates => at.appliance_configuration_templates
+      id: at.id,
+      name: at.name,
+      description: at.description,
+      preference_cpu: at.preference_cpu,
+      preference_memory: at.preference_memory,
+      preference_disk: at.preference_disk,
+      matched_flavor: flavor,
+      compute_site_ids: at.compute_site_ids,
+      appliance_configuration_templates: at.appliance_configuration_templates
     }
   end
 
@@ -39,16 +39,18 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
   end
 
   def map_cs(cs)
-    { :id => cs.id,
-      :site_id => cs.site_id,
-      :name => cs.name,
-      :location => cs.location,
-      :site_type => cs.site_type,
-      :technology => cs.technology,
-      :http_proxy_url => cs.http_proxy_url,
-      :https_proxy_url => cs.https_proxy_url,
-      :template_filters => cs.template_filters,
-      :active => cs.active
+    {
+      id: cs.id,
+      site_id: cs.site_id,
+      name: cs.name,
+      location: cs.location,
+      site_type: cs.site_type,
+      technology: cs.technology,
+      http_proxy_url: cs.http_proxy_url,
+      https_proxy_url: cs.https_proxy_url,
+      config: "SANITIZED",
+      template_filters: cs.template_filters,
+      active: cs.active
     }
   end
 
