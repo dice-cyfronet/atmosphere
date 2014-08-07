@@ -23,7 +23,7 @@
       %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
-    - @compute_sites.each do |compute_site|
+    - @compute_sites.order('compute_sites.name').each do |compute_site|
       %tr
         %td{ :style => "font-family: monospace;" }
           = compute_site.site_id
