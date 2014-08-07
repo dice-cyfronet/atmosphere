@@ -38,6 +38,7 @@ Air::Application.routes.draw do
       resources :port_mapping_templates, except: [:show] do
         resources :endpoints, except: [:show]
       end
+      resources :appliance_configuration_templates, except: [:show]
     end
     resources :security_proxies
     resources :security_policies
@@ -101,6 +102,10 @@ Air::Application.routes.draw do
 
       owned_payload_resources :security_proxies
       owned_payload_resources :security_policies
+
+      get 'clew/appliance_instances' => 'clew#appliance_instances'
+      get 'clew/appliance_types' => 'clew#appliance_types'
+
     end
   end
 

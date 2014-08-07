@@ -7,6 +7,18 @@ GIT
       sidekiq
 
 GIT
+  remote: git://github.com/fog/fog.git
+  revision: 030eb4b648d8dea289b1d94cbe776e091a55f15e
+  branch: master
+  specs:
+    fog (1.22.1)
+      fog-brightbox
+      fog-core (~> 1.22)
+      fog-json
+      ipaddress (~> 0.5)
+      nokogiri (~> 1.5, >= 1.5.11)
+
+GIT
   remote: git://github.com/yelled3/rspec-sidekiq.git
   revision: e4d2e34dcccfc51bb5b7c67fe06786eaa6c8e0d2
   branch: rspec3-beta
@@ -105,12 +117,6 @@ GEM
       multipart-post (>= 1.2, < 3)
     ffaker (1.24.0)
     ffi (1.9.3)
-    fog (1.22.1)
-      fog-brightbox
-      fog-core (~> 1.22)
-      fog-json
-      ipaddress (~> 0.5)
-      nokogiri (~> 1.5, >= 1.5.11)
     fog-brightbox (0.1.1)
       fog-core (~> 1.22)
       fog-json
@@ -366,7 +372,7 @@ DEPENDENCIES
   exception_notification
   factory_girl
   ffaker
-  fog (~> 1.19)
+  fog!
   font-awesome-rails
   foreigner
   foreman

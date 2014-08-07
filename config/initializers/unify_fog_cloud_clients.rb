@@ -89,7 +89,17 @@ class Fog::Compute::AWS::Server
   def created
     created_at
   end
+
+  def pause
+    raise Air::UnsuportedException, 'Amazon des not support pause action'
+  end
+
+  def suspend
+    raise Air::UnsuportedException, 'Amazon des not support suspend action'
+  end
 end
+
+
 
 class Fog::Compute::OpenStack::Image
   def architecture

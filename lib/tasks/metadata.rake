@@ -1,11 +1,14 @@
-import 'Rakefile'
-
 
 task purge_metadata_registry: :environment do
 
   puts "PURGING METADATA REGISTRY. Env = #{Rails.env}."
 
   global_ids = MetadataRepositoryClient.instance.get_active_global_ids
+  if global_ids.nil?
+    puts 'Problem with obtaining current MDS global ids list. Exiting'
+    exit 1
+  end
+
   global_ids.each do |metadata_global_id|
     MetadataRepositoryClient.instance.purge_metadata_key(metadata_global_id)
     puts metadata_global_id
@@ -22,26 +25,30 @@ task sync_metadata: :environment do
   puts "SYNCING METADATA. Env = #{Rails.env}."
 
   global_ids = MetadataRepositoryClient.instance.get_active_global_ids
-  ApplianceType.transaction do
-    global_ids.each do |metadata_global_id|
-      if ApplianceType.where(metadata_global_id: metadata_global_id).present? and ApplianceType.where(metadata_global_id: metadata_global_id).first.publishable?
-        MetadataRepositoryClient.instance.update_appliance_type ApplianceType.where(metadata_global_id: metadata_global_id).first
-        puts "U: [#{metadata_global_id}]"
-      else
-        MetadataRepositoryClient.instance.purge_metadata_key(metadata_global_id)
-        puts "D: [#{metadata_global_id}]"
-      end
-    end
+  if global_ids.nil?
+    puts 'Problem with obtaining current MDS global ids list. Exiting'
+    exit 1
+  end
 
-    ApplianceType.where(visible_to: ['all','developer']).all.each do |at|
-      if at.metadata_global_id and global_ids.include?(at.metadata_global_id)
-        puts "Updating ApplianceType #{at.name}."
-        MetadataRepositoryClient.instance.update_appliance_type at
-      else
-        mgid = MetadataRepositoryClient.instance.publish_appliance_type at
-        at.update_column(:metadata_global_id, mgid) if mgid
-        puts "A: [#{at.name}]"
-      end
+  global_ids.each do |metadata_global_id|
+    if ApplianceType.where(metadata_global_id: metadata_global_id).present? and ApplianceType.where(metadata_global_id: metadata_global_id).first.publishable?
+      # MetadataRepositoryClient.instance.update_appliance_type ApplianceType.where(metadata_global_id: metadata_global_id).first
+      puts "U: [#{metadata_global_id}]"
+    else
+      # MetadataRepositoryClient.instance.purge_metadata_key(metadata_global_id)
+      puts "D: [#{metadata_global_id}]"
+    end
+  end
+
+  ApplianceType.all.select{|at| !global_ids.include?(at.metadata_global_id)}.each do |at|
+    if at.publishable?
+      #at.update_column(:metadata_global_id, nil)  # In case AIR still thinks it is published all right, we need to fool it
+      #mgid = MetadataRepositoryClient.instance.publish_appliance_type at
+      #at.update_column(:metadata_global_id, mgid) if mgid
+      puts "A: [#{at.name}]"
+    elsif at.metadata_global_id
+      #at.update_column(:metadata_global_id, nil)
+      puts "C: [#{at.name}]"
     end
   end
 end
@@ -58,6 +65,11 @@ task clean_metadata_registry: :environment do
 
   if Rails.env.production?
     global_ids = MetadataRepositoryClient.instance.get_active_global_ids
+    if global_ids.nil?
+      puts 'Problem with obtaining current MDS global ids list. Exiting'
+      exit 1
+    end
+
     puts global_ids
     ApplianceType.transaction do
       ApplianceType.where(visible_to: ['all','developer']).all.each do |at|
@@ -84,10 +96,15 @@ task populate_metadata_registry: :environment do
 
   if Rails.env.production?
 
-    current_global_ids = MetadataRepositoryClient.instance.get_active_global_ids
+    global_ids = MetadataRepositoryClient.instance.get_active_global_ids
+    if global_ids.nil?
+      puts 'Problem with obtaining current MDS global ids list. Exiting'
+      exit 1
+    end
+
     ApplianceType.transaction do
       ApplianceType.where(visible_to: ['all','developer']).all.each do |at|
-        if at.metadata_global_id and current_global_ids.include?(at.metadata_global_id)
+        if at.metadata_global_id and global_ids.include?(at.metadata_global_id)
           puts "Updating ApplianceType #{at.name}."
           MetadataRepositoryClient.instance.update_appliance_type at
         else

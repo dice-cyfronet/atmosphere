@@ -297,30 +297,64 @@ describe VirtualMachine do
 
   it_behaves_like 'childhoodable'
 
-  context 'reboot actions' do
-    let(:cloud_client) { double }
+  context 'cloud action' do
+    let(:servers) { double }
+    let(:server) { double }
+    let(:id_at_site) { 'id_at_site' }
+    let(:cloud_client) { double(servers: servers) }
+    let(:vm) { create(:virtual_machine, id_at_site: id_at_site) }
+
     before do
       allow_any_instance_of(ComputeSite)
         .to receive(:cloud_client).and_return(cloud_client)
+      allow(servers).to receive(:get).with(id_at_site).and_return(server)
     end
 
     it 'sends reboot action to underlying compute site' do
-      id_at_site = 'id_at_site'
-      vm = create(:virtual_machine, id_at_site: id_at_site)
-
-      expect(cloud_client).to receive(:reboot_server).with(id_at_site)
-
-      vm.reboot
+      invoke_cloud_action(:reboot)
     end
 
-    it 'changes state into :reboot' do
-      vm = create(:virtual_machine)
-      allow(cloud_client).to receive(:reboot_server)
+    it 'changes state into "reboot" after reboot action' do
+      change_state_after_action(:reboot, 'reboot')
+    end
 
-      vm.reboot
+    it 'sends stop action to underlying compute site' do
+      invoke_cloud_action(:stop)
+    end
+
+    it 'changes state into "shutoff" after stop action' do
+      change_state_after_action(:stop, 'shutoff')
+    end
+
+    it 'sends pause action to underlying compute site' do
+      invoke_cloud_action(:pause)
+    end
+
+    it 'changes state into "paused" after pause action' do
+      change_state_after_action(:pause, 'paused')
+    end
+
+    it 'sends start action to underlying compute site' do
+      invoke_cloud_action(:start)
+    end
+
+    it 'changes state into "active" after start action' do
+      change_state_after_action(:start, 'active')
+    end
+
+    def invoke_cloud_action(action_name)
+      expect(server).to receive(action_name)
+
+      vm.send(action_name)
+    end
+
+    def change_state_after_action(action_name, new_state)
+      allow(server).to receive(action_name).and_return(true)
+
+      vm.send(action_name)
       vm.reload
 
-      expect(vm.state).to eq 'reboot'
+      expect(vm.state).to eq new_state
     end
   end
 end

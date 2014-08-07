@@ -130,9 +130,15 @@ FactoryGirl.define do
       shared false
     end
 
+    trait :active do
+      virtual_machine_templates { [ build(:virtual_machine_template)] }
+    end
+
     factory :filled_appliance_type, traits: [:all_attributes_not_empty]
     factory :shareable_appliance_type, traits: [:shareable]
     factory :not_shareable_appliance_type, traits: [:not_shareable]
+    factory :active_appliance_type, traits: [:active]
+
   end
 
   factory :dev_mode_property_set do |f|
@@ -261,7 +267,7 @@ FactoryGirl.define do
   factory :virtual_machine_flavor, aliases: [:flavor] do
     flavor_name { FactoryGirl.generate(:vm_flavor_name) }
     cpu { rand(max=16) + 1 }
-    memory { rand(max=16384) + 1 }
+    memory { rand(max=16384) + 512 }
     hdd { rand(max=1000) + 1 }
     hourly_cost { rand(max=100) + 1 }
   end

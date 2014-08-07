@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 20140616061353) do
     t.integer  "amount_billed",                       default: 0,         null: false
     t.string   "billing_state",                       default: "prepaid", null: false
     t.datetime "prepaid_until",                       default: "now()",   null: false
-    t.text     "description"
+    t.string   "description",                         default: ""
   end
 
   create_table "billing_logs", force: true do |t|

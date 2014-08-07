@@ -1,0 +1,22 @@
+%tr(data-appliance-configuration-template-id="#{@appliance_configuration_template.id}")
+  %td(colspan=2)
+    = simple_form_for [:admin, @appliance_type, @appliance_configuration_template], remote: true,
+        data: {target: '#appliance-configuration-templates'},
+        html: {class: 'form-inline'},
+        defaults: {label_html: {class: 'sr-only'}, input_html: {class: 'input-sm'}} do |f|
+      - if request[:action] == 'new'
+        = f.input :appliance_type_id, as: :hidden, input_html: {value: @appliance_type.id}
+      = f.input :name
+      = f.input :payload, input_html: {style: 'width:300px'}, placeholder: 'Paste the configuration payload here...'
+
+  %td
+    .btn-group.pull-right
+
+      - form_id = (request[:action] == 'new' ? '#new_appliance_configuration_template' : "#edit_appliance_configuration_template_#{@appliance_configuration_template.id}")
+
+      = button_tag class: 'btn btn-success btn-xs', onclick: "$('#{form_id}').submit()" do
+        =fa_icon 'save'
+
+      = link_to [:admin, @appliance_type, ApplianceConfigurationTemplate], remote: true,
+          class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#appliance-configuration-templates'} do
+        =fa_icon 'undo'

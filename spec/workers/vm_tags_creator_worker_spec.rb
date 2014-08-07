@@ -2,40 +2,108 @@ require 'spec_helper'
 
 describe VmTagsCreatorWorker do
 
-  server_id = 'SERVER_ID'
-  site_id = 1
+  vm_id = 1
+  id_at_site = 'ID_AT_SITE'
   tags_map = {'1_tag_name' => '1_value', '2_tag_name' => '2_value'}
 
-  let(:cs_mock) {double('compute site')}
   let(:cloud_client_mock) {double('cloud client')}
+  let(:cs_mock) { double('compute site') }
+  let(:vm_mock) { double('virtual machine')}
 
   before do
-    allow(ComputeSite).to receive(:find).with(site_id).and_return cs_mock
     allow(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
+    allow(VirtualMachine).to receive(:find).with(vm_id).and_return(vm_mock)
+    allow(vm_mock).to receive(:id).and_return vm_id
+    allow(vm_mock).to receive(:id_at_site).and_return id_at_site
+    allow(vm_mock).to receive(:compute_site).and_return cs_mock
   end
 
-  it 'calls cloud client with appropriate tag parameters' do
-    expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map)
-    expect(Raven).not_to receive(:capture_exception)
-    VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
-  end
+  context 'active vm' do
+    before do
+      allow(vm_mock).to receive(:state).and_return('active')
+    end
+    context 'on openstack' do
+      before do
+        allow(cs_mock).to receive(:technology).and_return('openstack')
+      end
 
-  it 'reports error to Raven' do
-    exc = Fog::Compute::AWS::NotFound.new
-    expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
-    expect(Raven).to receive(:capture_message).with(start_with('Failed to annotate'), anything)
-    begin
-      VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map)
-    rescue
-      # exc is expected to be raised
+      it 'calls cloud client with appropriate tag parameters' do
+        expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map)
+        expect(Raven).not_to receive(:capture_exception)
+        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+      end
+
+      it 'reraise exception' do
+        exc = Fog::Compute::OpenStack::NotFound.new
+        expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map).and_raise(exc)
+        expect { VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map) }
+          .to raise_error(Fog::Compute::OpenStack::NotFound)
+      end
+
+    end
+
+    context 'on amazon' do
+      before do
+        allow(cs_mock).to receive(:technology).and_return('aws')
+      end
+
+      it 'calls cloud client with appropriate tag parameters' do
+        expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map)
+        expect(Raven).not_to receive(:capture_exception)
+        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+      end
+
+      it 'reports error to Raven' do
+        exc = Fog::Compute::AWS::NotFound.new
+        expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map).and_raise(exc)
+        expect(Raven).to receive(:capture_message).with(start_with('Failed to annotate'), anything)
+        begin
+          VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+        rescue
+          # exc is expected to be raised
+        end
+      end
+
     end
   end
 
-  it 'reraise exception' do
-    exc = Fog::Compute::OpenStack::NotFound.new
-    expect(cloud_client_mock).to receive(:create_tags_for_vm).with(server_id, tags_map).and_raise(exc)
-    expect { VmTagsCreatorWorker.new.perform(server_id, site_id, tags_map) }
-      .to raise_error(Fog::Compute::OpenStack::NotFound)
+  context 'inactive vm' do
+
+    before do
+      allow(vm_mock).to receive(:state).and_return('build')
+    end
+
+    context 'on openstack' do
+    
+      before do
+        allow(cs_mock).to receive(:technology).and_return('openstack')
+      end
+
+      it 'does not call cloud client' do
+        expect(cloud_client_mock).not_to receive(:create_tags_for_vm)
+        expect(Raven).not_to receive(:capture_exception)
+        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+      end
+
+      it 'reschedules tag creation' do
+        expect(VmTagsCreatorWorker).to receive(:perform_in).with(2.minutes, vm_mock.id, tags_map)
+        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+      end
+
+    end
+
+    context 'on amazon' do
+      before do
+        allow(cs_mock).to receive(:technology).and_return('aws')
+      end
+
+      it 'calls cloud client with appropriate tag parameters' do
+        expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map)
+        expect(Raven).not_to receive(:capture_exception)
+        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+      end
+    end
+    
   end
 
 end

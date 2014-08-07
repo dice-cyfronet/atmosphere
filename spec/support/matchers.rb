@@ -357,12 +357,35 @@ end
 RSpec::Matchers.define :vmt_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
-    actual['id_at_site'] == expected.id_at_site &&
+        actual['id_at_site'] == expected.id_at_site &&
+        actual['name'] == expected.name &&
+        actual['state'] == expected.state.to_s &&
+        actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
+        actual['compute_site_id'] == expected.compute_site_id &&
+        actual['appliance_type_id'] == expected.appliance_type_id &&
+        actual['architecture'] == expected.architecture.to_s
+  end
+end
+
+RSpec::Matchers.define :clew_at_eq do |expected|
+  match do |actual|
+
+    actual['id'] == expected.id &&
     actual['name'] == expected.name &&
-    actual['state'] == expected.state.to_s &&
-    actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
-    actual['compute_site_id'] == expected.compute_site_id &&
-    actual['appliance_type_id'] == expected.appliance_type_id &&
-    actual['architecture'] == expected.architecture.to_s
+    actual['description'] == expected.description &&
+
+    actual['preference_cpu'] == expected.preference_cpu &&
+    actual['preference_memory'] == expected.preference_memory &&
+    actual['preference_disk'] == expected.preference_disk
+  end
+end
+
+RSpec::Matchers.define :clew_flavor_eq do |expected|
+  match do |actual|
+    actual['id'] == expected.id &&
+    actual['cpu'] == expected.cpu &&
+    actual['memory'] == expected.memory &&
+    actual['hdd'] == expected.hdd &&
+    actual['flavor_name'] == expected.flavor_name
   end
 end
