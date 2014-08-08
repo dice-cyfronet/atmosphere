@@ -160,7 +160,12 @@ class Fog::Compute::AWS::Flavor
     "i2.xlarge" => 4,
     "i2.2xlarge" => 8,
     "i2.4xlarge" => 16,
-    "i2.8xlarge" => 32
+    "i2.8xlarge" => 32,
+    "r3.large" => 2,
+    "r3.xlarge" => 4,
+    "r3.2xlarge" => 8,
+    "r3.4xlarge" => 16,
+    "r3.8xlarge" => 32
   }
 
   def vcpus
