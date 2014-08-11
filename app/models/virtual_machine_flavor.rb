@@ -26,7 +26,6 @@ class VirtualMachineFlavor < ActiveRecord::Base
   has_many :virtual_machines
 
   validates_presence_of :flavor_name
-  validates_uniqueness_of :flavor_name, scope: :compute_site
   validates_numericality_of :cpu, greater_than_or_equal_to: 0
   validates_numericality_of :memory, greater_than_or_equal_to: 0
   validates_numericality_of :hdd, greater_than_or_equal_to: 0
