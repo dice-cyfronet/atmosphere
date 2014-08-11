@@ -132,6 +132,7 @@ end
 class Fog::Compute::AWS::Flavor
   FLAVOR_VCPU_MAP = {
     "t1.micro" => 1,
+    "t2.micro" => 1,
     "m1.small" => 1,
     "m1.medium" => 1,
     "m1.large" => 2,
@@ -169,7 +170,7 @@ class Fog::Compute::AWS::Flavor
   }
 
   def vcpus
-    FLAVOR_VCPU_MAP[id]
+    FLAVOR_VCPU_MAP[id] || cores
   end
 
   def supported_architectures
