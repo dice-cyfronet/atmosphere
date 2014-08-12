@@ -1,0 +1,36 @@
+start on starting <%= app %>-<%= name %>
+stop on stopping <%= app %>-<%= name %>
+respawn
+
+setuid <%= shell_quote user %>
+chdir <%= shell_quote engine.root %>
+
+env PORT=<%= port %>
+<%- engine.env.each_pair do |key, value| -%>
+env <%= key.upcase %>=<%= shell_quote value %>
+<% end %>
+
+script
+# this script runs in /bin/sh by default
+# respawn as bash so we can source in rbenv
+exec /bin/bash <<EOT
+  # uncomment to use syslog for logging
+  # exec &> /dev/kmsg
+
+  export HOME=/home/atmosphere
+  export PATH="/home/atmosphere/.rbenv/bin:/home/atmosphere/.rbenv/shims:$PATH"
+
+  # Pick your poison :) Or none if you're using a system wide installed Ruby.
+  # rbenv
+  # source $HOME/.bash_profile
+  # OR
+  # source /home/apps/.profile
+  # OR system:
+  # source /etc/profile.d/rbenv.sh
+  #
+  # rvm
+  # source /home/apps/.rvm/scripts/rvm
+
+  exec <%= process.command %> >> <%= log %>/<%=name%>-<%=num%>.log 2>&1
+EOT
+end script

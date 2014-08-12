@@ -1,0 +1,18 @@
+pre-start script
+  mkdir -p <%= log %>
+  chown -R <%= user %> <%= log %>
+
+  mkdir -p /home/atmosphere/current/tmp/pids
+  chown -R <%= user %> /home/atmosphere/current/tmp/pids
+
+  mkdir -p /home/atmosphere/current/tmp/sockets
+  chown -R <%= user %> /home/atmosphere/current/tmp/sockets
+end script
+
+start on (started network-interface
+          or started network-manager
+          or started networking)
+
+stop on (stopping network-interface
+         or stopping network-manager
+         or stopping networking)

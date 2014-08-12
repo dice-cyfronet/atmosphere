@@ -1,0 +1,65 @@
+#!/bin/bash
+
+function log_shell {
+  printf "$1... "
+  output=`$2`
+  if [[ $? == 0 ]]; then
+    echo 'done'
+    #printf $output
+  else
+    printf "failed!\n\n$output\n"
+    exit 1
+  fi
+}
+
+
+read oldrev newrev refname
+echo "Old revision: $oldrev"
+echo "New revision: $newrev"
+echo "Reference name: $refname"
+
+new_branch=${refname#refs/heads/}
+
+source /home/atmosphere/.bash_profile
+
+export RAILS_ENV=production
+export GIT_SSL_NO_VERIFY=1
+export DISABLE_SPRING=1
+
+# Otherwise operations in sub-gits fail
+unset GIT_DIR
+
+cd ..
+
+env_git="env -i `which git`"
+is_not_new=`$env_git branch | grep -w $new_branch | tr '*' ' '`
+current_branch=`$env_git branch | grep '*'`
+
+log_shell "Reseting db/schema.rb" "$env_git checkout -- db/schema.rb"
+
+if [[ "$is_not_new" != *$new_branch* ]]; then
+  log_shell "Creating the $new_branch branch" "$env_git checkout -b $new_branch"
+
+fi
+
+if [[ "$current_branch" != *$new_branch* ]]; then
+  log_shell "Switching to the $new_branch branch" "$env_git checkout $new_branch"
+fi
+
+log_shell "Updating to $newrev" "$env_git reset --hard $newrev"
+log_shell "Updating submodules" "$env_git submodule update --init"
+log_shell "Bundling" "bundle install --deployment --without development test"
+log_shell "Pre-compiling assets", "bundle exec rake assets:clean assets:precompile"
+log_shell "Migrating" "bundle exec rake db:migrate"
+log_shell "Regenerating upstart configuration" "foreman export upstart $HOME/.init --app $USER --log $HOME/current/log --template $HOME/upstart-templates"
+
+running='start/running'
+is_running=`initctl status $USER | grep start`
+if [[ "$is_running" == *$running* ]]; then
+  #log_shell "Restarting" "initctl restart atmosphere"
+  log_shell "Reloading webapp" "kill -SIGUSR2 `cat /home/atmosphere/current/tmp/pids/puma.pid`"
+  log_shell "Restarting workers" "initctl restart atmosphere-worker"
+  log_shell "Restarting clock" "initctl restart atmosphere-clock"
+else
+  log_shell "Starting" "initctl start atmosphere"
+fi

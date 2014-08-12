@@ -1,0 +1,60 @@
+# atmospehre
+
+upstream atmosphere {
+  server unix:/home/atmosphere/current/tmp/sockets/atmosphere.socket;
+}
+
+server {
+  listen *:80; # e.g., listen 192.168.1.1:80; In most cases *:80 is a good idea
+  server_name CHANGEME;
+  server_tokens off; # don't show the version number, a security best practice
+  rewrite ^ https://$server_name$request_uri? permanent;
+}
+
+server {
+  listen *:443 ssl;
+
+  server_name CHANGEME;
+
+  ssl on;
+  ssl_certificate     /etc/certs/CHANGEME/server.pem;
+  ssl_certificate_key /etc/certs/CHANGEME/server.key;
+
+  server_tokens off; # don't show the version number, a security best practice
+  root /home/atmosphere/current/public;
+
+  # individual nginx logs for this atmosphere vhost
+  access_log /var/log/nginx/atmosphere_access.log;
+  error_log /var/log/nginx/atmosphere_error.log;
+
+  location / {
+    # serve static files from defined root folder;.
+    # @gitlab is a named location for the upstream fallback, see below
+    try_files $uri $uri/index.html $uri.html @atmosphere;
+  }
+
+  location ~* ^/assets/ {
+    # Per RFC2616 - 1 year maximum expiry
+    expires 1y;
+    add_header Cache-Control public;
+
+    # Some browsers still send conditional-GET requests if there's a
+    # Last-Modified header or an ETag header even if they haven't
+    # reached the expiry date sent in the Expires header.
+    add_header Last-Modified "";
+    add_header ETag "";
+    break;
+  }
+
+  # if a file, which is not found in the root folder is requested,
+  # then the proxy pass the request to the upsteam (atmosphere puma)
+  location @atmosphere {
+    proxy_redirect off;
+
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+
+    proxy_pass http://atmosphere;
+  }
+}
