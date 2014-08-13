@@ -10,6 +10,7 @@ The Atmosphere installation consists of setting up the following components:
 1. Atmosphere
 1. Nginx
 1. Atmosphere administrator
+1. Logrotate
 1. IPWrangler
 1. Redirus worker
 
@@ -269,10 +270,18 @@ cd /home/atmosphere/current
 sudo -u atmosphere -H rake db:seed
 ```
 
-## 8. IPWrangler
+## 8. Logrotate
+
+```
+sudo cp /home/atmosphere/current/lib/support/logrotate/atmosphere /etc/logrotate.d/atmosphere
+```
+
+If needed create additional logrotate configuration for Redirus worker and IPWrangler.
+
+## 9. IPWrangler
 
 **FIXME PS please paste link to IPWrangler instalation documentation**
 
-## 9. Redirus worker
+## 10. Redirus worker
 
 Installation procedure can be found (here)[https://github.com/dice-cyfronet/redirus-worker/blob/master/README.md]
