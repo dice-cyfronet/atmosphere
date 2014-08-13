@@ -4,6 +4,7 @@ class Admin::UserKeysController < Admin::ApplicationController
 
   def index
     # it really does the job :-)
+    @user_keys = @user_keys.order(:name)
   end
 
   def show

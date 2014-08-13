@@ -15,7 +15,7 @@
       %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
-    - @security_policies.order('security_policies.name').each do |security_policy|
+    - @security_policies.each do |security_policy|
       %tr
         %td= security_policy.name
         %td{ :style => "text-align: right" }

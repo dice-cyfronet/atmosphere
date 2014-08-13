@@ -19,7 +19,7 @@
       %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
-    - @user_keys.order('user_keys.name').each do |user_key|
+    - @user_keys.each do |user_key|
       %tr
         %td= user_key.name
         %td{ :style => "font-family: monospace;" }
