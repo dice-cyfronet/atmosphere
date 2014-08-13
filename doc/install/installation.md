@@ -124,7 +124,58 @@ sudo -u atmosphere -H psql -d atmosphere_production
 Upstart is used to manage Atmosphere and Redirus worker lifecycle
 (`start`/`stop`/`restart`).
 
-**FIXME PS**
+Edit `/etc/dbus-1/system.d/Upstart.conf` to allow any user to invoke all of upstarts methods:
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE busconfig PUBLIC
+  "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+
+<busconfig>
+  <!-- Only the root user can own the Upstart name -->
+  <policy user="root">
+    <allow own="com.ubuntu.Upstart" />
+  </policy>
+
+  <!-- Allow any user to invoke all of the methods on Upstart, its jobs
+       or their instances, and to get and set properties - since Upstart
+       isolates commands by user. -->
+  <policy context="default">
+    <allow send_destination="com.ubuntu.Upstart"
+       send_interface="org.freedesktop.DBus.Introspectable" />
+    <allow send_destination="com.ubuntu.Upstart"
+       send_interface="org.freedesktop.DBus.Properties" />
+    <allow send_destination="com.ubuntu.Upstart"
+       send_interface="com.ubuntu.Upstart0_6" />
+    <allow send_destination="com.ubuntu.Upstart"
+       send_interface="com.ubuntu.Upstart0_6.Job" />
+    <allow send_destination="com.ubuntu.Upstart"
+       send_interface="com.ubuntu.Upstart0_6.Instance" />
+  </policy>
+</busconfig>
+```
+
+Add to `${HOME}/.bash_profile` (where `${HOME}` is the home directory of user used to run `upstart`):
+
+```
+if [ ! -f /var/run/user/$(id -u)/upstart/sessions/*.session ]
+then
+    /sbin/init --user --confdir ${HOME}/.init &
+fi
+
+if [ -f /var/run/user/$(id -u)/upstart/sessions/*.session ]
+then
+   export $(cat /var/run/user/$(id -u)/upstart/sessions/*.session)
+fi
+```
+
+More information in (Upstart Cookbook)[http://upstart.ubuntu.com/cookbook/] in sections:
+
+* (user job)[http://upstart.ubuntu.com/cookbook/#user-job]
+* (enabling user job)[http://upstart.ubuntu.com/cookbook/#enabling]
+* (session job)[http://upstart.ubuntu.com/cookbook/#session-job]
+* (session init)[http://upstart.ubuntu.com/cookbook/#session-init]
 
 ## 6. Atmosphere
 
@@ -280,7 +331,9 @@ If needed create additional logrotate configuration for Redirus worker and IPWra
 
 ## 9. IPWrangler
 
-**FIXME PS please paste link to IPWrangler instalation documentation**
+Latest version of IPWrangler is available at (gitlab/atmosphere/ipt_wr)[https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/tree/ps-master/].
+
+Information about installation are available at (gitlab/atmosphere/ipt_wr/README.md)[https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/ps-master/README.md].
 
 ## 10. Redirus worker
 
