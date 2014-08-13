@@ -3,6 +3,7 @@ class Admin::ComputeSitesController < Admin::ApplicationController
 
   # GET /compute_sites
   def index
+    @compute_sites = @compute_sites.order(:name)
   end
 
   # GET /compute_sites/1

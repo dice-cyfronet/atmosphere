@@ -19,7 +19,7 @@
       %th{ :style => "text-align: right; min-width: 8rem;" }
         = t('actions')
 
-    - @appliance_sets.joins(:user).order('users.login', priority: :desc).group_by(&:user).each do |user, sets|
+    - @appliance_sets.each do |user, sets|
       - sets.each_with_index do |appliance_set, i|
         %tr
           - if i==0

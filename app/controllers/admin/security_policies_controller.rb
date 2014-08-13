@@ -2,6 +2,7 @@ class Admin::SecurityPoliciesController < Admin::ApplicationController
   load_and_authorize_resource :security_policy
 
   def index
+    @security_policies = @security_policies.order(:name)
     authenticate_user!
   end
 

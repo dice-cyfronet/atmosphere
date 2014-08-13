@@ -2,6 +2,7 @@ class Admin::SecurityProxiesController < Admin::ApplicationController
   load_and_authorize_resource :security_proxy
 
   def index
+    @security_proxies = @security_proxies.order(:name)
     authenticate_user!
   end
 
