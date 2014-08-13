@@ -2,7 +2,7 @@ class Admin::VirtualMachinesController < Admin::ApplicationController
   load_and_authorize_resource :virtual_machine
 
   def index
-    @virtual_machines = @virtual_machines.joins(:compute_site).order('compute_sites.name').order('virtual_machines.name').group_by(&:compute_site)
+    @virtual_machines = @virtual_machines.joins(:compute_site).order(compute_sites: :name).order(virtual_machines: :name).group_by(&:compute_site)
   end
 
   def show

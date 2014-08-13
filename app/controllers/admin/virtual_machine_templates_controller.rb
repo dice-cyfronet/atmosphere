@@ -4,7 +4,7 @@ class Admin::VirtualMachineTemplatesController < Admin::ApplicationController
 
   # GET /virtual_machine_templates
   def index
-   @virtual_machine_templates = @virtual_machine_templates.joins(:compute_site).order('compute_sites.name').order('virtual_machine_templates.name').group_by(&:compute_site)
+   @virtual_machine_templates = @virtual_machine_templates.joins(:compute_site).order(compute_sites: :name).order(virtual_machine_templates: :name).group_by(&:compute_site)
   end
 
   # GET /virtual_machine_templates/1
