@@ -27,9 +27,10 @@ class HttpMapping < ActiveRecord::Base
   enumerize :monitoring_status, in: [:pending, :ok, :lost, :not_monitored]
 
   around_destroy :rm_proxy_after_destroy
+  around_save :update_custom_proxy
 
   def update_proxy(ips = nil)
-    create_or_update_proxy(ips) || rm_proxy
+    create_or_update_proxy(ips) || rm_proxies
   end
 
   def proxy_name
@@ -38,7 +39,9 @@ class HttpMapping < ActiveRecord::Base
 
   def create_or_update_proxy(ips = nil)
     if has_workers?(ips)
-      Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::AddProxy, 'args' => [proxy_name, workers(ips), application_protocol, properties])
+      add_proxy(proxy_name, ips)
+      add_proxy(custom_name, ips) if custom_name
+
       true
     end
   end
@@ -52,8 +55,17 @@ class HttpMapping < ActiveRecord::Base
   delegate :service_name, :target_port, :properties, to: :port_mapping_template
   delegate :active_vms, to: :appliance
 
-  def rm_proxy(name=proxy_name)
+  def rm_proxies(default_proxy_name = proxy_name)
+    rm_proxy(default_proxy_name)
+    rm_proxy(custom_name) if custom_name
+  end
+
+  def rm_proxy(name)
     Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::RmProxy, 'args' => [name, application_protocol])
+  end
+
+  def add_proxy(name, ips=nil)
+    Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::AddProxy, 'args' => [name, workers(ips), application_protocol, properties])
   end
 
   def has_workers?(ips)
@@ -67,6 +79,17 @@ class HttpMapping < ActiveRecord::Base
   def rm_proxy_after_destroy
     p_name = proxy_name
     yield
-    rm_proxy(p_name)
+    rm_proxies(p_name)
+  end
+
+  def update_custom_proxy
+    old_custom_name = custom_name_was
+
+    yield
+
+    if old_custom_name != custom_name
+      rm_proxy(old_custom_name) unless old_custom_name.blank?
+      add_proxy(custom_name) unless custom_name.blank?
+    end
   end
 end

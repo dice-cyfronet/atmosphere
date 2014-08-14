@@ -67,7 +67,8 @@ describe Api::V1::ClewController do
                                     "created_at"=>httpm.created_at.iso8601(3),
                                     "updated_at"=>httpm.updated_at.iso8601(3),
                                     "compute_site_id"=>httpm.compute_site_id,
-                                    "monitoring_status"=>httpm.monitoring_status}],
+                                    "monitoring_status"=>httpm.monitoring_status,
+                                    "custom_name"=>httpm.custom_name}],
                               "endpoints"=>
                                   [{"id"=>endp.id,
                                     "name"=>endp.name,

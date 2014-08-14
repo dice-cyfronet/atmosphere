@@ -44,6 +44,14 @@ describe HttpMapping do
 
         expect(Redirus::Worker::RmProxy).to have_enqueued_job(proxy_name, subject.application_protocol)
       end
+
+      it 'removes custom redirectoin from redirus' do
+        subject.custom_name = 'custom_name'
+        subject.run_callbacks(:destroy)
+
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+          'custom_name', subject.application_protocol)
+      end
     end
 
     context 'when updating proxy' do
@@ -52,6 +60,7 @@ describe HttpMapping do
       end
 
       it 'does not add redirection when no workers' do
+        subject.custom_name = 'custom_name'
         subject.update_proxy
 
         expect(Redirus::Worker::AddProxy).to_not have_enqueued_job
@@ -69,6 +78,18 @@ describe HttpMapping do
         expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, match_array(['10.100.2.3:80', '10.100.2.4:80']), subject.application_protocol, [])
       end
 
+      it 'adds custom redirection into redirus' do
+        vm1 = build(:virtual_machine, state: :active, ip: '10.100.2.3')
+        subject.appliance.virtual_machines = [vm1]
+        subject.custom_name = 'custom_name'
+
+        subject.update_proxy
+
+        expect(Redirus::Worker::AddProxy).to have_enqueued_job(
+          'custom_name', match_array(['10.100.2.3:80']),
+          subject.application_protocol, [])
+      end
+
       it 'adds http redirection with properties' do
         vm1 = build(:virtual_machine, state: :active, ip: '10.100.2.3')
         subject.appliance.virtual_machines = [vm1]
@@ -82,10 +103,32 @@ describe HttpMapping do
       end
 
       it 'removes http redirection when no workers' do
+        subject.custom_name = 'custom_name'
         subject.update_proxy
 
-        expect(Redirus::Worker::RmProxy).to have_enqueued_job(proxy_name, subject.application_protocol)
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+          proxy_name, subject.application_protocol)
+
+        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+          'custom_name', subject.application_protocol)
       end
+    end
+
+    it 'removes old custom redirection and adds new one' do
+      mapping = create(:http_mapping)
+      mapping.update_column(:custom_name, 'old_custom_name')
+      vm1 = build(:virtual_machine, state: :active, ip: '10.100.2.3')
+      mapping.appliance.virtual_machines = [vm1]
+
+      mapping.custom_name = 'new_custom_name'
+      mapping.save
+
+      expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+        'old_custom_name', subject.application_protocol)
+      expect(Redirus::Worker::AddProxy).to have_enqueued_job(
+        'new_custom_name',
+        match_array(["10.100.2.3:#{mapping.port_mapping_template.target_port}"]),
+        subject.application_protocol, [])
     end
   end
 
