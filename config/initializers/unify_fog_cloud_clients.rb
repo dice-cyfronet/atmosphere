@@ -105,6 +105,10 @@ class Fog::Compute::OpenStack::Image
   def architecture
     'x86_64'
   end
+
+  def tags
+    metadata.to_hash
+  end
 end
 
 # Image class does not implement destroy method

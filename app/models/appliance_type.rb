@@ -50,6 +50,14 @@ class ApplianceType < ActiveRecord::Base
   scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}).uniq }
   scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
 
+  scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
+    joins(virtual_machine_templates: :compute_site).
+    where(
+      compute_sites: { site_id: cs_site_id },
+      virtual_machine_templates: { id_at_site: vmt_id_at_site }
+    ).first
+  end
+
   around_destroy :delete_vmts
 
   after_create :publish_metadata, if: :publishable?
