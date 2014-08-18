@@ -64,11 +64,11 @@ describe Api::V1::ClewController do
                                     "url"=>httpm.url,
                                     "appliance_id"=>httpm.appliance_id,
                                     "port_mapping_template_id"=>httpm.port_mapping_template_id,
-                                    "created_at"=>httpm.created_at.iso8601(3),
-                                    "updated_at"=>httpm.updated_at.iso8601(3),
                                     "compute_site_id"=>httpm.compute_site_id,
                                     "monitoring_status"=>httpm.monitoring_status,
-                                    "custom_name"=>httpm.custom_name}],
+                                    "custom_name"=>httpm.custom_name,
+                                    "custom_url"=>httpm.custom_url
+                                    }],
                               "endpoints"=>
                                   [{"id"=>endp.id,
                                     "name"=>endp.name,

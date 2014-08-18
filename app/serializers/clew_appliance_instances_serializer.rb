@@ -36,8 +36,22 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
       target_port: pmt.target_port,
       transport_protocol: pmt.transport_protocol,
       application_protocol: pmt.application_protocol,
-      http_mappings: pmt.http_mappings,
+      http_mappings: pmt.http_mappings.map { |hm| map_hm(hm) },
       endpoints: pmt.endpoints
+    }
+  end
+
+  def map_hm(hm)
+    {
+      id: hm.id,
+      application_protocol: hm.application_protocol,
+      url: hm.url,
+      appliance_id: hm.appliance_id,
+      port_mapping_template_id: hm.port_mapping_template_id,
+      compute_site_id: hm.compute_site_id,
+      monitoring_status: hm.monitoring_status,
+      custom_name: hm.custom_name,
+      custom_url: hm.custom_url
     }
   end
 
