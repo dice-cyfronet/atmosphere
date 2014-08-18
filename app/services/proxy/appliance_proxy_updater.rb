@@ -115,15 +115,6 @@ class Proxy::ApplianceProxyUpdater
       http_mapping
     end
 
-    def base_url(type)
-      type == 'http' ? main_compute_site.http_proxy_url : main_compute_site.https_proxy_url
-    end
-
-    def url(http_mapping, base_url)
-      uri = URI(base_url)
-      "#{uri.scheme}://#{http_mapping.proxy_name}.#{uri.host}"
-    end
-
     def create_or_update?
       !workers_ips.blank?
     end
