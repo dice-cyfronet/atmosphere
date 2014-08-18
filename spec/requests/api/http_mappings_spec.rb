@@ -114,6 +114,29 @@ describe Api::V1::HttpMappingsController do
     end
   end
 
+  describe 'PUT /http_mappings/{id}' do
+    it 'return 401 for not authenticated user' do
+      hm = create(:http_mapping)
+
+      put api("/http_mappings/#{hm.id}")
+      expect(response.status).to eq 401
+    end
+
+    it 'sets custom mapping name for owner' do
+      user = create(:user)
+      hm = user_http_mapping(user)
+      update_request = {
+        http_mapping: { custom_name: 'custom_name' }
+      }
+
+      put api("/http_mappings/#{hm.id}", user), update_request
+      hm.reload
+
+      expect(response.status).to eq 200
+      expect(hm.custom_name).to eq 'custom_name'
+    end
+  end
+
   def hms_response
     json_response['http_mappings']
   end
