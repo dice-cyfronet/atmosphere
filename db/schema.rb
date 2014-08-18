@@ -170,6 +170,7 @@ ActiveRecord::Schema.define(version: 20140814113241) do
     t.integer  "compute_site_id",                              null: false
     t.string   "monitoring_status",        default: "pending"
     t.string   "custom_name"
+    t.string   "base_url",                                     null: false
   end
 
   create_table "port_mapping_properties", force: true do |t|

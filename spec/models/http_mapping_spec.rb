@@ -132,6 +132,14 @@ describe HttpMapping do
     end
   end
 
+  it 'generates custom url' do
+    hm = create(:http_mapping,
+      custom_name: 'custom',
+      base_url: 'http://base.url')
+
+    expect(hm.custom_url).to eq 'http://custom.base.url'
+  end
+
   def proxy_name
     "#{subject.port_mapping_template.service_name}-1"
   end

@@ -4,16 +4,20 @@ class Proxy::UrlGenerator
     @compute_site = compute_site
   end
 
-  def url_for(http_mapping)
-    uri = URI(base_url(http_mapping.application_protocol))
+  def self.glue(base_url, prefix)
+    uri = URI(base_url)
 
-    "#{uri.scheme}://#{http_mapping.proxy_name}.#{uri.host}"
+    "#{uri.scheme}://#{prefix}.#{uri.host}"
   end
 
-  private
+  def url_for(http_mapping)
+    Proxy::UrlGenerator.glue(
+      base_url(http_mapping),
+      http_mapping.proxy_name)
+  end
 
-  def base_url(type)
-    type.http? ?
+  def base_url(http_mapping)
+    http_mapping.application_protocol.http? ?
       @compute_site.http_proxy_url :
       @compute_site.https_proxy_url
   end

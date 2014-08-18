@@ -46,6 +46,12 @@ class HttpMapping < ActiveRecord::Base
     end
   end
 
+  def custom_url
+    unless custom_name.blank?
+      Proxy::UrlGenerator.glue(base_url, custom_name)
+    end
+  end
+
   private
 
   def workers(ips=nil)

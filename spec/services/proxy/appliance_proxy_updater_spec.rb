@@ -68,6 +68,7 @@ describe Proxy::ApplianceProxyUpdater do
 
         expect(http_mapping.url).to include proxy_name(appl, http)
         expect(http_mapping.url).to start_with 'http://'
+        expect(http_mapping.base_url).to start_with 'http://'
       end
 
       it 'generates proxy url for https' do
@@ -77,6 +78,7 @@ describe Proxy::ApplianceProxyUpdater do
 
         expect(https_mapping.url).to include proxy_name(appl, https)
         expect(https_mapping.url).to start_with 'https://'
+        expect(https_mapping.base_url).to start_with 'https://'
       end
 
       it 'generates 4 jobs' do

@@ -112,6 +112,7 @@ class Proxy::ApplianceProxyUpdater
       http_mapping = mapping(pmt, type)
       http_mapping.compute_site ||= main_compute_site
       http_mapping.url = url_generator.url_for(http_mapping) if http_mapping.url.blank?
+      http_mapping.base_url = url_generator.base_url(http_mapping) if http_mapping.base_url.blank?
       http_mapping
     end
 
