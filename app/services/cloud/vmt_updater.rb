@@ -45,7 +45,7 @@ class Cloud::VmtUpdater
     source_cs_id, source_uuid = metadata['source_cs'], metadata['source_uuid']
 
     if source_cs_id && source_uuid
-      ApplianceType.with_vmt(source_cs_id, source_uuid)
+      ApplianceType.with_vmt(source_cs_id, source_uuid).first
     end
   end
 

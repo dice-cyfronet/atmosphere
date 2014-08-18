@@ -55,7 +55,7 @@ class ApplianceType < ActiveRecord::Base
     where(
       compute_sites: { site_id: cs_site_id },
       virtual_machine_templates: { id_at_site: vmt_id_at_site }
-    ).first
+    )
   end
 
   around_destroy :delete_vmts

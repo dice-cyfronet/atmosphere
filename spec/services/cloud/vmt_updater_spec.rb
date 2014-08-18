@@ -55,6 +55,31 @@ describe Cloud::VmtUpdater do
     expect(target_vmt.appliance_type).to be_nil
   end
 
+  it 'does not set relation when source VMT does not exist' do
+    source_cs = create(:compute_site)
+    target_cs = create(:compute_site)
+    image = open_stack_image('target_vmt_id',
+      source_cs.site_id, 'does_not_exist')
+    updater = Cloud::VmtUpdater.new(target_cs, image)
+
+    updater.update
+    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
+
+    expect(target_vmt.appliance_type).to be_nil
+  end
+
+  it 'does not set relation to AT when CS does not exist' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('target_vmt_id',
+      'does_not_exist', 'does_not_exist')
+    updater = Cloud::VmtUpdater.new(target_cs, image)
+
+    updater.update
+    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
+
+    expect(target_vmt.appliance_type).to be_nil
+  end
+
   def open_stack_image(image_id, source_cs, source_uuid)
     Fog::Compute::OpenStack::Image.new({
       id: image_id,
