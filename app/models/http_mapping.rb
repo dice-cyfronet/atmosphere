@@ -15,6 +15,7 @@
 
 class HttpMapping < ActiveRecord::Base
   extend Enumerize
+  include Slugable
 
   belongs_to :appliance
   belongs_to :port_mapping_template
@@ -26,6 +27,7 @@ class HttpMapping < ActiveRecord::Base
   enumerize :application_protocol, in: [:http, :https]
   enumerize :monitoring_status, in: [:pending, :ok, :lost, :not_monitored]
 
+  before_save :slug_custom_name
   around_destroy :rm_proxy_after_destroy
   around_save :update_custom_proxy
 
@@ -97,5 +99,9 @@ class HttpMapping < ActiveRecord::Base
       rm_proxy(old_custom_name) unless old_custom_name.blank?
       add_proxy(custom_name) unless custom_name.blank?
     end
+  end
+
+  def slug_custom_name
+    self.custom_name = to_slug(self.custom_name) if self.custom_name
   end
 end

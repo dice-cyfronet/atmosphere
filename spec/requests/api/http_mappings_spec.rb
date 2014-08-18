@@ -126,14 +126,14 @@ describe Api::V1::HttpMappingsController do
       user = create(:user)
       hm = user_http_mapping(user)
       update_request = {
-        http_mapping: { custom_name: 'custom_name' }
+        http_mapping: { custom_name: 'custom-name' }
       }
 
       put api("/http_mappings/#{hm.id}", user), update_request
       hm.reload
 
       expect(response.status).to eq 200
-      expect(hm.custom_name).to eq 'custom_name'
+      expect(hm.custom_name).to eq 'custom-name'
     end
   end
 

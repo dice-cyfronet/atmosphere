@@ -116,17 +116,17 @@ describe HttpMapping do
 
     it 'removes old custom redirection and adds new one' do
       mapping = create(:http_mapping)
-      mapping.update_column(:custom_name, 'old_custom_name')
+      mapping.update_column(:custom_name, 'old-custom-name')
       vm1 = build(:virtual_machine, state: :active, ip: '10.100.2.3')
       mapping.appliance.virtual_machines = [vm1]
 
-      mapping.custom_name = 'new_custom_name'
+      mapping.custom_name = 'new-custom-name'
       mapping.save
 
       expect(Redirus::Worker::RmProxy).to have_enqueued_job(
-        'old_custom_name', subject.application_protocol)
+        'old-custom-name', subject.application_protocol)
       expect(Redirus::Worker::AddProxy).to have_enqueued_job(
-        'new_custom_name',
+        'new-custom-name',
         match_array(["10.100.2.3:#{mapping.port_mapping_template.target_port}"]),
         subject.application_protocol, [])
     end
@@ -138,6 +138,12 @@ describe HttpMapping do
       base_url: 'http://base.url')
 
     expect(hm.custom_url).to eq 'http://custom.base.url'
+  end
+
+  it 'slugify custom name' do
+    hm = create(:http_mapping, custom_name: 'my_custom name..')
+
+    expect(hm.custom_name).to eq 'my-custom-name'
   end
 
   def proxy_name
