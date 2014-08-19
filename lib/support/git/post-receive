@@ -35,11 +35,12 @@ env_git="env -i `which git`"
 is_not_new=`$env_git branch | grep -w $new_branch | tr '*' ' '`
 current_branch=`$env_git branch | grep '*'`
 
-log_shell "Reseting db/schema.rb" "$env_git checkout -- db/schema.rb"
+if [ -f db/schema.rb ]; then
+  log_shell "Reseting db/schema.rb" "$env_git checkout -- db/schema.rb"
+fi
 
 if [[ "$is_not_new" != *$new_branch* ]]; then
   log_shell "Creating the $new_branch branch" "$env_git checkout -b $new_branch"
-
 fi
 
 if [[ "$current_branch" != *$new_branch* ]]; then
