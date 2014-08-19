@@ -173,6 +173,13 @@ then
 fi
 ```
 
+Change owner of this file:
+
+```
+sudo chown atmosphere:atmosphere /home/atmosphere/.bash_profile
+```
+
+
 More information in (Upstart Cookbook)[http://upstart.ubuntu.com/cookbook/] in sections:
 
 * (user job)[http://upstart.ubuntu.com/cookbook/#user-job]
@@ -256,7 +263,7 @@ sudo -u atmosphere -H editor /home/atmosphere/current/config/initializers/action
 Clone atmosphere code locally (on e.g. your laptop)
 
 ```
-git clone https://gitlab.dev.cyfronet.pl/atmosphere/air.git
+GIT_SSL_NO_VERIFY=1 git clone https://gitlab.dev.cyfronet.pl/atmosphere/air.git
 ```
 
 Generate locally two random secrets
