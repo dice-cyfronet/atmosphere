@@ -95,7 +95,7 @@ describe VmTemplateMonitoringWorker do
       before do
         allow(Air).to receive(:monitoring_logger).and_return(logger)
         expect(logger).to receive(:error)
-        allow(logger).to receive(:info)
+        allow(logger).to receive(:debug)
 
         allow_any_instance_of(ComputeSite).to receive(:cloud_client).and_return(cloud_client)
         allow(cloud_client).to receive(:images).and_raise(Excon::Errors::Unauthorized.new 'error')

@@ -11,11 +11,11 @@ class VmMonitoringWorker
 
   def perform(site_id)
     begin
-      logger.info "#{jid}: starting VM monitoring worker for site #{site_id}"
+      logger.debug { "#{jid}: starting VM monitoring worker for site #{site_id}" }
       site = ComputeSite.find(site_id)
-      logger.info "#{jid}: getting servers state for site #{site_id} from compute site"
+      logger.debug { "#{jid}: getting servers state for site #{site_id} from compute site" }
       update_vms(site, site.cloud_client.servers)
-      logger.info "#{jid}: VM monitoring finished for site #{site_id}"
+      logger.debug { "#{jid}: VM monitoring finished for site #{site_id}" }
     rescue Excon::Errors::HTTPStatusError => e
       logger.error "Unable to perform VMs monitoring job: #{e}"
     end
@@ -26,7 +26,7 @@ class VmMonitoringWorker
   attr_reader :vm_updater_class, :vm_destroyer_class
 
   def update_vms(site, servers)
-    logger.info "#{jid}: updating information about VMs"
+    logger.debug { "#{jid}: updating information about VMs" }
     all_site_vms = site.virtual_machines.to_a
     servers.each do |server|
       updated_vm = vm_updater_class.new(site, server).update

@@ -6,7 +6,7 @@ class FlavorWorker
 
   def perform
     begin
-      Rails.logger.info "Updating flavor info for all cloud sites."
+      Rails.logger.debug "Updating flavor info for all cloud sites."
       FlavorManager::scan_all_sites
     end
   end

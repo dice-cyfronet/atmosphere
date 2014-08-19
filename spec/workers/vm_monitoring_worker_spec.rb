@@ -66,7 +66,7 @@ describe VmMonitoringWorker do
       before do
         allow(Air). to receive(:monitoring_logger).and_return(logger)
         expect(logger).to receive(:error)
-        allow(logger).to receive(:info)
+        allow(logger).to receive(:debug)
 
         allow(cloud_client).to receive(:servers).and_raise(Excon::Errors::Unauthorized.new 'error')
       end
