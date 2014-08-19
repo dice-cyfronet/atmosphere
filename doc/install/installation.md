@@ -20,6 +20,8 @@ Install the required packages (needed to compile Ruby and native extensions to
 Ruby gems):
 
 ```
+sudo apt-get update
+
 sudo apt-get install -y build-essential zlib1g-dev libyaml-dev libssl-dev libgdbm-dev libreadline-dev libncurses5-dev libffi-dev openssh-server redis-server curl checkinstall libxml2-dev libxslt-dev libcurl4-openssl-dev libicu-dev logrotate
 ```
 
