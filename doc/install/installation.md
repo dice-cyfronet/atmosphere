@@ -221,8 +221,7 @@ line in `/home/atmosphere/upstart-templates/process.conf.erb`
 sudo -u atmosphere -H mkdir /home/atmosphere/upstart-templates
 
 # Download templates
-sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/
-raw/master/lib/support/git/upstart-templates/master.conf.erb -O /home/atmosphere/upstart-templates/master.conf.erb
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/upstart-templates/master.conf.erb -O /home/atmosphere/upstart-templates/master.conf.erb
 
 sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/upstart-templates/process.conf.erb -O /home/atmosphere/upstart-templates/process.conf.erb
 
