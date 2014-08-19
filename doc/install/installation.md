@@ -126,7 +126,8 @@ sudo -u atmosphere -H psql -d atmosphere_production
 Upstart is used to manage Atmosphere and Redirus worker lifecycle
 (`start`/`stop`/`restart`).
 
-Edit `/etc/dbus-1/system.d/Upstart.conf` to allow any user to invoke all of upstarts methods:
+Replace `/etc/dbus-1/system.d/Upstart.conf` with content presented bellow
+to allow any user to invoke all of upstarts methods:
 
 ```
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -190,7 +191,7 @@ Prepare clean git repository:
 cd /home/atmosphere
 
 # Create Atmosphere home directory
-mkdir current
+sudo -u atmosphere -H mkdir current
 
 # Init empty git repository...
 sudo -u atmosphere -H git init /home/atmosphere/current
@@ -205,7 +206,7 @@ repository
 
 ```
 # Download post-receive hook...
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/post-receive > /home/atmosphere/current/.git/hooks/post-receive
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/post-receive -O /home/atmosphere/current/.git/hooks/post-receive
 
 # ...and make it executable
 sudo -u atmosphere -H chmod +x /home/atmosphere/current/.git/hooks/*
@@ -220,12 +221,12 @@ line in `/home/atmosphere/upstart-templates/process.conf.erb`
 sudo -u atmosphere -H mkdir /home/atmosphere/upstart-templates
 
 # Download templates
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/
-raw/master/lib/support/git/upstart-templates/master.conf.erb > /home/atmosphere/upstart-templates/master.conf.erb
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/
+raw/master/lib/support/git/upstart-templates/master.conf.erb -O /home/atmosphere/upstart-templates/master.conf.erb
 
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/upstart-templates/process.conf.erb > /home/atmosphere/upstart-templates/process.conf.erb
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/upstart-templates/process.conf.erb -O /home/atmosphere/upstart-templates/process.conf.erb
 
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/upstart-templates/process_master.conf.erb > /home/atmosphere/upstart-templates/process_master.conf.erb
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/git/upstart-templates/process_master.conf.erb -O /home/atmosphere/upstart-templates/process_master.conf.erb
 
 # Create directory for generated upstart scripts
 sudo -u atmosphere -H mkdir /home/atmosphere/.init
@@ -238,13 +239,13 @@ mkdir /home/atmosphere/current/config
 mkdir /home/atmosphere/current/config/initializers
 
 # Download required configuration files
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/database.yml.postgresql > /home/atmosphere/current/config/database.yml
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/database.yml.postgresql -O /home/atmosphere/current/config/database.yml
 
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/air.yml.example > /home/atmosphere/current/config/air.yml
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/air.yml.example -O /home/atmosphere/current/config/air.yml
 
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/puma.rb.example > /home/atmosphere/current/config/puma.rb
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/puma.rb.example -O /home/atmosphere/current/config/puma.rb
 
-sudo -u atmosphere -H curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/initializers/action_mailer.rb.example > /home/atmosphere/current/config/initializers/action_mailer.rb
+sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/initializers/action_mailer.rb.example -O /home/atmosphere/current/config/initializers/action_mailer.rb
 
 # Customize configuration files
 sudo -u atmosphere -H editor /home/atmosphere/current/config/database.yml
