@@ -6,7 +6,10 @@
 
 It is still possible to install Atmosphere on other operating systems. List
 presented above mention all operating systems, which was **already** used for
-Atmosphere installation.
+Atmosphere installation. What is more some command used in installation
+description are debian specific (e.g. `apt-get`). If you are using OS with other
+package management system than all these commands need to be adopted (e.g. into
+`yum` if you are using Centos).
 
 ## Ruby versions
 
