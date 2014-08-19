@@ -24,6 +24,11 @@ class HttpMapping < ActiveRecord::Base
   validates_presence_of :url, :application_protocol, :appliance, :port_mapping_template, :compute_site
 
   validates_inclusion_of :application_protocol, in: %w(http https)
+  validates :custom_name, uniqueness: {
+      scope: [:compute_site_id, :application_protocol],
+      allow_blank: true
+    }
+
   enumerize :application_protocol, in: [:http, :https]
   enumerize :monitoring_status, in: [:pending, :ok, :lost, :not_monitored]
 

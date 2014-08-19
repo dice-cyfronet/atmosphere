@@ -146,6 +146,25 @@ describe HttpMapping do
     expect(hm.custom_name).to eq 'my-custom-name'
   end
 
+  it 'guarantee custom name uniques' do
+    cs = create(:compute_site)
+    create(:http_mapping,
+      custom_name: 'test',
+      application_protocol: :http,
+      compute_site: cs)
+    hm1 = build(:http_mapping,
+      custom_name: 'test',
+      application_protocol: :http,
+      compute_site: cs)
+    hm2 = build(:http_mapping,
+      custom_name: 'test',
+      application_protocol: :https,
+      compute_site: cs)
+
+    expect(hm1.save).to be_falsy
+    expect(hm2.save).to be_truthy
+  end
+
   def proxy_name
     "#{subject.port_mapping_template.service_name}-1"
   end
