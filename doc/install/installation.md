@@ -22,7 +22,7 @@ Ruby gems):
 ```
 sudo apt-get update
 
-sudo apt-get install -y build-essential zlib1g-dev libyaml-dev libssl-dev libgdbm-dev libreadline-dev libncurses5-dev libffi-dev openssh-server redis-server curl checkinstall libxml2-dev libxslt-dev libcurl4-openssl-dev libicu-dev logrotate
+sudo apt-get install -y build-essential zlib1g-dev libyaml-dev libssl-dev libgdbm-dev libreadline-dev libncurses5-dev libffi-dev openssh-server redis-server curl wget checkinstall libxml2-dev libxslt-dev libcurl4-openssl-dev libicu-dev logrotate
 ```
 
 Make sure you have the right version of Git installed
@@ -234,8 +234,8 @@ sudo -u atmosphere -H mkdir /home/atmosphere/.init
 Create Atmosphere configuration files
 
 ```
-mkdir /home/atmosphere/current/config
-mkdir /home/atmosphere/current/config/initializers
+sudo -u atmosphere -H mkdir /home/atmosphere/current/config
+sudo -u atmosphere -H mkdir /home/atmosphere/current/config/initializers
 
 # Download required configuration files
 sudo -u atmosphere -H wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/config/database.yml.postgresql -O /home/atmosphere/current/config/database.yml
