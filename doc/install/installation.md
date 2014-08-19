@@ -312,7 +312,7 @@ As a conclusion code from `master` branch will be pushed into remote server and
 sudo apt-get install -y nginx-light
 
 # Download Atmosphere nginx configuration file...
-sudo curl --progress https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/nginx/atmosphere > /etc/nginx/sites-available/atmosphere
+sudo wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/nginx/atmosphere -O /etc/nginx/sites-available/atmosphere
 
 # ...enable it...
 sudo ln -s /etc/nginx/sites-available /etc/nginx/sites-enabled
