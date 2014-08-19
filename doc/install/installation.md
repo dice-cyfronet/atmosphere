@@ -284,6 +284,12 @@ export SECRET_KEY_BASE=first_generated_secret
 export DEVISE_SECRET_KEY_BASE=second_generated_secret
 ```
 
+Install nodejs for compiling java script files
+
+```
+sudo apt-get install -y nodejs
+```
+
 Add Atmosphere remote into your local Atmosphere copy
 
 ```
@@ -314,8 +320,11 @@ sudo apt-get install -y nginx-light
 # Download Atmosphere nginx configuration file...
 sudo wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/nginx/atmosphere -O /etc/nginx/sites-available/atmosphere
 
+# customize nginx configuration file
+sudo editor /etc/nginx/sites-available/atmosphere
+
 # ...enable it...
-sudo ln -s /etc/nginx/sites-available /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/atmosphere /etc/nginx/sites-enabled/atmosphere
 
 # ...and restart nginx
 sudo service nginx restart
@@ -326,8 +335,10 @@ As a conclusion Atmosphere should be up and running on defined URL.
 ## 7. Atmosphere administrator
 
 ```
+sudo su - atmosphere
 cd /home/atmosphere/current
-sudo -u atmosphere -H rake db:seed
+bundle exec rake db:seed
+exit
 ```
 
 ## 8. Logrotate
@@ -340,10 +351,8 @@ If needed create additional logrotate configuration for Redirus worker and IPWra
 
 ## 9. IPWrangler
 
-Latest version of IPWrangler is available at (gitlab/atmosphere/ipt_wr)[https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/tree/ps-master/].
-
-Information about installation are available at (gitlab/atmosphere/ipt_wr/README.md)[https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/ps-master/README.md].
+Information documentation is available [here](https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/ps-master/README.md).
 
 ## 10. Redirus worker
 
-Installation procedure can be found (here)[https://github.com/dice-cyfronet/redirus-worker/blob/master/README.md]
+Installation documentation is available [here](https://github.com/dice-cyfronet/redirus-worker/blob/master/README.md).
