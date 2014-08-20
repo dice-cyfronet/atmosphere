@@ -61,8 +61,8 @@ sudo apt-get install -y postfix
 
 ## 2. Ruby
 
-You can use ruby installed by ruby version managers such as (RVM)[http://rvm.io/]
-or (rbenv)[https://github.com/sstephenson/rbenv], or install it globally from sources. The following manual presents global installation.
+You can use ruby installed by ruby version managers such as [RVM](http://rvm.io/)
+or [rbenv](https://github.com/sstephenson/rbenv), or install it globally from sources. The following manual presents global installation.
 
 Remove old Ruby 1.8, if present:
 
