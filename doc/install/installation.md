@@ -1,23 +1,22 @@
 # Overview
 
-The Atmosphere installation consists of setting up the following components:
+Atmosphere installation consists of setting up the following components:
 
 1. Packages / Dependencies
-1. Ruby
-1. System User
-1. Database
-1. Upstart
-1. Atmosphere
-1. Nginx
-1. Atmosphere administrator
-1. Logrotate
-1. IPWrangler
-1. Redirus worker
+2. Ruby interpreter
+3. System user account
+4. Database configuration
+5. Upstart scripts
+6. Atmosphere application
+7. Nginx web server
+8. Atmosphere administrator account
+9. Logrotate
+10. IPWrangler (for TCP/UDP redirections)
+11. Redirus worker (for smart HTTP(s) redirections)
 
 ## 1. Packages / Dependencies
 
-Install the required packages (needed to compile Ruby and native extensions to
-Ruby gems):
+Install the required packages (reqired to compile Ruby and native extensions to Ruby gems):
 
 ```
 sudo apt-get update
@@ -35,7 +34,7 @@ sudo apt-get install -y git-core
 git --version
 ```
 
-Is the system packaged Git too old? Remove it and compile from source.
+If the Git version installed by the system is too old, remove it and compile from source.
 
 ```
 # Remove packaged Git
@@ -54,7 +53,7 @@ make prefix=/usr/local all
 sudo make install
 ```
 
-Note: In order to receive mail notifications, make sure to install a mail server.
+Note: In order to receive e-mail notifications, make sure to install a mail server.
 
 ```
 sudo apt-get install -y postfix
@@ -63,9 +62,9 @@ sudo apt-get install -y postfix
 ## 2. Ruby
 
 You can use ruby installed by ruby version managers such as (RVM)[http://rvm.io/]
-or (rbenv)[https://github.com/sstephenson/rbenv] or install it glabaly from the sources. Bellow global ruby installation will be presented.
+or (rbenv)[https://github.com/sstephenson/rbenv], or install it globally from sources. The following manual presents global installation.
 
-Remove the old Ruby 1.8 if present
+Remove old Ruby 1.8, if present:
 
 ```
 sudo apt-get remove ruby1.8
@@ -91,13 +90,13 @@ sudo gem install foreman --no-ri --no-rdoc
 
 ## 3. System User
 
-Create a `atmosphere` user for Atmosphere:
+Create an `atmosphere` user for Atmosphere:
 
 ```
 sudo adduser --gecos 'Atmosphere' atmosphere
 ```
 
-## 4. Database
+## 4. Database setup
 
 Install PostgreSQL database.
 
@@ -105,13 +104,13 @@ Install PostgreSQL database.
 # Install the database packages
 sudo apt-get install -y postgresql-9.3 postgresql-client libpq-dev
 
-# Login to PostgreSQL
+# Log in to PostgreSQL
 sudo -u postgres psql -d template1
 
-# Create a user for Atmosphere.
+# Create a user for Atmosphere
 template1=# CREATE USER atmosphere CREATEDB;
 
-# Create the Atmosphere production database & grant all privileges on database
+# Create the Atmosphere production database & grant all privileges to user atmosphere
 template1=# CREATE DATABASE atmosphere_production OWNER atmosphere;
 
 # Quit the database session
@@ -123,11 +122,11 @@ sudo -u atmosphere -H psql -d atmosphere_production
 
 ## 5. Upstart
 
-Upstart is used to manage Atmosphere and Redirus worker lifecycle
+Upstart is used to manage the Atmosphere and Redirus worker lifecycle
 (`start`/`stop`/`restart`).
 
-Replace `/etc/dbus-1/system.d/Upstart.conf` with content presented bellow
-to allow any user to invoke all of upstarts methods:
+Replace `/etc/dbus-1/system.d/Upstart.conf` with the content presented below
+to allow any user to invoke all upstart methods:
 
 ```
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -159,7 +158,7 @@ to allow any user to invoke all of upstarts methods:
 </busconfig>
 ```
 
-Add to `${HOME}/.bash_profile` (where `${HOME}` is the home directory of user used to run `upstart`):
+Add the following to `${HOME}/.bash_profile` (where `${HOME}` is the home directory of user who is to run `upstart`):
 
 ```
 if [ ! -f /var/run/user/$(id -u)/upstart/sessions/*.session ]
@@ -173,14 +172,14 @@ then
 fi
 ```
 
-Change owner of this file:
+Change the owner of this file:
 
 ```
 sudo chown atmosphere:atmosphere /home/atmosphere/.bash_profile
 ```
 
 
-More information in (Upstart Cookbook)[http://upstart.ubuntu.com/cookbook/] in sections:
+More information can be found in the (Upstart Cookbook)[http://upstart.ubuntu.com/cookbook/], particularly in the following sections:
 
 * (user job)[http://upstart.ubuntu.com/cookbook/#user-job]
 * (enabling user job)[http://upstart.ubuntu.com/cookbook/#enabling]
@@ -189,26 +188,26 @@ More information in (Upstart Cookbook)[http://upstart.ubuntu.com/cookbook/] in s
 
 ## 6. Atmosphere
 
-We use Git `hooks` to deploy new version of atmosphere.
+We use Git `hooks` to automatically deploy new releases of atmosphere.
 
-Prepare clean git repository:
+Prepare a clean git repository:
 
 ```
-# We'll install Atmosphere into home directory of the user "atmosphere"
+# We'll install Atmosphere into the home directory of the user "atmosphere"
 cd /home/atmosphere
 
-# Create Atmosphere home directory
+# Create the Atmosphere home directory
 sudo -u atmosphere -H mkdir current
 
 # Init empty git repository...
 sudo -u atmosphere -H git init /home/atmosphere/current
 
-# ...and allow to push to this repository
+# ...and enable pushing to this repository.
 cd /home/atmosphere/current
 sudo -u atmosphere -H git config receive.denyCurrentBranch ignore
 ```
 
-Install post hook which will be triggered every time new code is pushed into the
+Install the post hook which will be triggered every time new code is pushed into the
 repository
 
 ```
@@ -220,11 +219,11 @@ sudo -u atmosphere -H chmod +x /home/atmosphere/current/.git/hooks/*
 ```
 
 Install modified templates for foreman upstart script generation. If you are
-using one of ruby version management tool than please uncomment apropriate
+using a ruby version management tool than please uncomment the appropriate
 line in `/home/atmosphere/upstart-templates/process.conf.erb`
 
 ```
-# Create dir for upstart templates
+# Create directory for upstart templates
 sudo -u atmosphere -H mkdir /home/atmosphere/upstart-templates
 
 # Download templates
@@ -260,28 +259,28 @@ sudo -u atmosphere -H editor /home/atmosphere/current/config/puma.rb
 sudo -u atmosphere -H editor /home/atmosphere/current/config/initializers/action_mailer.rb
 ```
 
-Clone atmosphere code locally (on e.g. your laptop)
+Clone atmosphere code locally (e.g. on your laptop):
 
 ```
 GIT_SSL_NO_VERIFY=1 git clone https://gitlab.dev.cyfronet.pl/atmosphere/air.git
 ```
 
-Generate locally two random secrets
+Generate two random secrets locally:
 
 ```
 cd air
 rake secret
 rake secret
 ```
-Set generated secrets as env variables on your server
+Expose generated secrets as environmental variables on your server
 
 ```
 # Open bash profile...
 sudo -u atmosphere -H editor /home/atmosphere/.bash_profile
 
 # ...and add two secrets
-export SECRET_KEY_BASE=first_generated_secret
-export DEVISE_SECRET_KEY_BASE=second_generated_secret
+export SECRET_KEY_BASE=<first_generated_secret>
+export DEVISE_SECRET_KEY_BASE=<second_generated_secret>
 ```
 
 Install nodejs for compiling java script files
@@ -290,7 +289,7 @@ Install nodejs for compiling java script files
 sudo apt-get install -y nodejs
 ```
 
-Add Atmosphere remote into your local Atmosphere copy
+Add Atmosphere remote to your local Atmosphere copy
 
 ```
 cd cloned_atmosphere_path
@@ -303,13 +302,13 @@ Push atmosphere code into production
 git push production master
 ```
 
-As a conclusion code from `master` branch will be pushed into remote server and
-`post-receive` hook will be invoked. It will:
-- updates remote code into required version
-- installs all required dependencies (gems)
-- triggers database migration
-- regenerates upstart scripts
-- restart application
+As a result, code from the `master` branch will be pushed into the remote server and
+the `post-receive` hook will be invoked. It will:
+- update remote code to requested version
+- install all required dependencies (gems)
+- perform database migration
+- regenerate upstart scripts
+- restart the application.
 
 ## Nginx
 
@@ -317,7 +316,7 @@ As a conclusion code from `master` branch will be pushed into remote server and
 # Install nginx
 sudo apt-get install -y nginx-light
 
-# Download Atmosphere nginx configuration file...
+# Download Atmosphere nginx configuration file
 sudo wget --no-check-certificate https://gitlab.dev.cyfronet.pl/atmosphere/air/raw/master/lib/support/nginx/atmosphere -O /etc/nginx/sites-available/atmosphere
 
 # customize nginx configuration file
@@ -330,7 +329,7 @@ sudo ln -s /etc/nginx/sites-available/atmosphere /etc/nginx/sites-enabled/atmosp
 sudo service nginx restart
 ```
 
-As a conclusion Atmosphere should be up and running on defined URL.
+As a conclusion Atmosphere should be up and running under the selected URL.
 
 ## 7. Atmosphere administrator
 
@@ -347,11 +346,11 @@ exit
 sudo cp /home/atmosphere/current/lib/support/logrotate/atmosphere /etc/logrotate.d/atmosphere
 ```
 
-If needed create additional logrotate configuration for Redirus worker and IPWrangler.
+If needed, create additional logrotate configurations for Redirus workers and IPWrangler.
 
 ## 9. IPWrangler
 
-Information documentation is available [here](https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/ps-master/README.md).
+Documentation is available [here](https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/ps-master/README.md).
 
 ## 10. Redirus worker
 

@@ -2,14 +2,13 @@
 
 ## Supported Operating Systems
 
-- Ubuntu
+- Ubuntu 12.04
+- Ubuntu 14.04
 
-It is still possible to install Atmosphere on other operating systems. List
-presented above mention all operating systems, which was **already** used for
-Atmosphere installation. What is more some command used in installation
-description are debian specific (e.g. `apt-get`). If you are using OS with other
-package management system than all these commands need to be adopted (e.g. into
-`yum` if you are using Centos).
+It may be possible to install Atmosphere on other operating systems. The above list only includes
+operating systems, which have **already** been used for Atmosphere deployment in production mode. What is more,
+some commands used in the installation manual are Debian-specific (e.g. `apt-get`). If your OS uses a different
+package management system, you will need to modify these commands appropriately (e.g. by calling `yum` if you are using CentOS).
 
 ## Ruby versions
 
@@ -29,19 +28,18 @@ Notice: The 25 workers of Sidekiq will show up as separate processes in your pro
 
 ## Storage
 
-The necessary hard drive space is necessary to store:
+The following components must reside in your attached storage:
 
 - Atmosphere codebase (30MB)
 - Atmosphere dependencies - gems (1GB)
 - Application logs (3GB)
-- Atmosphere database. Size of the database depends how many compute sites
+- Atmosphere database (Note: the volume of the database depends on how many compute sites
 will be integrated and how many Appliance Types and Appliances will be
-registered. For start 100MB should be enough.
+registered. 100MB should be enough for standard deployments.)
 
 ## Redis and Sidekiq
 
-Redis stores background task queue. The storage requirements for Redis are minimal,
-about 10MB. Sidekiq processes the background jobs with a multithreaded process.
-This process starts with the entire Rails stack (1GB+) but it can grow over time,
-depending of number of Compute Sites integrated and number of HTTP endpoints, which
-need to be monitored. On active server the Sidekiq process can use 2GB+ of memory.
+Redis manages the background task queue. Storage requirements for Redis are minimal (on the order of 10 MB).
+Sidekiq processes background jobs using a multithreaded process. This process starts along with the entire Rails stack (1GB+) but it may grow over time,
+depending of the number of compute sites integrated with atmosphere and the number of instance-bound HTTP endpoints which
+need to be monitored. On a heavily loaded server the Sidekiq process may allocate 2GB+ of memory.
