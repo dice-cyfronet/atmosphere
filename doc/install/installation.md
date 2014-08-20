@@ -350,7 +350,7 @@ If needed, create additional logrotate configurations for Redirus workers and IP
 
 ## 9. IPWrangler
 
-Documentation is available [here](https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/ps-master/README.md).
+Documentation is available [here](https://gitlab.dev.cyfronet.pl/atmosphere/ipt_wr/blob/master/README.md).
 
 ## 10. Redirus worker
 
