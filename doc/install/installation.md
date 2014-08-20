@@ -128,7 +128,7 @@ Upstart is used to manage the Atmosphere and Redirus worker lifecycle
 Replace `/etc/dbus-1/system.d/Upstart.conf` with the content presented below
 to allow any user to invoke all upstart methods:
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE busconfig PUBLIC
   "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
