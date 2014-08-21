@@ -1,7 +1,8 @@
 class Cloud::VmtUpdater
-  def initialize(site, image)
+  def initialize(site, image, options = {})
     @site = site
     @image = image
+    @all = options[:all]
   end
 
   def update
@@ -50,7 +51,7 @@ class Cloud::VmtUpdater
   end
 
   def young?
-    vmt.created_at.blank? ||
+    @all || vmt.created_at.blank? ||
       vmt.created_at > Air.config.vmt_at_relation_update_period.hours.ago
   end
 end
