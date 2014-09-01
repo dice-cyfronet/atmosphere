@@ -383,4 +383,15 @@ describe ApplianceType do
       }.to change { VirtualMachineTemplate.count }.by(0)
     end
   end
+
+  it 'allow to be started only on active compute site' do
+    active_cs = create(:compute_site, active: true)
+    inactive_cs = create(:compute_site, active: false)
+    active_vmt = create(:virtual_machine_template, compute_site: active_cs)
+    inactive_vmt = create(:virtual_machine_template, compute_site: inactive_cs)
+    at = create(:appliance_type,
+      virtual_machine_templates: [active_vmt, inactive_vmt])
+
+    expect(at.compute_sites).to eq [active_cs]
+  end
 end
