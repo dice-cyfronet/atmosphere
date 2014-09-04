@@ -14,7 +14,7 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
     options[:cpu] &&= at.preference_cpu
     options[:memory] &&= at.preference_memory
     options[:hdd] &&= at.preference_disk
-    flavor = VirtualMachineFlavor.with_prefs(options).first
+    flavor = VirtualMachineFlavor.active.with_prefs(options).first
     {
       id: at.id,
       name: at.name,
