@@ -10,11 +10,7 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
   end
 
   def map_at(at)
-    options = {}
-    options[:cpu] &&= at.preference_cpu
-    options[:memory] &&= at.preference_memory
-    options[:hdd] &&= at.preference_disk
-    flavor = VirtualMachineFlavor.active.with_prefs(options).first
+    flavor = selected_flavor_for(at)
     {
       id: at.id,
       name: at.name,
@@ -54,6 +50,24 @@ class ClewApplianceTypesSerializer < ActiveModel::Serializer
     }
   end
 
+  # TEMPORARY SOLITION - PLEASE FIX!!!!!!!!!!!!!!!!!!!!!!!!
+  def  selected_flavor_for(at)
+    params = {}
+    params[:cpu] &&= at.preference_cpu
+    params[:memory] &&= at.preference_memory
+    params[:hdd] &&= at.preference_disk
+
+    tmpls = VirtualMachineTemplate.active.on_active_cs
+      .where(appliance_type_id: at.id)
+    flavor = nil
+
+    unless tmpls.blank?
+      _, flavor = Optimizer.instance
+        .select_tmpl_and_flavor(tmpls, params)
+    end
+
+    flavor
+  end
 end
 
 

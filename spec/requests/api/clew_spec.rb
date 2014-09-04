@@ -141,12 +141,17 @@ describe Api::V1::ClewController do
       let!(:at3)  { create(:active_appliance_type, author: user) }
       let!(:at4)  { create(:active_appliance_type, visible_to: :all) }
 
+      let(:cs) { create(:compute_site) }
+
+      let!(:vmt3) { create(:virtual_machine_template, compute_site: cs, appliance_type: at3) }
+      let!(:vmt4) { create(:virtual_machine_template, compute_site: cs, appliance_type: at4) }
+
       let!(:act1) { create(:appliance_configuration_template, appliance_type: at1) }
       let!(:act2) { create(:appliance_configuration_template, appliance_type: at2) }
       let!(:act3) { create(:appliance_configuration_template, appliance_type: at3) }
       let!(:act4) { create(:appliance_configuration_template, appliance_type: at4) }
 
-      let!(:flavor)   { create(:flavor) }
+      let!(:flavor)   { create(:flavor, compute_site: cs) }
 
       it 'returns 200' do
         get api("/clew/appliance_types", user)
@@ -158,7 +163,7 @@ describe Api::V1::ClewController do
 
         expect(response.status).to eq 200
         expect(clew_at_response['appliance_types'].size).to eq 2
-        expect(clew_at_response['compute_sites'].size).to eq 2
+        expect(clew_at_response['compute_sites'].size).to eq 3
         expect(clew_at_response['appliance_types'][0]).to clew_at_eq at3
         expect(clew_at_response['appliance_types'][1]).to clew_at_eq at4
         expect(clew_at_response['appliance_types'][0]['matched_flavor']).to clew_flavor_eq  flavor
