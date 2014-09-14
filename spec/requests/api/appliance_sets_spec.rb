@@ -108,6 +108,51 @@ describe Api::V1::ApplianceSetsController do
         post api('/appliance_sets', non_developer), {appliance_set: {name: 'devel', appliance_set_type: :development}}
         expect(response.status).to eq 403
       end
+
+      context 'optimization policy and appliances are specified' do
+
+        let!(:at_1) { create(:appliance_type, visible_to: :all)}
+        let!(:conf_tmpl_1) { create(:appliance_configuration_template, appliance_type: at_1) }
+        let!(:at_2) { create(:appliance_type, visible_to: :all)}
+        let!(:conf_tmpl_2) { create(:appliance_configuration_template, appliance_type: at_2) }
+        let(:cs) { create(:compute_site) }
+        let(:tmpl_1) { create(:virtual_machine_template, appliance_type: at_1, compute_site: cs) }
+        let(:tmpl_2) { create(:virtual_machine_template, appliance_type: at_2, compute_site: cs) }
+
+        AS_NAME = 'AS with appliances and optimization policy'
+        
+        let!(:appliances_params) {
+          [ 
+            {configuration_template_id: conf_tmpl_1.id, params: {a: 'A'}, vms: [{cpu: 1, mem: 512, compute_site_ids: [1]}]},
+            {configuration_template_id: conf_tmpl_2.id, params: {b: 'B'}, vms: [{cpu: 1, mem: 512, compute_site_ids: [1]}]}
+          ]
+
+        }
+        
+
+        before(:each) do
+          params = {appliance_set: {name: AS_NAME, appliance_set_type: :workflow, optimization_policy: :manual, appliances: appliances_params}}
+          post api('/appliance_sets', non_developer), params
+        end
+
+        it 'creates AS with optimization policy' do
+          expect(created_as.optimization_policy).to eq 'manual'
+        end
+
+        it 'creates AS with appliances' do
+          expect(created_as.appliances.count).to eq appliances_params.size
+        end
+
+        it 'calls optimizer for each appliance of created AS' do
+          expect(Optimizer.instance).to have_received(:run).exactly(created_as.appliances.count).times
+        end
+
+        def created_as
+          ApplianceSet.find(as_response['id'])
+        end
+
+      end
+
     end
   end
 
