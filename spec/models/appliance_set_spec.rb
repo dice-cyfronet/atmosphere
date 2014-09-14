@@ -29,6 +29,8 @@ describe ApplianceSet do
   it { should ensure_inclusion_of(:appliance_set_type).in_array(%w(development workflow portal)) }
   it { should have_readonly_attribute :appliance_set_type }
 
+  it {should ensure_inclusion_of(:optimization_policy).in_array(%w(manual)) }
+
   pending 'to be at most 1 development appliance set in the scope of specific User'
   # TODO the below does not work as expected, something more is needed
   #context 'if appliance_set_type is either development or portal' do

@@ -22,6 +22,7 @@ class ApplianceSet < ActiveRecord::Base
 
   enumerize :appliance_set_type, in: [:portal, :development, :workflow]
   validates :appliance_set_type, inclusion: %w(portal development workflow)
+  validates :optimization_policy, inclusion: %w(manual), if: :optimization_policy
   validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
   attr_readonly :appliance_set_type
