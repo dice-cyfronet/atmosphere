@@ -81,5 +81,10 @@ module Api
     def load_admin_abilities?
       params[:action] != 'index' or to_boolean(params[:all])
     end
+
+    def mi_ticket
+      current_user ? current_user.mi_ticket : nil
+    end
+
   end
 end
