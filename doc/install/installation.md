@@ -179,12 +179,12 @@ sudo chown atmosphere:atmosphere /home/atmosphere/.bash_profile
 ```
 
 
-More information can be found in the (Upstart Cookbook)[http://upstart.ubuntu.com/cookbook/], particularly in the following sections:
+More information can be found in the [Upstart Cookbook](http://upstart.ubuntu.com/cookbook/), particularly in the following sections:
 
-* (user job)[http://upstart.ubuntu.com/cookbook/#user-job]
-* (enabling user job)[http://upstart.ubuntu.com/cookbook/#enabling]
-* (session job)[http://upstart.ubuntu.com/cookbook/#session-job]
-* (session init)[http://upstart.ubuntu.com/cookbook/#session-init]
+* [user job](http://upstart.ubuntu.com/cookbook/#user-job)
+* [enabling user job](http://upstart.ubuntu.com/cookbook/#enabling)
+* [session job](http://upstart.ubuntu.com/cookbook/#session-job)
+* [session init](http://upstart.ubuntu.com/cookbook/#session-init)
 
 ## 6. Atmosphere
 
