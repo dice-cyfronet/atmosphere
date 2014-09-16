@@ -1,0 +1,35 @@
+# Copy this lib/support/init.d/atmosphere.default.example file to
+# /etc/default/atmosphere in order for it to apply to your system.
+
+# RAILS_ENV defines the type of installation that is running.
+# Normal values are "production", "test" and "development".
+RAILS_ENV="production"
+
+# app_user defines the user that Atmosphere is run as.
+# The default is "atmosphere".
+app_user="atmosphere"
+
+# app_root defines the folder in which atmosphere and it's components are installed.
+# The default is "/home/$app_user/current"
+app_root="/home/$app_user/current"
+
+# pid_path defines a folder in which the atmosphere and it's components place their pids.
+# This variable is also used below to define the relevant pids for the atmosphere components.
+# The default is "$app_root/tmp/pids"
+pid_path="$app_root/tmp/pids"
+
+# socket_path defines the folder in which atmosphere places the sockets
+#The default is "$app_root/tmp/sockets"
+socket_path="$app_root/tmp/sockets"
+
+# web_server_pid_path defines the path in which to create the pid file fo the web_server
+# The default is "$pid_path/puma.pid"
+web_server_pid_path="$pid_path/puma.pid"
+
+# sidekiq_pid_path defines the path in which to create the pid file for sidekiq
+# The default is "$pid_path/sidekiq.pid"
+sidekiq_pid_path="$pid_path/sidekiq.pid"
+
+# clockwork_pid_path defines the path in which to create the pid file for clockwork
+# The default is "$pid_path/clockwork.pid"
+clockwork_pid_path="$pid_path/clockwork.pid"
