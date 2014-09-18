@@ -1,0 +1,53 @@
+#!/bin/sh
+
+cd $(dirname $0)/..
+app_root=$(pwd)
+
+puma_pidfile="$app_root/tmp/pids/puma.pid"
+puma_logfile="$app_root/log/web-1.log"
+
+atmosphere_user=$(ls -l config.ru | awk '{print $3}')
+
+stop()
+{
+  bundle exec pumactl --pidfile $puma_pidfile stop > /dev/null 2>&1
+}
+
+restart()
+{
+  bundle exec pumactl --pidfile $puma_pidfile restart > /dev/null 2>&1
+}
+
+start()
+{
+  start_puma nohup
+}
+
+start_no_deamonize()
+{
+  start_puma
+  wait $puma_pid
+}
+
+start_puma()
+{
+  $@ bundle exec puma --config $app_root/config/puma.rb --pidfile $puma_pidfile --environment $RAILS_ENV >> $puma_logfile 2>&1 &
+}
+
+case "$1" in
+  stop)
+    stop
+    ;;
+  start)
+    start
+    ;;
+  start_no_deamonize)
+    start_no_deamonize
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo "Usage: RAILS_ENV=your_env $0 {start|stop|start_no_deamonize|restart}"
+    ;;
+esac
