@@ -42,6 +42,39 @@ describe Appliance do
   it { should have_one(:dev_mode_property_set).dependent(:destroy) }
   it { should have_readonly_attribute :dev_mode_property_set }
 
+  context 'optimization strategy', focus: true do
+
+    it 'returns default optimization strategy if optimization policy is not defined' do
+      expect(Appliance.new.optimization_strategy.class).to eq OptimizationStrategy::Default
+    end
+
+    context 'optimization policy defined for appliance set' do
+
+      context 'policy not defined for appliance' do
+
+        it 'returns optimization strategy that is defined for appliance set' do
+          as = ApplianceSet.new(optimization_policy: :manual)
+          appl = Appliance.new(appliance_set: as)
+          expect(appl.optimization_strategy.class).to eq OptimizationStrategy::Manual
+        end
+
+      end
+
+      context 'policy defined for appliance' do
+
+        it 'returns optimization strategy that is defined for appliance set if strategy is not defined directly for appliance' do
+
+        end
+      end
+
+    end
+
+    context 'policy defined only for appliance' do
+
+    end
+
+  end
+
   context 'appliance configuration instances management' do
     before do
       allow(Optimizer).to receive(:instance).and_return(optimizer)
