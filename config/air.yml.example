@@ -70,3 +70,8 @@ production:
     atmo_template_name: 'Template OS Linux'
     atmo_group_name: 'Atmosphere Internal Monitoring'
     zabbix_agent_port: 10050
+        atmo_group_name: 'Atmosphere Internal Monitoring'
+  http_mapping_monitor:
+    pending: 10
+    ok: 120
+    lost: 15

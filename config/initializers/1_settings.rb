@@ -60,4 +60,10 @@ class Settings < Settingslogic
 
   Settings['monitoring'] ||= Settingslogic.new({})
   Settings.monitoring['query_interval'] ||= 5
+
+  Settings['http_mapping_monitor'] ||= Settingslogic.new({})
+  Settings.http_mapping_monitor['pending'] ||= 10
+  Settings.http_mapping_monitor['ok'] ||= 120
+  Settings.http_mapping_monitor['lost'] ||= 15
+
 end
