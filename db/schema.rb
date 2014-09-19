@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140913184638) do
+ActiveRecord::Schema.define(version: 20140918140228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20140913184638) do
     t.string   "billing_state",                       default: "prepaid", null: false
     t.datetime "prepaid_until",                       default: "now()",   null: false
     t.text     "description"
+    t.string   "optimization_policy"
   end
 
   create_table "billing_logs", force: true do |t|
