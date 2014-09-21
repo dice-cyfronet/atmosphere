@@ -41,17 +41,17 @@ describe Optimizer do
       end
 
       it 'does not reuse available vm if it is in dev mode' do
-          tmpl_of_shareable_at
-          appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-          vms = VirtualMachine.all
-          expect(vms.size).to eql 2
-          vm_1 = vms.first
-          vm_2 = vms.last
-          expect(vm_1.appliances.size).to eql 1
-          expect(vm_2.appliances.size).to eql 1
-          expect(vm_1.appliances).to eq [appl1]
-          expect(vm_2.appliances).to eq [appl2]
+        tmpl_of_shareable_at
+        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
+        appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
+        vms = VirtualMachine.all
+        expect(vms.size).to eql 2
+        vm_1 = vms.first
+        vm_2 = vms.last
+        expect(vm_1.appliances.size).to eql 1
+        expect(vm_2.appliances.size).to eql 1
+        expect(vm_1.appliances).to eq [appl1]
+        expect(vm_2.appliances).to eq [appl2]
       end
 
       context 'sets vm name' do
