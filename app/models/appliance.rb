@@ -22,6 +22,7 @@
 
 class Appliance < ActiveRecord::Base
   extend Enumerize
+  serialize :optimization_policy_params
 
   belongs_to :appliance_set
   belongs_to :appliance_type
