@@ -42,7 +42,7 @@ describe Appliance do
   it { should have_one(:dev_mode_property_set).dependent(:destroy) }
   it { should have_readonly_attribute :dev_mode_property_set }
 
-  context 'optimization strategy', focus: true do
+  context 'optimization strategy' do
 
     it 'returns default optimization strategy if optimization policy is not defined' do
       expect(Appliance.new.optimization_strategy.class).to eq OptimizationStrategy::Default
