@@ -11,8 +11,8 @@ describe OptimizationStrategy::Manual do
   let(:cs) { create(:compute_site, active: true, funds: [fund]) }
   let(:at) { create(:filled_appliance_type, visible_to: 'all', preference_disk: 0) }
   let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, compute_site: cs) }
-  let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, compute_site: cs, active: true) }
-  let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, compute_site: cs, active: true) }
+  let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, compute_site: cs, active: true, hourly_cost: 1) }
+  let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, compute_site: cs, active: true, hourly_cost: 2) }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
   let(:user) { create(:user) }
   let(:as) { create(:appliance_set, user: user)}
