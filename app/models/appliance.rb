@@ -22,6 +22,7 @@
 
 class Appliance < ActiveRecord::Base
   extend Enumerize
+  serialize :optimization_policy_params
 
   belongs_to :appliance_set
   belongs_to :appliance_type
@@ -86,7 +87,14 @@ class Appliance < ActiveRecord::Base
   end
 
   def optimization_strategy
-    OptimizationStrategy::Default.new(self)
+    strategy_name =
+    begin
+      self.optimization_policy || self.appliance_set.optimization_policy || 'default'
+    rescue NameError
+      'default'
+    end
+    strategy_class = ('OptimizationStrategy::' + strategy_name.to_s.capitalize!).constantize
+    strategy_class.new(self)
   end
 
   private
