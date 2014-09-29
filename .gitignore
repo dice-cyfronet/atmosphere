@@ -12,9 +12,11 @@
 /.secret
 /.devise_secret
 /config/air.yml
+/spec/dummy/config/air.yml
 
 # Ignore database config.
 /config/database.yml
+/spec/dummy/config/database.yml
 
 # Ignore cloud credentials config
 /config/initializers/cloud_credentials.rb
@@ -23,6 +25,8 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*
+/spec/dummy/log/*
 /tmp
+/spec/dummy/tmp
 /.project
 nbproject/

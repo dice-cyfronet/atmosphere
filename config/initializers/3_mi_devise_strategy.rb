@@ -1,7 +1,7 @@
 require 'devise/strategies/base'
 require 'omniauth-vph'
-require 'sudoable'
-require 'cache_entry'
+require 'atmosphere/sudoable'
+require 'atmosphere/cache_entry'
 
 module Devise
   module Strategies
@@ -12,7 +12,7 @@ module Devise
     #   http://myapp.example.com/?mi_ticket=MI_TOKEN
     #   http://myapp.example.com Header: MI_TOKEN: MI_TOKEN
     class MiTokenAuthenticatable < Authenticatable
-      include Sudoable
+      include Atmosphere::Sudoable
 
       def valid?
         super || mi_ticket

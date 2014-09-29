@@ -9,7 +9,7 @@ module Devise
     #   http://myapp.example.com/?private_token=TOKEN
     #   http://myapp.example.com Header: PRIVATE-TOKEN: TOKEN
     class TokenAuthenticatable < Authenticatable
-      include Sudoable
+      include Atmosphere::Sudoable
 
       def valid?
         super || token

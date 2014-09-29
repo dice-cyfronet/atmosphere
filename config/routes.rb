@@ -9,7 +9,7 @@ def owned_payload_resources(name)
   json_resources name
   get "#{name}/:name/payload" => "#{name}#payload",
       as: "#{name}_payload",
-      constraints: { name: /#{OwnedPayloable.name_regex}/ },
+      constraints: { name: /#{Atmosphere::OwnedPayloable.name_regex}/ },
       defaults: { format: :text }
 end
 
@@ -69,7 +69,7 @@ Atmosphere::Engine.routes.draw do
       get 'appliance_types/:id/endpoints/:service_name/:invocation_path' =>
           'appliance_types#endpoint_payload',
           as: 'appliance_types_endpoint_payload',
-          constraints: { invocation_path: /#{OwnedPayloable.name_regex}/ },
+          constraints: { invocation_path: /#{Atmosphere::OwnedPayloable.name_regex}/ },
           defaults: { format: :text }
 
       resources :appliance_endpoints, only: [:index, :show]

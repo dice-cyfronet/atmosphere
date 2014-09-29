@@ -1,31 +1,33 @@
-module TokenAuthenticatable
-  extend ActiveSupport::Concern
+module Atmosphere
+  module TokenAuthenticatable
+    extend ActiveSupport::Concern
 
-  module ClassMethods
-    def find_by_authentication_token(authentication_token = nil)
-      if authentication_token
-        where(authentication_token: authentication_token).first
+    module ClassMethods
+      def find_by_authentication_token(authentication_token = nil)
+        if authentication_token
+          where(authentication_token: authentication_token).first
+        end
       end
     end
-  end
 
-  def ensure_authentication_token
-    if authentication_token.blank?
-      self.authentication_token = generate_authentication_token
+    def ensure_authentication_token
+      if authentication_token.blank?
+        self.authentication_token = generate_authentication_token
+      end
     end
-  end
 
-  def reset_authentication_token!
-    self.authentication_token = generate_authentication_token
-    save
-  end
+    def reset_authentication_token!
+      self.authentication_token = generate_authentication_token
+      save
+    end
 
-  private
+    private
 
-  def generate_authentication_token
-    loop do
-      token = Devise.friendly_token
-      break token unless User.where(authentication_token: token).first
+    def generate_authentication_token
+      loop do
+        token = Devise.friendly_token
+        break token unless User.where(authentication_token: token).first
+      end
     end
   end
 end

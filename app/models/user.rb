@@ -34,9 +34,9 @@ class User < ActiveRecord::Base
 
   validates :login, uniqueness: { case_sensitive: false }
 
-  include LoginAndEmail
-  include TokenAuthenticatable
-  include Nondeletable
+  include Atmosphere::LoginAndEmail
+  include Atmosphere::TokenAuthenticatable
+  include Atmosphere::Nondeletable
 
   has_many :appliance_sets, dependent: :destroy
   has_many :user_keys, dependent: :destroy

@@ -38,12 +38,12 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails'
+  # gem 'rspec-rails'
   # gem 'rspec-sidekiq'
   gem 'rspec-sidekiq', github: 'yelled3/rspec-sidekiq', branch: 'rspec3-beta'
-  gem 'shoulda-matchers'
+  # gem 'shoulda-matchers'
 
-  gem 'factory_girl'
+  # gem 'factory_girl'
   gem 'ffaker'
   gem 'database_cleaner'
 end

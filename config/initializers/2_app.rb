@@ -1,4 +1,4 @@
-require 'cache_entry'
+require 'atmosphere/cache_entry'
 
 module Air
   Revision = `git log --pretty=format:'%h' -n 1`
@@ -27,7 +27,7 @@ module Air
     cache_expiration_time = config.cloud_client_cache_time.hours
 
     clients_cache[site_id] =
-      CacheEntry.new(cloud_client, cache_expiration_time)
+      Atmosphere::CacheEntry.new(cloud_client, cache_expiration_time)
   end
 
   def self.unregister_cloud_client(site_id)

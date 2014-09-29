@@ -4,19 +4,20 @@
 # somewhere inside the model class definition. This guards against "destroy", probably
 # not effective against "delete".
 
-module Nondeletable
-  extend ActiveSupport::Concern
+module Atmosphere
+  module Nondeletable
+    extend ActiveSupport::Concern
 
-  included do
-    before_destroy :prevent_destroy
+    included do
+      before_destroy :prevent_destroy
+    end
+
+    private
+
+    def prevent_destroy
+      logger.error "PREVENTING DESTROY of #{self.class.name}!!!"
+      errors.add :base, "Entities of #{self.class.name} cannot be destroyed!"
+      false
+    end
   end
-
-  private
-
-  def prevent_destroy
-    logger.error "PREVENTING DESTROY of #{self.class.name}!!!"
-    errors.add :base, "Entities of #{self.class.name} cannot be destroyed!"
-    false
-  end
-
 end

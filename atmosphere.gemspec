@@ -6,7 +6,7 @@ require 'atmosphere/version'
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = 'Atmosphere'
-  s.version     = Vphshare::VERSION
+  s.version     = Atmosphere::VERSION
   s.authors     = [
                     'Marek Kasztelnik',
                     'Tomasz Bartynski',
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.1.6'
+  s.add_dependency 'rails', '~> 4.1.5cp '
   s.add_dependency 'pg'
   s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'
@@ -44,9 +44,14 @@ Gem::Specification.new do |s|
   s.add_dependency 'settingslogic'
   s.add_dependency 'simple_form'
   s.add_dependency 'gravtastic'
+
   s.add_dependency 'devise', '~>3.2'
+  s.add_dependency 'omniauth'
+  s.add_dependency 'omniauth-vph'
+
   s.add_dependency 'cancan'
   s.add_dependency 'role_model'
+
   s.add_dependency 'haml-rails'
   s.add_dependency 'bootstrap-sass', '~>3.2'
   s.add_dependency 'font-awesome-rails'

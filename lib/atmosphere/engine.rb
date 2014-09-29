@@ -1,3 +1,10 @@
+require 'settingslogic'
+require 'devise'
+require 'simple_form'
+require 'gravtastic'
+require 'role_model'
+require 'foreigner'
+
 module Atmosphere
   class Engine < ::Rails::Engine
     isolate_namespace Atmosphere
