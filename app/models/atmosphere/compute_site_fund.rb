@@ -8,9 +8,11 @@
 #
 
 # Linking table between ComputeSites and Funds
-class ComputeSiteFund < ActiveRecord::Base
+module Atmosphere
+  class ComputeSiteFund < ActiveRecord::Base
+    self.table_name = 'compute_site_founds'
 
-  belongs_to :compute_site
-  belongs_to :fund
-
+    belongs_to :compute_site
+    belongs_to :fund
+  end
 end

@@ -4,6 +4,7 @@ require 'simple_form'
 require 'gravtastic'
 require 'role_model'
 require 'foreigner'
+require 'enumerize'
 
 module Atmosphere
   class Engine < ::Rails::Engine

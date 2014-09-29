@@ -8,7 +8,10 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+module Atmosphere
+  class SecurityPolicy < ActiveRecord::Base
+    self.table_name = 'security_policies'
 
-class SecurityPolicy < ActiveRecord::Base
-  include OwnedPayloable
+    include OwnedPayloable
+  end
 end

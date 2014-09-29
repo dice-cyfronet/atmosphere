@@ -18,11 +18,14 @@
 # This is a standalone class - it is not directly related to any other classes in the model; instead it preserves searchable data in the form of strings
 # Note: the 'actor' column should be used to specify which controller/service added the given log entry.
 
-class BillingLog < ActiveRecord::Base
+module Atmosphere
+  class BillingLog < ActiveRecord::Base
+    self.table_name = 'billing_logs'
 
-  belongs_to :user
+    belongs_to :user
 
-  validates_presence_of :appliance, :fund, :actor
-  validates_numericality_of :amount_billed
+    validates_presence_of :appliance, :fund, :actor
+    validates_numericality_of :amount_billed
 
+  end
 end

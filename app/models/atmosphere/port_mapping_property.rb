@@ -10,23 +10,25 @@
 #  created_at               :datetime
 #  updated_at               :datetime
 #
+module Atmosphere
+  class PortMappingProperty < ActiveRecord::Base
+    self.table_name = 'port_mapping_properties'
 
-class PortMappingProperty < ActiveRecord::Base
+    belongs_to :port_mapping_template
+    belongs_to :compute_site
 
-  belongs_to :port_mapping_template
-  belongs_to :compute_site
+    validates_presence_of :key, :value
 
-  validates_presence_of :key, :value
+    validates_presence_of :port_mapping_template, if: 'compute_site == nil'
+    validates_presence_of :compute_site, if: 'port_mapping_template == nil'
 
-  validates_presence_of :port_mapping_template, if: 'compute_site == nil'
-  validates_presence_of :compute_site, if: 'port_mapping_template == nil'
+    validates_absence_of :port_mapping_template, if: 'compute_site != nil'
+    validates_absence_of :compute_site, if: 'port_mapping_template != nil'
 
-  validates_absence_of :port_mapping_template, if: 'compute_site != nil'
-  validates_absence_of :compute_site, if: 'port_mapping_template != nil'
+    validates_uniqueness_of :key, :scope => :port_mapping_template_id
 
-  validates_uniqueness_of :key, :scope => :port_mapping_template_id
-
-  def to_s
-    "#{key} #{value}"
+    def to_s
+      "#{key} #{value}"
+    end
   end
 end

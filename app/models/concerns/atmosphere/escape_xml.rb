@@ -1,13 +1,13 @@
 # Simple utility for metadata XML creation
+module Atmosphere
+  module EscapeXml
+    extend ActiveSupport::Concern
 
-module EscapeXml
-  extend ActiveSupport::Concern
+    private
 
-  private
-
-  def esc_xml(input)
-    tab = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;', "'" => '&apos;', '"' => '&quot;'}
-    input.nil? ? input : input.gsub(/[&<>'"]/) {|match| tab[match]}
+    def esc_xml(input)
+      tab = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;', "'" => '&apos;', '"' => '&quot;'}
+      input.nil? ? input : input.gsub(/[&<>'"]/) {|match| tab[match]}
+    end
   end
-
 end

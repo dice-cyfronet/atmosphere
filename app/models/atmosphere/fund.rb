@@ -17,19 +17,20 @@
 # Funds are linked to Appliances instead of VMs due to the fact that a single VM may be shared by multiple Appliances
 # (and therefore multiple users), in which case all owners "chip in" to enable continued operation of the VM.
 # Funds are also linked to ComputeSites and may only be used to pay for VMs which belong to their respective ComputeSites.
+module Atmosphere
+  class Fund < ActiveRecord::Base
+    self.table_name = 'funds'
 
-class Fund < ActiveRecord::Base
+    has_many :appliances
+    has_many :users, through: :user_funds
+    has_many :user_funds, dependent: :destroy
 
-  has_many :appliances
-  has_many :users, through: :user_funds
-  has_many :user_funds, dependent: :destroy
+    has_many :compute_sites, through: :compute_site_funds
+    has_many :compute_site_funds, dependent: :destroy
 
-  has_many :compute_sites, through: :compute_site_funds
-  has_many :compute_site_funds, dependent: :destroy
-
-  validates_presence_of :name
-  validates_numericality_of :balance
-  validates_numericality_of :overdraft_limit, less_than_or_equal_to: 0
-  validates :termination_policy, inclusion: {in: ["delete", "suspend", "no_action"]}
-
+    validates_presence_of :name
+    validates_numericality_of :balance
+    validates_numericality_of :overdraft_limit, less_than_or_equal_to: 0
+    validates :termination_policy, inclusion: {in: ["delete", "suspend", "no_action"]}
+  end
 end

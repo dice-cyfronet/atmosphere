@@ -9,9 +9,11 @@
 #
 
 # Linking table between Users and Funds
-class UserFund < ActiveRecord::Base
+module Atmosphere
+  class UserFund < ActiveRecord::Base
+    self.table_name = 'user_funds'
 
-  belongs_to :user
-  belongs_to :fund
-
+    belongs_to :user
+    belongs_to :fund
+  end
 end

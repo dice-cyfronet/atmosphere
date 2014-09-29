@@ -11,24 +11,28 @@ require 'params_regexpable'
 #  updated_at                          :datetime
 #
 
-class ApplianceConfigurationInstance < ActiveRecord::Base
-  belongs_to :appliance_configuration_template
+module Atmosphere
+  class ApplianceConfigurationInstance < ActiveRecord::Base
+    self.table_name = 'appliance_configuration_instances'
 
-  has_many :appliances
+    belongs_to :appliance_configuration_template
 
-  def self.get(config_template, params)
-    instance_payload = ParamsRegexpable.filter(config_template.payload, params)
+    has_many :appliances
 
-    find_instance(config_template, instance_payload) || new_instance(config_template, instance_payload)
-  end
+    def self.get(config_template, params)
+      instance_payload = ParamsRegexpable.filter(config_template.payload, params)
 
-  private
+      find_instance(config_template, instance_payload) || new_instance(config_template, instance_payload)
+    end
 
-  def self.find_instance(config_template, payload)
-    config_template.appliance_configuration_instances.find_by(payload: payload)
-  end
+    private
 
-  def self.new_instance(config_template, payload)
-    ApplianceConfigurationInstance.new(appliance_configuration_template: config_template, payload: payload)
+    def self.find_instance(config_template, payload)
+      config_template.appliance_configuration_instances.find_by(payload: payload)
+    end
+
+    def self.new_instance(config_template, payload)
+      ApplianceConfigurationInstance.new(appliance_configuration_template: config_template, payload: payload)
+    end
   end
 end

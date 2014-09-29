@@ -11,25 +11,27 @@ require 'params_regexpable'
 #  created_at        :datetime
 #  updated_at        :datetime
 #
+module Atmosphere
+  class ApplianceConfigurationTemplate < ActiveRecord::Base
+    self.table_name = 'appliance_configuration_templates'
 
-class ApplianceConfigurationTemplate < ActiveRecord::Base
+    belongs_to :appliance_type
 
-  belongs_to :appliance_type
+    validates_presence_of :name, :appliance_type
+    validates_uniqueness_of :name, scope: :appliance_type
 
-  validates_presence_of :name, :appliance_type
-  validates_uniqueness_of :name, scope: :appliance_type
+    has_many :appliance_configuration_instances, dependent: :nullify
 
-  has_many :appliance_configuration_instances, dependent: :nullify
+    scope :with_config_instance, ->(config_instance) do
+      ApplianceConfigurationTemplate.joins(
+        :appliance_configuration_instances).where(
+          appliance_configuration_instances: {id: config_instance}).first!
+    end
 
-  scope :with_config_instance, ->(config_instance) do
-    ApplianceConfigurationTemplate.joins(
-      :appliance_configuration_instances).where(
-        appliance_configuration_instances: {id: config_instance}).first!
-  end
-
-  def parameters
-    params = ParamsRegexpable.parameters(payload)
-    params.delete(Air.config.mi_authentication_key)
-    params
+    def parameters
+      params = ParamsRegexpable.parameters(payload)
+      params.delete(Air.config.mi_authentication_key)
+      params
+    end
   end
 end

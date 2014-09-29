@@ -9,8 +9,8 @@ class BindAppliancesToComputeSites < ActiveRecord::Migration
     end
 
     # Retroactively update all Appliances
-    Appliance.all.each do |a|
-      a.compute_sites = ComputeSite.all
+    Atmosphere::Appliance.all.each do |a|
+      a.compute_sites = Atmosphere::ComputeSite.all
       a.save
     end
   end

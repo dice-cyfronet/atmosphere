@@ -8,10 +8,13 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+module Atmosphere
+  class SecurityProxy < ActiveRecord::Base
+    self.table_name = 'security_proxies'
 
-class SecurityProxy < ActiveRecord::Base
-  include OwnedPayloable
+    include OwnedPayloable
 
-  has_many :appliance_types
-  has_many :dev_mode_property_sets, dependent: :nullify
+    has_many :appliance_types
+    has_many :dev_mode_property_sets, dependent: :nullify
+  end
 end

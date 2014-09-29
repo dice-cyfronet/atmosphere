@@ -8,7 +8,11 @@
 #
 
 # Deployments provide a m:n link between appliances and virtual machines.
-class Deployment < ActiveRecord::Base
-  belongs_to :appliance
-  belongs_to :virtual_machine
+module Atmosphere
+  class Deployment < ActiveRecord::Base
+    self.table_name = 'deployments'
+
+    belongs_to :appliance
+    belongs_to :virtual_machine
+  end
 end

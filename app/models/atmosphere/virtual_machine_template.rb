@@ -15,135 +15,139 @@
 #  architecture          :string(255)      default("x86_64")
 #
 
-class VirtualMachineTemplate < ActiveRecord::Base
-  extend Enumerize
-  include Childhoodable
+module Atmosphere
+  class VirtualMachineTemplate < ActiveRecord::Base
+    self.table_name = 'virtual_machine_templates'
 
-  belongs_to :source_vm, class_name: 'VirtualMachine', foreign_key: 'virtual_machine_id'
-  has_many :instances, class_name: 'VirtualMachine', dependent: :nullify
-  belongs_to :compute_site
-  belongs_to :appliance_type
-  validates_presence_of :id_at_site, :name, :state, :compute_site_id
-  validates_uniqueness_of :id_at_site, :scope => :compute_site_id
-  enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
-  validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
-  validates :architecture, inclusion: %w(i386 x86_64)
-  before_update :release_source_vm, if: :saved?
-  after_update :destroy_source_vm, if: :saved?
-  before_destroy :cant_destroy_non_managed_vmt
-  after_destroy :destroy_source_vm
+    extend Enumerize
+    include Childhoodable
 
-  scope :def_order, -> { order(:name) }
-  scope :unassigned, -> { where(appliance_type_id: nil) }
+    belongs_to :source_vm, class_name: 'VirtualMachine', foreign_key: 'virtual_machine_id'
+    has_many :instances, class_name: 'VirtualMachine', dependent: :nullify
+    belongs_to :compute_site
+    belongs_to :appliance_type
+    validates_presence_of :id_at_site, :name, :state, :compute_site_id
+    validates_uniqueness_of :id_at_site, :scope => :compute_site_id
+    enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
+    validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
+    validates :architecture, inclusion: %w(i386 x86_64)
+    before_update :release_source_vm, if: :saved?
+    after_update :destroy_source_vm, if: :saved?
+    before_destroy :cant_destroy_non_managed_vmt
+    after_destroy :destroy_source_vm
 
-  scope :active, -> { where(state: 'active') }
-  scope :on_active_cs, -> do
-    joins(:compute_site)
-      .where(compute_sites: { active: true })
-  end
-  scope :on_cs, ->(cs) { where(compute_site_id: cs) }
+    scope :def_order, -> { order(:name) }
+    scope :unassigned, -> { where(appliance_type_id: nil) }
+
+    scope :active, -> { where(state: 'active') }
+    scope :on_active_cs, -> do
+      joins(:compute_site)
+        .where(compute_sites: { active: true })
+    end
+    scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
 
 
-  def uuid
-    "#{compute_site.site_id}-tmpl-#{id_at_site}"
-  end
+    def uuid
+      "#{compute_site.site_id}-tmpl-#{id_at_site}"
+    end
 
-  def self.create_from_vm(virtual_machine, name = virtual_machine.name)
-    name_with_timestamp = "#{name}/#{VirtualMachineTemplate.generate_timestamp}"
-    tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
-    cs = virtual_machine.compute_site
+    def self.create_from_vm(virtual_machine, name = virtual_machine.name)
+      name_with_timestamp = "#{name}/#{VirtualMachineTemplate.generate_timestamp}"
+      tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
+      cs = virtual_machine.compute_site
 
-    id_at_site = cs.cloud_client
-      .save_template(virtual_machine.id_at_site, tmpl_name)
-    logger.info "Created template #{id_at_site}"
+      id_at_site = cs.cloud_client
+        .save_template(virtual_machine.id_at_site, tmpl_name)
+      logger.info "Created template #{id_at_site}"
 
-    vm_template = cs.virtual_machine_templates
-      .find_or_initialize_by(id_at_site: id_at_site)
+      vm_template = cs.virtual_machine_templates
+        .find_or_initialize_by(id_at_site: id_at_site)
 
-    vm_template.source_vm = virtual_machine
-    vm_template.name = tmpl_name
-    vm_template.managed_by_atmosphere = true
-    vm_template.state = :saving
-    virtual_machine.state = :saving
+      vm_template.source_vm = virtual_machine
+      vm_template.name = tmpl_name
+      vm_template.managed_by_atmosphere = true
+      vm_template.state = :saving
+      virtual_machine.state = :saving
 
-    begin
-      vm_template.transaction do
-        logger.info "Saving template #{vm_template}"
-        vm_template.save!
-        virtual_machine.save!
+      begin
+        vm_template.transaction do
+          logger.info "Saving template #{vm_template}"
+          vm_template.save!
+          virtual_machine.save!
+        end
+      rescue
+        logger.error $!
+        vm_template.perform_delete_in_cloud
+        raise $!
       end
-    rescue
-      logger.error $!
-      vm_template.perform_delete_in_cloud
-      raise $!
+      vm_template
     end
-    vm_template
-  end
 
-  def self.sanitize_tmpl_name(name)
-    tmpl_name = name.dup
-    l = tmpl_name.length
-    if l < 3
-      (3 - l).times{tmpl_name << '_'}
-    elsif l > 128
-      tmpl_name = tmpl_name[0, 128]
+    def self.sanitize_tmpl_name(name)
+      tmpl_name = name.dup
+      l = tmpl_name.length
+      if l < 3
+        (3 - l).times{tmpl_name << '_'}
+      elsif l > 128
+        tmpl_name = tmpl_name[0, 128]
+      end
+      tmpl_name.gsub!(/[^([a-zA-Z]|\(|\)|\.|\-|\/|_|\d)]/, '_')
+      tmpl_name
     end
-    tmpl_name.gsub!(/[^([a-zA-Z]|\(|\)|\.|\-|\/|_|\d)]/, '_')
-    tmpl_name
-  end
 
-  def destroy(delete_in_cloud = true)
-    perform_delete_in_cloud if delete_in_cloud && managed_by_atmosphere
-    super()
-  end
-
-  def perform_delete_in_cloud
-    logger.info "Deleting template #{uuid}"
-    cloud_client = self.compute_site.cloud_client
-    cloud_client.images.destroy self.id_at_site
-    logger.info "Destroyed template #{uuid}"
-  end
-
-  private
-
-  def self.generate_timestamp
-    t = Time.now;
-    t.strftime("%d-%m-%Y/%H-%M-%S/#{t.usec}")
-  end
-
-  def release_source_vm
-    self.source_vm = nil
-  end
-
-  def destroy_source_vm
-    if  virtual_machine_id_was
-      vm = VirtualMachine.find(virtual_machine_id_was)
-      vm.destroy if vm.appliances.blank?
+    def destroy(delete_in_cloud = true)
+      perform_delete_in_cloud if delete_in_cloud && managed_by_atmosphere
+      super()
     end
-  end
 
-  def saved?
-    state_changed? && !saving?
-  end
+    def perform_delete_in_cloud
+      logger.info "Deleting template #{uuid}"
+      cloud_client = self.compute_site.cloud_client
+      cloud_client.images.destroy self.id_at_site
+      logger.info "Destroyed template #{uuid}"
+    end
 
-  def saving?
-    state == 'saving' || state == :saving
-  end
+    private
 
-  def save_template_in_cloud
-    logger.info "Saving template"
-    cs = source_vm.compute_site
-    cloud_client = cs.cloud_client
-    id_at_site = cloud_client.save_template(source_vm.id_at_site, name)
-    logger.info "Created template #{id_at_site}"
-    self.id_at_site = id_at_site
-    self.compute_site = cs
-    self.state = :saving
-    #self.appliance_type = vm.appliance_type
-  end
+    def self.generate_timestamp
+      t = Time.now;
+      t.strftime("%d-%m-%Y/%H-%M-%S/#{t.usec}")
+    end
 
-  def cant_destroy_non_managed_vmt
-    errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    def release_source_vm
+      self.source_vm = nil
+    end
+
+    def destroy_source_vm
+      if  virtual_machine_id_was
+        vm = VirtualMachine.find(virtual_machine_id_was)
+        vm.destroy if vm.appliances.blank?
+      end
+    end
+
+    def saved?
+      state_changed? && !saving?
+    end
+
+    def saving?
+      state == 'saving' || state == :saving
+    end
+
+    def save_template_in_cloud
+      logger.info "Saving template"
+      cs = source_vm.compute_site
+      cloud_client = cs.cloud_client
+      id_at_site = cloud_client.save_template(source_vm.id_at_site, name)
+      logger.info "Created template #{id_at_site}"
+      self.id_at_site = id_at_site
+      self.compute_site = cs
+      self.state = :saving
+      #self.appliance_type = vm.appliance_type
+    end
+
+    def cant_destroy_non_managed_vmt
+      errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    end
   end
 end
