@@ -13,7 +13,7 @@ def owned_payload_resources(name)
       defaults: { format: :text }
 end
 
-Air::Application.routes.draw do
+Atmosphere::Engine.routes.draw do
 
   get 'jobs/show'
   resource :profile, only: [:show, :update] do
