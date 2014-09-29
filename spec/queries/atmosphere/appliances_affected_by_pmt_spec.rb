@@ -1,8 +1,9 @@
 require 'rails_helper'
 
-describe AppliancesAffectedByPmt do
+describe Atmosphere::AppliancesAffectedByPmt do
   before do
-    allow(Optimizer).to receive(:instance).and_return(double(run: true))
+    allow(Atmosphere::Optimizer)
+      .to receive(:instance).and_return(double(run: true))
   end
 
   let!(:at) { create(:appliance_type) }
@@ -14,14 +15,14 @@ describe AppliancesAffectedByPmt do
     it 'finds affected appliances using appliance_type relation' do
       create(:appliance)
 
-      affected_appl = AppliancesAffectedByPmt.new(pmt).find
+      affected_appl = Atmosphere::AppliancesAffectedByPmt.new(pmt).find
 
       expect(affected_appl.size).to eq 1
       expect(affected_appl.first).to eq appl1
     end
 
     it 'returns appliance which can be updated' do
-      affected_appl = AppliancesAffectedByPmt.new(pmt).find.first
+      affected_appl = Atmosphere::AppliancesAffectedByPmt.new(pmt).find.first
 
       expect(affected_appl.readonly?).to be_falsy
     end
@@ -34,7 +35,7 @@ describe AppliancesAffectedByPmt do
       create(:appliance, appliance_type: at)
       dev_pmt = appl1.dev_mode_property_set.port_mapping_templates.first
 
-      affected_appl = AppliancesAffectedByPmt.new(dev_pmt).find
+      affected_appl = Atmosphere::AppliancesAffectedByPmt.new(dev_pmt).find
 
       expect(affected_appl.size).to eq 1
       expect(affected_appl.first).to eq appl1

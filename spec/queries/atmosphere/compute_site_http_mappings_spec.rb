@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ComputeSiteHttpMappings do
+describe Atmosphere::ComputeSiteHttpMappings do
 
   let(:cs)   { create(:compute_site) }
   let(:vm)   { create(:virtual_machine, compute_site: cs) }
@@ -29,7 +29,7 @@ describe ComputeSiteHttpMappings do
       port_mapping_template: pmt)
   end
 
-  subject { ComputeSiteHttpMappings.new(cs) }
+  subject { Atmosphere::ComputeSiteHttpMappings.new(cs) }
 
   it 'returns comptue site mappings' do
     mappings = subject.find

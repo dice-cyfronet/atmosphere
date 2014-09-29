@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe AppliancesWithMappingOnComputeSite do
+describe Atmosphere::AppliancesWithMappingOnComputeSite do
   let(:cs) { create(:compute_site) }
   let(:cs_appl1) { create(:appliance) }
   let(:cs_appl2) { create(:appliance) }
@@ -12,7 +12,7 @@ describe AppliancesWithMappingOnComputeSite do
   let!(:cs_mapping2) { create(:http_mapping, compute_site: cs, appliance: cs_appl2) }
   let!(:cs_mapping3) { create(:http_mapping, appliance: other_appl) }
 
-  subject { AppliancesWithMappingOnComputeSite.new(cs) }
+  subject { Atmosphere::AppliancesWithMappingOnComputeSite.new(cs) }
 
   it 'returns appliances with http mapping deployed on compute site' do
     appliances = subject.find

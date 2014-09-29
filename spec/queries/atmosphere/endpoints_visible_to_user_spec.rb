@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe EndpointsVisibleToUser do
+describe Atmosphere::EndpointsVisibleToUser do
 
   context 'when normal user' do
     let(:user) { create(:user) }
-    subject { EndpointsVisibleToUser.new(user) }
+    subject { Atmosphere::EndpointsVisibleToUser.new(user) }
 
     it 'returns endpoints from AT owned by the user' do
       endpoint = create_endpoint(author: user, visible_to: :owner)
@@ -35,7 +35,7 @@ describe EndpointsVisibleToUser do
 
   context 'when developer' do
     let(:developer) { create(:developer) }
-    subject { EndpointsVisibleToUser.new(developer) }
+    subject { Atmosphere::EndpointsVisibleToUser.new(developer) }
 
     it 'returns endpoints from AT visible to developer' do
       endpoint = create_endpoint(visible_to: :developer)
