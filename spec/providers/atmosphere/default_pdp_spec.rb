@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe DefaultPdp do
+describe Atmosphere::DefaultPdp do
   context '#can_manage?' do
     let(:user) { build(:user, id: 1) }
-    subject { DefaultPdp.new(user) }
+    subject { Atmosphere::DefaultPdp.new(user) }
 
     it 'allows to manage owned appliance types' do
       at = build(:appliance_type, user_id: user.id)
@@ -24,10 +24,10 @@ describe DefaultPdp do
     let!(:a2)   { create(:appliance_type, visible_to: :developer, author: user) }
     let!(:a3)   { create(:appliance_type, visible_to: :owner, author: user) }
 
-    subject { DefaultPdp.new(user) }
+    subject { Atmosphere::DefaultPdp.new(user) }
 
     it 'returns all, owner ATs for production mode' do
-      filtered = subject.filter(ApplianceType.all, 'production')
+      filtered = subject.filter(Atmosphere::ApplianceType.all, 'production')
 
       expect(filtered.count).to eq 2
       expect(filtered).to include a1
@@ -35,7 +35,7 @@ describe DefaultPdp do
     end
 
     it 'returns owned ATs for manage mode' do
-      filtered = subject.filter(ApplianceType.all, 'manage')
+      filtered = subject.filter(Atmosphere::ApplianceType.all, 'manage')
 
       expect(filtered.count).to eq 2
 
@@ -44,7 +44,7 @@ describe DefaultPdp do
     end
 
     it 'returns all, developer and owned ATs for development mode' do
-      filtered = subject.filter(ApplianceType.all, 'development')
+      filtered = subject.filter(Atmosphere::ApplianceType.all, 'development')
 
       expect(filtered.count).to eq 3
     end

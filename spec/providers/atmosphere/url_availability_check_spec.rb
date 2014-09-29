@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe UrlAvailabilityCheck do
+describe Atmosphere::UrlAvailabilityCheck do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:url) { 'http://foo.bar' }
 

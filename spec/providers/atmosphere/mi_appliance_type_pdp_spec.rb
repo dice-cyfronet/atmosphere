@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe MiApplianceTypePdp do
+describe Atmosphere::MiApplianceTypePdp do
   let(:resource_access) { double('mi resource access') }
   let(:resource_access_class) { double }
   let(:ticket) { 'ticket' }
@@ -19,7 +19,9 @@ describe MiApplianceTypePdp do
       }).and_return(resource_access)
   end
 
-  subject { MiApplianceTypePdp.new(current_user, resource_access_class) }
+  subject do
+    Atmosphere::MiApplianceTypePdp.new(current_user, resource_access_class)
+  end
 
   context 'with single resource' do
     let(:at) { build(:appliance_type, id: 1) }
@@ -127,7 +129,7 @@ describe MiApplianceTypePdp do
     end
 
     it 'filter all available appliance' do
-      filtered_ats = subject.filter(ApplianceType.all)
+      filtered_ats = subject.filter(Atmosphere::ApplianceType.all)
 
       expect(filtered_ats.size).to eq 5
       expect(filtered_ats).to include at1
@@ -138,7 +140,7 @@ describe MiApplianceTypePdp do
     end
 
     it 'filter available appliance types for production' do
-      filtered_ats = subject.filter(ApplianceType.all, :production)
+      filtered_ats = subject.filter(Atmosphere::ApplianceType.all, :production)
 
       expect(filtered_ats.size).to eq 4
       expect(filtered_ats).to include at1
@@ -148,7 +150,7 @@ describe MiApplianceTypePdp do
     end
 
     it 'filter available appliance types for development' do
-      filtered_ats = subject.filter(ApplianceType.all, :development)
+      filtered_ats = subject.filter(Atmosphere::ApplianceType.all, :development)
 
       expect(filtered_ats.size).to eq 4
       expect(filtered_ats).to include at2
@@ -158,7 +160,7 @@ describe MiApplianceTypePdp do
     end
 
     it 'filter available appliance types for manager' do
-      filtered_ats = subject.filter(ApplianceType.all, :manage)
+      filtered_ats = subject.filter(Atmosphere::ApplianceType.all, :manage)
 
       expect(filtered_ats.size).to eq 3
       expect(filtered_ats).to include at3
@@ -169,7 +171,7 @@ describe MiApplianceTypePdp do
     it 'returns all resources when user is an admin' do
       current_user_is_admin
 
-      filtered_ats = subject.filter(ApplianceType.all, :manage)
+      filtered_ats = subject.filter(Atmosphere::ApplianceType.all, :manage)
 
       expect(filtered_ats.size).to eq 5
     end
