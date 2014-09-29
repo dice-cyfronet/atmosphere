@@ -12,7 +12,7 @@
 
 require 'rails_helper'
 
-describe ApplianceConfigurationTemplate do
+describe Atmosphere::ApplianceConfigurationTemplate do
   it { should validate_presence_of :name }
   it { should validate_presence_of :appliance_type }
   it { should belong_to :appliance_type }

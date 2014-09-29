@@ -22,7 +22,7 @@
 
 require 'rails_helper'
 
-describe Appliance do
+describe Atmosphere::Appliance do
 
   let(:optimizer) {double}
 
@@ -44,7 +44,7 @@ describe Appliance do
 
   context 'appliance configuration instances management' do
     before do
-      allow(Optimizer).to receive(:instance).and_return(optimizer)
+      allow(Atmosphere::Optimizer).to receive(:instance).and_return(optimizer)
       expect(optimizer).to receive(:run).twice
     end
     let!(:appliance) { create(:appliance) }
@@ -52,7 +52,7 @@ describe Appliance do
     it 'removes appliance configuratoin instance when last Appliance using it' do
       expect {
         appliance.destroy
-      }.to change { ApplianceConfigurationInstance.count }.by(-1)
+      }.to change { Atmosphere::ApplianceConfigurationInstance.count }.by(-1)
     end
 
     it 'does not remove appliance configuration instance when other Appliance is using it' do
@@ -60,7 +60,7 @@ describe Appliance do
       create(:appliance, appliance_configuration_instance: appliance.appliance_configuration_instance)
       expect {
         appliance.destroy
-      }.to change { ApplianceConfigurationInstance.count }.by(0)
+      }.to change { Atmosphere::ApplianceConfigurationInstance.count }.by(0)
     end
   end
 
@@ -72,22 +72,22 @@ describe Appliance do
 
 
     before {
-      allow(DevModePropertySet).to receive(:create_from)
-        .and_return(DevModePropertySet.new(name: 'dev'))
+      allow(Atmosphere::DevModePropertySet).to receive(:create_from)
+        .and_return(Atmosphere::DevModePropertySet.new(name: 'dev'))
     }
 
     context 'when development appliance set' do
       it 'creates dev mode property set' do
         appliance = create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
 
-        expect(DevModePropertySet).to have_received(:create_from).with(appliance_type).once
+        expect(Atmosphere::DevModePropertySet).to have_received(:create_from).with(appliance_type).once
         expect(appliance.dev_mode_property_set).to_not be_nil
       end
 
       it 'saves dev mode property set' do
         expect {
           create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
-        }.to change { DevModePropertySet.count }.by(1)
+        }.to change { Atmosphere::DevModePropertySet.count }.by(1)
       end
 
       it 'overwrite dev mode property set' do
@@ -105,14 +105,14 @@ describe Appliance do
       it 'when workflow appliance set' do
         appliance = create(:appliance, appliance_type: appliance_type, appliance_set: workflow_appliance_set)
 
-        expect(DevModePropertySet).to_not have_received(:create_from)
+        expect(Atmosphere::DevModePropertySet).to_not have_received(:create_from)
         expect(appliance.dev_mode_property_set).to be_nil
       end
 
       it 'when portal appliance set' do
         appliance = create(:appliance, appliance_type: appliance_type, appliance_set: portal_appliance_set)
 
-        expect(DevModePropertySet).to_not have_received(:create_from)
+        expect(Atmosphere::DevModePropertySet).to_not have_received(:create_from)
         expect(appliance.dev_mode_property_set).to be_nil
       end
     end

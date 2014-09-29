@@ -15,7 +15,7 @@
 
 require 'rails_helper'
 
-describe VirtualMachineFlavor do
+describe Atmosphere::VirtualMachineFlavor do
   context 'supported architectures validation' do
     it "adds 'invalid architexture' error message" do
       fl = build(:virtual_machine_flavor,
@@ -54,7 +54,7 @@ describe VirtualMachineFlavor do
     it 'finds all 386 flavors' do
       f32, _, f_both = flavor_archs_combination
 
-      flavors = VirtualMachineFlavor.with_arch('i386')
+      flavors = Atmosphere::VirtualMachineFlavor.with_arch('i386')
 
       expect(flavors.count).to eq 2
       expect(flavors).to include f32
@@ -64,7 +64,7 @@ describe VirtualMachineFlavor do
     it 'finds all 64 flavors' do
       _, f64, f_both = flavor_archs_combination
 
-      flavors = VirtualMachineFlavor.with_arch('x86_64')
+      flavors = Atmosphere::VirtualMachineFlavor.with_arch('x86_64')
 
       expect(flavors.count).to eq 2
       expect(flavors).to include f64
@@ -84,7 +84,7 @@ describe VirtualMachineFlavor do
     it 'finds flavor with CPU specified' do
       flavor = to_smal_and_correct_flavor(cpu: 2)
 
-      flavors = VirtualMachineFlavor.with_prefs(cpu: 2)
+      flavors = Atmosphere::VirtualMachineFlavor.with_prefs(cpu: 2)
 
       expect(flavors.count).to eq 1
       expect(flavors.first).to eq flavor
@@ -93,7 +93,7 @@ describe VirtualMachineFlavor do
     it 'finds flavor with Memory specified' do
       flavor = to_smal_and_correct_flavor(memory: 2)
 
-      flavors = VirtualMachineFlavor.with_prefs(memory: 2)
+      flavors = Atmosphere::VirtualMachineFlavor.with_prefs(memory: 2)
 
       expect(flavors.count).to eq 1
       expect(flavors.first).to eq flavor
@@ -102,7 +102,7 @@ describe VirtualMachineFlavor do
     it 'finds flavor with Memory specified' do
       flavor = to_smal_and_correct_flavor(hdd: 2)
 
-      flavors = VirtualMachineFlavor.with_prefs(hdd: 2)
+      flavors = Atmosphere::VirtualMachineFlavor.with_prefs(hdd: 2)
 
       expect(flavors.count).to eq 1
       expect(flavors.first).to eq flavor
@@ -114,7 +114,7 @@ describe VirtualMachineFlavor do
       create(:flavor, cpu: 2, memory: 2, hdd: 1)
       flavor = create(:flavor, cpu: 2, memory: 2, hdd: 2)
 
-      flavors = VirtualMachineFlavor.with_prefs(cpu: 2, memory: 2, hdd: 2)
+      flavors = Atmosphere::VirtualMachineFlavor.with_prefs(cpu: 2, memory: 2, hdd: 2)
 
       expect(flavors.count).to eq 1
       expect(flavors.first).to eq flavor

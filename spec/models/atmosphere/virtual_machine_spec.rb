@@ -17,9 +17,9 @@
 #
 
 require 'rails_helper'
-require Rails.root.join("spec/shared_examples/childhoodable.rb")
+require_relative "../../shared_examples/childhoodable.rb"
 
-describe VirtualMachine do
+describe Atmosphere::VirtualMachine do
 
   before {
     Fog.mock!
@@ -187,7 +187,7 @@ describe VirtualMachine do
       it 'creates new port mapping after IP was changed and is not blank' do
         expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([{port_mapping_template: pmt_1, virtual_machine: vm_ipless, public_ip: public_ip, source_port: public_port}])
         vm_ipless.ip = priv_ip
-        expect { vm_ipless.save }.to change {PortMapping.count}.by 1
+        expect { vm_ipless.save }.to change {Atmosphere::PortMapping.count}.by 1
       end
     end
 
@@ -226,14 +226,14 @@ describe VirtualMachine do
           it 'after VM is destroyed if IP was not blank' do
             create(:port_mapping, virtual_machine: vm)
             create(:port_mapping, virtual_machine: vm)
-            expect { vm.destroy }.to change {PortMapping.count}.by -2
+            expect { vm.destroy }.to change {Atmosphere::PortMapping.count}.by -2
           end
 
           it 'if VM ip was updated from non-blank value to blank' do
             vm.ip = nil
             create(:port_mapping, virtual_machine: vm)
             create(:port_mapping, virtual_machine: vm)
-            expect { vm.save }.to change {PortMapping.count}.by -2
+            expect { vm.save }.to change {Atmosphere::PortMapping.count}.by -2
           end
         end
       end
@@ -288,7 +288,7 @@ describe VirtualMachine do
     end
 
     it 'returns only VMs manageable by atmosphere' do
-      vms = VirtualMachine.manageable
+      vms = Atmosphere::VirtualMachine.manageable
 
       expect(vms.count).to eq 1
       expect(vms[0]).to eq vm
@@ -305,7 +305,7 @@ describe VirtualMachine do
     let(:vm) { create(:virtual_machine, id_at_site: id_at_site) }
 
     before do
-      allow_any_instance_of(ComputeSite)
+      allow_any_instance_of(Atmosphere::ComputeSite)
         .to receive(:cloud_client).and_return(cloud_client)
       allow(servers).to receive(:get).with(id_at_site).and_return(server)
     end

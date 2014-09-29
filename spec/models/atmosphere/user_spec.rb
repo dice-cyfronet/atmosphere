@@ -22,7 +22,7 @@
 #
 
 require 'rails_helper'
-require Rails.root.join("spec/shared_examples/token_authenticatable.rb")
+require_relative "../../shared_examples/token_authenticatable.rb"
 
 describe User do
   it { should have_many(:appliance_sets).dependent(:destroy) }

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe VirtualMachine do
+describe Atmosphere::VirtualMachine do
 
   let(:metrics_double) { double('metrics double') }
   let(:mon_cli_double) { double('monitoring client') }

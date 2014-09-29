@@ -41,11 +41,11 @@ module Air
   end
 
   def self.monitoring_client
-    zabbix_client || Monitoring::NullClient.new
+    zabbix_client || Atmosphere::Monitoring::NullClient.new
   end
 
   def self.metrics_store
-    influxdb_client || Monitoring::NullMetricsStore.new
+    influxdb_client || Atmosphere::Monitoring::NullMetricsStore.new
   end
 
   def self.clear_cache!
@@ -56,7 +56,7 @@ module Air
 
   def self.zabbix_client
     if config['zabbix']
-      clients_cache['zabbix'] ||= Monitoring::ZabbixClient.new
+      clients_cache['zabbix'] ||= Atmosphere::Monitoring::ZabbixClient.new
     end
   end
 
@@ -64,7 +64,7 @@ module Air
     @clients_cache ||= {}
   end
 
-  def self.client_cache_entry(key, null_client_class = NullCacheEntry)
+  def self.client_cache_entry(key, null_client_class = Atmosphere::NullCacheEntry)
     clients_cache[key] || null_client_class.new
   end
 

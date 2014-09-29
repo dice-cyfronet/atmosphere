@@ -11,7 +11,7 @@
 
 require 'rails_helper'
 
-describe ApplianceConfigurationInstance do
+describe Atmosphere::ApplianceConfigurationInstance do
   it { should have_many(:appliances) }
   it { should belong_to(:appliance_configuration_template) }
 
@@ -20,7 +20,7 @@ describe ApplianceConfigurationInstance do
 
     context 'when no duplication exists' do
       it 'creates new appliance configuration instance' do
-        instance = ApplianceConfigurationInstance.get(act, {'param' => 'a' })
+        instance = Atmosphere::ApplianceConfigurationInstance.get(act, {'param' => 'a' })
 
         expect(instance.new_record?).to be_truthy
       end
@@ -32,7 +32,7 @@ describe ApplianceConfigurationInstance do
       end
 
       it 'reuses existing instance' do
-        instance = ApplianceConfigurationInstance.get(act, {'param' => 'a' })
+        instance = Atmosphere::ApplianceConfigurationInstance.get(act, {'param' => 'a' })
 
         expect(instance.new_record?).to be_falsy
       end

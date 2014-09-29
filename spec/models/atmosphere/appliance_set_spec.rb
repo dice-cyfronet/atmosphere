@@ -13,9 +13,9 @@
 
 require 'rails_helper'
 
-describe ApplianceSet do
+describe Atmosphere::ApplianceSet do
 
-  subject { FactoryGirl.create(:appliance_set) }
+  subject { create(:appliance_set) }
 
   it { should be_valid }
 

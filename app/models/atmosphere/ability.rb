@@ -1,27 +1,27 @@
 module Atmosphere
   class Ability
-    include CanCan::Ability
+    include ::CanCan::Ability
 
     @@ability_builder_classes = [
-        ::UserAbilityBuilder,
-        ::ComputeSiteAbilityBuilder,
-        ::ApplianceAbilityBuilder,
-        ::ApplianceTypeAbilityBuilder,
-        ::ApplianceSetAbilityBuilder,
-        ::EndpointAbilityBuilder,
-        ::OwnedPayloadAbilityBuilder,
-        ::ApplianceConfigurationTemplateAbilityBuilder,
-        ::ApplianceConfigurationInstanceAbilityBuilder,
-        ::PortMappingTemplateAbilityBuilder,
-        ::PortMappingPropertyAbilityBuilder,
-        ::DevModePropertySetAbilityBuilder,
-        ::VirtualMachineAbilityBuilder,
-        ::VirtualMachineTemplateAbilityBuilder,
-        ::HttpMappingAbilityBuilder,
-        ::PortMappingAbilityBuilder,
-        ::UserKeyAbilityBuilder,
-        ::VirtualMachineFlavorAbilityBuilder,
-        ::ClewAbilityBuilder
+        ::Atmosphere::UserAbilityBuilder,
+        ::Atmosphere::ComputeSiteAbilityBuilder,
+        ::Atmosphere::ApplianceAbilityBuilder,
+        ::Atmosphere::ApplianceTypeAbilityBuilder,
+        ::Atmosphere::ApplianceSetAbilityBuilder,
+        ::Atmosphere::EndpointAbilityBuilder,
+        ::Atmosphere::OwnedPayloadAbilityBuilder,
+        ::Atmosphere::ApplianceConfigurationTemplateAbilityBuilder,
+        ::Atmosphere::ApplianceConfigurationInstanceAbilityBuilder,
+        ::Atmosphere::PortMappingTemplateAbilityBuilder,
+        ::Atmosphere::PortMappingPropertyAbilityBuilder,
+        ::Atmosphere::DevModePropertySetAbilityBuilder,
+        ::Atmosphere::VirtualMachineAbilityBuilder,
+        ::Atmosphere::VirtualMachineTemplateAbilityBuilder,
+        ::Atmosphere::HttpMappingAbilityBuilder,
+        ::Atmosphere::PortMappingAbilityBuilder,
+        ::Atmosphere::UserKeyAbilityBuilder,
+        ::Atmosphere::VirtualMachineFlavorAbilityBuilder,
+        ::Atmosphere::ClewAbilityBuilder
       ]
 
     def initialize(user, load_admin_abilities = true)

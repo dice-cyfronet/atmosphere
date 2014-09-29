@@ -17,9 +17,9 @@
 
 require 'rails_helper'
 require 'securerandom'
-require Rails.root.join("spec/shared_examples/childhoodable.rb")
+require_relative "../../shared_examples/childhoodable.rb"
 
-describe VirtualMachineTemplate do
+describe Atmosphere::VirtualMachineTemplate do
 
   before do
     Fog.mock!
@@ -29,15 +29,15 @@ describe VirtualMachineTemplate do
 
   context 'name sanitization' do
     it 'appends underscores to name that is too short' do
-      expect(VirtualMachineTemplate.sanitize_tmpl_name('s')).to eq 's__'
+      expect(Atmosphere::VirtualMachineTemplate.sanitize_tmpl_name('s')).to eq 's__'
     end
 
     it 'trims too long name to 128 characters' do
-      expect(VirtualMachineTemplate.sanitize_tmpl_name(SecureRandom.hex(65)).length).to eq 128
+      expect(Atmosphere::VirtualMachineTemplate.sanitize_tmpl_name(SecureRandom.hex(65)).length).to eq 128
     end
 
     it 'replaces illegal characters with underscore' do
-      expect(VirtualMachineTemplate.sanitize_tmpl_name('!@#$%^&* ')).to eq '_________'
+      expect(Atmosphere::VirtualMachineTemplate.sanitize_tmpl_name('!@#$%^&* ')).to eq '_________'
     end
   end
 
@@ -72,7 +72,7 @@ describe VirtualMachineTemplate do
 
       it 'destroys vm in DB if it does not have an appliance associated' do
         allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
-        expect { subject.update_attribute(:state, :active) }.to change { VirtualMachine.count}.by(-1)
+        expect { subject.update_attribute(:state, :active) }.to change { Atmosphere::VirtualMachine.count}.by(-1)
       end
 
       it 'destroys vm in cloud if it does not have an appliance associated' do
@@ -88,17 +88,17 @@ describe VirtualMachineTemplate do
 
       it 'does not destroy vm in cloud if it has an appliance associated' do
         create(:appliance, virtual_machines: [vm])
-        expect { subject.update_attribute(:state, :active) }.to_not change { VirtualMachine.count }
+        expect { subject.update_attribute(:state, :active) }.to_not change { Atmosphere::VirtualMachine.count }
       end
 
       it 'shows up on the active scope' do
-        expect(VirtualMachineTemplate.active).to_not include subject
-        expect(VirtualMachineTemplate.active).to include active_vmt
+        expect(Atmosphere::VirtualMachineTemplate.active).to_not include subject
+        expect(Atmosphere::VirtualMachineTemplate.active).to include active_vmt
       end
 
       it 'shows up on the unassigned scope' do
-        expect(VirtualMachineTemplate.unassigned).to_not include assigned_vmt
-        expect(VirtualMachineTemplate.unassigned).to include active_vmt
+        expect(Atmosphere::VirtualMachineTemplate.unassigned).to_not include assigned_vmt
+        expect(Atmosphere::VirtualMachineTemplate.unassigned).to include active_vmt
       end
     end
 
@@ -111,7 +111,7 @@ describe VirtualMachineTemplate do
 
       it 'destroys vm in DB if it does not have an appliance associated' do
         allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
-        expect { subject.update_attribute(:state, :error) }.to change { VirtualMachine.count}.by(-1)
+        expect { subject.update_attribute(:state, :error) }.to change { Atmosphere::VirtualMachine.count}.by(-1)
       end
 
       it 'destroys vm in cloud if it does not have an appliance associated' do
@@ -127,7 +127,7 @@ describe VirtualMachineTemplate do
 
       it 'does not destroy vm in cloud if it has an appliance associated' do
         create(:appliance, virtual_machines: [vm])
-        expect { subject.update_attribute(:state, :error) }.to_not change { VirtualMachine.count }
+        expect { subject.update_attribute(:state, :error) }.to_not change { Atmosphere::VirtualMachine.count }
       end
     end
 
@@ -139,7 +139,7 @@ describe VirtualMachineTemplate do
 
       it 'does not destroys vm in DB if it does not have an appliance associated' do
         allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
-        expect { subject.update_attribute(:state, :saving) }.to_not change { VirtualMachine.count}
+        expect { subject.update_attribute(:state, :saving) }.to_not change { Atmosphere::VirtualMachine.count}
       end
 
       it 'does not destroy vm in cloud if it does not have an appliance associated' do
@@ -155,7 +155,7 @@ describe VirtualMachineTemplate do
 
       it 'does not destroy vm in cloud if it has an appliance associated' do
         create(:appliance, virtual_machines: [vm])
-        expect { subject.update_attribute(:state, :saving) }.to_not change { VirtualMachine.count }
+        expect { subject.update_attribute(:state, :saving) }.to_not change { Atmosphere::VirtualMachine.count }
       end
     end
   end
@@ -202,7 +202,7 @@ describe VirtualMachineTemplate do
         it 'does not remove source VM' do
           expect {
             tpl_in_saving_state.destroy
-          }.to change { VirtualMachine.count }.by(0)
+          }.to change { Atmosphere::VirtualMachine.count }.by(0)
         end
       end
 
@@ -210,7 +210,7 @@ describe VirtualMachineTemplate do
         it 'removes source VM' do
           expect {
             tpl_in_saving_state.destroy
-          }.to change { VirtualMachine.count }.by(-1)
+          }.to change { Atmosphere::VirtualMachine.count }.by(-1)
         end
       end
     end
@@ -228,21 +228,21 @@ describe VirtualMachineTemplate do
     end
 
     it 'sets managed_by_atmosphere to true' do
-      tmpl = VirtualMachineTemplate.create_from_vm(vm)
+      tmpl = Atmosphere::VirtualMachineTemplate.create_from_vm(vm)
 
       expect(tmpl.managed_by_atmosphere).to be_truthy
     end
 
     it 'sets VM state to "saving"' do
-      tmpl = VirtualMachineTemplate.create_from_vm(vm)
+      tmpl = Atmosphere::VirtualMachineTemplate.create_from_vm(vm)
       vm.reload
 
       expect(vm.state).to eq 'saving'
     end
 
     it 'saves template from machines with identical names' do
-      tmpl1 = VirtualMachineTemplate.create_from_vm(vm)
-      tmpl2 = VirtualMachineTemplate.create_from_vm(vm2)
+      tmpl1 = Atmosphere::VirtualMachineTemplate.create_from_vm(vm)
+      tmpl2 = Atmosphere::VirtualMachineTemplate.create_from_vm(vm2)
 
       expect(vm.name).to eq(vm2.name)
       expect(tmpl1.name).not_to eq(tmpl2.name)

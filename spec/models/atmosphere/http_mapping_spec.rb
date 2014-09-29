@@ -15,7 +15,7 @@
 
 require 'rails_helper'
 
-describe HttpMapping do
+describe Atmosphere::HttpMapping do
   it { should validate_presence_of :url }
   it { should validate_presence_of :application_protocol }
 

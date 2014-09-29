@@ -10,6 +10,6 @@
 
 require 'spec_helper'
 
-describe UserFund do
+describe Atmosphere::UserFund do
   pending "add some examples to (or delete) #{__FILE__}"
 end

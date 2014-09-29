@@ -15,13 +15,13 @@
 
 require 'rails_helper'
 
-describe PortMappingTemplate do
+describe Atmosphere::PortMappingTemplate do
 
   before { Fog.mock! }
 
   let(:dnat_client_mock) { double('dnat client') }
 
-  subject { FactoryGirl.create(:port_mapping_template) }
+  subject { create(:port_mapping_template) }
 
   it { should be_valid }
 
@@ -176,12 +176,12 @@ describe PortMappingTemplate do
       it 'remove dnat redirection' do
         expect {
           pmt.save
-        }.to change { PortMapping.count }.by(-1)
+        }.to change { Atmosphere::PortMapping.count }.by(-1)
       end
     end
 
     it 'does not remove dnat mapping when type none not changed' do
-      allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+      allow(Atmosphere::DnatWrangler).to receive(:new).and_return(dnat_client_mock)
       appliance_type = create(:appliance_type)
       pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
       appliance = create(:appliance, appliance_type: appliance_type)
@@ -195,7 +195,7 @@ describe PortMappingTemplate do
     end
 
     it 'does not add dnat mapping when type none not changed' do
-      allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+      allow(Atmosphere::DnatWrangler).to receive(:new).and_return(dnat_client_mock)
       appliance_type = create(:appliance_type)
       pmt = create(:port_mapping_template, appliance_type: appliance_type, dev_mode_property_set: nil, application_protocol: :none)
       appliance = create(:appliance, appliance_type: appliance_type)
@@ -208,7 +208,7 @@ describe PortMappingTemplate do
 
     context 'when http/https changed into none' do
       before do
-        allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+        allow(Atmosphere::DnatWrangler).to receive(:new).and_return(dnat_client_mock)
         allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([])
       end
 
@@ -246,9 +246,9 @@ describe PortMappingTemplate do
     context 'adds port mapping using dnat wrangler when pmt is created' do
       let(:wrg) { double('wrangler') }
       before do
-        allow(Optimizer.instance).to receive(:run)
-        allow(DnatWrangler).to receive(:new).and_return(dnat_client_mock)
-        allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([{port_mapping_template: PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
+        allow(Atmosphere::Optimizer.instance).to receive(:run)
+        allow(Atmosphere::DnatWrangler).to receive(:new).and_return(dnat_client_mock)
+        allow(dnat_client_mock).to receive(:add_dnat_for_vm).and_return([{port_mapping_template: Atmosphere::PortMappingTemplate.first, virtual_machine: vm, public_ip: public_ip, source_port: public_port_1}])
       end
       let(:proto) { 'tcp' }
       let(:priv_port) { 8080 }
@@ -316,27 +316,27 @@ describe PortMappingTemplate do
     let!(:private_complex_at) { create(:appliance_type, port_mapping_templates: [pmt4], visible_to: :owner) }
 
     it 'updates metadata when PMT destroyed' do
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at).twice
+      expect(Atmosphere::MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at).twice
       pmt1.destroy
     end
 
     it 'updates metadata when PMT with endpoint added' do
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at)
+      expect(Atmosphere::MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at)
       complex_at.port_mapping_templates << pmt2
     end
 
     it 'does not update metadata when empty PMT added' do
-      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      expect(Atmosphere::MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
       complex_at.port_mapping_templates << pmt3
     end
 
     it 'does not update metadata when empty PMT destroyed' do
-      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      expect(Atmosphere::MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
       pmt5.destroy
     end
 
     it 'does not update appliance metadata when not published' do
-      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      expect(Atmosphere::MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
       pmt4.destroy
     end
 

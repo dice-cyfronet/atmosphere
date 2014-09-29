@@ -20,7 +20,7 @@
 
 require 'rails_helper'
 
-describe ApplianceType do
+describe Atmosphere::ApplianceType do
 
   subject { FactoryGirl.create(:appliance_type) }
 
@@ -82,7 +82,7 @@ describe ApplianceType do
     let(:dev_props) { appl.dev_mode_property_set }
 
     it 'creates appliance type from appliance' do
-      at = ApplianceType.create_from(appl)
+      at = Atmosphere::ApplianceType.create_from(appl)
       expect(at.name).to eq(dev_props.name)
       expect(at.description).to eq(dev_props.description)
       expect(at.shared).to eq(dev_props.shared)
@@ -104,7 +104,7 @@ describe ApplianceType do
     end
 
     it 'overwrite data from appliance' do
-      at = ApplianceType.create_from(appl, overwrite)
+      at = Atmosphere::ApplianceType.create_from(appl, overwrite)
       expect(at.name).to eq(overwrite[:name])
       expect(at.description).to eq(overwrite[:description])
       expect(at.scalable).to eq(overwrite[:scalable])
@@ -138,7 +138,7 @@ describe ApplianceType do
       let(:dev_props_with_pmt) { appl.dev_mode_property_set }
 
       it 'creates pmt, endpoints, properties copy' do
-        at = ApplianceType.create_from(appl_with_pmt, overwrite)
+        at = Atmosphere::ApplianceType.create_from(appl_with_pmt, overwrite)
         expect(at.port_mapping_templates.length).to eq 2
         expect(at.port_mapping_templates[0].endpoints.length).to eq 2
         expect(at.port_mapping_templates[0].port_mapping_properties.length).to eq 2
@@ -158,7 +158,7 @@ describe ApplianceType do
       end
 
       it 'copies initial configuration templates' do
-        at = ApplianceType.create_from(appl, overwrite)
+        at = Atmosphere::ApplianceType.create_from(appl, overwrite)
 
         init_confs = at.appliance_configuration_templates.sort {|x,y| x.name <=> y.name}
 
@@ -282,14 +282,14 @@ describe ApplianceType do
       public_at.save
 
       at.visible_to = :all
-      mrc = MetadataRepositoryClient.instance
+      mrc = Atmosphere::MetadataRepositoryClient.instance
       expect(mrc).to receive(:publish_appliance_type).with(at)
       at.save
     end
 
     it 'publishes private appliance type made development' do
       at.visible_to = :developer
-      mrc = MetadataRepositoryClient.instance
+      mrc = Atmosphere::MetadataRepositoryClient.instance
       expect(mrc).to receive(:publish_appliance_type).with(at)
       at.save
     end
@@ -374,13 +374,13 @@ describe ApplianceType do
     it 'removes all assigned virtual machine templates' do
       expect {
         at.destroy
-      }.to change { VirtualMachineTemplate.count }.by(-2)
+      }.to change { Atmosphere::VirtualMachineTemplate.count }.by(-2)
     end
 
     it 'does not remove VMT when removed from relation' do
       expect {
         at.virtual_machine_templates = [ vmt1 ]
-      }.to change { VirtualMachineTemplate.count }.by(0)
+      }.to change { Atmosphere::VirtualMachineTemplate.count }.by(0)
     end
   end
 

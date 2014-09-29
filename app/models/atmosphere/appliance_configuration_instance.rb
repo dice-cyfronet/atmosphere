@@ -1,4 +1,4 @@
-require 'params_regexpable'
+require 'atmosphere/params_regexpable'
 
 # == Schema Information
 #

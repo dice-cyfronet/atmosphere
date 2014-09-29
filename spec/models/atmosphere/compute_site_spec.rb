@@ -22,7 +22,7 @@
 
 require 'rails_helper'
 
-describe ComputeSite do
+describe Atmosphere::ComputeSite do
 
   before { Fog.mock! }
 
@@ -127,7 +127,7 @@ describe ComputeSite do
     let!(:appl) { create(:appliance, appliance_type: at, virtual_machines: [ vm ]) }
 
     it 'loads not readonly compute sites' do
-      ComputeSite.with_appliance_type(at).each do |cs|
+      Atmosphere::ComputeSite.with_appliance_type(at).each do |cs|
         expect(cs.readonly?).to be_falsy
       end
     end
@@ -140,7 +140,7 @@ describe ComputeSite do
     let!(:appl) { create(:appliance, appliance_set: as, virtual_machines: [ vm ]) }
 
     it 'loads not readonly compute sites' do
-      ComputeSite.with_dev_property_set(appl.dev_mode_property_set).each do |cs|
+      Atmosphere::ComputeSite.with_dev_property_set(appl.dev_mode_property_set).each do |cs|
         expect(cs.readonly?).to be_falsy
       end
     end
@@ -208,7 +208,7 @@ describe ComputeSite do
       create(:compute_site, active: false)
       cs3 = create(:compute_site, active: true)
 
-      cses = ComputeSite.active
+      cses = Atmosphere::ComputeSite.active
 
       expect(cses.count).to eq 2
       expect(cses).to include cs1

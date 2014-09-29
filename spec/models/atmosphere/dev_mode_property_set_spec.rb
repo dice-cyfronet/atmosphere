@@ -18,7 +18,7 @@
 
 require 'rails_helper'
 
-describe DevModePropertySet do
+describe Atmosphere::DevModePropertySet do
   it { should validate_presence_of :name }
 
   [:preference_memory, :preference_disk, :preference_cpu].each do |attribute|
@@ -57,7 +57,7 @@ describe DevModePropertySet do
     }
 
     it 'copying appliance_type attributes values' do
-      target = DevModePropertySet.create_from(appliance_type)
+      target = Atmosphere::DevModePropertySet.create_from(appliance_type)
 
       expect(target.name).to eq appliance_type.name
       expect(target.description).to eq appliance_type.description
@@ -70,24 +70,24 @@ describe DevModePropertySet do
     end
 
     it 'copying port_mappings' do
-      target = DevModePropertySet.create_from(appliance_type)
+      target = Atmosphere::DevModePropertySet.create_from(appliance_type)
       expect(target.port_mapping_templates.size).to eq 2
     end
 
     it 'setting relation between appliance type and port_mappings copy relations into null' do
-      target = DevModePropertySet.create_from(appliance_type)
+      target = Atmosphere::DevModePropertySet.create_from(appliance_type)
       expect(target.port_mapping_templates[0].appliance_type).to be_nil
       expect(target.port_mapping_templates[1].appliance_type).to be_nil
     end
 
     it 'copying port_mapping endpoints' do
-      target = DevModePropertySet.create_from(appliance_type)
+      target = Atmosphere::DevModePropertySet.create_from(appliance_type)
       expect(target.port_mapping_templates[0].endpoints.size).to eq 2
       expect(target.port_mapping_templates[1].endpoints.size).to eq 0
     end
 
     it 'copying port_mapping_templates' do
-      target = DevModePropertySet.create_from(appliance_type)
+      target = Atmosphere::DevModePropertySet.create_from(appliance_type)
       expect(target.port_mapping_templates[0].port_mapping_properties.size).to eq 2
       expect(target.port_mapping_templates[1].port_mapping_properties.size).to eq 0
     end

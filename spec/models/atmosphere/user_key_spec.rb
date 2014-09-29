@@ -13,7 +13,7 @@
 
 require 'rails_helper'
 
-describe UserKey do
+describe Atmosphere::UserKey do
 
   let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
   before do
@@ -34,8 +34,8 @@ describe UserKey do
 
   it 'should import key to cloud site' do
     subject.name
-    ComputeSite.all.each { |cs| subject.import_to_cloud(cs) }
-    ComputeSite.all.each do |cs|
+    Atmosphere::ComputeSite.all.each { |cs| subject.import_to_cloud(cs) }
+    Atmosphere::ComputeSite.all.each do |cs|
       keypair = cs.cloud_client.key_pairs.select{|k| k.name == subject.id_at_site}.first
       expect(keypair.name).to eq(subject.id_at_site)
     end
@@ -43,7 +43,7 @@ describe UserKey do
 
   it 'should not raise error if key is imported twice' do
     subject.name
-    ComputeSite.all.each { |cs| subject.import_to_cloud(cs); subject.import_to_cloud(cs) }
+    Atmosphere::ComputeSite.all.each { |cs| subject.import_to_cloud(cs); subject.import_to_cloud(cs) }
   end
 
   # there is no need for equivalent test for amazon because AWS does not raise error when trying to deleting key that was not imported

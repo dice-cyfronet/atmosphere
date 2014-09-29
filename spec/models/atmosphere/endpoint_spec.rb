@@ -16,7 +16,7 @@
 
 require 'rails_helper'
 
-describe Endpoint do
+describe Atmosphere::Endpoint do
 
   it { should ensure_inclusion_of(:endpoint_type).in_array(%w(ws rest webapp)) }
 
@@ -82,7 +82,7 @@ describe Endpoint do
     end
 
     it 'updates metadata when endpoint switched to different PMT' do
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).twice
+      expect(Atmosphere::MetadataRepositoryClient.instance).to receive(:update_appliance_type).twice
       endp11.port_mapping_template = other_pmt
       endp11.save
       expect(complex_at.reload.as_metadata_xml.strip).not_to include('FIRST ENDP')
@@ -90,17 +90,17 @@ describe Endpoint do
     end
 
     it 'updates metadata when endpoint destroyed' do
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at)
+      expect(Atmosphere::MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(complex_at)
       endp11.destroy
     end
 
     it 'updates metadata when endpoint added' do
-      expect(MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(other_complex_at)
-      Endpoint.create(port_mapping_template: other_pmt, invocation_path: 'ip', name: 'new')
+      expect(Atmosphere::MetadataRepositoryClient.instance).to receive(:update_appliance_type).with(other_complex_at)
+      Atmosphere::Endpoint.create(port_mapping_template: other_pmt, invocation_path: 'ip', name: 'new')
     end
 
     it 'does not update appliance metadata when not published' do
-      expect(MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
+      expect(Atmosphere::MetadataRepositoryClient.instance).not_to receive(:update_appliance_type)
       endp41.destroy
     end
 

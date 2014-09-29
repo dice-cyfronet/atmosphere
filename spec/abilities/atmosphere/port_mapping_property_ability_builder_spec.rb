@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe PortMappingPropertyAbilityBuilder do
+describe Atmosphere::PortMappingPropertyAbilityBuilder do
   let(:user) { build(:user) }
   let(:pdp) { double('pdp') }
   let(:pdp_class) { double('pdp class') }
-  let(:ability) { Ability.new(user) }
+  let(:ability) { Atmosphere::Ability.new(user) }
 
   before do
     allow(Air.config).to receive(:at_pdp_class).and_return(pdp_class)

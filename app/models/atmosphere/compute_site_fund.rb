@@ -10,7 +10,7 @@
 # Linking table between ComputeSites and Funds
 module Atmosphere
   class ComputeSiteFund < ActiveRecord::Base
-    self.table_name = 'compute_site_founds'
+    self.table_name = 'compute_site_funds'
 
     belongs_to :compute_site
     belongs_to :fund

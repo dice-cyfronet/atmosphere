@@ -13,7 +13,7 @@
 
 require 'rails_helper'
 
-describe PortMapping do
+describe Atmosphere::PortMapping do
   it { should validate_presence_of :public_ip }
   it { should validate_presence_of :source_port }
   it { should validate_presence_of :virtual_machine }

@@ -38,16 +38,16 @@ class User < ActiveRecord::Base
   include Atmosphere::TokenAuthenticatable
   include Atmosphere::Nondeletable
 
-  has_many :appliance_sets, dependent: :destroy
-  has_many :user_keys, dependent: :destroy
-  has_many :appliance_types
+  has_many :appliance_sets, dependent: :destroy, class_name: 'Atmosphere::ApplianceSet'
+  has_many :user_keys, dependent: :destroy, class_name: 'Atmosphere::UserKey'
+  has_many :appliance_types, class_name: 'Atmosphere::ApplianceType'
 
-  has_and_belongs_to_many :security_proxies
-  has_and_belongs_to_many :security_policies
+  has_and_belongs_to_many :security_proxies, class_name: 'Atmosphere::SecurityProxy'
+  has_and_belongs_to_many :security_policies, class_name: 'Atmosphere::SecurityPolicy'
 
-  has_many :funds, through: :user_funds
-  has_many :user_funds, dependent: :destroy
-  has_many :billing_logs, dependent: :nullify
+  has_many :funds, through: :user_funds, class_name: 'Atmosphere::Fund'
+  has_many :user_funds, dependent: :destroy, class_name: 'Atmosphere::UserFund'
+  has_many :billing_logs, dependent: :nullify, class_name: 'Atmosphere::BillingLog'
 
   before_save :check_fund_assignment
   around_update :manage_metadata
@@ -109,8 +109,8 @@ class User < ActiveRecord::Base
   # This method is provided to ensure compatibility with old versions of Atmosphere which do not supply fund information when creating users.
   # Once the platform APIs are updated, this method will be deprecated and should be removed.
   def check_fund_assignment
-    if funds.blank? and Fund.all.count > 0
-      user_funds << UserFund.new(user: self, fund: Fund.first, default: true)
+    if funds.blank? and Atmosphere::Fund.all.count > 0
+      user_funds << Atmosphere::UserFund.new(user: self, fund: Atmosphere::Fund.first, default: true)
     end
   end
 

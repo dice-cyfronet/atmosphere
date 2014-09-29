@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe VirtualMachineTemplateAbilityBuilder do
+describe Atmosphere::VirtualMachineTemplateAbilityBuilder do
 
   let(:user) { nil }
-  subject { Ability.new(user) }
+  subject { Atmosphere::Ability.new(user) }
 
   context 'normal user' do
     let(:user) { build(:user, id: 1) }

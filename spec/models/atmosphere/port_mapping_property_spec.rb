@@ -13,7 +13,7 @@
 
 require 'rails_helper'
 
-describe PortMappingProperty do
+describe Atmosphere::PortMappingProperty do
 
   it { should validate_presence_of :key }
   it { should validate_presence_of :value }

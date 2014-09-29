@@ -1,10 +1,12 @@
 require 'settingslogic'
 require 'devise'
+require 'cancan'
 require 'simple_form'
 require 'gravtastic'
 require 'role_model'
 require 'foreigner'
 require 'enumerize'
+require 'sentry-raven'
 
 module Atmosphere
   class Engine < ::Rails::Engine
