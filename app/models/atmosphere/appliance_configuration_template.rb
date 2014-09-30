@@ -15,7 +15,8 @@ module Atmosphere
   class ApplianceConfigurationTemplate < ActiveRecord::Base
     self.table_name = 'appliance_configuration_templates'
 
-    belongs_to :appliance_type
+    belongs_to :appliance_type,
+      class_name: 'Atmosphere::ApplianceType'
 
     validates_presence_of :name, :appliance_type
     validates_uniqueness_of :name, scope: :appliance_type

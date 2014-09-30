@@ -8,6 +8,9 @@ require 'foreigner'
 require 'enumerize'
 require 'sentry-raven'
 require 'influxdb'
+require 'active_model_serializers'
+require 'will_paginate'
+require 'omniauth-vph'
 
 module Atmosphere
   class Engine < ::Rails::Engine

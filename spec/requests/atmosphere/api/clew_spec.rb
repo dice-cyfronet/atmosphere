@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::ClewController do
+describe Atmosphere::Api::V1::ClewController do
   include ApiHelpers
 
   describe 'GET /clew/appliance_instances' do

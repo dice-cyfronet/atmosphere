@@ -3,8 +3,15 @@ module Atmosphere
     module V1
       class ClewController < Atmosphere::Api::ApplicationController
 
-        load_and_authorize_resource :appliance_sets, :class => "ApplianceSet", :parent => false, :only => :appliance_instances
-        load_and_authorize_resource :appliance_types, :class => "ApplianceType", :parent => false, :only => :appliance_types
+        load_and_authorize_resource :appliance_sets,
+          class: 'Atmosphere::ApplianceSet',
+          parent: false,
+          only: :appliance_instances
+
+        load_and_authorize_resource :appliance_types,
+          class: 'Atmosphere::ApplianceType',
+          parent: false,
+          only: :appliance_types
 
         respond_to :json
 
@@ -24,7 +31,6 @@ module Atmosphere
         def pdp
           Air.config.at_pdp_class.new(current_user)
         end
-
       end
     end
   end

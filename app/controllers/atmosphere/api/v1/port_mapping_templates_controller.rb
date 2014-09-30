@@ -1,8 +1,14 @@
 class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::ApplicationController
-
   before_filter :find_port_mapping_templates, only: :index
-  load_and_authorize_resource :port_mapping_template, except: :index
-  authorize_resource :port_mapping_template, only: :index
+
+  load_and_authorize_resource :port_mapping_template,
+    except: :index,
+    class: 'Atmosphere::PortMappingTemplate'
+
+  authorize_resource :port_mapping_template,
+    only: :index,
+    class: 'Atmosphere::PortMappingTemplate'
+
   before_filter :initialize_manager, only: [:create, :update, :destroy]
   respond_to :json
 
@@ -43,12 +49,12 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
 
   def find_port_mapping_templates
     if params[:appliance_type_id]
-      @appliance_type = ApplianceType.find(params[:appliance_type_id])
-      @port_mapping_templates = PortMappingTemplate.where(appliance_type: @appliance_type)
+      @appliance_type = Atmosphere::ApplianceType.find(params[:appliance_type_id])
+      @port_mapping_templates = Atmosphere::PortMappingTemplate.where(appliance_type: @appliance_type)
       authorize!(:index, @appliance_type)
     else
-      @dev_mode_property_set = DevModePropertySet.find(params[:dev_mode_property_set_id])
-      @port_mapping_templates = PortMappingTemplate.where(dev_mode_property_set: @dev_mode_property_set)
+      @dev_mode_property_set = Atmosphere::DevModePropertySet.find(params[:dev_mode_property_set_id])
+      @port_mapping_templates = Atmosphere::PortMappingTemplate.where(dev_mode_property_set: @dev_mode_property_set)
       authorize!(:index, @dev_mode_property_set.appliance.appliance_set)
     end
   end
@@ -59,6 +65,11 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
   end
 
   def initialize_manager
-    @manager = AffectedApplianceAwareManager.new(@port_mapping_template, AppliancesAffectedByPmt)
+    @manager = Atmosphere::AffectedApplianceAwareManager
+      .new(@port_mapping_template, Atmosphere::AppliancesAffectedByPmt)
+  end
+
+  def model_class
+    Atmosphere::PortMappingTemplate
   end
 end

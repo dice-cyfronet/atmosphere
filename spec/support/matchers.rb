@@ -176,7 +176,7 @@ RSpec::Matchers.define :basic_endpoint_eq do |expected|
     (actual['name'] == expected.name) &&
     (actual['description'] == expected.description) &&
     (actual['endpoint_type'] == expected.endpoint_type.to_s) &&
-    (actual['url'] == descriptor_api_v1_endpoint_url(expected.id))
+    (actual['url'] == atmosphere.descriptor_api_v1_endpoint_url(expected.id))
   end
 end
 

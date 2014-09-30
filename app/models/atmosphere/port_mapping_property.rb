@@ -14,8 +14,11 @@ module Atmosphere
   class PortMappingProperty < ActiveRecord::Base
     self.table_name = 'port_mapping_properties'
 
-    belongs_to :port_mapping_template
-    belongs_to :compute_site
+    belongs_to :port_mapping_template,
+      class_name: 'Atmosphere::PortMappingTemplate'
+
+    belongs_to :compute_site,
+      class_name: 'Atmosphere::ComputeSite'
 
     validates_presence_of :key, :value
 

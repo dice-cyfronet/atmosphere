@@ -1,6 +1,9 @@
 class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
   before_filter :init_appliance, only: :create
-  load_and_authorize_resource :appliance
+
+  load_and_authorize_resource :appliance,
+    class: 'Atmosphere::Appliance'
+
   before_filter :init_vm_search, only: :index
 
   respond_to :json
@@ -38,15 +41,17 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def endpoints
-    endpoints = Endpoint.appl_endpoints(@appliance).order(:id).collect do |endpoint|
-      {
-        id: endpoint.id,
-        type: endpoint.endpoint_type,
-        urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.port_mapping_template_id).collect do |mapping|
-          "#{mapping.url}/#{endpoint.invocation_path}"
-        end
-      }
-    end
+    endpoints = Atmosphere::Endpoint
+      .appl_endpoints(@appliance)
+      .order(:id).collect do |endpoint|
+        {
+          id: endpoint.id,
+          type: endpoint.endpoint_type,
+          urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.port_mapping_template_id).collect do |mapping|
+            "#{mapping.url}/#{endpoint.invocation_path}"
+          end
+        }
+      end
 
     render json: { endpoints: endpoints }
   end
@@ -94,7 +99,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def init_appliance
-    @creator = ApplianceCreator.new(params.require(:appliance), mi_ticket)
+    @creator = Atmosphere::ApplianceCreator.new(params.require(:appliance), mi_ticket)
     @appliance = @creator.appliance
   end
 
@@ -108,5 +113,9 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def mi_ticket
     current_user ? current_user.mi_ticket : nil
+  end
+
+  def model_class
+    Atmosphere::Appliance
   end
 end

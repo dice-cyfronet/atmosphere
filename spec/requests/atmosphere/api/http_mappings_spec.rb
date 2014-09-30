@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::HttpMappingsController do
+describe Atmosphere::Api::V1::HttpMappingsController do
 
   include ApiHelpers
 

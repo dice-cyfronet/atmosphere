@@ -26,12 +26,46 @@ module Atmosphere
 
     extend Enumerize
 
-    belongs_to :appliance_set
-    belongs_to :appliance_type
-    belongs_to :appliance_configuration_instance
-    belongs_to :user_key
+    belongs_to :appliance_set,
+      class_name: 'Atmosphere::ApplianceSet'
 
-    belongs_to :fund
+    belongs_to :appliance_type,
+      class_name: 'Atmosphere::ApplianceType'
+
+    belongs_to :appliance_configuration_instance,
+      class_name: 'Atmosphere::ApplianceConfigurationInstance'
+
+    belongs_to :user_key,
+      class_name: 'Atmosphere::UserKey'
+
+    belongs_to :fund,
+      class_name: 'Atmosphere::Fund'
+
+    has_many :http_mappings,
+      dependent: :destroy,
+      autosave: true,
+      class_name: 'Atmosphere::HttpMapping'
+
+    has_many :virtual_machines,
+      through: :deployments,
+      class_name: 'Atmosphere::VirtualMachine'
+
+    has_many :deployments,
+      dependent: :destroy,
+      class_name: 'Atmosphere::Deployment'
+
+    has_many :compute_sites,
+      through: :appliance_compute_sites,
+      dependent: :destroy,
+      class_name: 'Atmosphere::ComputeSite'
+
+    has_many :appliance_compute_sites,
+      class_name: 'Atmosphere::ApplianceComputeSite'
+
+    has_one :dev_mode_property_set,
+      dependent: :destroy,
+      autosave: true,
+      class_name: 'Atmosphere::DevModePropertySet'
 
     validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
 
@@ -42,14 +76,6 @@ module Atmosphere
 
     validates_numericality_of :amount_billed
 
-    has_many :http_mappings, dependent: :destroy, autosave: true
-    has_many :virtual_machines, through: :deployments
-    has_many :deployments, dependent: :destroy
-
-    has_many :compute_sites, through: :appliance_compute_sites, dependent: :destroy
-    has_many :appliance_compute_sites
-
-    has_one :dev_mode_property_set, dependent: :destroy, autosave: true
     attr_readonly :dev_mode_property_set
 
     before_create :create_dev_mode_property_set, if: :development?

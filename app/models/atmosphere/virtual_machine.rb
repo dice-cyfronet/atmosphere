@@ -24,13 +24,33 @@ module Atmosphere
     include Childhoodable
 
 
-    has_many :saved_templates, class_name: 'VirtualMachineTemplate', dependent: :nullify
-    has_many :port_mappings, dependent: :delete_all
-    belongs_to :source_template, class_name: 'VirtualMachineTemplate', foreign_key: 'virtual_machine_template_id'
-    belongs_to :compute_site
-    belongs_to :virtual_machine_flavor
-    has_many :appliances, through: :deployments, dependent: :destroy
-    has_many :deployments, dependent: :destroy
+    has_many :saved_templates,
+      dependent: :nullify,
+      class_name: 'Atmosphere::VirtualMachineTemplate'
+
+    has_many :port_mappings,
+      dependent: :delete_all,
+      class_name: 'Atmosphere::PortMapping'
+
+    belongs_to :source_template,
+      class_name: 'Atmosphere::VirtualMachineTemplate',
+      foreign_key: 'virtual_machine_template_id'
+
+    belongs_to :compute_site,
+      class_name: 'Atmosphere::ComputeSite'
+
+    belongs_to :virtual_machine_flavor,
+      class_name: 'Atmosphere::VirtualMachineFlavor'
+
+    has_many :appliances,
+      through: :deployments,
+      dependent: :destroy,
+      class_name: 'Atmosphere::Appliance'
+
+    has_many :deployments,
+      dependent: :destroy,
+      class_name: 'Atmosphere::Deployment'
+
     validates_presence_of :name
     validates_uniqueness_of :id_at_site, :scope => :compute_site_id
     enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving', 'paused']

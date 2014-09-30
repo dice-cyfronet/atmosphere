@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::PortMappingTemplatesController do
+describe Atmosphere::Api::V1::PortMappingTemplatesController do
   include ApiHelpers
 
   let(:user)           { create(:user) }
@@ -190,7 +190,7 @@ describe Api::V1::PortMappingTemplatesController do
       it 'does not create new port mapping template for not owned appliance type' do
         expect {
           post api("/port_mapping_templates", different_user), new_port_mapping_template_request
-        }.to change { PortMappingTemplate.count }.by(0)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(0)
       end
     end
 
@@ -208,13 +208,13 @@ describe Api::V1::PortMappingTemplatesController do
       it 'creates new port mapping template' do
         expect {
           post api("/port_mapping_templates", user), new_port_mapping_template_request
-        }.to change { PortMappingTemplate.count }.by(1)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
       end
 
       it 'creates new development mode port mapping template' do
         expect {
           post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
-        }.to change { PortMappingTemplate.count }.by(1)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
       end
 
       it 'creates new port mapping template with correct attribute values' do
@@ -248,7 +248,7 @@ describe Api::V1::PortMappingTemplatesController do
         expect {
           post api("/port_mapping_templates", admin), new_port_mapping_template_request
           expect(response.status).to eq 201
-        }.to change { PortMappingTemplate.count }.by(1)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
       end
     end
 
@@ -292,7 +292,7 @@ describe Api::V1::PortMappingTemplatesController do
         old_target_port = pmt1.target_port
         old_appliance_type_id = pmt1.appliance_type.id
         put api("/port_mapping_templates/#{pmt1.id}", user), update_json
-        updated_pmt = PortMappingTemplate.find(pmt1.id)
+        updated_pmt = Atmosphere::PortMappingTemplate.find(pmt1.id)
 
         expect(updated_pmt).to be_updated_by_port_mapping_template update_json[:port_mapping_template]
         expect(pmt_response).to port_mapping_template_eq updated_pmt
@@ -339,7 +339,7 @@ describe Api::V1::PortMappingTemplatesController do
         expect {
           delete api("/port_mapping_templates/#{pmt1.id}", different_user)
           expect(response.status).to eq 403
-        }.to change { PortMappingTemplate.count }.by(0)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(0)
       end
     end
 
@@ -347,7 +347,7 @@ describe Api::V1::PortMappingTemplatesController do
       it 'admin deletes any port mapping template' do
         expect {
           delete api("/port_mapping_templates/#{pmt1.id}", admin)
-        }.to change { PortMappingTemplate.count }.by(-1)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(-1)
       end
     end
 
@@ -360,7 +360,7 @@ describe Api::V1::PortMappingTemplatesController do
       it 'deletes own port mapping template' do
         expect {
           delete api("/port_mapping_templates/#{pmt1.id}", user)
-        }.to change { PortMappingTemplate.count }.by(-1)
+        }.to change { Atmosphere::PortMappingTemplate.count }.by(-1)
       end
     end
   end

@@ -1,9 +1,11 @@
 #
 # User key serializer.
 #
-class UserKeySerializer < ActiveModel::Serializer
-  embed :ids
+module Atmosphere
+  class UserKeySerializer < ActiveModel::Serializer
+    embed :ids
 
-  attributes :id, :name, :fingerprint, :public_key
-  has_one :user
+    attributes :id, :name, :fingerprint, :public_key
+    has_one :user
+  end
 end

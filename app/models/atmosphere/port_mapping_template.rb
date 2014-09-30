@@ -19,8 +19,29 @@ module Atmosphere
     extend Enumerize
     include Slugable
 
-    belongs_to :appliance_type
-    belongs_to :dev_mode_property_set
+    belongs_to :appliance_type,
+      class_name: 'Atmosphere::ApplianceType'
+
+    belongs_to :dev_mode_property_set,
+      class_name: 'Atmosphere::DevModePropertySet'
+
+    has_many :http_mappings,
+      dependent: :destroy,
+      class_name: 'Atmosphere::HttpMapping'
+
+    has_many :port_mappings,
+      dependent: :destroy,
+      class_name: 'Atmosphere::PortMapping'
+
+    has_many :port_mapping_properties,
+      dependent: :destroy,
+      autosave: true,
+      class_name: 'Atmosphere::PortMappingProperty'
+
+    has_many :endpoints,
+      dependent: :destroy,
+      autosave: true,
+      class_name: 'Atmosphere::Endpoint'
 
     validates_presence_of :appliance_type, if: 'dev_mode_property_set == nil'
     validates_presence_of :dev_mode_property_set, if: 'appliance_type == nil'
@@ -42,11 +63,6 @@ module Atmosphere
     validates_uniqueness_of :service_name, scope: [:appliance_type, :dev_mode_property_set]
     validates_uniqueness_of :target_port, scope: [:appliance_type, :dev_mode_property_set]
     validates :target_port, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
-    has_many :http_mappings, dependent: :destroy
-    has_many :port_mappings, dependent: :destroy
-    has_many :port_mapping_properties, dependent: :destroy, autosave: true
-    has_many :endpoints, dependent: :destroy, autosave: true
 
     before_validation :slug_service_name
 

@@ -2,9 +2,12 @@ module Atmosphere
   module Api
     module V1
       class ApplianceSetsController < Atmosphere::Api::ApplicationController
-        before_filter :create_appliance_set, only: :create
-        load_and_authorize_resource :appliance_set
+        load_and_authorize_resource :appliance_set,
+          class: 'Atmosphere::ApplianceSet'
         respond_to :json
+
+        before_filter :create_appliance_set, only: :create
+
 
         def index
           respond_with @appliance_sets.where(filter).order(:id)
@@ -66,6 +69,10 @@ module Atmosphere
           if current_user
             @appliance_sets = load_all? ? ApplianceSet.all : current_user.appliance_sets
           end
+        end
+
+        def model_class
+          Atmosphere::ApplianceSet
         end
       end
     end

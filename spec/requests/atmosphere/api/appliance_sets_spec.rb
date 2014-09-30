@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe Api::V1::ApplianceSetsController do
+describe Atmosphere::Api::V1::ApplianceSetsController do
   include ApiHelpers
 
   before do
-    allow(Optimizer.instance).to receive(:run)
+    allow(Atmosphere::Optimizer.instance).to receive(:run)
   end
 
   let(:user)           { create(:developer) }
@@ -86,14 +86,14 @@ describe Api::V1::ApplianceSetsController do
           expect(as_response['id']).to_not be_nil
           expect(as_response['name']).to eq new_appliance_set[:appliance_set][:name]
           expect(as_response['appliance_set_type']).to eq new_appliance_set[:appliance_set][:appliance_set_type].to_s
-        }.to change { ApplianceSet.count }.by(1)
+        }.to change { Atmosphere::ApplianceSet.count }.by(1)
       end
 
       it 'does not allow to create second portal appliance set' do
         expect {
           post api('/appliance_sets', user), {appliance_set: {name: 'second portal', appliance_set_type: :portal}}
           expect(response.status).to eq 409
-        }.to change { ApplianceSet.count }.by(0)
+        }.to change { Atmosphere::ApplianceSet.count }.by(0)
       end
 
       it 'does not allow to create second development appliance set' do
@@ -101,7 +101,7 @@ describe Api::V1::ApplianceSetsController do
         expect {
           post api('/appliance_sets', user), {appliance_set: {name: 'second portal', appliance_set_type: :development}}
           expect(response.status).to eq 409
-        }.to change { ApplianceSet.count }.by(0)
+        }.to change { Atmosphere::ApplianceSet.count }.by(0)
       end
 
       it 'does not allow create development appliance set for non developer' do
@@ -151,14 +151,14 @@ describe Api::V1::ApplianceSetsController do
 
       it 'changes name and priority' do
         put api("/appliance_sets/#{portal_set.id}", user), update_request
-        set = ApplianceSet.find(portal_set.id)
+        set = Atmosphere::ApplianceSet.find(portal_set.id)
         expect(set.name).to eq 'updated'
         expect(set.priority).to eq 99
       end
 
       it 'does not change appliance set type' do
         put api("/appliance_sets/#{portal_set.id}", user), {appliance_set: {appliance_set_type: :workflow}}
-        set = ApplianceSet.find(portal_set.id)
+        set = Atmosphere::ApplianceSet.find(portal_set.id)
         expect(set.appliance_set_type).to eq 'portal'
       end
     end
@@ -181,14 +181,14 @@ describe Api::V1::ApplianceSetsController do
       it 'deletes appliance set' do
         expect {
           delete api("/appliance_sets/#{portal_set.id}", user)
-        }.to change { ApplianceSet.count }.by(-1)
+        }.to change { Atmosphere::ApplianceSet.count }.by(-1)
       end
 
       it 'returns 403 when deleting not owned appliance set' do
         expect {
           delete api("/appliance_sets/#{portal_set.id}", different_user)
           expect(response.status).to eq 403
-        }.to change { ApplianceSet.count }.by(0)
+        }.to change { Atmosphere::ApplianceSet.count }.by(0)
       end
     end
 

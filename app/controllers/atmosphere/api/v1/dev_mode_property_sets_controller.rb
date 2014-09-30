@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class DevModePropertySetsController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :dev_mode_property_set
+        load_and_authorize_resource :dev_mode_property_set,
+          class: 'Atmosphere::DevModePropertySet'
+
         respond_to :json
 
         def index
@@ -24,6 +26,10 @@ module Atmosphere
 
         def dev_mode_property_set_params
           params.require(:dev_mode_property_set).permit(:name, :description, :shared, :scalable, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id)
+        end
+
+        def model_class
+          Atmosphere::DevModePropertySet
         end
       end
     end

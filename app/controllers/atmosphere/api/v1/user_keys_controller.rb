@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class UserKeysController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :user_key
+        load_and_authorize_resource :user_key,
+          class: 'Atmosphere::UserKey'
+
         respond_to :json
 
         def index
@@ -39,6 +41,10 @@ module Atmosphere
 
         def user_key_params
           params.require(:user_key).permit(:public_key, :name)
+        end
+
+        def model_class
+          Atmosphere::UserKey
         end
       end
     end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::ApplianceTypesController do
+describe Atmosphere::Api::V1::ApplianceTypesController do
   include ApiHelpers
 
   describe 'GET /appliance_types' do
@@ -346,7 +346,7 @@ describe Api::V1::ApplianceTypesController do
 
     before do
       Fog.mock!
-      allow(Optimizer.instance).to receive(:run)
+      allow(Atmosphere::Optimizer.instance).to receive(:run)
     end
 
     context 'when unauthenticated' do
@@ -390,7 +390,7 @@ describe Api::V1::ApplianceTypesController do
 
         expect {
           post api("/appliance_types/", developer), msg
-        }.to change { ApplianceType.count }.by(1)
+        }.to change { Atmosphere::ApplianceType.count }.by(1)
       end
 
       it 'sets AT properties from appliance dev mode property set' do
@@ -438,7 +438,7 @@ describe Api::V1::ApplianceTypesController do
 
           expect {
             post api("/appliance_types/", developer), msg
-          }.to change { PortMappingTemplate.count }.by(1)
+          }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
         end
 
         it 'creates pmt property copy from appliance pmt' do
@@ -452,7 +452,7 @@ describe Api::V1::ApplianceTypesController do
 
           expect {
             post api("/appliance_types/", developer), msg
-          }.to change { PortMappingProperty.count }.by(1)
+          }.to change { Atmosphere::PortMappingProperty.count }.by(1)
         end
 
         it 'creates endpoint copy from appliance pmt' do
@@ -466,7 +466,7 @@ describe Api::V1::ApplianceTypesController do
 
           expect {
             post api("/appliance_types/", developer), msg
-          }.to change { Endpoint.count }.by(1)
+          }.to change { Atmosphere::Endpoint.count }.by(1)
         end
       end
 
@@ -478,7 +478,7 @@ describe Api::V1::ApplianceTypesController do
           msg = create_msg(appliance_id: appl.id)
 
           post api('/appliance_types/', developer), msg
-          created_at = ApplianceType.find(at_response['id'])
+          created_at = Atmosphere::ApplianceType.find(at_response['id'])
 
           expect(created_at.name).to eq msg[:appliance_type][:name]
           expect(created_at.description).to eq description
@@ -532,7 +532,7 @@ describe Api::V1::ApplianceTypesController do
           expect {
             post api('/appliance_types/', developer), msg
             vm.reload
-          }.to change { VirtualMachineTemplate.count }.by(1)
+          }.to change { Atmosphere::VirtualMachineTemplate.count }.by(1)
 
           expect(vm.saved_templates.size).to eq 1
           tmpl = vm.saved_templates.first
@@ -599,7 +599,7 @@ describe Api::V1::ApplianceTypesController do
 
         expect {
           delete api("/appliance_types/#{at.id}", user)
-        }.to change { ApplianceType.count }.by(-1)
+        }.to change { Atmosphere::ApplianceType.count }.by(-1)
       end
 
       it 'returns 403 when user is not and appliance type owner' do
@@ -609,7 +609,7 @@ describe Api::V1::ApplianceTypesController do
         expect {
           delete api("/appliance_types/#{at.id}", not_owner)
           expect(response.status).to eq 403
-        }.to change { ApplianceType.count }.by(0)
+        }.to change { Atmosphere::ApplianceType.count }.by(0)
       end
     end
 
@@ -620,7 +620,7 @@ describe Api::V1::ApplianceTypesController do
 
         expect {
           delete api("/appliance_types/#{at.id}", admin)
-        }.to change { ApplianceType.count }.by(-1)
+        }.to change { Atmosphere::ApplianceType.count }.by(-1)
       end
     end
   end

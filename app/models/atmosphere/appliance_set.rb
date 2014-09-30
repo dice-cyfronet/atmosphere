@@ -18,6 +18,10 @@ module Atmosphere
 
     belongs_to :user
 
+    has_many :appliances,
+        dependent: :destroy,
+        class_name: 'Atmosphere::Appliance'
+
     validates_presence_of :priority, :appliance_set_type, :user
 
     validates :priority, numericality: { only_integer: true }, inclusion: 1..100
@@ -27,8 +31,6 @@ module Atmosphere
     validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
     attr_readonly :appliance_set_type
-
-    has_many :appliances, dependent: :destroy
 
     scope :with_vm, ->(virtual_machine) { joins(appliances: :virtual_machines).where(virtual_machines: {id: virtual_machine.id}) }
 

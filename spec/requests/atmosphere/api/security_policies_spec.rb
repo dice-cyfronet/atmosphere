@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::SecurityPoliciesController do
+describe Atmosphere::Api::V1::SecurityPoliciesController do
   include ApiHelpers
 
   let!(:owned_payload1) { create(:security_policy, name: 'first/policy', users: [owner1, owner2]) }
@@ -21,7 +21,7 @@ describe Api::V1::SecurityPoliciesController do
   end
 
   def owned_payload_class
-    SecurityPolicy
+    Atmosphere::SecurityPolicy
   end
 
   def owned_payload_path

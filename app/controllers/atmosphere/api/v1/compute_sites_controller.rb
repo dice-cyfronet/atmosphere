@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class ComputeSitesController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :compute_site
+        load_and_authorize_resource :compute_site,
+          class: 'Atmosphere::ComputeSite'
+
         respond_to :json
 
         def index
@@ -11,6 +13,10 @@ module Atmosphere
 
         def show
           respond_with @compute_site
+        end
+
+        def model_class
+          Atmosphere::ComputeSite
         end
       end
     end

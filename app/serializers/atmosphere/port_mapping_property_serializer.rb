@@ -1,11 +1,13 @@
 #
 # Port mapping property serializer.
 #
-class PortMappingPropertySerializer < ActiveModel::Serializer
-  embed :ids
+module Atmosphere
+  class PortMappingPropertySerializer < ActiveModel::Serializer
+    embed :ids
 
-  attributes :id, :key, :value
+    attributes :id, :key, :value
 
-  has_one :port_mapping_template
-  has_one :compute_site
+    has_one :port_mapping_template
+    has_one :compute_site
+  end
 end

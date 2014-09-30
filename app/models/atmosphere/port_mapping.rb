@@ -14,8 +14,11 @@ module Atmosphere
   class PortMapping < ActiveRecord::Base
     self.table_name = 'port_mappings'
 
-    belongs_to :virtual_machine
-    belongs_to :port_mapping_template
+    belongs_to :virtual_machine,
+      class_name: 'Atmosphere::VirtualMachine'
+
+    belongs_to :port_mapping_template,
+      class_name: 'Atmosphere::PortMappingTemplate'
 
     validates_presence_of :public_ip, :source_port, :virtual_machine, :port_mapping_template
 

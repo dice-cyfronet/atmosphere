@@ -19,9 +19,14 @@ module Atmosphere
     extend Enumerize
     include Slugable
 
-    belongs_to :appliance
-    belongs_to :port_mapping_template
-    belongs_to :compute_site
+    belongs_to :appliance,
+      class_name: 'Atmosphere::Appliance'
+
+    belongs_to :port_mapping_template,
+      class_name: 'Atmosphere::PortMappingTemplate'
+
+    belongs_to :compute_site,
+      class_name: 'Atmosphere::ComputeSite'
 
     validates_presence_of :url, :application_protocol, :appliance, :port_mapping_template, :compute_site
 

@@ -1,10 +1,14 @@
-moduel Atmosphere
+module Atmosphere
   module Api
     module V1
       class PortMappingPropertiesController < Atmosphere::Api::ApplicationController
+        load_and_authorize_resource :port_mapping_template,
+          only: [:index],
+          class: 'Atmosphere::PortMappingTemplate'
 
-        load_and_authorize_resource :port_mapping_template, only: [:index]
-        load_and_authorize_resource :port_mapping_property
+        load_and_authorize_resource :port_mapping_property,
+          class: 'Atmosphere::PortMappingProperty'
+
         before_filter :initialize_manager, only: [:create, :update, :destroy]
         respond_to :json
 
@@ -48,6 +52,10 @@ moduel Atmosphere
 
         def initialize_manager
           @manager = AffectedApplianceAwareManager.new(@port_mapping_property, AppliancesAffectedByPmp)
+        end
+
+        def model_class
+          Atmosphere::PortMappingProperty
         end
       end # of PortMappingPropertiesController
     end # of V1

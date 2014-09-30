@@ -20,7 +20,8 @@ module Atmosphere
     extend Enumerize
     include EscapeXml
 
-    belongs_to :port_mapping_template
+    belongs_to :port_mapping_template,
+      class_name: 'Atmosphere::PortMappingTemplate'
 
     enumerize :endpoint_type, in: [:ws, :rest, :webapp]
     validates :endpoint_type, inclusion: %w(ws rest webapp)

@@ -22,10 +22,20 @@ module Atmosphere
     extend Enumerize
     include Childhoodable
 
-    belongs_to :source_vm, class_name: 'VirtualMachine', foreign_key: 'virtual_machine_id'
-    has_many :instances, class_name: 'VirtualMachine', dependent: :nullify
-    belongs_to :compute_site
-    belongs_to :appliance_type
+    belongs_to :source_vm,
+      class_name: 'Atmosphere::VirtualMachine',
+      foreign_key: 'virtual_machine_id'
+
+    has_many :instances,
+      dependent: :nullify,
+      class_name: 'Atmosphere::VirtualMachine'
+
+    belongs_to :compute_site,
+      class_name: 'Atmosphere::ComputeSite'
+
+    belongs_to :appliance_type,
+      class_name: 'Atmosphere::ApplianceType'
+
     validates_presence_of :id_at_site, :name, :state, :compute_site_id
     validates_uniqueness_of :id_at_site, :scope => :compute_site_id
     enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']

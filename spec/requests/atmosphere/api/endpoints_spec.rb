@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::EndpointsController do
+describe Atmosphere::Api::V1::EndpointsController do
   include ApiHelpers
 
   let(:user)           { create(:user) }
@@ -225,7 +225,7 @@ describe Api::V1::EndpointsController do
       it 'creates new endpoint' do
         expect {
           post api("/endpoints", user), new_request
-        }.to change { Endpoint.count }.by(1)
+        }.to change { Atmosphere::Endpoint.count }.by(1)
       end
 
       it 'creates new endpoint with correct attribute values' do
@@ -252,7 +252,7 @@ describe Api::V1::EndpointsController do
       it 'does not create new endpoint for not owned port mapping template' do
         expect {
           post api("/endpoints", different_user), new_request
-        }.to change { Endpoint.count }.by(0)
+        }.to change { Atmosphere::Endpoint.count }.by(0)
       end
     end
 
@@ -261,7 +261,7 @@ describe Api::V1::EndpointsController do
         expect {
           post api("/endpoints", admin), new_request
           expect(response.status).to eq 201
-        }.to change { Endpoint.count }.by(1)
+        }.to change { Atmosphere::Endpoint.count }.by(1)
       end
     end
 
@@ -275,7 +275,7 @@ describe Api::V1::EndpointsController do
         expect {
           post api("/endpoints", developer), new_dev_request
           expect(response.status).to eq 201
-        }.to change { Endpoint.count }.by(1)
+        }.to change { Atmosphere::Endpoint.count }.by(1)
       end
     end
   end
@@ -309,7 +309,7 @@ describe Api::V1::EndpointsController do
         old_endpoint_type = e1.endpoint_type
         old_port_mapping_template_id = e1.port_mapping_template_id
         put api("/endpoints/#{e1.id}", user), update_json
-        updated_e = Endpoint.find(e1.id)
+        updated_e = Atmosphere::Endpoint.find(e1.id)
 
         expect(updated_e).to be_updated_by_endpoint update_json[:endpoint]
         expect(e_response).to endpoint_eq updated_e
@@ -352,7 +352,7 @@ describe Api::V1::EndpointsController do
         old_endpoint_type = e3.endpoint_type
         old_port_mapping_template_id = e3.port_mapping_template_id
         put api("/endpoints/#{e3.id}", developer), update_json
-        updated_e = Endpoint.find(e3.id)
+        updated_e = Atmosphere::Endpoint.find(e3.id)
 
         expect(updated_e).to be_updated_by_endpoint update_json[:endpoint]
         expect(e_response).to endpoint_eq updated_e
@@ -384,20 +384,20 @@ describe Api::V1::EndpointsController do
       it 'deletes own endpoint' do
         expect {
           delete api("/endpoints/#{e1.id}", user)
-        }.to change { Endpoint.count }.by(-1)
+        }.to change { Atmosphere::Endpoint.count }.by(-1)
       end
 
       it 'admin deletes any endpoint' do
         expect {
           delete api("/endpoints/#{e1.id}", admin)
-        }.to change { Endpoint.count }.by(-1)
+        }.to change { Atmosphere::Endpoint.count }.by(-1)
       end
 
       it 'returns 403 when user tries to delete not owned endpoint' do
         expect {
           delete api("/endpoints/#{e1.id}", different_user)
           expect(response.status).to eq 403
-        }.to change { Endpoint.count }.by(0)
+        }.to change { Atmosphere::Endpoint.count }.by(0)
       end
     end
 
@@ -411,13 +411,13 @@ describe Api::V1::EndpointsController do
         expect {
           delete api("/endpoints/#{e3.id}", user)
           expect(response.status).to eq 403
-        }.to change { Endpoint.count }.by(0)
+        }.to change { Atmosphere::Endpoint.count }.by(0)
       end
 
       it 'deletes development endpoint' do
         expect {
           delete api("/endpoints/#{e3.id}", developer)
-        }.to change { Endpoint.count }.by(-1)
+        }.to change { Atmosphere::Endpoint.count }.by(-1)
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::UserKeysController do
+describe Atmosphere::Api::V1::UserKeysController do
   include ApiHelpers
 
   let(:user)  { create(:user) }
@@ -135,18 +135,18 @@ describe Api::V1::UserKeysController do
       it 'adds new user key' do
         expect {
           post api("/user_keys", user), new_key_request
-        }.to change { UserKey.count }.by(1)
+        }.to change { Atmosphere::UserKey.count }.by(1)
       end
 
       it 'uploades new user key from file' do
         expect {
           post api("/user_keys", user), new_upload_key_request
-        }.to change { UserKey.count }.by(1)
+        }.to change { Atmosphere::UserKey.count }.by(1)
       end
 
       it 'adds new user key and generate fingerprint' do
         post api("/user_keys", user), new_key_request
-        added_user_key = UserKey.find(user_key_response['id'])
+        added_user_key = Atmosphere::UserKey.find(user_key_response['id'])
         expect(added_user_key.fingerprint).to eq user_key1.fingerprint
         expect(added_user_key.name).to eq new_key_request[:user_key][:name]
         expect(added_user_key.public_key).to eq new_key_request[:user_key][:public_key]
@@ -154,7 +154,7 @@ describe Api::V1::UserKeysController do
 
       it 'uploads new user key and generate fingerprint' do
         post api("/user_keys", user), new_upload_key_request
-        added_user_key = UserKey.find(user_key_response['id'])
+        added_user_key = Atmosphere::UserKey.find(user_key_response['id'])
         expect(added_user_key.fingerprint).to eq user_key1.fingerprint
         expect(added_user_key.name).to eq new_upload_key_request[:user_key][:name]
         expect(added_user_key.public_key).to eq File.read('spec/testing_user_public.key')
@@ -213,14 +213,14 @@ describe Api::V1::UserKeysController do
         expect {
           delete api("/user_keys/#{user_key1.id}", user)
           expect(response.status).to eq 200
-        }.to change { UserKey.count }.by(-1)
+        }.to change { Atmosphere::UserKey.count }.by(-1)
       end
 
       it 'returns 403 Forbidden when deleting not owned user key' do
         expect {
           delete api("/user_keys/#{other_user_key.id}", user)
           expect(response.status).to eq 403
-        }.to change { UserKey.count }.by(0)
+        }.to change { Atmosphere::UserKey.count }.by(0)
       end
 
       context 'when key is used in running VM' do
@@ -230,7 +230,7 @@ describe Api::V1::UserKeysController do
           expect {
             delete api("/user_keys/#{user_key1.id}", user)
             expect(response.status).to eq 422
-          }.to change { UserKey.count }.by(0)
+          }.to change { Atmosphere::UserKey.count }.by(0)
         end
       end
     end
@@ -240,7 +240,7 @@ describe Api::V1::UserKeysController do
         expect {
           delete api("/user_keys/#{other_user_key.id}", admin)
           expect(response.status).to eq 200
-          }.to change { UserKey.count }.by(-1)
+          }.to change { Atmosphere::UserKey.count }.by(-1)
       end
     end
   end

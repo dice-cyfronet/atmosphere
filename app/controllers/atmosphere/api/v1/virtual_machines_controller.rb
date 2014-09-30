@@ -1,8 +1,10 @@
 module Atmosphere
   module Api
     module V1
-      class VirtualMachinesController < Atmoshpere::Api::ApplicationController
-        load_and_authorize_resource :virtual_machine
+      class VirtualMachinesController < Atmosphere::Api::ApplicationController
+        load_and_authorize_resource :virtual_machine,
+          class: 'Atmosphere::VirtualMachine'
+
         respond_to :json
 
         def index
@@ -22,6 +24,10 @@ module Atmosphere
           filter[:virtual_machine_flavor_id] = params[:flavor_id] if params[:flavor_id]
 
           filter
+        end
+
+        def model_class
+          Atmosphere::VirtualMachine
         end
       end
     end

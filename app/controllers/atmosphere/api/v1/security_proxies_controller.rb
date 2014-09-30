@@ -3,7 +3,10 @@ module Atmosphere
     module V1
       class SecurityProxiesController < Atmosphere::Api::ApplicationController
         before_filter :find_by_name, only: :payload
-        load_and_authorize_resource :security_proxy
+
+        load_and_authorize_resource :security_proxy,
+          class: 'Atmosphere::SecurityProxy'
+
         respond_to :json
 
         def index
@@ -56,9 +59,13 @@ module Atmosphere
         end
 
         def find_by_name
-          @security_proxy = SecurityProxy.find_by(name: params[:name])
+          @security_proxy = model_class.find_by(name: params[:name])
           raise ActiveRecord::RecordNotFound if @security_proxy.blank?
           @security_proxy
+        end
+
+        def model_class
+          Atmosphere::SecurityProxy
         end
       end
     end

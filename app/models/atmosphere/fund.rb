@@ -21,12 +21,23 @@ module Atmosphere
   class Fund < ActiveRecord::Base
     self.table_name = 'funds'
 
-    has_many :appliances
-    has_many :users, through: :user_funds
-    has_many :user_funds, dependent: :destroy
+    has_many :appliances,
+        class_name: 'Atmosphere::Appliance'
 
-    has_many :compute_sites, through: :compute_site_funds
-    has_many :compute_site_funds, dependent: :destroy
+    has_many :users,
+        through: :user_funds
+
+    has_many :user_funds,
+        dependent: :destroy,
+        class_name: 'Atmosphere::UserFund'
+
+    has_many :compute_sites,
+        through: :compute_site_funds,
+        class_name: 'Atmosphere::ComputeSite'
+
+    has_many :compute_site_funds,
+        dependent: :destroy,
+        class_name: 'Atmosphere::ComputeSiteFund'
 
     validates_presence_of :name
     validates_numericality_of :balance

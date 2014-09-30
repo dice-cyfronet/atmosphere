@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-describe ApplianceSerializer do
+describe Atmosphere::ApplianceSerializer do
   it 'returns information about connected VMs' do
     cs = create(:compute_site)
     vm1 = create(:virtual_machine, compute_site: cs)
     vm2 = create(:virtual_machine, compute_site: cs)
     appliance = build(:appliance, virtual_machines: [vm1, vm2])
-    serializer = ApplianceSerializer.new(appliance)
+    serializer = Atmosphere::ApplianceSerializer.new(appliance)
 
     result = JSON.parse(serializer.to_json)
 

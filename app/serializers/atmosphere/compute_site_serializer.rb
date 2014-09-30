@@ -3,20 +3,22 @@
 # is returned. When current user has admin role than additionally
 # compute site configuration is returned.
 #
-class ComputeSiteSerializer < ActiveModel::Serializer
-  embed :ids
+module Atmosphere
+  class ComputeSiteSerializer < ActiveModel::Serializer
+    embed :ids
 
-  attributes :id, :site_id, :name, :location, :site_type, :technology
+    attributes :id, :site_id, :name, :location, :site_type, :technology
 
-  def attributes
-    hash = super
-    hash['config'] = object.config if admin?
-    hash
-  end
+    def attributes
+      hash = super
+      hash['config'] = object.config if admin?
+      hash
+    end
 
-  private
+    private
 
-  def admin?
-    scope.has_role? :admin
+    def admin?
+      scope.has_role? :admin
+    end
   end
 end

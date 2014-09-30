@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe VirtualMachineFlavorSerializer do
+describe Atmosphere::VirtualMachineFlavorSerializer do
   it 'sets active flag to true for flavor on active compute site' do
     flavor = flavor_on_cs(cs_active: true, active: true)
 
@@ -34,7 +34,7 @@ describe VirtualMachineFlavorSerializer do
   end
 
   def serialize(flavor)
-    serializer = VirtualMachineFlavorSerializer.new(flavor)
+    serializer = Atmosphere::VirtualMachineFlavorSerializer.new(flavor)
 
     JSON.parse(serializer.to_json)
   end

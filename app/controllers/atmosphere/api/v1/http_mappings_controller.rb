@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class HttpMappingsController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :http_mapping
+        load_and_authorize_resource :http_mapping,
+          class: 'Atmosphere::HttpMapping'
+
         respond_to :json
 
         def index
@@ -27,6 +29,10 @@ module Atmosphere
 
         def update_params
           @update_params ||= params.require(:http_mapping).permit(:custom_name)
+        end
+
+        def model_class
+          Atmosphere::HttpMapping
         end
       end
     end

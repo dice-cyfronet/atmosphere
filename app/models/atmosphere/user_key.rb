@@ -19,15 +19,17 @@ module Atmosphere
 
     FINGER_PRINT_RE = /([\d\h]{2}:)+[\d\h]{2}/
 
+    has_many :appliances,
+      class_name: 'Atmosphere::Appliance'
+
+    belongs_to :user
+
     validates_presence_of :name, :public_key, :user
     validates_uniqueness_of :name, :scope => :user_id
     attr_readonly :name, :public_key, :fingerprint
     validate :check_key_type, :generate_fingerprint, unless: :persisted?
     before_destroy :disallow_if_used_in_running_vm
     before_destroy :delete_in_clouds
-
-    has_many :appliances
-    belongs_to :user
 
     def id_at_site
       "#{user.login}-#{Digest::SHA1.hexdigest(fingerprint)}"

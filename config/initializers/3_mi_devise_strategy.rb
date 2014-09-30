@@ -69,12 +69,12 @@ module Devise
 
       def load_user_info(mi_ticket)
         user_info = adaptor.user_info(mi_ticket)
-        cache[mi_ticket] = CacheEntry.new(user_info, 5.minutes)
+        cache[mi_ticket] = Atmosphere::CacheEntry.new(user_info, 5.minutes)
         user_info
       end
 
       def cached_user_info(mi_ticket)
-        cache[mi_ticket] || NullCacheEntry.new
+        cache[mi_ticket] || Atmosphere::NullCacheEntry.new
       end
 
       def cache

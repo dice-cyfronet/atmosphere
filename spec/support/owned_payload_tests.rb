@@ -181,7 +181,7 @@ module OwnedPayloadTests
   end
 
   def payloads_response
-    json_response[owned_payload_class.name.tableize]
+    json_response[owned_payload_class.name.demodulize.tableize]
   end
 
   def payload_response
@@ -189,6 +189,6 @@ module OwnedPayloadTests
   end
 
   def payload_sym
-    owned_payload_class.name.tableize.singularize.to_sym
+    owned_payload_class.name.demodulize.tableize.singularize.to_sym
   end
 end

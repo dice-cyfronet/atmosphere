@@ -24,8 +24,35 @@ module Atmosphere
     extend Enumerize
     include EscapeXml
 
-    belongs_to :security_proxy
-    belongs_to :author, class_name: 'User', foreign_key: 'user_id'
+    belongs_to :security_proxy#,
+      # class_name: 'Atmosphere::SecurityProxy'
+
+    belongs_to :author,
+      class_name: 'User',
+      foreign_key: 'user_id'
+
+    has_many :appliances,
+      dependent: :destroy,
+      class_name: 'Atmosphere::Appliance'
+
+    has_many :port_mapping_templates,
+      dependent: :destroy,
+      class_name: 'Atmosphere::PortMappingTemplate'
+
+    has_many :appliance_configuration_templates,
+      dependent: :destroy,
+      class_name: 'Atmosphere::ApplianceConfigurationTemplate'
+
+    has_many :virtual_machine_templates,
+      class_name: 'Atmosphere::VirtualMachineTemplate'
+
+    # Required for API (returning all compute sites on which a given
+    # AT can be deployed). By allowed compute site we understan active compute site
+    # with VMT installed.
+    has_many :compute_sites,
+      -> { where(compute_sites: {active: true}).uniq },
+      through: :virtual_machine_templates,
+      class_name: 'Atmosphere::ComputeSite'
 
     validates_presence_of :name, :visible_to
     validates_uniqueness_of :name
@@ -39,16 +66,6 @@ module Atmosphere
     validates :preference_memory, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
     validates :preference_disk, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
     validates :preference_cpu, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
-
-    has_many :appliances, dependent: :destroy
-    has_many :port_mapping_templates, dependent: :destroy
-    has_many :appliance_configuration_templates, dependent: :destroy
-    has_many :virtual_machine_templates
-
-    # Required for API (returning all compute sites on which a given
-    # AT can be deployed). By allowed compute site we understan active compute site
-    # with VMT installed.
-    has_many :compute_sites, -> { where(compute_sites: {active: true}).uniq }, through: :virtual_machine_templates
 
     scope :def_order, -> { order(:name) }
     scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}).uniq }

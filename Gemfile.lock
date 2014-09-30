@@ -51,6 +51,7 @@ PATH
       sinatra
       turbolinks
       unf
+      will_paginate (~> 3.0.5)
       zabbixapi
 
 GEM
@@ -374,6 +375,7 @@ GEM
     uuidtools (2.1.5)
     warden (1.2.3)
       rack (>= 1.0)
+    will_paginate (3.0.7)
     zabbixapi (2.2.1)
       json (~> 1.6, >= 1.6.0)
 

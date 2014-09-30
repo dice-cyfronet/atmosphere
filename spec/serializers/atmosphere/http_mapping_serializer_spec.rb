@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe HttpMappingSerializer do
+describe Atmosphere::HttpMappingSerializer do
   it 'returns custom name' do
     hm = create(:http_mapping,
       custom_name: 'my-custom-name',
       base_url: "http://base.url")
-    serializer = HttpMappingSerializer.new(hm)
+    serializer = Atmosphere::HttpMappingSerializer.new(hm)
 
     result = JSON.parse(serializer.to_json)
 

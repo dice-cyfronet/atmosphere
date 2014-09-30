@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::DevModePropertySetsController do
+describe Atmosphere::Api::V1::DevModePropertySetsController do
   include ApiHelpers
 
   let(:developer) { create(:developer) }

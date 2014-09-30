@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::ApplianceEndpointsController do
+describe Atmosphere::Api::V1::ApplianceEndpointsController do
   include ApiHelpers
 
   before do

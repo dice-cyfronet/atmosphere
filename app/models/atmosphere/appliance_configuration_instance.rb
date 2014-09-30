@@ -15,9 +15,11 @@ module Atmosphere
   class ApplianceConfigurationInstance < ActiveRecord::Base
     self.table_name = 'appliance_configuration_instances'
 
-    belongs_to :appliance_configuration_template
+    belongs_to :appliance_configuration_template,
+      class_name: 'Atmosphere::ApplianceConfigurationTemplate'
 
-    has_many :appliances
+    has_many :appliances,
+      class_name: 'Atmosphere::Appliance'
 
     def self.get(config_template, params)
       instance_payload = ParamsRegexpable.filter(config_template.payload, params)

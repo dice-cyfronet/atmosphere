@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::VirtualMachineTemplatesController do
+describe Atmosphere::Api::V1::VirtualMachineTemplatesController do
   include ApiHelpers
 
   describe 'GET /virtual_machine_templates' do

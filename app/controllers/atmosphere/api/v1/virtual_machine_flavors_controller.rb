@@ -1,8 +1,10 @@
 module Atmosphere
   module Api
     module V1
-      class VirtualMachineFlavorsController < Atmoshpere::Api::ApplicationController
-        authorize_resource :virtual_machine_flavor
+      class VirtualMachineFlavorsController < Atmosphere::Api::ApplicationController
+        authorize_resource :virtual_machine_flavor,
+          class: 'Atmosphere::VirtualMachineFlavor'
+
         respond_to :json
         before_filter :validate_params!,
                       :validate_filter_combination!, only: :index
@@ -58,7 +60,7 @@ module Atmosphere
         def validate_params!
           allowed_query_params.each do |param_name|
             if invalid_number_param?(params[param_name])
-              raise Air::InvalidParameterFormat.new(
+              raise Atmosphere::InvalidParameterFormat.new(
                 "Invalid parameter format for #{param_name}")
             end
           end
@@ -73,7 +75,7 @@ module Atmosphere
         end
 
         def validate_filter_combination!
-          raise Air::Conflict,
+          raise Atmosphere::Conflict,
             "Illegal combination of filters" if conflicted_queries?
         end
 
@@ -101,6 +103,10 @@ module Atmosphere
 
         def invalid_number_param?(nr)
           nr && !(nr =~ /^\d+$/)
+        end
+
+        def model_class
+          Atmosphere::VirtualMachineFlavor
         end
       end
     end

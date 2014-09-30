@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::PortMappingPropertiesController do
+describe Atmosphere::Api::V1::PortMappingPropertiesController do
   include ApiHelpers
 
   let(:user)           { create(:user) }
@@ -161,7 +161,7 @@ describe Api::V1::PortMappingPropertiesController do
       it 'creates new port mapping property' do
         expect {
           post api("/port_mapping_properties", user), new_request
-        }.to change { PortMappingProperty.count }.by(1)
+        }.to change { Atmosphere::PortMappingProperty.count }.by(1)
       end
 
       it 'creates new port mapping property with correct attribute values' do
@@ -185,7 +185,7 @@ describe Api::V1::PortMappingPropertiesController do
       it 'does not create new port mapping property for not owned port mapping template' do
         expect {
           post api("/port_mapping_properties", different_user), new_request
-        }.to change { PortMappingProperty.count }.by(0)
+        }.to change { Atmosphere::PortMappingProperty.count }.by(0)
       end
     end
 
@@ -194,7 +194,7 @@ describe Api::V1::PortMappingPropertiesController do
         expect {
           post api("/port_mapping_properties", admin), new_request
           expect(response.status).to eq 201
-        }.to change { PortMappingProperty.count }.by(1)
+        }.to change { Atmosphere::PortMappingProperty.count }.by(1)
       end
     end
 
@@ -228,7 +228,7 @@ describe Api::V1::PortMappingPropertiesController do
         old_key = pmp1.key
         old_port_mapping_template_id = pmp1.port_mapping_template_id
         put api("/port_mapping_properties/#{pmp1.id}", user), update_json
-        updated_e = PortMappingProperty.find(pmp1.id)
+        updated_e = Atmosphere::PortMappingProperty.find(pmp1.id)
 
         expect(updated_e).to be_updated_by_port_mapping_property update_json[:port_mapping_property]
         expect(pmp_response).to port_mapping_property_eq updated_e
@@ -274,20 +274,20 @@ describe Api::V1::PortMappingPropertiesController do
       it 'deletes own port mapping property' do
         expect {
           delete api("/port_mapping_properties/#{pmp1.id}", user)
-        }.to change { PortMappingProperty.count }.by(-1)
+        }.to change { Atmosphere::PortMappingProperty.count }.by(-1)
       end
 
       it 'admin deletes any port mapping property' do
         expect {
           delete api("/port_mapping_properties/#{pmp1.id}", admin)
-        }.to change { PortMappingProperty.count }.by(-1)
+        }.to change { Atmosphere::PortMappingProperty.count }.by(-1)
       end
 
       it 'returns 403 when user tries to delete not owned port mapping property' do
         expect {
           delete api("/port_mapping_properties/#{pmp1.id}", different_user)
           expect(response.status).to eq 403
-        }.to change { PortMappingProperty.count }.by(0)
+        }.to change { Atmosphere::PortMappingProperty.count }.by(0)
       end
     end
   end

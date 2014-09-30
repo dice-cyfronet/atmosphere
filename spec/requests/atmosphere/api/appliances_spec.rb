@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::AppliancesController do
+describe Atmosphere::Api::V1::AppliancesController do
   include ApiHelpers
 
   let(:optimizer) {double}
@@ -189,7 +189,8 @@ describe Api::V1::AppliancesController do
 
     context 'when authenticated as user' do
       before do
-        allow(Optimizer).to receive(:instance).and_return(optimizer)
+        allow(Atmosphere::Optimizer)
+          .to receive(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
 
@@ -202,24 +203,24 @@ describe Api::V1::AppliancesController do
         it 'creates config instance' do
           expect {
             post api("/appliances", user), static_request_body
-          }.to change { ApplianceConfigurationInstance.count}.by(1)
+          }.to change { Atmosphere::ApplianceConfigurationInstance.count}.by(1)
         end
 
         it 'creates new appliance' do
           expect {
             post api("/appliances", user), static_request_body
-          }.to change { Appliance.count}.by(1)
+          }.to change { Atmosphere::Appliance.count}.by(1)
         end
 
         it 'copies config payload from template' do
           post api("/appliances", user), static_request_body
-          config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+          config_instance = Atmosphere::ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
           expect(config_instance.payload).to eq config_instance.appliance_configuration_template.payload
         end
 
         it 'sets appliance name and description' do
           post api("/appliances", user), static_request_body
-          created_appliance = Appliance.find(appliance_response['id'])
+          created_appliance = Atmosphere::Appliance.find(appliance_response['id'])
 
           expect(created_appliance.name)
             .to eq static_request_body[:appliance][:name]
@@ -231,7 +232,7 @@ describe Api::V1::AppliancesController do
           request_body = generic_start_request(static_config, portal_set)
 
           post api("/appliances", user), request_body
-          created_appliance = Appliance.find(appliance_response['id'])
+          created_appliance = Atmosphere::Appliance.find(appliance_response['id'])
 
           expect(created_appliance.name)
             .to eq public_at.name
@@ -247,7 +248,7 @@ describe Api::V1::AppliancesController do
           it 'reuses configuratoin instance' do
             expect {
               post api("/appliances", user), static_request_body
-            }.to change { ApplianceConfigurationInstance.count}.by(0)
+            }.to change { Atmosphere::ApplianceConfigurationInstance.count}.by(0)
           end
         end
       end
@@ -275,7 +276,7 @@ describe Api::V1::AppliancesController do
 
         it 'creates dynamic configuration instance payload' do
           post api("/appliances", user), dynamic_request_body
-          config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+          config_instance = Atmosphere::ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
           expect(config_instance.payload).to eq 'dynamic config a b c'
         end
 
@@ -310,13 +311,13 @@ describe Api::V1::AppliancesController do
 
           it 'creates dynamic configuration with header mi ticket injected' do
             post api("/appliances"), dynamic_request_with_mi_ticket_body, {"MI-TICKET" => 'ticket'}
-            config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+            config_instance = Atmosphere::ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
             expect(config_instance.payload).to eq 'dynamic config with mi_ticket: ticket'
           end
 
           it 'creates dynamic configuration with query param mi ticket injected' do
             post api("/appliances?mi_ticket=ticket"), dynamic_request_with_mi_ticket_body
-            config_instance = ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
+            config_instance = Atmosphere::ApplianceConfigurationInstance.find(appliance_response['appliance_configuration_instance_id'])
             expect(config_instance.payload).to eq 'dynamic config with mi_ticket: ticket'
           end
         end
@@ -339,14 +340,14 @@ describe Api::V1::AppliancesController do
             expect(optimizer).to receive(:run).once
             expect {
               post api("/appliances", user), static_request_body
-            }.to change { ApplianceConfigurationInstance.count}.by(0)
+            }.to change { Atmosphere::ApplianceConfigurationInstance.count}.by(0)
           end
 
           it 'creates new appliance' do
             expect(optimizer).to receive(:run).once
             expect {
               post api("/appliances", user), static_request_body
-            }.to change { Appliance.count}.by(1)
+            }.to change { Atmosphere::Appliance.count}.by(1)
           end
 
           it 'creates new appliance when configuration payload the same but different appliance types' do
@@ -373,7 +374,7 @@ describe Api::V1::AppliancesController do
             it 'creates new appliance of the sam type when configuration template is different' do
               expect {
                 post api("/appliances", user), req_for_second_appl_for_the_same_at
-              }.to change { Appliance.count}.by(1)
+              }.to change { Atmosphere::Appliance.count}.by(1)
             end
 
           end
@@ -421,7 +422,7 @@ describe Api::V1::AppliancesController do
           request[:appliance][:dev_mode_property_set] = {preference_memory: 123, preference_cpu: 2, preference_disk: 321}
 
           post api("/appliances", developer), request
-          appl = Appliance.find(appliance_response['id'])
+          appl = Atmosphere::Appliance.find(appliance_response['id'])
           set = appl.dev_mode_property_set
 
           expect(set.preference_memory).to eq 123
@@ -464,25 +465,26 @@ describe Api::V1::AppliancesController do
       end
 
       before do
-        allow(Optimizer).to receive(:instance).and_return(optimizer)
+        allow(Atmosphere::Optimizer)
+          .to receive(:instance).and_return(optimizer)
         expect(optimizer).to receive(:run).once
       end
 
       it 'creates new appliance with default cs binding' do
         expect {
           post api("/appliances", user), static_request_body
-        }.to change { ApplianceComputeSite.count}.by(2)
+        }.to change { Atmosphere::ApplianceComputeSite.count}.by(2)
       end
 
       it 'creates new appliance bound to one cs' do
         post api("/appliances", developer), static_dev_request_body_with_one_cs
-        a = Appliance.find(appliance_response['id'])
+        a = Atmosphere::Appliance.find(appliance_response['id'])
         expect(a.compute_sites.count).to eq 1
       end
 
       it 'creates new appliance bound to two cs' do
         post api("/appliances", developer), static_dev_request_body_with_two_cs
-        a = Appliance.find(appliance_response['id'])
+        a = Atmosphere::Appliance.find(appliance_response['id'])
         expect(a.compute_sites.count).to eq 2
       end
     end
@@ -495,7 +497,7 @@ describe Api::V1::AppliancesController do
         it 'skips user key for started appliance' do
           post api("/appliances", user), user_key_request(static_request_body, user_key)
 
-          created_appliance = Appliance.find(appliance_response['id'])
+          created_appliance = Atmosphere::Appliance.find(appliance_response['id'])
           expect(created_appliance.user_key).to be_nil
         end
       end
@@ -506,7 +508,7 @@ describe Api::V1::AppliancesController do
         it 'injects user key for started appliance' do
           post api("/appliances", developer), user_key_request(static_dev_request_body, developer_key)
 
-          created_appliance = Appliance.find(appliance_response['id'])
+          created_appliance = Atmosphere::Appliance.find(appliance_response['id'])
           expect(created_appliance.user_key).to eq developer_key
         end
       end
@@ -568,7 +570,7 @@ describe Api::V1::AppliancesController do
       it 'deletes user appliance' do
         expect {
           delete api("/appliances/#{user_appliance1.id}", user)
-        }.to change { Appliance.count }.by(-1)
+        }.to change { Atmosphere::Appliance.count }.by(-1)
       end
 
       it 'returns 403 Forbidden when trying to remove other user appliance' do
@@ -579,7 +581,7 @@ describe Api::V1::AppliancesController do
       it 'does not remove other user appliance' do
         expect {
           delete api("/appliances/#{other_user_appliance.id}", user)
-        }.to change { Appliance.count }.by(0)
+        }.to change { Atmosphere::Appliance.count }.by(0)
       end
     end
 
@@ -588,7 +590,7 @@ describe Api::V1::AppliancesController do
         expect {
           delete api("/appliances/#{other_user_appliance.id}", admin)
           expect(response.status).to eq 200
-        }.to change { Appliance.count }.by(-1)
+        }.to change { Atmosphere::Appliance.count }.by(-1)
       end
     end
   end
@@ -619,7 +621,7 @@ describe Api::V1::AppliancesController do
         appliance = appliance_for(user, mode: :development)
         vm = create(:virtual_machine, appliances: [appliance])
 
-        expect_any_instance_of(VirtualMachine).to receive(:reboot)
+        expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:reboot)
 
         post api("/appliances/#{appliance.id}/action", user), reboot_action_body
 

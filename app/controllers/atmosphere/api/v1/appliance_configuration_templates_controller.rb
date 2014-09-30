@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class ApplianceConfigurationTemplatesController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :appliance_configuration_template
+        load_and_authorize_resource :appliance_configuration_template,
+          class: 'Atmosphere::ApplianceConfigurationTemplate'
+
         respond_to :json
 
         def index
@@ -45,6 +47,10 @@ module Atmosphere
 
         def update_params
           params.require(:appliance_configuration_template).permit(:name, :payload)
+        end
+
+        def model_class
+          Atmosphere::ApplianceConfigurationTemplate
         end
       end
     end

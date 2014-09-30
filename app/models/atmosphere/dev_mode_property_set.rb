@@ -19,6 +19,19 @@ module Atmosphere
   class DevModePropertySet < ActiveRecord::Base
     self.table_name = 'dev_mode_property_sets'
 
+    belongs_to :security_proxy,
+      class_name: 'Atmosphere::SecurityProxy'
+
+    belongs_to :appliance,
+      class_name: 'Atmosphere::Appliance'
+
+      has_many :port_mapping_templates,
+        dependent: :destroy,
+        autosave: true,
+        class_name: 'Atmosphere::PortMappingTemplate'
+
+    validates_presence_of :appliance
+
     validates_presence_of :name
 
     validates :shared, inclusion: [true, false]
@@ -27,13 +40,6 @@ module Atmosphere
     validates :preference_memory, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
     validates :preference_disk, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
     validates :preference_cpu, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
-
-    belongs_to :security_proxy
-
-    belongs_to :appliance
-    validates_presence_of :appliance
-
-    has_many :port_mapping_templates, dependent: :destroy, autosave: true
 
     def self.create_from(appliance_type)
       dev_mode_property_set = DevModePropertySet.new(

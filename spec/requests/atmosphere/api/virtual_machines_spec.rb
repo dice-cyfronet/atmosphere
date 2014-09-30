@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::VirtualMachinesController do
+describe Atmosphere::Api::V1::VirtualMachinesController do
   include ApiHelpers
 
   let(:user)  { create(:user) }

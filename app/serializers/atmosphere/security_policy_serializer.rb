@@ -1,9 +1,11 @@
 #
 # Security policy serializer.
 #
-class SecurityPolicySerializer < ActiveModel::Serializer
-  embed :ids
+module Atmosphere
+  class SecurityPolicySerializer < ActiveModel::Serializer
+    embed :ids
 
-  attributes :id, :name, :payload
-  has_many :users, key: :owners
+    attributes :id, :name, :payload
+    has_many :users, key: :owners
+  end
 end

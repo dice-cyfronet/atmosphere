@@ -12,7 +12,10 @@ module Atmosphere
   class Deployment < ActiveRecord::Base
     self.table_name = 'deployments'
 
-    belongs_to :appliance
-    belongs_to :virtual_machine
+    belongs_to :appliance,
+      class_name: 'Atmosphere::Appliance'
+
+    belongs_to :virtual_machine,
+      class_name: 'Atmosphere::VirtualMachine'
   end
 end

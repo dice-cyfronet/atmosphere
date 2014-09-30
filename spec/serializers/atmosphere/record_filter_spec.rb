@@ -4,10 +4,10 @@ require "spec_helper"
 require "active_model_serializers"
 require "active_support/json"
 
-describe RecordFilter do
+describe Atmosphere::RecordFilter do
 
   class CustomSerializer
-    include RecordFilter
+    include Atmosphere::RecordFilter
     can_filter_by :a, :c
   end
 

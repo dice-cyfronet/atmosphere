@@ -2,8 +2,14 @@ module Atmosphere
   module Api
     module V1
       class ApplianceTypesController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :appliance_type, except: :create
-        authorize_resource :appliance_type, only: :create
+        load_and_authorize_resource :appliance_type,
+          except: :create,
+          class: 'Atmosphere::ApplianceType'
+
+        authorize_resource :appliance_type,
+          only: :create,
+          class: 'Atmosphere::ApplianceType'
+
         respond_to :json
 
         def index
@@ -24,7 +30,7 @@ module Atmosphere
           if appl
             authorize!(:save_vm_as_tmpl, appl)
             vm = appl.virtual_machines.first
-            raise Air::Conflict.new("It is not allowed to save application twice") if vm && vm.state.saving?
+            raise Atmosphere::Conflict.new("It is not allowed to save application twice") if vm && vm.state.saving?
           else
             unless current_user.admin?
               raise ActionController::ParameterMissing.new('appliance_id parameter is missing')
@@ -103,6 +109,10 @@ module Atmosphere
 
         def pdp
           Air.config.at_pdp_class.new(current_user)
+        end
+
+        def model_class
+          Atmosphere::ApplianceType
         end
       end
     end

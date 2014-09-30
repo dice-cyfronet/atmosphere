@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::SecurityProxiesController do
+describe Atmosphere::Api::V1::SecurityProxiesController do
   include ApiHelpers
 
   let!(:owned_payload1) { create(:security_proxy, name: 'first/proxy', users: [owner1, owner2]) }
@@ -21,7 +21,7 @@ describe Api::V1::SecurityProxiesController do
   end
 
   def owned_payload_class
-    SecurityProxy
+    Atmosphere::SecurityProxy
   end
 
   def owned_payload_path

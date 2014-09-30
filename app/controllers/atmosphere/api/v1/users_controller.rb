@@ -1,7 +1,7 @@
 module Atmosphere
   module Api
     module V1
-      class UsersController < Atmoshpere::Api::ApplicationController
+      class UsersController < Atmosphere::Api::ApplicationController
         load_and_authorize_resource :user
         respond_to :json
 

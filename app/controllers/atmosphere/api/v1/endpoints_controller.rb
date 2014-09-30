@@ -1,7 +1,8 @@
 class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationController
+  load_and_authorize_resource :endpoint,
+    class: 'Atmosphere::Endpoint'
 
   before_filter :find_endpoints, only: :index
-  load_and_authorize_resource :endpoint
 
   respond_to :json
 
@@ -16,14 +17,14 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
   def create
     log_user_action "create new endpoint with following params #{params}"
     @endpoint.save!
-    render json: @endpoint, serializer: EndpointSerializer, status: :created
+    render json: @endpoint, status: :created
     log_user_action "endpoint created: #{@endpoint.to_json}"
   end
 
   def update
     log_user_action "update endpoint #{@endpoint.id} with following params #{params}"
     @endpoint.update_attributes!(endpoint_params)
-    render json: @endpoint, serializer: EndpointSerializer
+    render json: @endpoint
     log_user_action "endpoint updated: #{@endpoint.to_json}"
   end
 
@@ -42,17 +43,21 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
       'descriptor_url' => descriptor_api_v1_endpoint_url(@endpoint)
     }
 
-    render text: ParamsRegexpable.filter(@endpoint.descriptor, filter_params)
+    render text: Atmosphere::ParamsRegexpable.filter(@endpoint.descriptor, filter_params)
   end
 
   private
 
   def find_endpoints
     authenticate_user!
-    @endpoints = Endpoint.visible_to(current_user)
+    @endpoints = Atmosphere::Endpoint.visible_to(current_user)
   end
 
   def endpoint_params
     params.require(:endpoint).permit(:name, :endpoint_type, :description, :descriptor, :invocation_path, :port_mapping_template_id, :secured)
+  end
+
+  def model_class
+    Atmosphere::Endpoint
   end
 end

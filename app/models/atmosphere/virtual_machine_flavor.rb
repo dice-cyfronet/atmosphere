@@ -23,8 +23,11 @@ module Atmosphere
   class VirtualMachineFlavor < ActiveRecord::Base
     self.table_name = 'virtual_machine_flavors'
 
-    belongs_to :compute_site
-    has_many :virtual_machines
+    belongs_to :compute_site,
+      class_name: 'Atmosphere::ComputeSite'
+
+    has_many :virtual_machines,
+      class_name: 'Atmosphere::VirtualMachine'
 
     validates_presence_of :flavor_name
     validates_numericality_of :cpu, greater_than_or_equal_to: 0

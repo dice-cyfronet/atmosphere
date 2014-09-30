@@ -12,7 +12,10 @@ module Atmosphere
   class ApplianceComputeSite < ActiveRecord::Base
     self.table_name = 'appliance_compute_sites'
 
-    belongs_to :appliance
-    belongs_to :compute_site
+    belongs_to :appliance,
+      class_name: 'Atmosphere::Appliance'
+
+    belongs_to :compute_site,
+    class_name: 'Atmosphere::ComputeSite'
   end
 end

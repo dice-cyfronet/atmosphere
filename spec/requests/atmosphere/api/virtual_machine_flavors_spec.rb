@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::VirtualMachineFlavorsController do
+describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
   include ApiHelpers
   include VmtOnCsHelpers
 
@@ -38,7 +38,7 @@ describe Api::V1::VirtualMachineFlavorsController do
       it 'returns all flavors when no filters are specified' do
         get api('/virtual_machine_flavors', user)
         flavors = fls_response
-        expect(flavors.size).to eq VirtualMachineFlavor.count
+        expect(flavors.size).to eq Atmosphere::VirtualMachineFlavor.count
       end
 
       it 'filters flavors if id param is provided' do

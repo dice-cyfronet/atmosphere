@@ -25,25 +25,48 @@ module Atmosphere
 
     extend Enumerize
 
+    has_many :virtual_machines,
+      dependent: :destroy,
+      class_name: 'Atmosphere::VirtualMachine'
+
+    has_many :virtual_machine_templates,
+      dependent: :destroy,
+      class_name: 'Atmosphere::VirtualMachineTemplate'
+
+    has_many :port_mapping_properties,
+      dependent: :destroy,
+      class_name: 'Atmosphere::PortMappingProperty'
+
+    has_many :virtual_machine_flavors,
+      dependent: :destroy,
+      class_name: 'Atmosphere::VirtualMachineFlavor'
+
+    # Required for API (returning all compute sites on which a given AT can be deployed)
+    has_many :appliance_types,
+      through: :virtual_machine_templates,
+      class_name: 'Atmosphere::ApplianceType'
+
+    has_many :funds,
+      through: :compute_site_funds,
+      class_name: 'Atmosphere::Fund'
+
+    has_many :compute_site_funds,
+      dependent: :destroy,
+      class_name: 'Atmosphere::ComputeSiteFund'
+
+    has_many :appliances,
+      through: :appliance_compute_sites,
+      class_name: 'Atmosphere::Appliance'
+
+    has_many :appliance_compute_sites,
+      dependent: :destroy,
+      class_name: 'Atmosphere::ApplianceComputeSite'
+
     validates_presence_of :site_id, :site_type, :technology
     enumerize :site_type, in: [:public, :private], predicates: true
     enumerize :technology, in: [:openstack, :aws], predicates: true
     validates :site_type, inclusion: %w(public private)
     validates :technology, inclusion: %w(openstack aws)
-
-    has_many :virtual_machines, dependent: :destroy
-    has_many :virtual_machine_templates, dependent: :destroy
-    has_many :port_mapping_properties, dependent: :destroy
-    has_many :virtual_machine_flavors, dependent: :destroy
-
-    # Required for API (returning all compute sites on which a given AT can be deployed)
-    has_many :appliance_types, through: :virtual_machine_templates
-
-    has_many :funds, through: :compute_site_funds
-    has_many :compute_site_funds, dependent: :destroy
-
-    has_many :appliances, through: :appliance_compute_sites
-    has_many :appliance_compute_sites, dependent: :destroy
 
     scope :with_appliance_type, ->(appliance_type) { joins(virtual_machines: {appliances: :appliance_set}).where(appliances: {appliance_type_id: appliance_type.id}, appliance_sets: {appliance_set_type: [:workflow, :portal]}).readonly(false) }
 

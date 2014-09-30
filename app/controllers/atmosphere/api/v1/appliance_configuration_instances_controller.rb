@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class ApplianceConfigurationInstancesController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :appliance_configuration_instance
+        load_and_authorize_resource :appliance_configuration_instance,
+          class: 'Atmosphere::ApplianceConfigurationInstance'
+
         respond_to :json
 
         def index
@@ -21,6 +23,10 @@ module Atmosphere
           filter[:appliances] = {id: appliance_id} unless appliance_id.blank?
 
           filter
+        end
+
+        def model_class
+          Atmosphere::ApplianceConfigurationInstance
         end
       end
     end

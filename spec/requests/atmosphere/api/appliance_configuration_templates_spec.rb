@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::ApplianceConfigurationTemplatesController do
+describe Atmosphere::Api::V1::ApplianceConfigurationTemplatesController do
   include ApiHelpers
 
   let(:user)  { create(:user) }
@@ -144,12 +144,12 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
       it 'creates new appliance configuration template' do
         expect {
           post api("/appliance_configuration_templates", user), new_config_template_request
-        }.to change { ApplianceConfigurationTemplate.count }.by(1)
+        }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(1)
       end
 
       it 'creates new appliance configuration template with correct attrs values' do
         post api("/appliance_configuration_templates", user), new_config_template_request
-        result = ApplianceConfigurationTemplate.find(act_response['id'])
+        result = Atmosphere::ApplianceConfigurationTemplate.find(act_response['id'])
         expect(act_response).to config_template_eq result
       end
 
@@ -160,7 +160,7 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
       it 'does not creates new configuration template when creating new one for not owned appliance type' do
         expect {
           post api("/appliance_configuration_templates", user), new_not_owned_config_template_request
-        }.to change { ApplianceConfigurationTemplate.count }.by(0)
+        }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(0)
       end
     end
 
@@ -169,7 +169,7 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
         expect {
           post api("/appliance_configuration_templates", admin), new_not_owned_config_template_request
           expect(response.status).to eq 201
-        }.to change { ApplianceConfigurationTemplate.count }.by(1)
+        }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(1)
       end
     end
   end
@@ -199,7 +199,7 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
 
       it 'updates appliance configuration template' do
         put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user), update_request
-        updated = ApplianceConfigurationTemplate.find(at1_config_tpl1.id)
+        updated = Atmosphere::ApplianceConfigurationTemplate.find(at1_config_tpl1.id)
         expect(act_response).to config_template_eq updated
       end
 
@@ -234,7 +234,7 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
       it 'deletes appliance configuration template' do
         expect {
           delete api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user)
-        }.to change { ApplianceConfigurationTemplate.count }.by(-1)
+        }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(-1)
       end
 
       it 'returns 403 Forbidden when trying to remove configuration template from not owned appliance type' do
@@ -245,7 +245,7 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
       it 'does not remove configuration template from not owned appliance type' do
         expect {
           delete api("/appliance_configuration_templates/#{at2_config_tpl.id}", user)
-        }.to change { ApplianceConfigurationTemplate.count }.by(0)
+        }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(0)
       end
     end
 
@@ -254,7 +254,7 @@ describe Api::V1::ApplianceConfigurationTemplatesController do
         expect {
           delete api("/appliance_configuration_templates/#{at2_config_tpl.id}", admin)
           expect(response.status).to eq 200
-        }.to change { ApplianceConfigurationTemplate.count }.by(-1)
+        }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(-1)
       end
     end
   end

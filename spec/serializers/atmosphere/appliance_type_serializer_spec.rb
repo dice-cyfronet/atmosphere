@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-describe ApplianceTypeSerializer do
+describe Atmosphere::ApplianceTypeSerializer do
   include VmtOnCsHelpers
 
   it 'is inactive when all VMT started on turned off compute site' do
     _, inactive_vmt = vmt_on_site(cs_active: false)
     at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
-    serializer = ApplianceTypeSerializer.new(at)
+    serializer = Atmosphere::ApplianceTypeSerializer.new(at)
 
     result = JSON.parse(serializer.to_json)
 
@@ -18,7 +18,7 @@ describe ApplianceTypeSerializer do
     active_cs, active_vmt = vmt_on_site(cs_active: true)
     at = create(:appliance_type,
       virtual_machine_templates: [inactive_vmt, active_vmt])
-    serializer = ApplianceTypeSerializer.new(at)
+    serializer = Atmosphere::ApplianceTypeSerializer.new(at)
 
     result = JSON.parse(serializer.to_json)
 

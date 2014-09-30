@@ -3,7 +3,10 @@ module Atmosphere
     module V1
       class SecurityPoliciesController < Atmosphere::Api::ApplicationController
         before_filter :find_by_name, only: :payload
-        load_and_authorize_resource :security_policy
+
+        load_and_authorize_resource :security_policy,
+          class: 'Atmosphere::SecurityPolicy'
+
         respond_to :json
 
         def index
@@ -17,14 +20,14 @@ module Atmosphere
         def create
           log_user_action "create new security policy with following params #{params}"
           @security_policy.save!
-          render json: @security_policy, serializer: SecurityPolicySerializer, status: :created
+          render json: @security_policy, status: :created
           log_user_action "security policy created: #{@security_policy.to_json}"
         end
 
         def update
           log_user_action "update security policy #{@security_policy.id} with following params #{params}"
           @security_policy.update_attributes!(params[:security_policy])
-          render json: @security_policy, serializer: SecurityPolicySerializer
+          render json: @security_policy
           log_user_action "security policy updated: #{@security_policy.to_json}"
         end
 
@@ -56,9 +59,13 @@ module Atmosphere
         end
 
         def find_by_name
-          @security_policy = SecurityPolicy.find_by(name: params[:name])
+          @security_policy = model_class.find_by(name: params[:name])
           raise ActiveRecord::RecordNotFound if @security_policy.blank?
           @security_policy
+        end
+
+        def model_class
+          Atmosphere::SecurityPolicy
         end
       end
     end

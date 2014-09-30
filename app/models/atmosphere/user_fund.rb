@@ -14,6 +14,8 @@ module Atmosphere
     self.table_name = 'user_funds'
 
     belongs_to :user
-    belongs_to :fund
+
+    belongs_to :fund,
+      class_name: 'Atmosphere::Fund'
   end
 end

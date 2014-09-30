@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V1::ComputeSitesController do
+describe Atmosphere::Api::V1::ComputeSitesController do
   include ApiHelpers
 
   let(:user) { create(:user) }

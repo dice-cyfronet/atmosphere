@@ -12,7 +12,10 @@ module Atmosphere
   class ComputeSiteFund < ActiveRecord::Base
     self.table_name = 'compute_site_funds'
 
-    belongs_to :compute_site
-    belongs_to :fund
+    belongs_to :compute_site,
+      class_name: 'Atmosphere::ComputeSite'
+
+    belongs_to :fund,
+      class_name: 'Atmosphere::Fund'
   end
 end
