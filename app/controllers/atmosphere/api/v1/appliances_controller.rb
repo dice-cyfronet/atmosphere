@@ -1,4 +1,4 @@
-class Api::V1::AppliancesController < Api::ApplicationController
+class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
   before_filter :init_appliance, only: :create
   load_and_authorize_resource :appliance
   before_filter :init_vm_search, only: :index

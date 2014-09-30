@@ -1,4 +1,4 @@
-class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class Atmosphere::Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def vphticket
     @user = User.vph_find_or_create(oauth)

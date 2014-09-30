@@ -1,4 +1,4 @@
-class Admin::SecurityPoliciesController < Admin::ApplicationController
+class Atmosphere::Admin::SecurityPoliciesController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :security_policy
 
   def index

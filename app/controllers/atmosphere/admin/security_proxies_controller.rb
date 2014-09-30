@@ -1,4 +1,4 @@
-class Admin::SecurityProxiesController < Admin::ApplicationController
+class Atmosphere::Admin::SecurityProxiesController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :security_proxy
 
   def index

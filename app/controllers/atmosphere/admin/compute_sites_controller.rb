@@ -1,4 +1,4 @@
-class Admin::ComputeSitesController < Admin::ApplicationController
+class Atmosphere::Admin::ComputeSitesController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :compute_site
 
   # GET /compute_sites

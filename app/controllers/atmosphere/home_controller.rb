@@ -1,4 +1,4 @@
-class HomeController < ApplicationController
+class Atmosphere::HomeController < ApplicationController
   skip_authorization_check
 
   def index

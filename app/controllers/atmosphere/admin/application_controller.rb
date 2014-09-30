@@ -1,4 +1,4 @@
-class Admin::ApplicationController < ApplicationController
+class Atmosphere::Admin::ApplicationController < Atmosphere::ApplicationController
   before_filter :only_admin_allowed
 
   private

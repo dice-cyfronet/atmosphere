@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Admin::ApplianceSetsController do
+describe Atmosphere::Admin::ApplianceSetsController do
   describe "routing" do
 
     it "routes to #index" do

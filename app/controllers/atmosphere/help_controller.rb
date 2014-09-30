@@ -1,4 +1,4 @@
-class HelpController < ApplicationController
+class Atmosphere::HelpController < ApplicationController
   skip_authorization_check
 
   before_filter :authenticate_user!

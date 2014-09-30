@@ -1,4 +1,4 @@
-class Admin::VirtualMachineTemplatesController < Admin::ApplicationController
+class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :virtual_machine_template
   before_filter :set_compute_sites, :except => [:index, :show, :destroy]
 

@@ -1,4 +1,4 @@
-class Admin::VirtualMachinesController < Admin::ApplicationController
+class Atmosphere::Admin::VirtualMachinesController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :virtual_machine
 
   def index

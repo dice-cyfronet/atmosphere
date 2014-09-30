@@ -1,4 +1,4 @@
-class Admin::ApplianceTypesController < Admin::ApplicationController
+class Atmosphere::Admin::ApplianceTypesController < Atmosphere::Admin::ApplicationController
 
   load_and_authorize_resource :appliance_type
   before_filter :set_appliance_types

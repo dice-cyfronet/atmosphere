@@ -1,4 +1,4 @@
-class Admin::ApplianceSetsController < Admin::ApplicationController
+class Atmosphere::Admin::ApplianceSetsController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :appliance_set
 
   # GET /admin/appliance_sets

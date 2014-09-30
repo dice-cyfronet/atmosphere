@@ -1,4 +1,4 @@
-class Admin::ApplianceConfigurationTemplatesController < Admin::ApplicationController
+class Atmosphere::Admin::ApplianceConfigurationTemplatesController < Atmosphere::Admin::ApplicationController
 
   # NOTE: all actions below do Ajax/JSON
 

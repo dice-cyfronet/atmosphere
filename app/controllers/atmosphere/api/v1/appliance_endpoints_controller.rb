@@ -1,4 +1,4 @@
-class Api::V1::ApplianceEndpointsController < Api::ApplicationController
+class Atmosphere::Api::V1::ApplianceEndpointsController < Atmosphere::Api::ApplicationController
   load_and_authorize_resource :appliance_type, parent: false
   before_filter :set_filter
   before_filter :limit_appliance_types

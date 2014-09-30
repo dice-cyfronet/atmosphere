@@ -1,4 +1,4 @@
-class Admin::PortMappingTemplatesController < Admin::ApplicationController
+class Atmosphere::Admin::PortMappingTemplatesController < Atmosphere::Admin::ApplicationController
 
   # NOTE: all actions below do Ajax/JSON
 

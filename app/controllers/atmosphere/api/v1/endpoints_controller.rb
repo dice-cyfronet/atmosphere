@@ -1,4 +1,4 @@
-class Api::V1::EndpointsController < Api::ApplicationController
+class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationController
 
   before_filter :find_endpoints, only: :index
   load_and_authorize_resource :endpoint

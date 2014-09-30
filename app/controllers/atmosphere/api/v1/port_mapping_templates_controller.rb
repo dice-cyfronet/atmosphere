@@ -1,4 +1,4 @@
-class Api::V1::PortMappingTemplatesController < Api::ApplicationController
+class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::ApplicationController
 
   before_filter :find_port_mapping_templates, only: :index
   load_and_authorize_resource :port_mapping_template, except: :index

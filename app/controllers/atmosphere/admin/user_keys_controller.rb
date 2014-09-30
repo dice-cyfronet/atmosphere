@@ -1,4 +1,4 @@
-class Admin::UserKeysController < Admin::ApplicationController
+class Atmosphere::Admin::UserKeysController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :user_key
   #before_filter :set_user_keys, only: :index
 

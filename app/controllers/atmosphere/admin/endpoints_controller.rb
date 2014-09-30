@@ -1,4 +1,4 @@
-class Admin::EndpointsController < Admin::ApplicationController
+class Atmosphere::Admin::EndpointsController < Atmosphere::Admin::ApplicationController
 
   # NOTE: all actions below do Ajax/JSON
 
