@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ApplicationHelper do
+describe Atmosphere::ApplicationHelper, type: :helper do
   describe 'current_controller?' do
     before do
       allow(controller).to receive(:controller_name).and_return('foo')

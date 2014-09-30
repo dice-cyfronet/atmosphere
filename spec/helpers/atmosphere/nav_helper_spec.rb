@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe NavHelper do
-  include ApplicationHelper
+describe Atmosphere::NavHelper do
+  include Atmosphere::ApplicationHelper
 
-  describe 'nav_ling' do
+  describe 'nav_link' do
     before do
       allow(controller).to receive(:controller_name).and_return('foo')
       allow(controller).to receive(:action_name).and_return('foo')
