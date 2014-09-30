@@ -1,4 +1,4 @@
-moduel Atmosphere
+module Atmosphere
   module Filterable
     extend ActiveSupport::Concern
 
