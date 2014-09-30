@@ -1,3 +1,3 @@
-module Air
+module Atmosphere
   class UnsuportedException < Exception; end
 end

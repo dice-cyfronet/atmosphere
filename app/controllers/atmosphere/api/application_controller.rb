@@ -20,11 +20,11 @@ module Atmosphere
         render_json_error('Record not found', status: :not_found)
       end
 
-      rescue_from ActionController::ParameterMissing, Air::InvalidParameterFormat do |exception|
+      rescue_from ActionController::ParameterMissing, Atmosphere::InvalidParameterFormat do |exception|
         render_json_error(exception.to_s, status: :unprocessable_entity)
       end
 
-      rescue_from Air::Conflict do |exception|
+      rescue_from Atmosphere::Conflict do |exception|
         log_user_action "record conflict #{exception}"
         render_json_error(exception.to_s, status: :conflict, type: :conflict)
       end
