@@ -1,10 +1,9 @@
 require 'spec_helper'
-require 'utils'
+require 'atmosphere/utils'
 #$: << '../../lib'
 
-include Utils
-
-describe Utils do
+describe Atmosphere::Utils do
+  include Atmosphere::Utils
 
   context 'min_elements_by' do
 

@@ -1,7 +1,8 @@
 require 'spec_helper'
-require 'mi_resource_access'
+require 'atmosphere/mi_resource_access'
+require 'json'
 
-describe MiResourceAccess do
+describe Atmosphere::MiResourceAccess do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:connection) do
     Faraday.new do |builder|
@@ -9,7 +10,9 @@ describe MiResourceAccess do
     end
   end
 
-  subject { MiResourceAccess.new('AtomicService', connection: connection) }
+  subject do
+    Atmosphere::MiResourceAccess.new('AtomicService', connection: connection)
+  end
 
   context '#has_role?' do
     let(:url) { '/api/hasrole/?local_id=1&type=AtomicService&role=reader' }

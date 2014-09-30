@@ -1,3 +1,5 @@
+require 'faraday'
+
 module Atmosphere
   class MiResourceAccess
 
