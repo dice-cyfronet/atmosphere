@@ -71,8 +71,8 @@ module Air
   def self.influxdb_client
     cached_client = self.client_cache_entry('influxdb')
     if config['influxdb'] && !cached_client.valid?
-      client = Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
-      cached_client = CacheEntry.new(client, 60.minutes)
+      client = Atmosphere::Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
+      cached_client = Atmosphere::CacheEntry.new(client, 60.minutes)
       clients_cache['influxdb'] = cached_client
     end
     cached_client.value

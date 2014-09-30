@@ -31,7 +31,7 @@ describe Air do
       Air.config['zabbix'] = nil
 
       expect(Air.monitoring_client)
-        .to be_an_instance_of Monitoring::NullClient
+        .to be_an_instance_of Atmosphere::Monitoring::NullClient
     end
 
     it 'returns real client when configuration available' do
@@ -45,7 +45,7 @@ describe Air do
       Air.config.zabbix['query_interval'] = 5
 
       expect(Air.monitoring_client)
-        .to be_an_instance_of Monitoring::ZabbixClient
+        .to be_an_instance_of Atmosphere::Monitoring::ZabbixClient
     end
   end
 
@@ -54,14 +54,14 @@ describe Air do
       Air.config['influxdb'] = nil
 
       expect(Air.metrics_store)
-        .to be_an_instance_of Monitoring::NullMetricsStore
+        .to be_an_instance_of Atmosphere::Monitoring::NullMetricsStore
     end
 
     it 'returns real client when configuration available' do
       create_influxdb_config!
 
       expect(Air.metrics_store)
-        .to be_an_instance_of Monitoring::InfluxdbMetricsStore
+        .to be_an_instance_of Atmosphere::Monitoring::InfluxdbMetricsStore
     end
 
     it 'creates new client when client outdated' do

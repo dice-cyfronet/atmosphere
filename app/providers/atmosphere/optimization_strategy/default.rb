@@ -53,7 +53,7 @@ module Atmosphere
       end
 
       class VmAndFlavor
-        include ::Utils
+        include Utils
 
         def initialize(tmpls, options={})
           @tmpls = tmpls

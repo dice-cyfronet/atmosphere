@@ -3,7 +3,7 @@ module Atmosphere
     def initialize
       # smart hack :-)
       # requiring zabbix fails if there is no zabbix section in air.yml. In 2_app.rb it is checked whether this section is present and this service is instantiated only if the section exists.
-      require 'zabbix'
+      require 'atmosphere/zabbix'
     end
 
     def register_host(uuid, ip)

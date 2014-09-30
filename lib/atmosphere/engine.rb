@@ -7,6 +7,7 @@ require 'role_model'
 require 'foreigner'
 require 'enumerize'
 require 'sentry-raven'
+require 'influxdb'
 
 module Atmosphere
   class Engine < ::Rails::Engine
