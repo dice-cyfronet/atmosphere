@@ -1,11 +1,11 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe VmDestroyer do
+describe Atmosphere::VmDestroyer do
   let(:vm) { double('vm', appliances: [], destroy: true) }
   let(:updater) { double('updater', update: true) }
   let(:updater_class) { double('updater_class', new: updater) }
 
-  subject { VmDestroyer.new(vm, updater_class) }
+  subject { Atmosphere::VmDestroyer.new(vm, updater_class) }
 
   context '#destroy' do
     it 'destroys VM' do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe VmUpdater do
+describe Atmosphere::VmUpdater do
   let(:cs)  { create(:compute_site) }
   let!(:flavor) { create(:virtual_machine_flavor, compute_site: cs) }
   let(:vmt) { create(:virtual_machine_template, compute_site: cs) }
@@ -8,18 +8,19 @@ describe VmUpdater do
   let(:updater) { double('updater', update: true) }
   let(:updater_class) { double('updater_class', new: updater) }
 
-  let(:updated_vm) { VirtualMachine.find_by(id_at_site: 'id_at_site') }
+  let(:updated_vm) { Atmosphere::VirtualMachine.find_by(id_at_site: 'id_at_site') }
 
   before do
-    allow(VirtualMachineTemplate).to receive(:find_by)
-      .with(compute_site: cs, id_at_site: "vmt_id_at_site")
-        .and_return(vmt)
+    allow(Atmosphere::VirtualMachineTemplate)
+      .to receive(:find_by)
+        .with(compute_site: cs, id_at_site: "vmt_id_at_site")
+          .and_return(vmt)
     #Zabbix.stub(:register_host).and_return 1
     #Zabbix.stub(:unregister_host)
     #Zabbix.stub(:host_metrics)
   end
 
-  subject { VmUpdater.new(cs, server, updater_class) }
+  subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
 
   describe 'VM states' do
     context "when task state equals to image_snapshot" do
@@ -29,7 +30,7 @@ describe VmUpdater do
                       flavor: {'id' => "1"})
       end
 
-      subject { VmUpdater.new(cs, server, updater_class) }
+      subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
 
       it 'sets "saving" state' do
         vm = subject.update
@@ -52,7 +53,7 @@ describe VmUpdater do
         vm.saved_templates << vmt
       end
 
-      subject { VmUpdater.new(cs, server, updater_class) }
+      subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
 
       it 'sets "saving" state' do
         vm = subject.update
@@ -124,7 +125,7 @@ describe VmUpdater do
 
         expect(updater).not_to receive(:update)
 
-        VmUpdater.new(cs, server, updater_class).update
+        Atmosphere::VmUpdater.new(cs, server, updater_class).update
       end
     end
 
@@ -181,7 +182,7 @@ describe VmUpdater do
       it 'creates missing VM' do
         expect {
           subject.update
-        }.to change { VirtualMachine.count }.by(1)
+        }.to change { Atmosphere::VirtualMachine.count }.by(1)
       end
 
       it 'sets VMs details' do
@@ -199,7 +200,7 @@ describe VmUpdater do
       it 'reuses existing VM' do
         expect {
           subject.update
-        }.to change { VirtualMachine.count }.by(0)
+        }.to change { Atmosphere::VirtualMachine.count }.by(0)
       end
 
       it 'updates VMs details' do
@@ -272,7 +273,7 @@ describe VmUpdater do
     it 'does not update VM data' do
       expect {
         subject.update
-      }.to change { VirtualMachine.count }.by(0)
+      }.to change { Atmosphere::VirtualMachine.count }.by(0)
     end
   end
 
@@ -295,7 +296,7 @@ describe VmUpdater do
         )
       allow(server).to receive(:updated).and_return(vm_update_at)
 
-      VmUpdater.new(cs, server, updater_class).update
+      Atmosphere::VmUpdater.new(cs, server, updater_class).update
       vm.reload
 
       expect(vm.ip).to eq '1.2.3.4'
@@ -310,7 +311,7 @@ describe VmUpdater do
         )
       allow(server).to receive(:updated).and_return(vm_update_at + 1)
 
-      VmUpdater.new(cs, server, updater_class).update
+      Atmosphere::VmUpdater.new(cs, server, updater_class).update
       vm.reload
 
       expect(vm.ip).to eq '1.2.3.4'
@@ -325,7 +326,7 @@ describe VmUpdater do
         )
       allow(server).to receive(:updated).and_return(vm_update_at - 1)
 
-      VmUpdater.new(cs, server, updater_class).update
+      Atmosphere::VmUpdater.new(cs, server, updater_class).update
       vm.reload
 
       expect(vm.ip).to be_nil

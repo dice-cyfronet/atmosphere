@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Optimizer do
+describe Atmosphere::Optimizer do
   include VmtOnCsHelpers
 
   before do
@@ -14,7 +14,7 @@ describe Optimizer do
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: openstack)}
 
-  subject { Optimizer.instance }
+  subject { Atmosphere::Optimizer.instance }
 
   it 'is not nil' do
      expect(subject).not_to be_nil
@@ -28,9 +28,9 @@ describe Optimizer do
       let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not reuse available vm' do
         tmpl_of_shareable_at
-        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-        appl2 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-        vms = VirtualMachine.all
+        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+        appl2 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+        vms = Atmosphere::VirtualMachine.all
         expect(vms.size).to eql 2
         vm_1 = vms.first
         vm_2 = vms.last
@@ -42,9 +42,9 @@ describe Optimizer do
 
       it 'does not reuse available vm if it is in dev mode' do
           tmpl_of_shareable_at
-          appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-          vms = VirtualMachine.all
+          appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          vms = Atmosphere::VirtualMachine.all
           expect(vms.size).to eql 2
           vm_1 = vms.first
           vm_2 = vms.last
@@ -63,7 +63,7 @@ describe Optimizer do
         end
 
         before do
-          allow(ApplianceVmsManager).to receive(:new)
+          allow(Atmosphere::ApplianceVmsManager).to receive(:new)
             .and_return(appl_vm_manager)
         end
 
@@ -73,7 +73,7 @@ describe Optimizer do
             expect(name).to eq name
           end
 
-          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance', fund: fund, compute_sites: ComputeSite.all)
+          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
 
         end
 
@@ -82,7 +82,7 @@ describe Optimizer do
             expect(name).to eq shareable_appl_type.name
           end
 
-          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, fund: fund, compute_sites: ComputeSite.all)
+          create(:appliance, name: nil, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
         end
       end
     end
@@ -110,8 +110,8 @@ describe Optimizer do
       context 'vm cannot be reused' do
 
         it 'instantiates a new vm if there are no vms at all' do
-          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: ComputeSite.all)
-          vms = VirtualMachine.all
+          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          vms = Atmosphere::VirtualMachine.all
           expect(vms.size).to eql 1
           vm = vms.first
           expect(vm.appliances.size).to eql 1
@@ -119,7 +119,7 @@ describe Optimizer do
         end
 
         it 'sets appliance state to satisfied if vm was instantiated' do
-          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: ComputeSite.all)
+          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
           appl.reload
           expect(appl.state).to eql 'satisfied'
         end
@@ -127,9 +127,9 @@ describe Optimizer do
         it 'does not reuse avaiable vm if appliances use config with equal payload and different ids' do
           tmpl_of_shareable_at
           config_inst = create(:appliance_configuration_instance)
-          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload), fund: fund, compute_sites: ComputeSite.all)
-          vms = VirtualMachine.all
+          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          vms = Atmosphere::VirtualMachine.all
           expect(vms.size).to eql 2
           vm_1 = vms.first
           vm_2 = vms.last
@@ -147,10 +147,10 @@ describe Optimizer do
           end
 
           it 'instantiates a new vm if already running vm cannot accept more load' do
-            appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
-            appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all)
+            appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+            appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
 
-            vms = VirtualMachine.all
+            vms = Atmosphere::VirtualMachine.all
             expect(vms.size).to eql 2
             appl1.reload
             appl2.reload
@@ -165,19 +165,19 @@ describe Optimizer do
 
       context 'vm can be reused' do
         let(:config_inst) { create(:appliance_configuration_instance) }
-        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all) }
-        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all) }
+        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
+        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
 
         context 'and user has emough funds to start appliance' do
           before do
             appl1.reload
-            allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
-            allow(BillingService).to receive(:bill_appliance)
+            allow(Atmosphere::BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
+            allow(Atmosphere::BillingService).to receive(:bill_appliance)
             appl2.reload
           end
 
           it 'reuses available vm' do
-            vms = VirtualMachine.all
+            vms = Atmosphere::VirtualMachine.all
             expect(vms.size).to eql 1
             vm = vms.first
             expect(vm.appliances.size).to eql 2
@@ -189,14 +189,14 @@ describe Optimizer do
           end
 
           it 'triggers billing' do
-            expect(BillingService).to have_received(:bill_appliance)
+            expect(Atmosphere::BillingService).to have_received(:bill_appliance)
           end
         end
 
         context 'and user does not have emough funds to start appliance' do
           before do
             appl1.reload
-            allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(false)
+            allow(Atmosphere::BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(false)
           end
 
           it_behaves_like 'not_enough_funds'
@@ -209,19 +209,19 @@ describe Optimizer do
       let(:cs) { create(:openstack_with_flavors, funds: [fund]) }
       let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, compute_site: cs)}
       let(:config_inst) { create(:appliance_configuration_instance) }
-      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all) }
-      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: ComputeSite.all) }
+      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
+      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
 
       context 'and user has emough funds to start appliance' do
         before do
-          allow(BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
+          allow(Atmosphere::BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
 
           appl1.reload
           appl2.reload
         end
 
         it 'instantiates a new vm although vm with given conf is already running' do
-          vms = VirtualMachine.all
+          vms = Atmosphere::VirtualMachine.all
           expect(vms.size).to eql 2
           expect(appl1.virtual_machines.size).to eql 1
           expect(appl2.virtual_machines.size).to eql 1
@@ -233,7 +233,7 @@ describe Optimizer do
 
       context 'and user does not have emough funds to start appliance' do
         before do
-          allow(BillingService).to receive(:can_afford_flavor?).and_return(false)
+          allow(Atmosphere::BillingService).to receive(:can_afford_flavor?).and_return(false)
 
           appl2.reload
         end
@@ -258,7 +258,7 @@ describe Optimizer do
         active_cs, active_vmt = vmt_on_site(cs_active: true)
         flavor = create(:virtual_machine_flavor,
           compute_site: active_cs, id_at_site: '123')
-        allow(BillingService).to receive(:can_afford_flavor?)
+        allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(anything, flavor).and_return(true)
         at = create(:appliance_type,
           virtual_machine_templates: [inactive_vmt, active_vmt])
@@ -296,7 +296,7 @@ describe Optimizer do
             id_at_site: '123'
           )
         at = create(:appliance_type, virtual_machine_templates: [vmt])
-        allow(BillingService).to receive(:can_afford_flavor?)
+        allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(anything, active_flavor).and_return(true)
 
         appl = create(:appliance, appliance_set: wf,
@@ -323,27 +323,27 @@ describe Optimizer do
     it 'terminates unused manageable vm' do
       subject.run(destroyed_appliance: true)
 
-      expect(Cloud::VmDestroyWorker).to have_enqueued_job(vm.id)
+      expect(Atmosphere::Cloud::VmDestroyWorker).to have_enqueued_job(vm.id)
     end
   end
 
   context 'no template is available' do
     let(:at) { create(:appliance_type) }
     it 'sets appliance to unsatisfied state' do
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
 
     it 'sets state explanation' do
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
       appl.reload
       expect(appl.state_explanation).to eql "No matching template was found for appliance #{appl.name}"
     end
 
     it 'only saving tmpl exists' do
       saving_tmpl = create(:virtual_machine_template, appliance_type: at, state: :saving)
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
       appl.reload
       expect(appl.state).to eql 'unsatisfied'
     end
@@ -360,14 +360,14 @@ describe Optimizer do
 
     let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
     it 'includes flavor in params of created vm' do
-      allow(VirtualMachine).to receive(:create)
-      allow(ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
+      allow(Atmosphere::VirtualMachine).to receive(:create)
+      allow(Atmosphere::ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
       selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
       expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
         expect(flavor).to eq selected_flavor
       end
 
-      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, compute_sites: ComputeSite.all)
+      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
     end
 
     context 'is selected with appropriate architecture' do
@@ -444,12 +444,12 @@ describe Optimizer do
 
           it 'sets state explanation' do
             [tmpl_at_amazon, tmpl_at_openstack]
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, compute_sites: ComputeSite.all)
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
             expect(appl.state_explanation).to eq "No matching flavor was found for appliance #{appl.name}"
           end
 
           it 'sets appliance as unsatisfied' do
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: ComputeSite.all)
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
             expect(appl.state).to eq 'unsatisfied'
           end
         end
@@ -519,7 +519,7 @@ describe Optimizer do
       end
 
       before do
-        allow(ApplianceVmsManager).to receive(:new)
+        allow(Atmosphere::ApplianceVmsManager).to receive(:new)
           .and_return(appl_vm_manager)
       end
 
@@ -529,14 +529,14 @@ describe Optimizer do
             expect(flavor.cpu).to eq 2
           end
 
-          create(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: ComputeSite.all)
+          create(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
         end
       end
 
       context 'when preferences set in appliance' do
         before do
-          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: ComputeSite.all)
-          @appl.dev_mode_property_set = DevModePropertySet.new(name: 'pref_test')
+          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end
 

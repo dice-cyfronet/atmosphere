@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'fog/openstack'
 
-describe FlavorManager do
+describe Atmosphere::FlavorManager do
 
   let(:cs1) { create(:openstack_compute_site) }
   let(:cs2) { create(:amazon_compute_site) }
@@ -24,12 +24,12 @@ describe FlavorManager do
 
       it 'registers compute sites with flavors' do
         expect(cs1.virtual_machine_flavors.count).to eq 2
-        FlavorManager::scan_site(cs1)
+        Atmosphere::FlavorManager::scan_site(cs1)
         expect(cs1.virtual_machine_flavors.count).to eq cs1.cloud_client.flavors.count
       end
 
       it 'updates existing flavour on openstack' do
-        FlavorManager::scan_site(cs1)
+        Atmosphere::FlavorManager::scan_site(cs1)
         fog_flavor = cs1.cloud_client.flavors.detect { |f| f.id == flavor6_ost.id_at_site }
 
         flavor6_ost.reload
@@ -37,7 +37,7 @@ describe FlavorManager do
       end
 
       it 'updates existing flavour on aws' do
-        FlavorManager::scan_site(cs2)
+        Atmosphere::FlavorManager::scan_site(cs2)
         fog_flavor = cs2.cloud_client.flavors.detect { |f| f.id == flavor6_aws.id_at_site }
 
         flavor6_aws.reload
@@ -45,14 +45,14 @@ describe FlavorManager do
       end
 
       it 'removes nonexistent flavor on openstack' do
-        FlavorManager::scan_site(cs1)
+        Atmosphere::FlavorManager::scan_site(cs1)
         expect(cs1.virtual_machine_flavors.count).to eq cs1.cloud_client.flavors.count
         # Add nonexistent flavor to compute_site cs1
         create(:virtual_machine_flavor, compute_site: cs1, id_at_site: "foo", flavor_name: "baz")
         cs1.reload
         expect(cs1.virtual_machine_flavors.where(flavor_name: "baz").count).to eq 1
         # Scan site again and expect flavor "baz" to be gone
-        FlavorManager::scan_site(cs1)
+        Atmosphere::FlavorManager::scan_site(cs1)
         cs1.reload
         expect(cs1.virtual_machine_flavors.where(flavor_name: "baz").count).to eq 0
       end
@@ -62,21 +62,21 @@ describe FlavorManager do
     context 'when idle' do
       it 'scans openstack cloud site' do
         # Fog creates 7 mock flavors by default
-        FlavorManager::scan_site(cs1)
+        Atmosphere::FlavorManager::scan_site(cs1)
         expect(cs1.virtual_machine_flavors.count).to eq cs1.cloud_client.flavors.count
 
         # No further changes expected
-        FlavorManager::scan_site(cs1)
+        Atmosphere::FlavorManager::scan_site(cs1)
         expect(cs1.virtual_machine_flavors.count).to eq cs1.cloud_client.flavors.count
       end
 
       it 'scans AWS cloud site' do
         # Fog creates 7 mock flavors by default
-        FlavorManager::scan_site(cs2)
+        Atmosphere::FlavorManager::scan_site(cs2)
         expect(cs2.virtual_machine_flavors.count).to eq cs2.cloud_client.flavors.count
 
         # No further changes expected
-        FlavorManager::scan_site(cs2)
+        Atmosphere::FlavorManager::scan_site(cs2)
         expect(cs2.virtual_machine_flavors.count).to eq cs2.cloud_client.flavors.count
       end
     end

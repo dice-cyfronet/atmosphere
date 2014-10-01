@@ -27,6 +27,7 @@ PATH
       devise (~> 3.2)
       enumerize
       fog
+      fog (~> 1.23)
       font-awesome-rails
       foreigner
       github-markup
@@ -50,6 +51,7 @@ PATH
       simple_form
       sinatra
       turbolinks
+      unf
       unf
       will_paginate (~> 3.0.5)
       zabbixapi

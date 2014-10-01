@@ -11,7 +11,7 @@ module Atmosphere
       Appliance.all.each do |appl|
         begin
           bill_appliance(appl, Time.now.utc, "Mass billing operation.", true)
-        rescue Air::BillingException => e
+        rescue Atmosphere::BillingException => e
           # TODO: Communicate this to the user via MI. For safety's sake, leave this appliance alone.
           appl.billing_state = 'error'
           appl.save
@@ -29,7 +29,7 @@ module Atmosphere
         BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Unable to determine current payment validity date for appliance.", actor: "bill_appliance", amount_billed: 0).save
         appl.billing_state = "error"
         appl.save
-        raise Air::BillingException.new(message: "Unable to determine current payment validity date for appliance #{appl.id}")
+        raise Atmosphere::BillingException.new(message: "Unable to determine current payment validity date for appliance #{appl.id}")
       else
         # Figure out how long this appliance can continue to run without being billed again.
         billing_interval = (billing_time - appl.prepaid_until) # This will return time in seconds
@@ -64,7 +64,7 @@ module Atmosphere
               else
                 Rails.logger.error("ERROR: Unable to update appliance #{appl.id} with billing data.")
                 BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Error saving appliance following update of billing information.", actor: "bill_appliance", amount_billed: 0).save
-                raise Air::BillingException.new(message: "Unable to update appliance #{appl.id} with billing data.")
+                raise Atmosphere::BillingException.new(message: "Unable to update appliance #{appl.id} with billing data.")
               end
             end
           end
@@ -129,7 +129,7 @@ module Atmosphere
     # Requires this appliance's fund to be bound to the VM's compute_site
     def self.can_afford_vm?(appliance, vm)
       if appliance.fund.blank?
-        raise Air::BillingException.new(message: "can_afford_vm? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
+        raise Atmosphere::BillingException.new(message: "can_afford_vm? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
       end
       billable_time = self.calculate_billable_time(appliance, Time.now.utc, true)
       amt_due = (billable_time*(vm.virtual_machine_flavor.hourly_cost)/(vm.appliances.count+1)).round
@@ -144,7 +144,7 @@ module Atmosphere
     # Requires this appliance's fund to be bound to the flavor's compute site
     def self.can_afford_flavor?(appliance, flavor)
       if appliance.fund.blank?
-        raise Air::BillingException.new(message: "can_afford_flavor? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
+        raise Atmosphere::BillingException.new(message: "can_afford_flavor? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
       end
       billable_time = self.calculate_billable_time(appliance, Time.now.utc, true)
       amt_due = (billable_time*(flavor.hourly_cost)).round

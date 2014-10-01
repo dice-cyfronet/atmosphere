@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Cloud::VmCreator do
+describe Atmosphere::Cloud::VmCreator do
   let(:default_flavor) { build(:virtual_machine_flavor, id_at_site: 'def_f_id') }
   let(:cs) do
     build(:compute_site).tap do |cs|
@@ -23,7 +23,7 @@ describe Cloud::VmCreator do
 
   it 'creates VM' do
     allow(servers_cloud_client).to receive(:create).and_return(server)
-    vm_id_at_site = Cloud::VmCreator.new(vmt).spawn_vm!
+    vm_id_at_site = Atmosphere::Cloud::VmCreator.new(vmt).spawn_vm!
 
     expect(vm_id_at_site).to eq server_id
   end
@@ -34,7 +34,7 @@ describe Cloud::VmCreator do
       expect(params[:image_id]).to eq vmt.id_at_site
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt).spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt).spawn_vm!
   end
 
   it 'creates VM with default flavor' do
@@ -43,7 +43,7 @@ describe Cloud::VmCreator do
       expect(params[:flavor_id]).to eq default_flavor.id_at_site
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt).spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt).spawn_vm!
   end
 
   it 'creates VM with default name' do
@@ -51,7 +51,7 @@ describe Cloud::VmCreator do
       expect(params[:name]).to eq vmt.name
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt).spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt).spawn_vm!
   end
 
   it 'creates VM with custom name' do
@@ -59,7 +59,7 @@ describe Cloud::VmCreator do
       expect(params[:name]).to eq 'custom name'
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt, name: 'custom name').spawn_vm!
   end
 
   it 'creates VM with user data' do
@@ -67,7 +67,7 @@ describe Cloud::VmCreator do
       expect(params[:user_data]).to eq 'my user data'
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt, user_data: 'my user data').spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt, user_data: 'my user data').spawn_vm!
   end
 
   it 'creates VM without user data when it is empty' do
@@ -75,7 +75,7 @@ describe Cloud::VmCreator do
       expect(params).to_not include :user_data
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt, user_data: nil).spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt, user_data: nil).spawn_vm!
   end
 
   it 'creates VM with user key' do
@@ -85,7 +85,7 @@ describe Cloud::VmCreator do
       expect(params[:key_name]).to eq 'my_key_name'
     end.and_return(server)
 
-    Cloud::VmCreator.new(vmt, user_key: user_key).spawn_vm!
+    Atmosphere::Cloud::VmCreator.new(vmt, user_key: user_key).spawn_vm!
   end
 
   context 'amazon' do
@@ -100,7 +100,7 @@ describe Cloud::VmCreator do
         expect(params[:groups]).to include 'mniec_permit_all'
       end.and_return(server)
 
-      Cloud::VmCreator.new(vmt).spawn_vm!
+      Atmosphere::Cloud::VmCreator.new(vmt).spawn_vm!
     end
   end
 end

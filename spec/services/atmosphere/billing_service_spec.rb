@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe BillingService do
+describe Atmosphere::BillingService do
 
   let!(:cs) { create(:openstack_with_flavors) }
   let!(:cs_fund) { create(:fund, compute_sites: [cs]) }
@@ -23,14 +23,14 @@ describe BillingService do
 
   before do
     allow(optimizer).to receive(:run)
-    allow(Optimizer).to receive(:instance).and_return(optimizer)
+    allow(Atmosphere::Optimizer).to receive(:instance).and_return(optimizer)
   end
 
   context 'new user obtains default fund' do
     it 'creates new user' do
       u = create(:user, funds: [] )
 
-      expect(u.default_fund).to be_a Fund
+      expect(u.default_fund).to be_a Atmosphere::Fund
     end
   end
 
@@ -40,28 +40,28 @@ describe BillingService do
 
     it 'throws exception for malformed appliance' do
       appl = create(:appliance, fund: nil, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
-      expect{BillingService.can_afford_vm?(appl, not_shareable_vm1)}.to raise_exception(Air::BillingException)
-      expect{BillingService.can_afford_flavor?(appl, not_shareable_vm1.virtual_machine_flavor)}.to raise_exception(Air::BillingException)
+      expect{Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)}.to raise_exception(Atmosphere::BillingException)
+      expect{Atmosphere::BillingService.can_afford_flavor?(appl, not_shareable_vm1.virtual_machine_flavor)}.to raise_exception(Atmosphere::BillingException)
     end
 
     it 'creates new funded non-shareable appliance as default' do
       appl = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
 
-      expect(BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
+      expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
 
-      BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
+      Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
       expect(appl.billing_state).to eq("prepaid")
       expect(appl.amount_billed).to eq appl.virtual_machines.first.virtual_machine_flavor.hourly_cost
-      expect(BillingLog.all.count).to eq 1
+      expect(Atmosphere::BillingLog.all.count).to eq 1
     end
 
     it 'creates new unfunded non-shareable appliance' do
       appl = create(:appliance, fund: empty_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
       expect(appl.billing_state).to eq("expired")
 
-      expect(BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq false
+      expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq false
 
-      BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
+      Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
 
       expect(appl.billing_state).to eq("expired")
 
@@ -69,9 +69,9 @@ describe BillingService do
       empty_fund.balance = 10000
       empty_fund.save
 
-      expect(BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
+      expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
 
-      BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
+      Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
 
       expect(appl.billing_state).to eq("prepaid")
     end
@@ -82,16 +82,16 @@ describe BillingService do
 
       appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
-      BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
+      Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
       appl1.reload
-      expect(BillingLog.all.count).to eq 1
+      expect(Atmosphere::BillingLog.all.count).to eq 1
 
       cs_fund.reload
       expect(cs_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost))
 
       appl2 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
-      BillingService.bill_appliance(appl2, Time.now.utc, "mock billing", true)
+      Atmosphere::BillingService.bill_appliance(appl2, Time.now.utc, "mock billing", true)
       appl2.reload
       expect(appl1.amount_billed).to eq appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost
       expect(appl2.amount_billed).to eq (appl2.virtual_machines.first.virtual_machine_flavor.hourly_cost*0.5).round
@@ -131,16 +131,16 @@ describe BillingService do
       zus_appl2 = create(:appliance, fund: zus, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
       standalone_zus_appl = create(:appliance, fund: zus, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm3])
 
-      expect(BillingService.can_afford_flavor?(rich_appl, expensive_flavor)).to eq true
-      expect(BillingService.can_afford_flavor?(middle_class_appl, expensive_flavor)).to eq true
-      expect(BillingService.can_afford_flavor?(zus_appl1, expensive_flavor)).to eq false
-      expect(BillingService.can_afford_flavor?(zus_appl1, cheap_flavor)).to eq false
-      expect(BillingService.can_afford_flavor?(standalone_zus_appl, cheap_flavor)).to eq false
-      expect(BillingService.can_afford_flavor?(amber_gold_appl, expensive_flavor)).to eq true
+      expect(Atmosphere::BillingService.can_afford_flavor?(rich_appl, expensive_flavor)).to eq true
+      expect(Atmosphere::BillingService.can_afford_flavor?(middle_class_appl, expensive_flavor)).to eq true
+      expect(Atmosphere::BillingService.can_afford_flavor?(zus_appl1, expensive_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(zus_appl1, cheap_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(standalone_zus_appl, cheap_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(amber_gold_appl, expensive_flavor)).to eq true
 
       # aplien_appl cannot afford anything because its fund is not bound to ComputeSite cs
-      expect(BillingService.can_afford_flavor?(alien_appl, cheap_flavor)).to eq false
-      expect(BillingService.can_afford_flavor?(alien_appl, free_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(alien_appl, cheap_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(alien_appl, free_flavor)).to eq false
     end
 
     it 'can or cannot afford vms' do
@@ -148,15 +148,15 @@ describe BillingService do
       cheap_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cheap_flavor)
       free_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: free_flavor)
 
-      expect(BillingService.can_afford_vm?(rich_appl, expensive_vm)).to eq true
-      expect(BillingService.can_afford_vm?(zus_appl1, shareable_vm)).to eq true
-      expect(BillingService.can_afford_vm?(zus_appl1, cheap_vm)).to eq false
-      expect(BillingService.can_afford_vm?(zus_appl1, free_vm)).to eq true
+      expect(Atmosphere::BillingService.can_afford_vm?(rich_appl, expensive_vm)).to eq true
+      expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, shareable_vm)).to eq true
+      expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, cheap_vm)).to eq false
+      expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, free_vm)).to eq true
 
       # alien_appl cannot afford anything because its fund is not bound to ComputeSite cs
-      expect(BillingService.can_afford_vm?(alien_appl, cheap_vm)).to eq false
-      expect(BillingService.can_afford_vm?(alien_appl, shareable_vm)).to eq false
-      expect(BillingService.can_afford_vm?(alien_appl, free_vm)).to eq false
+      expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, cheap_vm)).to eq false
+      expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, shareable_vm)).to eq false
+      expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, free_vm)).to eq false
     end
 
   end
@@ -188,7 +188,7 @@ describe BillingService do
 
       cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost # Cost per 1h of use for a single (full) VM
 
-      BillingService.bill_all_appliances
+      Atmosphere::BillingService.bill_all_appliances
 
       appl1.reload
       appl2.reload
@@ -214,9 +214,9 @@ describe BillingService do
       expiring_appl.save
 
       # This will bill all appliances, but expiring_appl will have expired since it does not have enough funds assigned
-      BillingService.bill_all_appliances
+      Atmosphere::BillingService.bill_all_appliances
 
-      expect(BillingLog.all.count).to eq 10
+      expect(Atmosphere::BillingLog.all.count).to eq 10
 
       appl1.reload
       appl2.reload
@@ -256,7 +256,7 @@ describe BillingService do
 
       cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost # Cost per 1h of use for a single (full) VM
 
-      BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
+      Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
 
       cs_fund.reload
       expect(cs_fund.balance).to eq original_balance - cost_unit
@@ -271,7 +271,7 @@ describe BillingService do
         # Squelch exception involving destruction of VM in cloud
       end
 
-      expect(BillingLog.all.count).to eq 2
+      expect(Atmosphere::BillingLog.all.count).to eq 2
 
       # This should incur another 30-minute expense, triggered automatically by Appliance.destroy
       cs_fund.reload

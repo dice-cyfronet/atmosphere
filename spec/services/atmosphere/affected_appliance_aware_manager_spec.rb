@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe AffectedApplianceAwareManager do
+describe Atmosphere::AffectedApplianceAwareManager do
 
   let(:obj) { double('obj', save!: true, id: 2) }
   let(:updater) { double('updater') }
@@ -8,7 +8,10 @@ describe AffectedApplianceAwareManager do
   let(:affected_appliances) { double(find: []) }
   let(:affected_appliances_class) { double(new: affected_appliances) }
 
-  subject { AffectedApplianceAwareManager.new(obj, affected_appliances_class, updater_class) }
+  subject do
+    Atmosphere::AffectedApplianceAwareManager
+      .new(obj, affected_appliances_class, updater_class)
+  end
 
   context '#save!' do
     it 'saves obj' do

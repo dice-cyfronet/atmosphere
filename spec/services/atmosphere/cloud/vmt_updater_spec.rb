@@ -1,16 +1,16 @@
 require 'rails_helper'
 
-describe Cloud::VmtUpdater do
+describe Atmosphere::Cloud::VmtUpdater do
 
   it 'openstack updates VMT--AT relation when VMT is young' do
     at, source_vmt, source_cs = at_with_vmt_on_cs
     target_cs = create(:compute_site)
     image = open_stack_image('target_vmt_id',
       source_cs.site_id, source_vmt.id_at_site)
-    updater = Cloud::VmtUpdater.new(target_cs, image)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
     updater.update
-    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
+    target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to eq at
     expect(target_vmt.managed_by_atmosphere).to be_truthy
@@ -29,10 +29,10 @@ describe Cloud::VmtUpdater do
         'source_uuid' => source_vmt.id_at_site
       }
     })
-    updater = Cloud::VmtUpdater.new(target_cs, image)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
     updater.update
-    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'ami-123')
+    target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'ami-123')
 
     expect(target_vmt.appliance_type).to eq at
     expect(target_vmt.managed_by_atmosphere).to be_truthy
@@ -43,14 +43,14 @@ describe Cloud::VmtUpdater do
     target_cs = create(:compute_site)
     image = open_stack_image('target_vmt_id',
       source_cs.site_id, source_vmt.id_at_site)
-    updater = Cloud::VmtUpdater.new(target_cs, image)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
     target_vmt = create(:virtual_machine_template,
       compute_site: target_cs,
       id_at_site: 'target_vmt_id',
       created_at: (Air.config.vmt_at_relation_update_period + 1).hours.ago)
 
     updater.update
-    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
+    target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
   end
@@ -60,10 +60,10 @@ describe Cloud::VmtUpdater do
     target_cs = create(:compute_site)
     image = open_stack_image('target_vmt_id',
       source_cs.site_id, 'does_not_exist')
-    updater = Cloud::VmtUpdater.new(target_cs, image)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
     updater.update
-    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
+    target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
   end
@@ -72,10 +72,10 @@ describe Cloud::VmtUpdater do
     target_cs = create(:compute_site)
     image = open_stack_image('target_vmt_id',
       'does_not_exist', 'does_not_exist')
-    updater = Cloud::VmtUpdater.new(target_cs, image)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
     updater.update
-    target_vmt = VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
+    target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
   end

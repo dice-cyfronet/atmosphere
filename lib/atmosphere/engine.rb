@@ -11,6 +11,8 @@ require 'influxdb'
 require 'active_model_serializers'
 require 'will_paginate'
 require 'omniauth-vph'
+require 'fog'
+require 'unf'
 
 module Atmosphere
   class Engine < ::Rails::Engine

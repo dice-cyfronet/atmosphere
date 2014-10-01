@@ -68,6 +68,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'influxdb'
   s.add_dependency 'sentry-raven'
   s.add_dependency 'will_paginate', '~> 3.0.5'
+  s.add_dependency 'fog', '~>1.23'
+  s.add_dependency 'unf'
 
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'factory_girl_rails'

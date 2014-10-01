@@ -1,26 +1,26 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe ApplianceVmsManager do
+describe Atmosphere::ApplianceVmsManager do
 
   context '#can_reuse_vm?' do
 
     it 'reuses shared VMs in prod mode' do
       appl = appliance(development: false, shared: true)
-      subject = ApplianceVmsManager.new(appl)
+      subject = Atmosphere::ApplianceVmsManager.new(appl)
 
       expect(subject.can_reuse_vm?).to be_truthy
     end
 
     it 'does not reuse VM in dev mode' do
       appl = appliance(development: true, shared: true)
-      subject = ApplianceVmsManager.new(appl)
+      subject = Atmosphere::ApplianceVmsManager.new(appl)
 
       expect(subject.can_reuse_vm?).to be_falsy
     end
 
     it 'does not reuse not shareable VMs' do
       appl = appliance(development: false, shared: false)
-      subject = ApplianceVmsManager.new(appl)
+      subject = Atmosphere::ApplianceVmsManager.new(appl)
 
       expect(subject.can_reuse_vm?).to be_falsy
     end
@@ -60,11 +60,11 @@ describe ApplianceVmsManager do
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
     let(:vm) { double('vm') }
-    subject { ApplianceVmsManager.new(appl, updater_class, Cloud::VmCreator, tags_manager_class) }
+    subject { Atmosphere::ApplianceVmsManager.new(appl, updater_class, Atmosphere::Cloud::VmCreator, tags_manager_class) }
 
     context 'when user can afford vm' do
       before do
-        allow(BillingService).to receive(:can_afford_vm?).with(appl, vm).and_return(true)
+        allow(Atmosphere::BillingService).to receive(:can_afford_vm?).with(appl, vm).and_return(true)
         allow(tags_mng).to receive(:create_tags_for_vm)
         subject.reuse_vm!(vm)
       end
@@ -89,7 +89,7 @@ describe ApplianceVmsManager do
 
     context "when user can't afford vm" do
       before do
-        allow(BillingService).to receive(:can_afford_vm?)
+        allow(Atmosphere::BillingService).to receive(:can_afford_vm?)
           .with(appl, vm).and_return(false)
 
         subject.reuse_vm!(vm)
@@ -136,7 +136,7 @@ describe ApplianceVmsManager do
     let(:name)   { 'name' }
     let(:vm)     { double('vm', errors: { to_json: {} }) }
 
-    subject { ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
+    subject { Atmosphere::ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
 
     before do
       allow(vm_creator_class).to receive(:new).with(tmpl,
@@ -147,7 +147,7 @@ describe ApplianceVmsManager do
 
     context 'when user can afford to spawn VM with selected flavor' do
       before do
-        allow(BillingService).to receive(:can_afford_flavor?)
+        allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(appl, flavor).and_return(true)
       end
 
@@ -195,7 +195,7 @@ describe ApplianceVmsManager do
 
     context "when user can't afford to spawn VM with selected flavor" do
       before do
-        allow(BillingService).to receive(:can_afford_flavor?)
+        allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(appl, flavor).and_return(false)
 
         subject.spawn_vm!(tmpl, flavor, name)

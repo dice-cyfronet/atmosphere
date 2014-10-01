@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-describe Proxy::ApplianceProxyUpdater do
-  subject { Proxy::ApplianceProxyUpdater.new(appl) }
+describe Atmosphere::Proxy::ApplianceProxyUpdater do
+  subject { Atmosphere::Proxy::ApplianceProxyUpdater.new(appl) }
   let(:http) { create(:port_mapping_template, application_protocol: :http) }
   let(:https) { create(:port_mapping_template, application_protocol: :https) }
   let(:http_https) { create(:port_mapping_template, application_protocol: :http_https) }
@@ -15,7 +15,7 @@ describe Proxy::ApplianceProxyUpdater do
       it 'does nothing' do
         expect {
           subject.update
-        }.to change { HttpMapping.count }.by(0)
+        }.to change { Atmosphere::HttpMapping.count }.by(0)
       end
 
       context 'but http mappings exists' do
@@ -27,7 +27,7 @@ describe Proxy::ApplianceProxyUpdater do
         it 'removes all http mappings' do
           expect {
             subject.update
-          }.to change { HttpMapping.count }.by(-2)
+          }.to change { Atmosphere::HttpMapping.count }.by(-2)
         end
       end
     end
@@ -39,7 +39,7 @@ describe Proxy::ApplianceProxyUpdater do
       it 'does nothing' do
         expect {
           subject.update
-        }.to change { HttpMapping.count }.by(0)
+        }.to change { Atmosphere::HttpMapping.count }.by(0)
       end
     end
 
@@ -51,14 +51,14 @@ describe Proxy::ApplianceProxyUpdater do
       it 'creates 4 new http mappings' do
         expect {
           subject.update
-        }.to change { HttpMapping.count }.by(4)
+        }.to change { Atmosphere::HttpMapping.count }.by(4)
       end
 
       it 'creates only missing http mappings' do
         create(:http_mapping, application_protocol: :http, appliance: appl, port_mapping_template: http)
         expect {
           subject.update
-        }.to change { HttpMapping.count }.by(3)
+        }.to change { Atmosphere::HttpMapping.count }.by(3)
       end
 
       it 'generates proxy url for http' do
@@ -111,7 +111,7 @@ describe Proxy::ApplianceProxyUpdater do
     end
 
     context 'http' do
-      subject { Proxy::ApplianceProxyUpdater.new(appl) }
+      subject { Atmosphere::Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(updated: http) }
 
       it 'updates only one proxy' do
@@ -129,7 +129,7 @@ describe Proxy::ApplianceProxyUpdater do
     end
 
     context 'https' do
-      subject { Proxy::ApplianceProxyUpdater.new(appl) }
+      subject { Atmosphere::Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(saved: https) }
 
       it 'updates only one proxy' do
@@ -147,7 +147,7 @@ describe Proxy::ApplianceProxyUpdater do
     end
 
     context 'when deleting PMT' do
-      subject { Proxy::ApplianceProxyUpdater.new(appl) }
+      subject { Atmosphere::Proxy::ApplianceProxyUpdater.new(appl) }
       before { subject.update(destroyed: https) }
 
       it 'does nothing' do
@@ -181,12 +181,12 @@ describe Proxy::ApplianceProxyUpdater do
     let(:vm) { create(:active_vm) }
     let(:appl) { create(:appliance, appliance_type: at, virtual_machines: [vm], appliance_set: as) }
 
-    subject { Proxy::ApplianceProxyUpdater.new(appl) }
+    subject { Atmosphere::Proxy::ApplianceProxyUpdater.new(appl) }
 
     it 'creates http mapping assigned into dev_mode_property_set' do
       subject.update
 
-      http_mapping = HttpMapping.where(appliance_id: appl.id).first
+      http_mapping = Atmosphere::HttpMapping.where(appliance_id: appl.id).first
 
       expect(http_mapping.port_mapping_template.dev_mode_property_set).to eq appl.dev_mode_property_set
     end

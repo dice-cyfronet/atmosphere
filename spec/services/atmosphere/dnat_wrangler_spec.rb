@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe DnatWrangler do
+describe Atmosphere::DnatWrangler do
 
   let(:priv_ip)           { '10.10.8.8' }
   let(:priv_port)         { 8888 }
@@ -17,7 +17,7 @@ describe DnatWrangler do
 
   context 'wrangler config is provided' do
 
-    subject { DnatWrangler.new('http://10.0.0.1:8080/dnat', 'wrangler_user', 'wrangler_passwd') }
+    subject { Atmosphere::DnatWrangler.new('http://10.0.0.1:8080/dnat', 'wrangler_user', 'wrangler_passwd') }
 
     context 'building appropriate path for Wragler request' do
 
@@ -142,7 +142,7 @@ describe DnatWrangler do
 
   context 'wrangler config is not provided' do
 
-    subject { DnatWrangler.new(nil, nil, nil) }
+    subject { Atmosphere::DnatWrangler.new(nil, nil, nil) }
 
     context 'when adding DNAT' do
       context 'returns empty array' do

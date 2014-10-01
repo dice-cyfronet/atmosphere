@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Proxy::ComputeSiteUrlUpdater do
+describe Atmosphere::Proxy::ComputeSiteUrlUpdater do
   let(:finder) { double('http_mapping_finder') }
   let(:finder_class) { double }
 
@@ -14,7 +14,10 @@ describe Proxy::ComputeSiteUrlUpdater do
     allow(url_generator_class).to receive(:new).with(cs).and_return(url_generator)
   end
 
-  subject { Proxy::ComputeSiteUrlUpdater.new(cs, finder_class, url_generator_class) }
+  subject do
+    Atmosphere::Proxy::ComputeSiteUrlUpdater
+      .new(cs, finder_class, url_generator_class)
+  end
 
   it 'updates all http mappings' do
     mapping1 = build(:http_mapping)
