@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe HttpMappingMonitoringWorker do
+describe Atmosphere::HttpMappingMonitoringWorker do
   include ApiHelpers
 
   let(:status_check) { double() }
   let(:hm_pending) { create(:http_mapping) }
   let(:hm_ok) { create(:http_mapping, monitoring_status: :ok) }
 
-  subject { HttpMappingMonitoringWorker.new(status_check) }
+  subject { Atmosphere::HttpMappingMonitoringWorker.new(status_check) }
 
   it 'should check pending' do
     expect(status_check).to receive(:submit).with(hm_pending.id)

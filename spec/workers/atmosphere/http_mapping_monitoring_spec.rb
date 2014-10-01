@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe HttpMappingMonitoringWorker do
+describe Atmosphere::HttpMappingMonitoringWorker do
   include ApiHelpers
 
   let(:status_check) { double }
-  subject { HttpMappingMonitoringWorker.new(status_check) }
+  subject { Atmosphere::HttpMappingMonitoringWorker.new(status_check) }
 
   it 'should check pending' do
     hm_pending = create(:http_mapping)

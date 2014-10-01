@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe VmTemplateMonitoringWorker do
+describe Atmosphere::VmTemplateMonitoringWorker do
 
   before { Fog.mock! }
 
@@ -39,15 +39,15 @@ describe VmTemplateMonitoringWorker do
       it 'creates 3 new templates' do
         expect {
           subject.perform(cyfronet_folsom.id)
-        }.to change{ VirtualMachineTemplate.count }.by(3)
+        }.to change{ Atmosphere::VirtualMachineTemplate.count }.by(3)
       end
 
       it 'creates new templates and set details' do
         subject.perform(cyfronet_folsom.id)
 
-        db_ubuntu = VirtualMachineTemplate.find_by(id_at_site: 'ubuntu')
-        db_arch = VirtualMachineTemplate.find_by(id_at_site: 'arch')
-        db_centos = VirtualMachineTemplate.find_by(id_at_site: 'centos')
+        db_ubuntu = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'ubuntu')
+        db_arch = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'arch')
+        db_centos = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'centos')
 
         expect(db_ubuntu).to vmt_fog_data_equals ubuntu_data, cyfronet_folsom
         expect(db_arch).to vmt_fog_data_equals arch_data, cyfronet_folsom
@@ -61,12 +61,12 @@ describe VmTemplateMonitoringWorker do
       it 'does not create duplicated templates' do
         expect {
           subject.perform(cyfronet_folsom.id)
-        }.to change{ VirtualMachineTemplate.count }.by(2)
+        }.to change{ Atmosphere::VirtualMachineTemplate.count }.by(2)
       end
 
       it 'updates existing template details' do
         subject.perform(cyfronet_folsom.id)
-        db_ubuntu = VirtualMachineTemplate.find_by(id_at_site: 'ubuntu')
+        db_ubuntu = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'ubuntu')
 
         expect(db_ubuntu).to vmt_fog_data_equals ubuntu_data, cyfronet_folsom
       end
@@ -84,7 +84,7 @@ describe VmTemplateMonitoringWorker do
       it 'removes deleted template' do
         expect {
           subject.perform(cyfronet_folsom.id)
-        }.to change{ VirtualMachineTemplate.count }.by(-1)
+        }.to change{ Atmosphere::VirtualMachineTemplate.count }.by(-1)
       end
     end
 
@@ -97,7 +97,8 @@ describe VmTemplateMonitoringWorker do
         expect(logger).to receive(:error)
         allow(logger).to receive(:debug)
 
-        allow_any_instance_of(ComputeSite).to receive(:cloud_client).and_return(cloud_client)
+        allow_any_instance_of(Atmosphere::ComputeSite)
+          .to receive(:cloud_client).and_return(cloud_client)
         allow(cloud_client).to receive(:images).and_raise(Excon::Errors::Unauthorized.new 'error')
       end
 

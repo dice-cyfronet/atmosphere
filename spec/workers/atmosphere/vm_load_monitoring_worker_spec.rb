@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe VmLoadMonitoringWorker do
+describe Atmosphere::VmLoadMonitoringWorker do
 
   before {
     Fog.mock!
@@ -21,7 +21,8 @@ describe VmLoadMonitoringWorker do
       vm2 = create(:virtual_machine, ip: '10.100.0.2', monitoring_id: 2, managed_by_atmosphere: true)
       vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
       vm4 = create(:virtual_machine, ip: '10.100.0.4', monitoring_id: 3)
-      allow(VirtualMachine).to receive(:all).and_return [vm1, vm2, vm3]
+      allow(Atmosphere::VirtualMachine)
+        .to receive(:all).and_return [vm1, vm2, vm3]
 
       expect(vm1).to receive(:current_load_metrics)
       expect(vm2).to receive(:current_load_metrics)
@@ -43,7 +44,8 @@ describe VmLoadMonitoringWorker do
       allow(vm2).to receive(:current_load_metrics).and_return metrics_double_2
       allow(vm3).to receive(:current_load_metrics).and_return metrics_double_3
 
-      allow(VirtualMachine).to receive(:all).and_return [vm1, vm2, vm3]
+      allow(Atmosphere::VirtualMachine)
+        .to receive(:all).and_return [vm1, vm2, vm3]
 
       expect(vm1).to receive(:save_load_metrics).with(metrics_double_1)
       expect(vm2).to receive(:save_load_metrics).with(metrics_double_2)

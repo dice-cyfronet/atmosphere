@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe VmTagsCreatorWorker do
+describe Atmosphere::VmTagsCreatorWorker do
 
   vm_id = 1
   id_at_site = 'ID_AT_SITE'
@@ -12,7 +12,7 @@ describe VmTagsCreatorWorker do
 
   before do
     allow(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
-    allow(VirtualMachine).to receive(:find).with(vm_id).and_return(vm_mock)
+    allow(Atmosphere::VirtualMachine).to receive(:find).with(vm_id).and_return(vm_mock)
     allow(vm_mock).to receive(:id).and_return vm_id
     allow(vm_mock).to receive(:id_at_site).and_return id_at_site
     allow(vm_mock).to receive(:compute_site).and_return cs_mock
@@ -30,14 +30,16 @@ describe VmTagsCreatorWorker do
       it 'calls cloud client with appropriate tag parameters' do
         expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map)
         expect(Raven).not_to receive(:capture_exception)
-        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+        Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
       end
 
       it 'reraise exception' do
         exc = Fog::Compute::OpenStack::NotFound.new
         expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map).and_raise(exc)
-        expect { VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map) }
-          .to raise_error(Fog::Compute::OpenStack::NotFound)
+        expect {
+          Atmosphere::VmTagsCreatorWorker.new
+            .perform(vm_mock.id, tags_map)
+        }.to raise_error(Fog::Compute::OpenStack::NotFound)
       end
 
     end
@@ -50,7 +52,7 @@ describe VmTagsCreatorWorker do
       it 'calls cloud client with appropriate tag parameters' do
         expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map)
         expect(Raven).not_to receive(:capture_exception)
-        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+        Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
       end
 
       it 'reports error to Raven' do
@@ -58,7 +60,7 @@ describe VmTagsCreatorWorker do
         expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map).and_raise(exc)
         expect(Raven).to receive(:capture_message).with(start_with('Failed to annotate'), anything)
         begin
-          VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+          Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
         rescue
           # exc is expected to be raised
         end
@@ -74,7 +76,7 @@ describe VmTagsCreatorWorker do
     end
 
     context 'on openstack' do
-    
+
       before do
         allow(cs_mock).to receive(:technology).and_return('openstack')
       end
@@ -82,12 +84,15 @@ describe VmTagsCreatorWorker do
       it 'does not call cloud client' do
         expect(cloud_client_mock).not_to receive(:create_tags_for_vm)
         expect(Raven).not_to receive(:capture_exception)
-        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+        Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
       end
 
       it 'reschedules tag creation' do
-        expect(VmTagsCreatorWorker).to receive(:perform_in).with(2.minutes, vm_mock.id, tags_map)
-        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+        expect(Atmosphere::VmTagsCreatorWorker)
+          .to receive(:perform_in)
+            .with(2.minutes, vm_mock.id, tags_map)
+
+        Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
       end
 
     end
@@ -100,10 +105,10 @@ describe VmTagsCreatorWorker do
       it 'calls cloud client with appropriate tag parameters' do
         expect(cloud_client_mock).to receive(:create_tags_for_vm).with(vm_mock.id_at_site, tags_map)
         expect(Raven).not_to receive(:capture_exception)
-        VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
+        Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
       end
     end
-    
+
   end
 
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe VmMonitoringWorker do
+describe Atmosphere::VmMonitoringWorker do
   let(:vm_updater_class) { double }
   let(:vm_destroyer_class) { double('destroyer') }
 
@@ -8,7 +8,7 @@ describe VmMonitoringWorker do
     Fog.mock!
   }
 
-  subject { VmMonitoringWorker.new(vm_updater_class, vm_destroyer_class) }
+  subject { Atmosphere::VmMonitoringWorker.new(vm_updater_class, vm_destroyer_class) }
 
   context 'as a sidekiq worker' do
     it 'responds to #perform' do
@@ -24,7 +24,8 @@ describe VmMonitoringWorker do
     let(:cs) { double('cs', cloud_client: cloud_client) }
 
     before do
-      allow(ComputeSite).to receive(:find).with(1).and_return(cs)
+      allow(Atmosphere::ComputeSite)
+        .to receive(:find).with(1).and_return(cs)
     end
 
     context 'and cloud client returns information about VMs' do
