@@ -2,8 +2,13 @@ class Atmosphere::Admin::ApplianceConfigurationTemplatesController < Atmosphere:
 
   # NOTE: all actions below do Ajax/JSON
 
-  load_and_authorize_resource :appliance_type
-  load_and_authorize_resource :appliance_configuration_template, through: :appliance_type
+  load_and_authorize_resource :appliance_type,
+    class: 'Atmosphere::ApplianceType'
+
+  load_and_authorize_resource :appliance_configuration_template,
+    through: :appliance_type,
+    class: 'Atmosphere::ApplianceConfigurationTemplate'
+
   layout false
 
   # GET /admin/appliance_types/1/appliance_configuration_templates

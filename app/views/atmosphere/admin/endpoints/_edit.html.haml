@@ -22,6 +22,6 @@
       = button_tag class: 'btn btn-success btn-xs', onclick: "$('#{form_id}').submit()" do
         =fa_icon 'save'
 
-      = link_to [:admin, pmt.appliance_type, pmt, Endpoint], remote: true,
+      = link_to [:admin, pmt.appliance_type, pmt, Atmosphere::Endpoint], remote: true,
           class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#endpoints'} do
         =fa_icon 'undo'

@@ -1,11 +1,11 @@
 !!! 5
 %html{ lang: 'en'}
-  = render 'layouts/head'
+  = render 'layouts/atmosphere/head'
   %body
     #wrap
       .proper-content
-        = render 'layouts/flash'
-        = render 'layouts/navbar'
+        = render 'layouts/atmosphere/flash'
+        = render 'layouts/atmosphere/navbar'
         .container= yield
       #push
-    = render "layouts/footer"
+    = render "layouts/atmosphere/footer"

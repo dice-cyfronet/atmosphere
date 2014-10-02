@@ -1,5 +1,6 @@
 class Atmosphere::Admin::SecurityProxiesController < Atmosphere::Admin::ApplicationController
-  load_and_authorize_resource :security_proxy
+  load_and_authorize_resource :security_proxy,
+    class: 'Atmosphere::SecurityProxy'
 
   def index
     @security_proxies = @security_proxies.order(:name)

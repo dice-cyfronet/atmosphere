@@ -1,5 +1,5 @@
 require 'settingslogic'
-require 'devise'
+
 require 'cancan'
 require 'simple_form'
 require 'gravtastic'
@@ -13,6 +13,16 @@ require 'will_paginate'
 require 'omniauth-vph'
 require 'fog'
 require 'unf'
+
+require 'bootstrap-sass'
+require 'font-awesome-rails'
+require 'nprogress-rails'
+require 'jquery-rails'
+require 'turbolinks'
+require 'jquery-turbolinks'
+
+require 'github-markup'
+require 'redcarpet'
 
 module Atmosphere
   class Engine < ::Rails::Engine

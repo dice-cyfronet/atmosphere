@@ -28,13 +28,13 @@
 
     %tr#vmt-assignment-form
       %td(colspan='5')
-        - if VirtualMachineTemplate.active.unassigned.count > 0
+        - if Atmosphere::VirtualMachineTemplate.active.unassigned.count > 0
           %p.description
             Select unassigned Virtual Machine Templates to set them as of this Appliance Type.
 
             = form_tag assign_virtual_machine_template_admin_appliance_type_path, method: :put, class: 'form-inline', role: :form do |f|
               .form-group
-                = select_tag :virtual_machine_template_id, options_from_collection_for_select(VirtualMachineTemplate.active.unassigned, :id, :name), class: 'form-control'
+                = select_tag :virtual_machine_template_id, options_from_collection_for_select(Atmosphere::VirtualMachineTemplate.active.unassigned, :id, :name), class: 'form-control'
 
               = submit_tag :submit, class: 'btn btn-success', value: 'Assign'
 

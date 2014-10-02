@@ -24,7 +24,7 @@
           .pull-right Actions
 
     %tbody
-      = render partial: 'admin/port_mapping_templates/show', collection: @appliance_type.port_mapping_templates.def_order, as: :pmt
+      = render partial: 'atmosphere/admin/port_mapping_templates/show', collection: @appliance_type.port_mapping_templates.def_order, as: :pmt
 
       %tr#new-port-mapping-template
 

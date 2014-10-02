@@ -1,6 +1,7 @@
 class Atmosphere::Admin::ApplianceTypesController < Atmosphere::Admin::ApplicationController
+  load_and_authorize_resource :appliance_type,
+    class: 'Atmosphere::ApplianceType'
 
-  load_and_authorize_resource :appliance_type
   before_filter :set_appliance_types
 
   # GET /admin/appliance_types
@@ -41,7 +42,7 @@ class Atmosphere::Admin::ApplianceTypesController < Atmosphere::Admin::Applicati
   # Serves for assigning active VMT particular AT
   def assign_virtual_machine_template
     if params[:virtual_machine_template_id]
-      vmt = VirtualMachineTemplate.find params[:virtual_machine_template_id]
+      vmt = Atmosphere::VirtualMachineTemplate.find params[:virtual_machine_template_id]
       @appliance_type.virtual_machine_templates << vmt if vmt
       redirect_to [:admin, @appliance_type], notice: 'Appliance Type was successfully updated.'
     else
@@ -63,7 +64,7 @@ class Atmosphere::Admin::ApplianceTypesController < Atmosphere::Admin::Applicati
   private
 
     def set_appliance_types
-      @appliance_types = (@appliance_types ? @appliance_types : ApplianceType.all).def_order
+      @appliance_types = (@appliance_types ? @appliance_types : Atmosphere::ApplianceType.all).def_order
     end
 
     # Only allow a trusted parameter "white list" through.

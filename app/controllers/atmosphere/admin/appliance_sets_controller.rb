@@ -1,5 +1,6 @@
 class Atmosphere::Admin::ApplianceSetsController < Atmosphere::Admin::ApplicationController
-  load_and_authorize_resource :appliance_set
+  load_and_authorize_resource :appliance_set,
+    class: 'Atmosphere::ApplianceSet'
 
   # GET /admin/appliance_sets
   def index

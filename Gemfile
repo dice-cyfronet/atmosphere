@@ -12,7 +12,6 @@ gemspec
 
 gem 'redirus-worker', github: 'dice-cyfronet/redirus-worker', branch: :master, require: 'redirus/worker/proxy'
 
-
 group :development do
   gem 'annotate'
   gem 'quiet_assets'

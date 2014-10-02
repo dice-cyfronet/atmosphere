@@ -7,7 +7,7 @@
   %td= t "enumerize.application_protocol.#{pmt.application_protocol}"
   %td
 
-    = link_to [:admin, pmt.appliance_type, pmt, Endpoint], remote: true,
+    = link_to [:admin, pmt.appliance_type, pmt, Atmosphere::Endpoint], remote: true,
         class: 'btn btn-default btn-xs', title: 'Endpoints', data: {target: '#endpoints', role: 'endpoints'} do
       Endpoints
 

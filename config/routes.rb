@@ -14,6 +14,13 @@ def owned_payload_resources(name)
 end
 
 Atmosphere::Engine.routes.draw do
+  root 'home#index'
+
+  devise_for  :users,
+              controllers: {
+                omniauth_callbacks: 'users/omniauth_callbacks'
+              },
+              module: :devise
 
   get 'jobs/show'
   resource :profile, only: [:show, :update] do
@@ -52,11 +59,6 @@ Atmosphere::Engine.routes.draw do
     resources :virtual_machine_templates, except: [:new, :create]
     resources :user_keys, except: [:edit, :update]
   end
-
-  devise_for :users,
-             controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
-
-  root to: 'home#index'
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
@@ -105,7 +107,6 @@ Atmosphere::Engine.routes.draw do
 
       get 'clew/appliance_instances' => 'clew#appliance_instances'
       get 'clew/appliance_types' => 'clew#appliance_types'
-
     end
   end
 

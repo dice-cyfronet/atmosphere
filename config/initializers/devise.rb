@@ -263,4 +263,6 @@ Devise.setup do |config|
       manager.default_strategies(:scope => :user).unshift strategy
     end
   end
+
+  config.router_name = :atmosphere
 end

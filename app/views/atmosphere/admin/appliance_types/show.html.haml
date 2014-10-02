@@ -1,11 +1,11 @@
 .appliance_types
   .row
-    = render 'admin/appliance_types/appliance_types_menu'
+    = render 'atmosphere/admin/appliance_types/appliance_types_menu'
 
     .col-md-9
       #appliance_type
 
-        = render 'admin/appliance_types/view'
+        = render 'atmosphere/admin/appliance_types/view'
 
         -#= hb 'if isEditing' do
         -#  .edit
@@ -27,10 +27,10 @@
 
         .tab-content
           #port-mappings-tab.tab-pane.active
-            = render 'admin/port_mapping_templates/index'
+            = render 'atmosphere/admin/port_mapping_templates/index'
           #configurations-tab.tab-pane
-            = render 'admin/appliance_configuration_templates/index'
+            = render 'atmosphere/admin/appliance_configuration_templates/index'
           #templates-tab.tab-pane
-            = render 'admin/appliance_types/templates'
+            = render 'atmosphere/admin/appliance_types/templates'
           #appliances-tab.tab-pane
-            = render 'admin/appliance_types/appliances'
+            = render 'atmosphere/admin/appliance_types/appliances'

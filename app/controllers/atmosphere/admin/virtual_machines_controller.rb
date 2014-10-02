@@ -1,5 +1,6 @@
 class Atmosphere::Admin::VirtualMachinesController < Atmosphere::Admin::ApplicationController
-  load_and_authorize_resource :virtual_machine
+  load_and_authorize_resource :virtual_machine,
+    class: 'Atmosphere::VirtualMachine'
 
   def index
     @virtual_machines = @virtual_machines.joins(:compute_site).order('compute_sites.name').order('virtual_machines.name').group_by(&:compute_site)

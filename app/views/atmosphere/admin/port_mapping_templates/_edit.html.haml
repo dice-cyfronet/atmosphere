@@ -20,6 +20,6 @@
       = button_tag class: 'btn btn-success btn-xs', onclick: "$('#{form_id}').submit()" do
         =fa_icon 'save'
 
-      = link_to [:admin, @appliance_type, PortMappingTemplate], remote: true,
+      = link_to [:admin, @appliance_type, Atmosphere::PortMappingTemplate], remote: true,
           class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#port-mapping-templates'} do
         =fa_icon 'undo'

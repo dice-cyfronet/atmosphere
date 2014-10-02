@@ -1,5 +1,6 @@
 class Atmosphere::Admin::SecurityPoliciesController < Atmosphere::Admin::ApplicationController
-  load_and_authorize_resource :security_policy
+  load_and_authorize_resource :security_policy,
+    class: 'Atmosphere::SecurityPolicy'
 
   def index
     @security_policies = @security_policies.order(:name)

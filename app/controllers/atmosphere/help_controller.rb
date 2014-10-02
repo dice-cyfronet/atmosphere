@@ -1,5 +1,6 @@
 class Atmosphere::HelpController < ApplicationController
   skip_authorization_check
+  layout 'layouts/atmosphere/application'
 
   before_filter :authenticate_user!
 

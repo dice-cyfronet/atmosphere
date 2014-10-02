@@ -2,8 +2,13 @@ class Atmosphere::Admin::PortMappingTemplatesController < Atmosphere::Admin::App
 
   # NOTE: all actions below do Ajax/JSON
 
-  load_and_authorize_resource :appliance_type
-  load_and_authorize_resource :port_mapping_template, through: :appliance_type
+  load_and_authorize_resource :appliance_type,
+    class: 'Atmosphere::ApplianceType'
+
+  load_and_authorize_resource :port_mapping_template,
+    through: :appliance_type,
+    class: 'Atmosphere::PortMappingTemplate'
+
   before_filter :initialize_manager, only: [:create, :update, :destroy]
   layout false
 
@@ -61,6 +66,6 @@ class Atmosphere::Admin::PortMappingTemplatesController < Atmosphere::Admin::App
   end
 
   def initialize_manager
-    @manager = AffectedApplianceAwareManager.new(@port_mapping_template, AppliancesAffectedByPmt)
+    @manager = Atmosphere::AffectedApplianceAwareManager.new(@port_mapping_template, AppliancesAffectedByPmt)
   end
 end

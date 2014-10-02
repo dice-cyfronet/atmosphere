@@ -1,6 +1,6 @@
 .appliance_types
   .row
-    = render 'admin/appliance_types/appliance_types_menu'
+    = render 'atmosphere/admin/appliance_types/appliance_types_menu'
 
     .col-md-9
       #appliance_type
@@ -23,7 +23,7 @@
               = link_to admin_appliance_types_path, class: 'btn btn-default btn-xs', title: 'Cancel' do
                 = t('cancel')
           %hr
-          = render 'admin/appliance_types/edit'
+          = render 'atmosphere/admin/appliance_types/edit'
 
         -# FIXME(any) use this or remove?
 

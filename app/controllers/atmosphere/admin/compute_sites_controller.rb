@@ -1,5 +1,6 @@
 class Atmosphere::Admin::ComputeSitesController < Atmosphere::Admin::ApplicationController
-  load_and_authorize_resource :compute_site
+  load_and_authorize_resource :compute_site,
+    class: 'Atmosphere::ComputeSite'
 
   # GET /compute_sites
   def index
