@@ -13,4 +13,4 @@
           = link_to file.titleize, help_api_file_path(file)
   .col-md-10
     = preserve do
-      = markdown File.read(Rails.root.join("doc", "api", "#{@category}.md"))
+      = markdown File.read(@doc_file)
