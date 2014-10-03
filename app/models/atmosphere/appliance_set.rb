@@ -16,7 +16,8 @@ module Atmosphere
 
     extend Enumerize
 
-    belongs_to :user
+    belongs_to :user,
+        class_name: 'Atmosphere::User'
 
     has_many :appliances,
         dependent: :destroy,

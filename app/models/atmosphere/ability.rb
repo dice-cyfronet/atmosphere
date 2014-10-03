@@ -40,7 +40,7 @@ module Atmosphere
       end
 
       ### Anonymous user activities
-      user ||= User.new
+      user ||= Atmosphere::User.new
       apply_abilities_for! :anonymous
     end
 

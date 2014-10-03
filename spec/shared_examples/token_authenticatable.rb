@@ -2,7 +2,7 @@ shared_examples 'token_authenticatable' do
   describe '.find_by_authentication_token' do
     context 'valid token' do
       it 'finds correct user' do
-        class_symbol = described_class.name.underscore
+        class_symbol = described_class.name.demodulize.underscore
         item = create(class_symbol, :authentication_token)
         create(class_symbol, :authentication_token)
 
@@ -16,7 +16,7 @@ shared_examples 'token_authenticatable' do
 
     context 'nil token' do
       it 'returns nil' do
-        class_symbol = described_class.name.underscore
+        class_symbol = described_class.name.demodulize.underscore
         create(class_symbol)
 
         item_found = described_class.find_by_authentication_token(nil)
@@ -28,7 +28,7 @@ shared_examples 'token_authenticatable' do
 
   describe '#ensure_authentication_token' do
     it 'creates auth token' do
-      class_symbol = described_class.name.underscore
+      class_symbol = described_class.name.demodulize.underscore
       item = create(class_symbol, authentication_token: '')
 
       item.ensure_authentication_token

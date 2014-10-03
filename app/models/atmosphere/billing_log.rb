@@ -22,7 +22,8 @@ module Atmosphere
   class BillingLog < ActiveRecord::Base
     self.table_name = 'billing_logs'
 
-    belongs_to :user
+    belongs_to :user,
+      class_name: 'Atmosphere::User'
 
     validates_presence_of :appliance, :fund, :actor
     validates_numericality_of :amount_billed

@@ -22,7 +22,8 @@ module Atmosphere
     has_many :appliances,
       class_name: 'Atmosphere::Appliance'
 
-    belongs_to :user
+    belongs_to :user,
+      class_name: 'Atmosphere::User'
 
     validates_presence_of :name, :public_key, :user
     validates_uniqueness_of :name, :scope => :user_id

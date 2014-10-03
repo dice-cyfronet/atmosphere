@@ -24,14 +24,16 @@
 require 'rails_helper'
 require_relative "../../shared_examples/token_authenticatable.rb"
 
-describe User do
+describe Atmosphere::User do
+  subject { build(:user) }
+
   it { should have_many(:appliance_sets).dependent(:destroy) }
   it { should have_many(:user_keys).dependent(:destroy) }
   it { should have_many :appliance_types }
   it { should have_and_belong_to_many :security_proxies }
   it { should have_and_belong_to_many :security_policies }
 
-  it_behaves_like 'token_authenticatable'
+it_behaves_like 'token_authenticatable'
 
   describe '#generate_password' do
     before { subject.generate_password }
@@ -70,24 +72,24 @@ describe User do
       end
 
       it 'should be found using login' do
-        found = User.vph_find_or_create(user1_auth)
+        found = Atmosphere::User.vph_find_or_create(user1_auth)
         expect(found.id).to eq user1.id
       end
 
       it 'should be found using email' do
-        found = User.vph_find_or_create(user2_auth)
+        found = Atmosphere::User.vph_find_or_create(user2_auth)
         expect(found.id).to eq user2.id
       end
 
       it 'should update user details' do
-        found = User.vph_find_or_create(user1_auth)
+        found = Atmosphere::User.vph_find_or_create(user1_auth)
         expect(found.email).to eq user1_auth.info.email
         expect(found.full_name).to eq user1_auth.info.full_name
         expect(found.roles.to_a).to eq [:admin]
       end
 
       it 'should update also user login' do
-        found = User.vph_find_or_create(user2_auth)
+        found = Atmosphere::User.vph_find_or_create(user2_auth)
         expect(found.login).to eq user2_auth.info.login
       end
     end
@@ -106,12 +108,12 @@ describe User do
 
       it 'should create new user' do
         expect {
-          User.vph_find_or_create(new_user_auth)
-        }.to change { User.count }.by(1)
+          Atmosphere::User.vph_find_or_create(new_user_auth)
+        }.to change { Atmosphere::User.count }.by(1)
       end
 
       it 'should set user details' do
-        user = User.vph_find_or_create(new_user_auth)
+        user = Atmosphere::User.vph_find_or_create(new_user_auth)
 
         expect(user.login).to eq new_user_auth.info.login
         expect(user.email).to eq new_user_auth.info.email

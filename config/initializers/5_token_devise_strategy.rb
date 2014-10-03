@@ -18,7 +18,7 @@ module Devise
       def authenticate!
         return fail(:invalid_ticket) unless token
         begin
-          user = User.find_by(authentication_token: token)
+          user = Atmosphere::User.find_by(authentication_token: token)
           user = sudo!(user, sudo_as) if sudo_as
 
           success!(user)

@@ -24,11 +24,11 @@ module Atmosphere
     extend Enumerize
     include EscapeXml
 
-    belongs_to :security_proxy#,
-      # class_name: 'Atmosphere::SecurityProxy'
+    belongs_to :security_proxy,
+      class_name: 'Atmosphere::SecurityProxy'
 
     belongs_to :author,
-      class_name: 'User',
+      class_name: 'Atmosphere::User',
       foreign_key: 'user_id'
 
     has_many :appliances,

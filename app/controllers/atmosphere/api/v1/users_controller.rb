@@ -2,7 +2,9 @@ module Atmosphere
   module Api
     module V1
       class UsersController < Atmosphere::Api::ApplicationController
-        load_and_authorize_resource :user
+        load_and_authorize_resource :user,
+          class: 'Atmosphere::User'
+
         respond_to :json
 
         def index
@@ -11,6 +13,10 @@ module Atmosphere
 
         def show
           respond_with @user
+        end
+
+        def model_class
+          Atmosphere::User
         end
       end
     end

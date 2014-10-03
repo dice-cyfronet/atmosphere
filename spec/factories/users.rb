@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :user do
+  factory :user, class: 'Atmosphere::User' do
     email { Faker::Internet.email }
     login { SecureRandom.hex(8) }
     password '12345678'

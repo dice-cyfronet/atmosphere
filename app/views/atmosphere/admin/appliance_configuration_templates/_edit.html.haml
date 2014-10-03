@@ -17,6 +17,6 @@
       = button_tag class: 'btn btn-success btn-xs', onclick: "$('#{form_id}').submit()" do
         =fa_icon 'save'
 
-      = link_to [:admin, @appliance_type, ApplianceConfigurationTemplate], remote: true,
+      = link_to [:admin, @appliance_type, Atmosphere::ApplianceConfigurationTemplate], remote: true,
           class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#appliance-configuration-templates'} do
         =fa_icon 'undo'

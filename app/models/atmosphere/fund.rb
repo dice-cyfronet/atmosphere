@@ -25,7 +25,8 @@ module Atmosphere
         class_name: 'Atmosphere::Appliance'
 
     has_many :users,
-        through: :user_funds
+        through: :user_funds,
+        class_name: 'Atmosphere::User'
 
     has_many :user_funds,
         dependent: :destroy,

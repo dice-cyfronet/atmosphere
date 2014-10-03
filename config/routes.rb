@@ -17,6 +17,7 @@ Atmosphere::Engine.routes.draw do
   root 'home#index'
 
   devise_for  :users,
+              class_name: 'Atmosphere::User',
               controllers: {
                 omniauth_callbacks: 'users/omniauth_callbacks'
               },
