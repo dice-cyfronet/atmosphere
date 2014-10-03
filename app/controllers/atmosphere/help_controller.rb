@@ -1,4 +1,4 @@
-class Atmosphere::HelpController < ApplicationController
+class Atmosphere::HelpController < Atmosphere::ApplicationController
   skip_authorization_check
   layout 'layouts/atmosphere/application'
 

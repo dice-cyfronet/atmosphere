@@ -5,6 +5,8 @@ class Atmosphere::ApplicationController < ApplicationController
   check_authorization :unless => :devise_controller?
   include Atmosphere::CancanStrongParams
 
+  helper Atmosphere::Engine.helpers
+
   rescue_from CanCan::AccessDenied do |exception|
     if current_user.nil?
       session[:next] = request.fullpath

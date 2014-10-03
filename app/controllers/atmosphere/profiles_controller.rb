@@ -1,4 +1,4 @@
-class Atmosphere::ProfilesController < ApplicationController
+class Atmosphere::ProfilesController < Atmosphere::ApplicationController
   skip_authorization_check
   before_filter :authenticate_user!
 
