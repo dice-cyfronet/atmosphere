@@ -18,7 +18,7 @@ GIT
 PATH
   remote: .
   specs:
-    Atmosphere (0.0.1)
+    atmosphere (0.0.1)
       active_model_serializers (~> 0.8.0)
       bootstrap-sass (~> 3.2)
       cancan
@@ -27,7 +27,6 @@ PATH
       devise (~> 3.2)
       enumerize
       fog
-      fog (~> 1.23)
       font-awesome-rails
       foreigner
       github-markup
@@ -51,7 +50,6 @@ PATH
       simple_form
       sinatra
       turbolinks
-      unf
       unf
       will_paginate (~> 3.0.5)
       zabbixapi
@@ -206,7 +204,7 @@ GEM
     influxdb (0.1.8)
       json
     ipaddress (0.8.0)
-    jquery-rails (3.1.1)
+    jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     jquery-turbolinks (2.0.2)
@@ -367,7 +365,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    turbolinks (2.2.2)
+    turbolinks (2.4.0)
       coffee-rails
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -385,8 +383,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  Atmosphere!
   annotate
+  atmosphere!
   better_errors
   binding_of_caller
   database_cleaner
