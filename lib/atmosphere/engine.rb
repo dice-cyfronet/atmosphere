@@ -15,7 +15,7 @@ require 'fog'
 require 'unf'
 
 require 'bootstrap-sass'
-require 'font-awesome-rails'
+require 'font-awesome-sass'
 require 'nprogress-rails'
 require 'jquery-rails'
 require 'turbolinks'

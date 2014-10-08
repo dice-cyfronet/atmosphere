@@ -13,8 +13,8 @@
 
       = link_to [:edit, :admin, pmt.appliance_type, pmt, endpoint], remote: true,
           class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-endpoint-id='#{endpoint.id}']"} do
-        =fa_icon 'edit'
+        =icon 'edit'
 
       = link_to [:admin, pmt.appliance_type, pmt, endpoint], method: :delete, remote: true,
           class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#endpoints'} do
-        =fa_icon 'trash-o'
+        =icon 'trash-o'

@@ -76,10 +76,10 @@
             .btn-group
               = link_to [:admin, appliance_set],
                 class: 'btn btn-success btn-xs', title: t('appliance_sets.show') do
-                =fa_icon 'bars'
+                =icon 'bars'
               = link_to edit_admin_appliance_set_path(appliance_set),
                 class: 'btn btn-warning btn-xs', title: t('appliance_sets.edit') do
-                =fa_icon 'edit'
+                =icon 'edit'
               = link_to [:admin, appliance_set], method: :delete, data: { confirm: t('are_you_sure') },
                 class: 'btn btn-danger btn-xs', title: t('appliance_sets.remove') do
-                =fa_icon 'trash-o'
+                =icon 'trash-o'

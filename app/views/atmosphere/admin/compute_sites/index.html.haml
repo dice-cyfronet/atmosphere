@@ -4,7 +4,7 @@
 %p
   = link_to new_admin_compute_site_path,
     class: 'btn btn-success btn-xs', title: t('compute_sites.new') do
-    =fa_icon 'plus'
+    =icon 'plus'
     = t('add_new')
 
 %p
@@ -35,10 +35,10 @@
           .btn-group
             = link_to admin_compute_site_path(compute_site),
               class: 'btn btn-success btn-xs', title: t('compute_sites.show') do
-              =fa_icon 'bars'
+              =icon 'bars'
             = link_to edit_admin_compute_site_path(compute_site),
               class: 'btn btn-warning btn-xs', title: t('compute_sites.edit') do
-              =fa_icon 'edit'
+              =icon 'edit'
             = link_to admin_compute_site_path(compute_site), method: :delete, :data => { confirm: t('are_you_sure') },
               class: 'btn btn-danger btn-xs', title: t('compute_sites.remove') do
-              =fa_icon 'trash-o'
+              =icon 'trash-o'

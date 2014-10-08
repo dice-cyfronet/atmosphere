@@ -16,11 +16,11 @@
 
       = link_to [:edit, :admin, act.appliance_type, act], remote: true, action: :edit,
           class: 'btn btn-success btn-xs', title: 'Edit', data: {target: "tr[data-appliance-configuration-template-id='#{act.id}']"} do
-        =fa_icon 'edit'
+        =icon 'edit'
 
       = link_to [:admin, act.appliance_type, act], method: :delete, remote: true,
           class: 'btn btn-danger btn-xs', title: 'Delete', data: {target: '#appliance-configuration-templates'} do
-        =fa_icon 'trash-o'
+        =icon 'trash-o'
 
 :javascript
   $('body').on('click', '.short-payload', function() {

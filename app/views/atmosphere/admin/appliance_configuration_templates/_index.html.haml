@@ -33,6 +33,6 @@
         %td(colspan="#{acts_present ? '5' : ''}")
           = link_to [:new, :admin, @appliance_type, :appliance_configuration_template], remote: true,
               class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-appliance-configuration-template'} do
-            =fa_icon 'plus'
+            =icon 'plus'
             Add
             = 'first' unless acts_present

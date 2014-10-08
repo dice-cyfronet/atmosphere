@@ -15,8 +15,8 @@
       - form_id = (request[:action] == 'new' ? '#new_appliance_configuration_template' : "#edit_appliance_configuration_template_#{@appliance_configuration_template.id}")
 
       = button_tag class: 'btn btn-success btn-xs', onclick: "$('#{form_id}').submit()" do
-        =fa_icon 'save'
+        =icon 'save'
 
       = link_to [:admin, @appliance_type, Atmosphere::ApplianceConfigurationTemplate], remote: true,
           class: 'btn btn-default btn-xs', title: 'Cancel', data: {target: '#appliance-configuration-templates'} do
-        =fa_icon 'undo'
+        =icon 'undo'

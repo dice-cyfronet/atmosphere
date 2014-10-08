@@ -17,10 +17,10 @@
       - if user_signed_in?
         = nav_link controller: :help do
           = link_to help_path, class: "has_bottom_tooltip", title: t('help.title') do
-            =fa_icon 'question'
+            =icon 'question'
         = nav_link controller: :profiles do
           = link_to profile_path, class: "has_bottom_tooltip avatar", title: t('profiles.title') do
             = image_tag current_user.gravatar_url(:size => 26)
         %li
           = link_to destroy_user_session_path, class: "has_bottom_tooltip", title: t('logout'), method: :delete do
-            =fa_icon 'sign-out'
+            =icon 'sign-out'

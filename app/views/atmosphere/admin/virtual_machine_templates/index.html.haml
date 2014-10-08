@@ -31,10 +31,10 @@
             .btn-group
               = link_to admin_virtual_machine_template_path(virtual_machine_template),
                 class: 'btn btn-success btn-xs', title: t('virtual_machine_templates.show') do
-                =fa_icon 'bars'
+                =icon 'bars'
               = link_to edit_admin_virtual_machine_template_path(virtual_machine_template),
                 class: 'btn btn-warning btn-xs', title: t('virtual_machine_templates.edit') do
-                =fa_icon 'edit'
+                =icon 'edit'
               = link_to admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => t('are_you_sure') },
                 class: 'btn btn-danger btn-xs', title: t('virtual_machine_templates.remove') do
-                =fa_icon 'trash-o'
+                =icon 'trash-o'

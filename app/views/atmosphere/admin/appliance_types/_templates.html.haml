@@ -19,7 +19,7 @@
         %td
           = link_to admin_virtual_machine_template_path(id: vmt.id, virtual_machine_template: { appliance_type_id: nil }), method: :put,
               class: 'btn btn-danger btn-xs', title: 'Remove this Appliance Type assignment' do
-            =fa_icon 'trash-o'
+            =icon 'trash-o'
 
     - unless @appliance_type.virtual_machine_templates.present?
       %tr

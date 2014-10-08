@@ -4,7 +4,7 @@
 %p
   = link_to new_admin_user_key_path,
     class: 'btn btn-success btn-xs', title: t('user_keys.new') do
-    =fa_icon 'plus'
+    =icon 'plus'
     = t('add_new')
 
 %p
@@ -29,7 +29,7 @@
           .btn-group
             = link_to admin_user_key_path(user_key),
               class: 'btn btn-success btn-xs', title: t('user_keys.show') do
-              =fa_icon 'bars'
+              =icon 'bars'
             = link_to admin_user_key_path(user_key), :method => :delete, :data => { :confirm => t('are_you_sure') },
               class: 'btn btn-danger btn-xs', title: t('user_keys.remove') do
-              =fa_icon 'trash-o'
+              =icon 'trash-o'

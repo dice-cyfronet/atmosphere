@@ -6,16 +6,16 @@
 
   .pull-right
     = link_to edit_admin_appliance_type_path(@appliance_type), class: 'btn btn-success btn-xs', title: t('edit') do
-      = fa_icon 'edit'
+      = icon 'edit'
       = t('edit')
     %span.btn.btn-danger.btn-xs.appliance-type-delete(title='Delete')
-      = fa_icon 'trash-o'
+      = icon 'trash-o'
       = t('delete')
 
     .btn-group.hidden.appliance-type-delete-section
 
       = link_to admin_appliance_type_path(@appliance_type), method: :delete, class: 'btn btn-danger btn-xs', title: 'Yes, delete it.' do
-        = fa_icon 'trash-o'
+        = icon 'trash-o'
         = t('yes')
 
       %span.btn.btn-default.btn-xs.appliance-type-delete-no(title='No, better not.')

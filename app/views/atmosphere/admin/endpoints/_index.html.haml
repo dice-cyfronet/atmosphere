@@ -36,7 +36,7 @@
         %td(colspan="#{endpoints_present ? '4' : ''}")
           = link_to [:new, :admin, @port_mapping_template.appliance_type, @port_mapping_template, :endpoint],
               remote: true, class: 'btn btn-success btn-xs pull-right', title: 'Add', data: {target: '#new-endpoint'} do
-            =fa_icon 'plus'
+            =icon 'plus'
             Add
             = 'first' unless endpoints_present
 

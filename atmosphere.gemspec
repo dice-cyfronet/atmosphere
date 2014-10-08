@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.files = Dir['{app,config,db,lib,doc}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.1.5'
+  s.add_dependency 'rails', '~> 4.1.6'
   s.add_dependency 'pg'
   s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'
@@ -53,7 +53,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'haml-rails'
   s.add_dependency 'bootstrap-sass', '~>3.2'
-  s.add_dependency 'font-awesome-rails'
+  s.add_dependency 'font-awesome-sass', '~> 4.2.0'
   s.add_dependency 'active_model_serializers', '~>0.8.0'
   s.add_dependency 'zabbixapi'
   s.add_dependency 'showdown-rails'
