@@ -242,27 +242,5 @@ Devise.setup do |config|
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = "/my_engine/users/auth"
 
-  Warden::Strategies.add(:token_authenticatable, Devise::Strategies::TokenAuthenticatable)
-
-  strategies = [:token_authenticatable]
-
-  if Air.config.vph.enabled
-    config.omniauth :vphticket,
-      host: Air.config.vph.host,
-      roles_map: Air.config.vph.roles_map,
-      ssl_verify: Air.config.vph.ssl_verify
-
-    Warden::Strategies.add(:mi_token_authenticatable, Devise::Strategies::MiTokenAuthenticatable)
-
-    strategies << :mi_token_authenticatable
-  end
-
-  config.warden do |manager|
-    manager.intercept_401 = false
-    strategies.each do |strategy|
-      manager.default_strategies(:scope => :user).unshift strategy
-    end
-  end
-
   config.router_name = :atmosphere
 end

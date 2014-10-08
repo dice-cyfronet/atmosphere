@@ -3,10 +3,10 @@ module Atmosphere
 
     attr_reader :appliance
 
-    def initialize(params, mi_authentication_key)
+    def initialize(params, delegated_auth)
       @params = params
       @appliance = Appliance.new(create_params)
-      @mi_authentication_key = mi_authentication_key
+      @delegated_auth = delegated_auth
     end
 
     def create!
@@ -25,7 +25,7 @@ module Atmosphere
 
     private
 
-    attr_reader :params, :mi_authentication_key
+    attr_reader :params, :delegated_auth
 
     def create_params
       c_params = production? ? prod_params : dev_params
@@ -122,7 +122,10 @@ module Atmosphere
 
     def config_params
       c_params = params[:params] || {}
-      c_params[Air.config.mi_authentication_key] = mi_authentication_key
+      if Atmosphere.delegation_initconf_key
+        c_params[Atmosphere.delegation_initconf_key] = delegated_auth
+      end
+
       c_params
     end
   end

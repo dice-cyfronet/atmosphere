@@ -1,6 +1,6 @@
 module Atmosphere
   module Api
-    class ApplicationController < ActionController::Base
+    class ApplicationController < ::ApplicationController
       protect_from_forgery with: :null_session
 
       check_authorization
@@ -76,7 +76,7 @@ module Atmosphere
       end
 
       def current_ability
-        @current_ability ||= Ability.new(current_user, load_admin_abilities?)
+        @current_ability ||= ::Ability.new(current_user, load_admin_abilities?)
       end
 
       def load_admin_abilities?

@@ -2,15 +2,6 @@ require 'sidekiq/web'
 
 def json_resources(name)
   resources name, only: [:index, :show, :create, :update, :destroy]
-  yield if block_given?
-end
-
-def owned_payload_resources(name)
-  json_resources name
-  get "#{name}/:name/payload" => "#{name}#payload",
-      as: "#{name}_payload",
-      constraints: { name: /#{Atmosphere::OwnedPayloable.name_regex}/ },
-      defaults: { format: :text }
 end
 
 Atmosphere::Engine.routes.draw do
@@ -48,8 +39,6 @@ Atmosphere::Engine.routes.draw do
       end
       resources :appliance_configuration_templates, except: [:show]
     end
-    resources :security_proxies
-    resources :security_policies
     resources :compute_sites
     resources :virtual_machines, only: [:index, :show] do
       member do
@@ -72,7 +61,7 @@ Atmosphere::Engine.routes.draw do
       get 'appliance_types/:id/endpoints/:service_name/:invocation_path' =>
           'appliance_types#endpoint_payload',
           as: 'appliance_types_endpoint_payload',
-          constraints: { invocation_path: /#{Atmosphere::OwnedPayloable.name_regex}/ },
+          constraints: { invocation_path: /[\w\.-]+(\/{0,1}[\w\.-]+)+/ },
           defaults: { format: :text }
 
       resources :appliance_endpoints, only: [:index, :show]
@@ -102,9 +91,6 @@ Atmosphere::Engine.routes.draw do
       resources :virtual_machine_templates, only: [:index]
       json_resources :users
       resources :user_keys, only: [:index, :show, :create, :destroy]
-
-      owned_payload_resources :security_proxies
-      owned_payload_resources :security_policies
 
       get 'clew/appliance_instances' => 'clew#appliance_instances'
       get 'clew/appliance_types' => 'clew#appliance_types'

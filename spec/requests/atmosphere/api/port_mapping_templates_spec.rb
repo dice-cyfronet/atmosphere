@@ -8,8 +8,7 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
   let(:admin)          { create(:admin) }
   let(:developer) { create(:developer) }
 
-  let(:security_proxy) { create(:security_proxy) }
-  let!(:at1) { create(:filled_appliance_type, author: user, security_proxy: security_proxy) }
+  let!(:at1) { create(:filled_appliance_type, author: user) }
   let!(:at2) { create(:appliance_type, author: user, visible_to: 'all') }
   let!(:pmt1) { create(:port_mapping_template, appliance_type: at1) }
   let!(:pmt2) { create(:port_mapping_template, appliance_type: at2) }

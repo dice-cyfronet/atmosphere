@@ -1,3 +1,3 @@
-module Atmosphere::UserExt
+module Atmosphere::EndpointExt
   extend ActiveSupport::Concern
 end

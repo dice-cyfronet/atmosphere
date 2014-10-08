@@ -4,4 +4,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   helper Atmosphere::Engine.helpers
+
+  def current_user
+    login = params[:my_login]
+    (login && Atmosphere::User.find_by(login: login)) || super
+  end
 end

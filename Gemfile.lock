@@ -39,7 +39,7 @@ PATH
       omniauth
       omniauth-vph
       pg
-      rails (~> 4.1.5cp)
+      rails (~> 4.1.5)
       redcarpet
       role_model
       sass-rails (~> 4.0.3)

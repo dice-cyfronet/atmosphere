@@ -13,7 +13,6 @@ class CreateApplianceTypes < ActiveRecord::Migration
       t.integer :preference_memory
       t.integer :preference_disk
 
-      t.references :security_proxy,     null: true
       t.references :user,               null: true
 
       t.timestamps
@@ -21,6 +20,5 @@ class CreateApplianceTypes < ActiveRecord::Migration
 
     add_index :appliance_types, :name, unique: true
     add_foreign_key :appliance_types, :users
-    add_foreign_key :appliance_types, :security_proxies
   end
 end

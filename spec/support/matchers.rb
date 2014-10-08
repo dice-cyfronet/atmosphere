@@ -1,17 +1,3 @@
-RSpec::Matchers.define :owned_payload_eq do |expected|
-  match do |actual|
-    actual['name'] == expected.name &&
-    actual['payload'] == expected.payload &&
-    actual['owners'].size == ids(expected).size
-  end
-
-  def ids (expected)
-    @names ||= expected.users.collect do |user|
-      user.id
-    end
-  end
-end
-
 RSpec::Matchers.define :appliance_set_eq do |expected|
   match do |actual|
     actual['name'] == expected.name &&
@@ -35,8 +21,7 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
     actual['preference_disk'] == expected.preference_disk &&
 
     #links
-    actual['author_id'] == expected.user_id &&
-    actual['security_proxy_id'] == expected.security_proxy_id
+    actual['author_id'] == expected.user_id
   end
 end
 
@@ -215,7 +200,6 @@ RSpec::Matchers.define :dev_props_eq do |expected|
     actual['preference_cpu'] == expected.preference_cpu &&
     actual['preference_memory'] == expected.preference_memory &&
     actual['preference_disk'] == expected.preference_disk &&
-    (!expected.security_proxy || actual['security_proxy_id'] == expected.security_proxy.id) &&
     actual['port_mapping_template_ids'] == expected.port_mapping_templates.collect(&:id)
   end
 end
@@ -228,8 +212,7 @@ RSpec::Matchers.define :dev_props_be_updated_by do |expected|
     (actual.scalable == expected[:scalable] || expected[:scalable].blank?)  &&
     (actual.preference_cpu == expected[:preference_cpu] || expected[:preference_cpu].blank?)  &&
     (actual.preference_memory == expected[:preference_memory] || expected[:preference_memory].blank?)  &&
-    (actual.preference_disk == expected[:preference_disk] || expected[:preference_disk].blank?)  &&
-    (expected[:security_proxy_id].blank? || actual.security_proxy.id == expected[:security_proxy_id])
+    (actual.preference_disk == expected[:preference_disk] || expected[:preference_disk].blank?)
   end
 end
 

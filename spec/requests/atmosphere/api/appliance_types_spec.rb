@@ -289,9 +289,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         user = create(:user)
         different_user = create(:user)
         at = create(:appliance_type, author: user)
-        new_sec_proxy = create(:security_proxy, name: 'different/one')
         msg = update_msg(
-            security_proxy_id: new_sec_proxy.id,
             author_id: different_user.id
           )
 

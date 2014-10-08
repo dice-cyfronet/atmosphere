@@ -9,7 +9,6 @@ FactoryGirl.define do
       preference_cpu 2
       preference_memory 1024
       preference_disk 10240
-      security_proxy
     end
 
     trait :shareable do

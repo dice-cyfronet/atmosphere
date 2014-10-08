@@ -60,7 +60,6 @@ ActiveRecord::Schema.define(version: 20140814113241) do
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
-    t.integer  "security_proxy_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -135,7 +134,6 @@ ActiveRecord::Schema.define(version: 20140814113241) do
     t.integer  "preference_memory"
     t.integer  "preference_disk"
     t.integer  "appliance_id",                      null: false
-    t.integer  "security_proxy_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -200,34 +198,6 @@ ActiveRecord::Schema.define(version: 20140814113241) do
     t.integer  "virtual_machine_id",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "security_policies", force: true do |t|
-    t.string   "name"
-    t.text     "payload"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "security_policies", ["name"], name: "index_security_policies_on_name", unique: true, using: :btree
-
-  create_table "security_policies_users", force: true do |t|
-    t.integer "user_id"
-    t.integer "security_policy_id"
-  end
-
-  create_table "security_proxies", force: true do |t|
-    t.string   "name"
-    t.text     "payload"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "security_proxies", ["name"], name: "index_security_proxies_on_name", unique: true, using: :btree
-
-  create_table "security_proxies_users", force: true do |t|
-    t.integer "user_id"
-    t.integer "security_proxy_id"
   end
 
   create_table "user_funds", force: true do |t|
@@ -321,7 +291,6 @@ ActiveRecord::Schema.define(version: 20140814113241) do
 
   add_foreign_key "appliance_sets", "users", name: "appliance_sets_user_id_fk"
 
-  add_foreign_key "appliance_types", "security_proxies", name: "appliance_types_security_proxy_id_fk"
   add_foreign_key "appliance_types", "users", name: "appliance_types_user_id_fk"
 
   add_foreign_key "appliances", "appliance_configuration_instances", name: "appliances_appliance_configuration_instance_id_fk"
@@ -330,7 +299,6 @@ ActiveRecord::Schema.define(version: 20140814113241) do
   add_foreign_key "appliances", "user_keys", name: "appliances_user_key_id_fk"
 
   add_foreign_key "dev_mode_property_sets", "appliances", name: "dev_mode_property_sets_appliance_id_fk"
-  add_foreign_key "dev_mode_property_sets", "security_proxies", name: "dev_mode_property_sets_security_proxy_id_fk"
 
   add_foreign_key "endpoints", "port_mapping_templates", name: "endpoints_port_mapping_template_id_fk"
 

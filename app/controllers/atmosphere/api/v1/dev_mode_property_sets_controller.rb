@@ -16,8 +16,9 @@ module Atmosphere
         end
 
         def update
-          log_user_action "update dev mode property set #{@dev_mode_property_set.id} with following params #{params}"
+          log_user_action "update dev mode property set #{@dev_mode_property_set.id} with following params #{dev_mode_property_set_params}"
 
+          @dev_mode_property_set.update_attributes!(dev_mode_property_set_params)
           render json: @dev_mode_property_set, serializer:DevModePropertySetSerializer
           log_user_action "dev mode property set #{@dev_mode_property_set.id} updated #{@dev_mode_property_set.to_json}"
         end
@@ -25,12 +26,16 @@ module Atmosphere
         private
 
         def dev_mode_property_set_params
-          params.require(:dev_mode_property_set).permit(:name, :description, :shared, :scalable, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id)
+          allowed_params = [:name, :description, :shared, :scalable, :preference_cpu, :preference_memory, :preference_disk] + update_params_ext
+
+          params.require(:dev_mode_property_set).permit(allowed_params)
         end
 
         def model_class
           Atmosphere::DevModePropertySet
         end
+
+        include Atmosphere::Api::V1::DevModePropertySetsControllerExt
       end
     end
   end

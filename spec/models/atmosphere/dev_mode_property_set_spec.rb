@@ -26,8 +26,6 @@ describe Atmosphere::DevModePropertySet do
     it { should_not allow_value(-1).for(attribute) }
   end
 
-  it { should belong_to :security_proxy }
-
   it { should belong_to :appliance }
   it { should validate_presence_of :appliance }
 
@@ -66,7 +64,6 @@ describe Atmosphere::DevModePropertySet do
       expect(target.preference_cpu).to eq appliance_type.preference_cpu
       expect(target.preference_memory).to eq appliance_type.preference_memory
       expect(target.preference_disk).to eq appliance_type.preference_disk
-      expect(target.security_proxy).to eq appliance_type.security_proxy
     end
 
     it 'copying port_mappings' do

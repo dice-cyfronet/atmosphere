@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.files = Dir['{app,config,db,lib,doc}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.1.5cp '
+  s.add_dependency 'rails', '~> 4.1.5'
   s.add_dependency 'pg'
   s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'

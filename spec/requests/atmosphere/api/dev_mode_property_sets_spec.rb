@@ -92,7 +92,6 @@ describe Atmosphere::Api::V1::DevModePropertySetsController do
   end
 
   describe 'PUT /dev_mode_property_sets/:id' do
-    let(:sec_proxy) { create(:security_proxy) }
     let(:update_params) do
       {
         dev_mode_property_set: {
@@ -102,22 +101,21 @@ describe Atmosphere::Api::V1::DevModePropertySetsController do
           scalable: true,
           preference_cpu: 3,
           preference_memory: 1234,
-          preference_disk: 4321,
-          security_proxy: sec_proxy.id
+          preference_disk: 4321
         }
       }
     end
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}")
+        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}"), update_params
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as developer' do
       it 'returns 200 Success' do
-        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}", developer)
+        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}", developer), update_params
         expect(response.status).to eq 200
       end
 

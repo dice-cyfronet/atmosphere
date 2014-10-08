@@ -50,7 +50,7 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
 
   def find_endpoints
     authenticate_user!
-    @endpoints = Atmosphere::Endpoint.visible_to(current_user)
+    @endpoints = current_user && Atmosphere::Endpoint.visible_to(current_user)
   end
 
   def endpoint_params

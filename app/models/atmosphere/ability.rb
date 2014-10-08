@@ -9,7 +9,6 @@ module Atmosphere
         ::Atmosphere::ApplianceTypeAbilityBuilder,
         ::Atmosphere::ApplianceSetAbilityBuilder,
         ::Atmosphere::EndpointAbilityBuilder,
-        ::Atmosphere::OwnedPayloadAbilityBuilder,
         ::Atmosphere::ApplianceConfigurationTemplateAbilityBuilder,
         ::Atmosphere::ApplianceConfigurationInstanceAbilityBuilder,
         ::Atmosphere::PortMappingTemplateAbilityBuilder,
@@ -25,7 +24,7 @@ module Atmosphere
       ]
 
     def initialize(user, load_admin_abilities = true)
-      @ability_builders = @@ability_builder_classes.collect do |builder_class|
+      @ability_builders = ability_builder_classes.collect do |builder_class|
         builder_class.new(self, user)
       end
 
@@ -44,7 +43,17 @@ module Atmosphere
       apply_abilities_for! :anonymous
     end
 
+    protected
+
+    def ability_builder_classes_ext
+      []
+    end
+
     private
+
+    def ability_builder_classes
+      @@ability_builder_classes + ability_builder_classes_ext
+    end
 
     def apply_abilities_for!(type)
       @ability_builders.each do |builder|

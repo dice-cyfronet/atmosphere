@@ -1,4 +1,6 @@
 class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
+  include Atmosphere::Api::V1::AppliancesControllerExt
+
   before_filter :init_appliance, only: :create
 
   load_and_authorize_resource :appliance,
@@ -99,7 +101,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def init_appliance
-    @creator = Atmosphere::ApplianceCreator.new(params.require(:appliance), mi_ticket)
+    @creator = Atmosphere::ApplianceCreator.new(params.require(:appliance), delegate_auth)
     @appliance = @creator.appliance
   end
 
@@ -109,10 +111,6 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def in_set_context?
     !params[:appliance_set_id].blank?
-  end
-
-  def mi_ticket
-    current_user ? current_user.mi_ticket : nil
   end
 
   def model_class

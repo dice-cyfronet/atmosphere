@@ -11,12 +11,10 @@ class CreateDevModePropertySets < ActiveRecord::Migration
       t.integer :preference_disk
 
       t.references :appliance,          null: false
-      t.references :security_proxy,     null: true
 
       t.timestamps
     end
 
     add_foreign_key :dev_mode_property_sets, :appliances
-    add_foreign_key :dev_mode_property_sets, :security_proxies
   end
 end

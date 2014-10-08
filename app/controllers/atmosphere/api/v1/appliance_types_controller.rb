@@ -37,13 +37,13 @@ module Atmosphere
             end
           end
           begin
-            ApplianceType.transaction do
-              tmpl = VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
+            Atmosphere::ApplianceType.transaction do
+              tmpl = Atmosphere::VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
 
               new_at_params = appliance_type_params.dup
               new_at_params['user_id'] = new_at_params.delete('author_id')
 
-              @appliance_type = ApplianceType.create_from(appl, new_at_params)
+              @appliance_type = Atmosphere::ApplianceType.create_from(appl, new_at_params)
               @appliance_type.virtual_machine_templates << tmpl if tmpl
               @appliance_type.author = current_user if @appliance_type.author.blank?
 
@@ -65,7 +65,7 @@ module Atmosphere
           update_params = appliance_type_params
           update_params.delete 'appliance_id'
           author_id = update_params.delete(:author_id)
-          update_params[:author] = User.find(author_id) if author_id
+          update_params[:author] = Atmosphere::User.find(author_id) if author_id
 
           @appliance_type.update_attributes!(update_params)
           render json: @appliance_type, serializer: ApplianceTypeSerializer
@@ -83,7 +83,7 @@ module Atmosphere
         end
 
         def endpoint_payload
-          render text: Endpoint.at_endpoint(@appliance_type, params[:service_name], params[:invocation_path]).take!.descriptor
+          render text: Atmosphere::Endpoint.at_endpoint(@appliance_type, params[:service_name], params[:invocation_path]).take!.descriptor
         end
 
         private

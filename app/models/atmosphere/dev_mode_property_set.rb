@@ -18,9 +18,7 @@
 module Atmosphere
   class DevModePropertySet < ActiveRecord::Base
     self.table_name = 'dev_mode_property_sets'
-
-    belongs_to :security_proxy,
-      class_name: 'Atmosphere::SecurityProxy'
+    include Atmosphere::DevModePropertySetExt
 
     belongs_to :appliance,
       class_name: 'Atmosphere::Appliance'
@@ -42,18 +40,20 @@ module Atmosphere
     validates :preference_cpu, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
 
     def self.create_from(appliance_type)
-      dev_mode_property_set = DevModePropertySet.new(
-        name: appliance_type.name,
-        description: appliance_type.description,
-        shared: appliance_type.shared,
-        scalable: appliance_type.scalable,
-        preference_cpu: appliance_type.preference_cpu,
-        preference_memory: appliance_type.preference_memory,
-        preference_disk: appliance_type.preference_disk,
-        security_proxy: appliance_type.security_proxy,
-      )
+      copy_params = ['name', 'description', 'shared',
+        'scalable', 'preference_cpu', 'preference_memory',
+        'preference_disk'] + copy_additional_params
 
-      dev_mode_property_set.port_mapping_templates = PmtCopier.copy(appliance_type).each {|pmt| pmt.dev_mode_property_set = dev_mode_property_set}
+      attrs = appliance_type.attributes.select do |k, _|
+        copy_params.include? k
+      end
+
+      dev_mode_property_set = DevModePropertySet.new(attrs)
+      dev_mode_property_set.port_mapping_templates =
+        PmtCopier.copy(appliance_type).each  do |pmt|
+          pmt.dev_mode_property_set = dev_mode_property_set
+        end
+
       dev_mode_property_set
     end
   end
