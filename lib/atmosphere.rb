@@ -9,10 +9,6 @@ module Atmosphere
       yield self
     end
 
-  # configuration placeholder
-  # mattr_accessor :config_param_name
-  # @@config_param_name = default_value
-
   # If user credentials should be delegated into spawned VM than delegated
   # auth value can be used. It will automatically inject into every initial
   # configuration instance parameter with delegation_key value as a key
@@ -20,6 +16,13 @@ module Atmosphere
   # /app/controllers/concerns/api/*/appliances_controller_ext.rb.
   mattr_accessor :delegation_initconf_key
 
+  # List of additional resources which should be presented while login
+  # as admin user. List should be namespaced with router name. For main
+  # rails application use following format:
+  #
+  #  {
+  #    main_app: { AdditionalResourceViewsToShow }
+  #  }
   mattr_accessor :admin_entites_ext
   @@admin_entites_ext = {}
 
