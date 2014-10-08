@@ -20,16 +20,6 @@ body.login-page {
   }
 }
 
-
-.multi-login-box {
-  @extend .login-box;
-
-  form {
-    border-top: 0;
-  }
-}
-
-
 .remember {
   label {
     text-align: left;

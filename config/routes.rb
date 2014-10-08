@@ -10,7 +10,7 @@ Atmosphere::Engine.routes.draw do
   devise_for  :users,
               class_name: 'Atmosphere::User',
               controllers: {
-                omniauth_callbacks: 'users/omniauth_callbacks'
+                omniauth_callbacks: 'atmosphere/users/omniauth_callbacks'
               },
               module: :devise
 

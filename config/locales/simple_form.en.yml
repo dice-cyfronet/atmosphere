@@ -22,14 +22,6 @@ en:
         wrangler_url: IP Wrangler URL
         wrangler_username: IP Wrangler Username
         wrangler_password: IP Wrangler Password
-      security_policy:
-        name: Name
-        payload: Payload
-        users: Users
-      security_proxy:
-        name: Name
-        payload: Payload
-        users: Users
       user_key:
         name: Name
         public_key: Public key

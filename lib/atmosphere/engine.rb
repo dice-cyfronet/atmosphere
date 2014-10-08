@@ -10,7 +10,7 @@ require 'sentry-raven'
 require 'influxdb'
 require 'active_model_serializers'
 require 'will_paginate'
-require 'omniauth-vph'
+require 'omniauth'
 require 'fog'
 require 'unf'
 

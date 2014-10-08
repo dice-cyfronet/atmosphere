@@ -47,7 +47,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'devise', '~>3.2'
   s.add_dependency 'omniauth'
-  s.add_dependency 'omniauth-vph'
 
   s.add_dependency 'cancan'
   s.add_dependency 'role_model'

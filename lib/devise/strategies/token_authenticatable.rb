@@ -1,4 +1,5 @@
 require 'devise/strategies/base'
+require 'devise/strategies/sudoable'
 
 module Devise
   module Strategies
@@ -9,7 +10,7 @@ module Devise
     #   http://myapp.example.com/?private_token=TOKEN
     #   http://myapp.example.com Header: PRIVATE-TOKEN: TOKEN
     class TokenAuthenticatable < Authenticatable
-      include Atmosphere::Sudoable
+      include Sudoable
 
       def valid?
         super || token
@@ -23,7 +24,7 @@ module Devise
 
           success!(user)
         rescue Exception => e
-          return fail(:master_interface_error)
+          return fail(:authentication_token_error)
         end
       end
 

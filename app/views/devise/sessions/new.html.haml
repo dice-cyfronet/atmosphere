@@ -1,15 +1,2 @@
-- if vphticket_login_enabled? and false
-  .multi-login-box
-    %ul.nav.nav-tabs
-      %li.active
-        = link_to t('devise.mi_ticket'), '#tab-mi', 'data-toggle' => 'tab'
-      %li
-        = link_to t('devise.standard'), '#tab-signin', 'data-toggle' => 'tab'
-    .tab-content
-      %div#tab-mi.tab-pane.active
-        = render partial: 'devise/sessions/new_mi'
-      %div#tab-signin.tab-pane
-        = render partial: 'devise/sessions/new_base'
--else
-  .login-box
-    = render partial: 'devise/sessions/new_base'
+.login-box
+  = render partial: 'devise/sessions/new_base'

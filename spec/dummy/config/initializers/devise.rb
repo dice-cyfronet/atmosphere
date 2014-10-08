@@ -1,3 +1,5 @@
+require 'devise/strategies/token_authenticatable'
+
 Devise.setup do |config|
   Warden::Strategies.add(:token_authenticatable, Devise::Strategies::TokenAuthenticatable)
 
