@@ -40,4 +40,12 @@ module Atmosphere
 
     entities.merge(admin_entites_ext)
   end
+
+  # sidekiq redis url.
+  mattr_accessor :redis_url
+  @@redis_url = 'redis://localhost:6379'
+
+  # namespace for sidekiq delayed jobs.
+  mattr_accessor :redis_namespace
+  @@redis_namespace = 'atmosphere'
 end
