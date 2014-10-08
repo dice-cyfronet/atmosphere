@@ -28,11 +28,18 @@ module Devise
         end
       end
 
+      mattr_accessor :key
+      @@key = 'private_token'
+
+      def self.header_key
+        @@key.upcase.gsub(/_/, '-')
+      end
+
       private
 
       def token
-        params[Air.config.token_authentication_key].presence ||
-          request.headers[Air.config.header_token_authentication_key].presence
+        params[TokenAuthenticatable.key].presence ||
+          request.headers[TokenAuthenticatable.header_key].presence
       end
     end
   end
