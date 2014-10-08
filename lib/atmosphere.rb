@@ -19,4 +19,22 @@ module Atmosphere
   # and result of delegate_auth method implemented in
   # /app/controllers/concerns/api/*/appliances_controller_ext.rb.
   mattr_accessor :delegation_initconf_key
+
+  mattr_accessor :admin_entites_ext
+  @@admin_entites_ext = {}
+
+  def self.admin_entities
+    entities = {
+      atmosphere: [
+        Atmosphere::ApplianceType,
+        Atmosphere::ApplianceSet,
+        Atmosphere::ComputeSite,
+        Atmosphere::VirtualMachine,
+        Atmosphere::VirtualMachineTemplate,
+        Atmosphere::UserKey
+      ]
+    }
+
+    entities.merge(admin_entites_ext)
+  end
 end

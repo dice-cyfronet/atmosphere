@@ -4,10 +4,12 @@
 
     %ul.nav.navbar-nav
       - if current_user.has_role? :admin
-        - [Atmosphere::ApplianceType, Atmosphere::ApplianceSet, Atmosphere::ComputeSite, Atmosphere::VirtualMachine, Atmosphere::VirtualMachineTemplate, Atmosphere::UserKey, Atmosphere::SecurityProxy, Atmosphere::SecurityPolicy].each do |model|
-          - tab_name = model.name.demodulize.tableize
-          = nav_link controller: tab_name.to_sym do
-            = link_to t("#{tab_name}.title"), [:admin, model], class: "has_bottom_tooltip", title: t("#{tab_name}.long_title")
+        - Atmosphere.admin_entities.each do |route_context_name, models|
+          - route_context = send(route_context_name)
+          - models.each do |model|
+            - tab_name = model.name.demodulize.tableize
+            = nav_link controller: tab_name.to_sym do
+              = link_to t("#{tab_name}.title"), [route_context, :admin, model], class: "has_bottom_tooltip", title: t("#{tab_name}.long_title")
         = nav_link controller: :jobs do
           = link_to 'Jobs', jobs_path, class: "has_bottom_tooltip", title: 'Background jobs'
 
