@@ -28,7 +28,7 @@ module ApiHelpers
 
       # Append private_token if given a User object
       (user.respond_to?(:login) ?
-        "&my_login=#{user.login}" : "")
+        "&private_token=#{user.authentication_token}" : "")
   end
 
   def json_response

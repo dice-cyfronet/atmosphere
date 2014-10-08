@@ -5,8 +5,8 @@ class ApplicationController < ActionController::Base
 
   helper Atmosphere::Engine.helpers
 
-  def current_user
-    login = params[:my_login]
-    (login && Atmosphere::User.find_by(login: login)) || super
-  end
+  # def current_user
+  #   login = params[:my_login]
+  #   (login && Atmosphere::User.find_by(login: login)) || super
+  # end
 end
