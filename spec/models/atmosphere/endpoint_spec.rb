@@ -18,7 +18,7 @@ require 'rails_helper'
 
 describe Atmosphere::Endpoint do
 
-  it { should ensure_inclusion_of(:endpoint_type).in_array(%w(ws rest webapp)) }
+  it { should validate_inclusion_of(:endpoint_type).in_array(%w(ws rest webapp)) }
 
   it 'should set proper default values' do
     expect(subject.endpoint_type).to eql 'ws'

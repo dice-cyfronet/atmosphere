@@ -25,7 +25,7 @@ describe Atmosphere::VirtualMachineTemplate do
     Fog.mock!
   end
 
-  it { should ensure_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
+  it { should validate_inclusion_of(:state).in_array(%w(active deleted error saving queued killed pending_delete)) }
 
   context 'name sanitization' do
     it 'appends underscores to name that is too short' do

@@ -19,7 +19,7 @@ describe Atmosphere::HttpMapping do
   it { should validate_presence_of :url }
   it { should validate_presence_of :application_protocol }
 
-  it { should ensure_inclusion_of(:application_protocol).in_array(%w(http https)) }
+  it { should validate_inclusion_of(:application_protocol).in_array(%w(http https)) }
 
   it 'should set proper default values' do
     expect(subject.application_protocol).to eql 'http'

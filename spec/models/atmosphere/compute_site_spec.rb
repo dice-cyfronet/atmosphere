@@ -37,7 +37,7 @@ describe Atmosphere::ComputeSite do
   it { should have_many(:virtual_machine_templates).dependent(:destroy) }
   it { should have_many(:virtual_machines).dependent(:destroy) }
 
-  it { should ensure_inclusion_of(:site_type).in_array(%w(public private))}
+  it { should validate_inclusion_of(:site_type).in_array(%w(public private))}
 
   context 'cloud' do
     context 'openstack' do
@@ -57,7 +57,7 @@ describe Atmosphere::ComputeSite do
 
   context 'if technology is present' do
     before { subject.technology = 'openstack' }
-    it { should ensure_inclusion_of(:technology).in_array(%w(openstack aws))}
+    it { should validate_inclusion_of(:technology).in_array(%w(openstack aws))}
     it { should be_valid }
   end
 

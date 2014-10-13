@@ -29,7 +29,7 @@ describe Atmosphere::Appliance do
   it { should belong_to :appliance_set }
   it { should validate_presence_of :appliance_set }
   it { should validate_presence_of :state }
-  it { should ensure_inclusion_of(:state).in_array(%w(new satisfied unsatisfied))}
+  it { should validate_inclusion_of(:state).in_array(%w(new satisfied unsatisfied))}
 
   it { should belong_to :appliance_type }
   it { should validate_presence_of :appliance_type }

@@ -37,7 +37,7 @@ describe Atmosphere::VirtualMachine do
   let(:default_flavor) { cs.virtual_machine_flavors.first }
 
   it { should have_many(:port_mappings).dependent(:delete_all) }
-  it { should ensure_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
+  it { should validate_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
 
   context 'destruction' do
     let(:cc_mock) { double('cloud client mock') }

@@ -24,9 +24,9 @@ describe Atmosphere::ApplianceSet do
   it { should validate_presence_of :user }
 
   it { should validate_numericality_of :priority }
-  it { should ensure_inclusion_of(:priority).in_range(1..100) }
+  it { should validate_inclusion_of(:priority).in_range(1..100) }
 
-  it { should ensure_inclusion_of(:appliance_set_type).in_array(%w(development workflow portal)) }
+  it { should validate_inclusion_of(:appliance_set_type).in_array(%w(development workflow portal)) }
   it { should have_readonly_attribute :appliance_set_type }
 
   pending 'to be at most 1 development appliance set in the scope of specific User'

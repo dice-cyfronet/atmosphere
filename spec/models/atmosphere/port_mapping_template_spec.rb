@@ -30,16 +30,16 @@ describe Atmosphere::PortMappingTemplate do
   it { should validate_presence_of :application_protocol }
   it { should validate_presence_of :transport_protocol }
 
-  it { should ensure_inclusion_of(:transport_protocol).in_array(%w(tcp udp)) }
+  it { should validate_inclusion_of(:transport_protocol).in_array(%w(tcp udp)) }
 
   context 'if transport_protocol is tcp' do
     before { allow(subject).to receive(:transport_protocol).and_return('tcp') }
-    it { should ensure_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
+    it { should validate_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
   end
 
   context 'if transport_protocol is udp' do
     before { allow(subject).to receive(:transport_protocol).and_return('udp') }
-    it { should ensure_inclusion_of(:application_protocol).in_array(%w(none)) }
+    it { should validate_inclusion_of(:application_protocol).in_array(%w(none)) }
   end
 
   it 'should set proper default values' do

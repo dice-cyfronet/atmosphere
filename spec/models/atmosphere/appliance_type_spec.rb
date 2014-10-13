@@ -31,7 +31,7 @@ describe Atmosphere::ApplianceType do
 
   it { should validate_uniqueness_of :name }
 
-  it { should ensure_inclusion_of(:visible_to).in_array(%w(owner developer all)) }
+  it { should validate_inclusion_of(:visible_to).in_array(%w(owner developer all)) }
 
   it { should have_db_index(:name).unique(true) }
 
