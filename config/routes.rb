@@ -64,8 +64,6 @@ Atmosphere::Engine.routes.draw do
           constraints: { invocation_path: /[\w\.-]+(\/{0,1}[\w\.-]+)+/ },
           defaults: { format: :text }
 
-      resources :appliance_endpoints, only: [:index, :show]
-
       json_resources :port_mapping_templates
       resources :endpoints do
         member do

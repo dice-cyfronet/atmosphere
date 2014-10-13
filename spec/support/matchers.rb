@@ -25,14 +25,6 @@ RSpec::Matchers.define :appliance_type_eq do |expected|
   end
 end
 
-RSpec::Matchers.define :basic_appliance_type_eq do |expected|
-  match do |actual|
-    actual['id'] == expected.id &&
-    actual['name'] == expected.name &&
-    actual['description'] == expected.description
-  end
-end
-
 RSpec::Matchers.define :http_mapping_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
@@ -152,16 +144,6 @@ RSpec::Matchers.define :endpoint_eq do |expected|
     (actual['invocation_path'] == expected.invocation_path) &&
     (actual['port_mapping_template_id'] == expected.port_mapping_template_id) &&
     (actual['secured'] == expected.secured)
-  end
-end
-
-RSpec::Matchers.define :basic_endpoint_eq do |expected|
-  match do |actual|
-    (actual['id'] == expected.id) &&
-    (actual['name'] == expected.name) &&
-    (actual['description'] == expected.description) &&
-    (actual['endpoint_type'] == expected.endpoint_type.to_s) &&
-    (actual['url'] == atmosphere.descriptor_api_v1_endpoint_url(expected.id))
   end
 end
 
