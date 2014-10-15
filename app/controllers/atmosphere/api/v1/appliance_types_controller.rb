@@ -83,7 +83,11 @@ module Atmosphere
         end
 
         def endpoint_payload
-          render text: Atmosphere::Endpoint.at_endpoint(@appliance_type, params[:service_name], params[:invocation_path]).take!.descriptor
+          render text: Atmosphere::Endpoint.at_endpoint(
+                                              @appliance_type,
+                                              params[:service_name],
+                                              params[:invocation_path]
+                                            ).take!.descriptor
         end
 
         private

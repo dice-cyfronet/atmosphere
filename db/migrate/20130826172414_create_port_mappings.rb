@@ -1,6 +1,6 @@
 class CreatePortMappings < ActiveRecord::Migration
   def change
-    create_table :port_mappings do |t|
+    create_table :atmosphere_port_mappings do |t|
       t.string :public_ip,                    null: false
       t.integer :source_port,                 null: false
 
@@ -10,7 +10,12 @@ class CreatePortMappings < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :port_mappings, :port_mapping_templates
-    add_foreign_key :port_mappings, :virtual_machines
+    add_foreign_key :atmosphere_port_mappings,
+                    :atmosphere_port_mapping_templates,
+                    column: 'port_mapping_template_id'
+
+    add_foreign_key :atmosphere_port_mappings,
+                    :atmosphere_virtual_machines,
+                    column: 'virtual_machine_id'
   end
 end

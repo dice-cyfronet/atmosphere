@@ -19,8 +19,6 @@
 # Funds are also linked to ComputeSites and may only be used to pay for VMs which belong to their respective ComputeSites.
 module Atmosphere
   class Fund < ActiveRecord::Base
-    self.table_name = 'funds'
-
     has_many :appliances,
         class_name: 'Atmosphere::Appliance'
 

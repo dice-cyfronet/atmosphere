@@ -12,8 +12,6 @@
 #
 module Atmosphere
   class PortMapping < ActiveRecord::Base
-    self.table_name = 'port_mappings'
-
     belongs_to :virtual_machine,
       class_name: 'Atmosphere::VirtualMachine'
 

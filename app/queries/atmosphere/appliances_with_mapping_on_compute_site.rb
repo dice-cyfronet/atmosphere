@@ -9,7 +9,7 @@ module Atmosphere
 
     def find
       Appliance.joins(:http_mappings).where(
-          http_mappings: { compute_site_id: @compute_site.id }
+          atmosphere_http_mappings: { compute_site_id: @compute_site.id }
         )
     end
   end

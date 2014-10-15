@@ -22,8 +22,6 @@
 #
 module Atmosphere
   class User < ActiveRecord::Base
-    self.table_name = 'users'
-
     include Atmosphere::UserExt
 
     # Include default devise modules. Others available are:
@@ -66,7 +64,7 @@ module Atmosphere
 
     scope :with_vm, ->(vm) do
       joins(appliance_sets: { appliances: :virtual_machines })
-        .where(virtual_machines: {id: vm.id})
+        .where(atmosphere_virtual_machines: {id: vm.id})
     end
 
     include Gravtastic

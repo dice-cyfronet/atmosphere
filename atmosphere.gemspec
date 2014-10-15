@@ -50,6 +50,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'cancan'
   s.add_dependency 'role_model'
+  s.add_dependency 'redirus', '~>0.1.1'
 
   s.add_dependency 'haml-rails'
   s.add_dependency 'bootstrap-sass', '~>3.2'

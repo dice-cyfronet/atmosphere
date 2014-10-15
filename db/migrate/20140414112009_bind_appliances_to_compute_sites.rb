@@ -3,7 +3,7 @@
 
 class BindAppliancesToComputeSites < ActiveRecord::Migration
   def change
-    create_table :appliance_compute_sites do |t|
+    create_table :atmosphere_appliance_compute_sites do |t|
       t.belongs_to :appliance
       t.belongs_to :compute_site
     end

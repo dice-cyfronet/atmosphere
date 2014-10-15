@@ -18,8 +18,6 @@
 
 module Atmosphere
   class VirtualMachine < ActiveRecord::Base
-    self.table_name = 'virtual_machines'
-
     extend Enumerize
     include Childhoodable
 
@@ -67,7 +65,7 @@ module Atmosphere
 
     scope :reusable_by, ->(appliance) do
       manageable.joins(:appliances).where(
-        appliances: {
+        atmosphere_appliances: {
           appliance_configuration_instance_id:
             appliance.appliance_configuration_instance_id
         },

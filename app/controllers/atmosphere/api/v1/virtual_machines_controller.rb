@@ -20,8 +20,14 @@ module Atmosphere
         def filter
           filter = super
           appliance_id = params[:appliance_id]
-          filter[:appliances] = {id: appliance_id} unless appliance_id.blank?
-          filter[:virtual_machine_flavor_id] = params[:flavor_id] if params[:flavor_id]
+
+          unless appliance_id.blank?
+            filter[:atmosphere_appliances] = { id: appliance_id }
+          end
+
+          if params[:flavor_id]
+            filter[:virtual_machine_flavor_id] = params[:flavor_id]
+          end
 
           filter
         end

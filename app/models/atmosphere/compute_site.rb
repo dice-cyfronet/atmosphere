@@ -21,8 +21,6 @@
 #
 module Atmosphere
   class ComputeSite < ActiveRecord::Base
-    self.table_name = 'compute_sites'
-
     extend Enumerize
 
     has_many :virtual_machines,
@@ -68,13 +66,40 @@ module Atmosphere
     validates :site_type, inclusion: %w(public private)
     validates :technology, inclusion: %w(openstack aws)
 
-    scope :with_appliance_type, ->(appliance_type) { joins(virtual_machines: {appliances: :appliance_set}).where(appliances: {appliance_type_id: appliance_type.id}, appliance_sets: {appliance_set_type: [:workflow, :portal]}).readonly(false) }
+    scope :with_appliance_type, ->(appliance_type) do
+      joins(virtual_machines: {appliances: :appliance_set})
+        .where(
+          atmosphere_appliances: {
+            appliance_type_id: appliance_type
+          },
+          atmosphere_appliance_sets: {
+            appliance_set_type: [:workflow, :portal]
+          }
+        ).readonly(false)
+    end
 
-    scope :with_deployment, ->(deployment) { joins(virtual_machines: :deployments).where(deployments: {id: deployment.id}).readonly(false) }
+    scope :with_deployment, ->(deployment) do
+      joins(virtual_machines: :deployments)
+        .where(
+          deployments: {
+            id: deployment.id
+          }
+        ).readonly(false)
+    end
 
-    scope :with_dev_property_set, ->(dev_mode_property_set) { joins(virtual_machines: {appliances: :dev_mode_property_set}).where(dev_mode_property_sets: {id: dev_mode_property_set.id}).readonly(false) }
+    scope :with_dev_property_set, ->(dev_mode_property_set) do
+      joins(virtual_machines: { appliances: :dev_mode_property_set })
+        .where(
+          atmosphere_dev_mode_property_sets: {
+            id: dev_mode_property_set.id
+          }
+        ).readonly(false)
+    end
 
-    scope :with_appliance, ->(appliance) {joins(virtual_machines: :appliances).where(appliances: {id: appliance.id})}
+    scope :with_appliance, ->(appliance) do
+      joins(virtual_machines: :appliances)
+        .where(atmosphere_appliances: {id: appliance.id})
+    end
 
     scope :active, -> { where(active: true) }
 

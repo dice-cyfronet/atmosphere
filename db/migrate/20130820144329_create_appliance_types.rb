@@ -1,6 +1,6 @@
 class CreateApplianceTypes < ActiveRecord::Migration
   def change
-    create_table :appliance_types do |t|
+    create_table :atmosphere_appliance_types do |t|
 
       t.string :name,                   null: false
       t.text :description
@@ -18,7 +18,11 @@ class CreateApplianceTypes < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :appliance_types, :name, unique: true
-    add_foreign_key :appliance_types, :users
+    add_index :atmosphere_appliance_types,
+              :name, unique: true
+
+    add_foreign_key :atmosphere_appliance_types,
+                    :atmosphere_users,
+                    column: 'user_id'
   end
 end

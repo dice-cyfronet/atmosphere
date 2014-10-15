@@ -1,6 +1,6 @@
 class CreateVirtualMachines < ActiveRecord::Migration
   def change
-    create_table :virtual_machines do |t|
+    create_table :atmosphere_virtual_machines do |t|
       t.string :id_at_site,               null: false
       t.string :name,                     null: false
       t.string :state,                    null: false
@@ -12,12 +12,19 @@ class CreateVirtualMachines < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :virtual_machines, :compute_sites
-    add_index :virtual_machines, [:compute_site_id, :id_at_site], unique: true
+    add_foreign_key :atmosphere_virtual_machines,
+                    :atmosphere_compute_sites,
+                    column: 'compute_site_id',
+                    name: 'atmo_vm_cs_fk'
+
+    add_index :atmosphere_virtual_machines,
+              [:compute_site_id, :id_at_site],
+              name: 'atmo_vm_cs_id_id_at_site_ix',
+              unique: true
 
     # Linking table supporting the m:n relationship between appliances and virtual_machines.
     # Also functions as an ActiveRecord in its own right.
-    create_table :deployments do |t|
+    create_table :atmosphere_deployments do |t|
       t.belongs_to :virtual_machine
       t.belongs_to :appliance
     end

@@ -1,6 +1,6 @@
 class CreateVirtualMachineFlavors < ActiveRecord::Migration
   def change
-    create_table :virtual_machine_flavors do |t|
+    create_table :atmosphere_virtual_machine_flavors do |t|
       t.string :flavor_name,            null:false
       t.float :cpu,                     null:true
       t.float :memory,                  null:true
@@ -10,10 +10,12 @@ class CreateVirtualMachineFlavors < ActiveRecord::Migration
       t.belongs_to :compute_site
     end
 
-    add_foreign_key :virtual_machine_flavors, :compute_sites
+    add_foreign_key :atmosphere_virtual_machine_flavors,
+                    :atmosphere_compute_sites,
+                    column: 'compute_site_id'
 
     # Add backreference in virtual_machines
-    change_table :virtual_machines do |t|
+    change_table :atmosphere_virtual_machines do |t|
       t.belongs_to :virtual_machine_flavor
     end
 

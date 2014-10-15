@@ -1,6 +1,6 @@
 class CreateApplianceSets < ActiveRecord::Migration
   def change
-    create_table :appliance_sets do |t|
+    create_table :atmosphere_appliance_sets do |t|
       t.string  :name,                   null: true
       t.integer :priority,               null: false, default: 50
       t.string  :appliance_set_type,     null: false, default: 'workflow'
@@ -10,6 +10,8 @@ class CreateApplianceSets < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :appliance_sets, :users
+    add_foreign_key :atmosphere_appliance_sets,
+                    :atmosphere_users,
+                    column: 'user_id'
   end
 end

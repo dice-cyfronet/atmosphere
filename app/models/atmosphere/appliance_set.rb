@@ -12,8 +12,6 @@
 #
 module Atmosphere
   class ApplianceSet < ActiveRecord::Base
-    self.table_name = 'appliance_sets'
-
     extend Enumerize
 
     belongs_to :user,
@@ -33,20 +31,90 @@ module Atmosphere
 
     attr_readonly :appliance_set_type
 
-    scope :with_vm, ->(virtual_machine) { joins(appliances: :virtual_machines).where(virtual_machines: {id: virtual_machine.id}) }
+    scope :with_vm, ->(virtual_machine) do
+      joins(appliances: :virtual_machines)
+        .where(atmosphere_virtual_machines: {id: virtual_machine.id})
+    end
 
-    scope :clew_appliances, -> (appliance_set_type) { where(:appliance_sets => { :appliance_set_type => appliance_set_type }).
-        includes(:appliances).references(:appliances).
-        includes(:appliances => :deployments).references(:appliances => :deployments).
-        includes(:appliances => :appliance_type).references(:appliances => :appliance_type).
-        includes(:appliances => :http_mappings).references(:appliances => :http_mappings).
-        includes(:appliances => { :appliance_type => :port_mapping_templates } ).references(:appliances => { :appliance_type => :port_mapping_templates } ).
-        includes(:appliances => { :deployments => :virtual_machine }).references(:appliances => { :deployments => :virtual_machine }).
-        includes(:appliances => { :appliance_type => { :port_mapping_templates => :http_mappings } } ).references(:appliances => { :appliance_type => { :port_mapping_templates => :http_mappings } }).
-        includes(:appliances => { :appliance_type => { :port_mapping_templates => :endpoints } } ).references(:appliances => { :appliance_type => { :port_mapping_templates => :endpoints } }).
-        includes(:appliances => { :deployments => { :virtual_machine => :port_mappings } } ).references(:appliances => { :deployments => { :virtual_machine => :port_mappings } }).
-        includes(:appliances => { :deployments => { :virtual_machine => :compute_site } } ).references(:appliances => { :deployments => { :virtual_machine => :compute_site } }).
-        includes(:appliances => { :deployments => { :virtual_machine => :virtual_machine_flavor } }).references(:appliances => { :deployments => { :virtual_machine => :virtual_machine_flavor } })}
+    scope :clew_appliances, -> (appliance_set_type) do
+      where(
+        atmosphere_appliance_sets: { appliance_set_type: appliance_set_type }
+      )
+      .includes(:appliances)
+      .references(:appliances)
+      .includes(appliances: :deployments)
+      .references(appliances: :deployments)
+      .includes(appliances: :appliance_type)
+      .references(appliances: :appliance_type)
+      .includes(appliances: :http_mappings)
+      .references(appliances: :http_mappings)
+      .includes(appliances: { appliance_type: :port_mapping_templates } )
+      .references(appliances: { appliance_type: :port_mapping_templates })
+      .includes(appliances: { deployments: :virtual_machine })
+      .references(appliances: { deployments: :virtual_machine })
+      .includes(
+        appliances: {
+          appliance_type: {
+            port_mapping_templates: :http_mappings
+          }
+        }
+      ).references(
+        appliances: {
+          appliance_type: {
+            port_mapping_templates: :http_mappings
+          }
+        }
+      )
+      .includes(
+        appliances: {
+          appliance_type: {
+            port_mapping_templates: :endpoints
+          }
+        }
+      ).references(
+        appliances: {
+          appliance_type: {
+            :port_mapping_templates => :endpoints
+          }
+        }
+      ).includes(
+        appliances: {
+          deployments: {
+            virtual_machine: :port_mappings
+          }
+        }
+      ).references(
+        appliances: {
+          deployments: {
+            virtual_machine: :port_mappings
+          }
+        }
+      ).includes(
+        appliances: {
+          deployments: {
+            virtual_machine: :compute_site
+          }
+        }
+      ).references(
+        appliances: {
+          deployments: {
+            virtual_machine: :compute_site
+          }
+        }
+      ).includes(
+        appliances: {
+          deployments: {
+            virtual_machine: :virtual_machine_flavor
+          }
+        }
+      ).references(
+        appliances: {
+          deployments: {
+            virtual_machine: :virtual_machine_flavor
+          }
+        }
+      )
+    end
 
     def production?
       not appliance_set_type.development?

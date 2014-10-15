@@ -1,7 +1,7 @@
 class AddCustomNameToHttpMapping < ActiveRecord::Migration
   def change
-    add_column :http_mappings, :custom_name, :string
-    add_column :http_mappings, :base_url, :string
+    add_column :atmosphere_http_mappings, :custom_name, :string
+    add_column :atmosphere_http_mappings, :base_url, :string
 
     Atmosphere::HttpMapping.all.each do |hm|
       hm.base_url = hm.application_protocol.http? ?
@@ -11,6 +11,6 @@ class AddCustomNameToHttpMapping < ActiveRecord::Migration
       hm.save
     end
 
-    change_column :http_mappings, :base_url, :string, null: false
+    change_column :atmosphere_http_mappings, :base_url, :string, null: false
   end
 end

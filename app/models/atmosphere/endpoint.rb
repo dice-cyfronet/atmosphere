@@ -15,7 +15,6 @@
 #
 module Atmosphere
   class Endpoint < ActiveRecord::Base
-    self.table_name = 'endpoints'
     include Atmosphere::EndpointExt
 
     belongs_to :port_mapping_template,
@@ -29,9 +28,25 @@ module Atmosphere
 
     scope :def_order, -> { order(:description) }
 
-    scope :at_endpoint, ->(at, service_name, invocation_path) { joins(:port_mapping_template).where(invocation_path: invocation_path, port_mapping_templates: {service_name: service_name, appliance_type_id: at.id}) }
+    scope :at_endpoint, ->(at, service_name, invocation_path) do
+      joins(:port_mapping_template)
+        .where(
+          invocation_path: invocation_path,
+          atmosphere_port_mapping_templates: {
+            service_name: service_name,
+            appliance_type_id: at.id
+          }
+        )
+    end
 
-    scope :appl_endpoints, ->(appl) { joins(port_mapping_template: :http_mappings).where(http_mappings: {appliance_id: appl.id}).uniq }
+    scope :appl_endpoints, ->(appl) do
+      joins(port_mapping_template: :http_mappings)
+        .where(
+          atmosphere_http_mappings: {
+            appliance_id: appl.id
+          }
+        ).uniq
+    end
 
     scope :visible_to, ->(user) { EndpointsVisibleToUser.new(self, user).find }
 

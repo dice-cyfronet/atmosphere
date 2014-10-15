@@ -22,8 +22,6 @@
 
 module Atmosphere
   class Appliance < ActiveRecord::Base
-    self.table_name = 'appliances'
-
     extend Enumerize
 
     belongs_to :appliance_set,
@@ -85,7 +83,7 @@ module Atmosphere
     after_destroy :optimize_destroyed_appliance
     after_create :initial_billing, :optimize_saved_appliance
 
-    scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(virtual_machines: {compute_site: compute_site}) }
+    scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(atmosphere_virtual_machines: {compute_site: compute_site}) }
 
     def to_s
       "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"

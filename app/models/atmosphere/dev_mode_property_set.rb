@@ -17,7 +17,6 @@
 #
 module Atmosphere
   class DevModePropertySet < ActiveRecord::Base
-    self.table_name = 'dev_mode_property_sets'
     include Atmosphere::DevModePropertySetExt
 
     belongs_to :appliance,

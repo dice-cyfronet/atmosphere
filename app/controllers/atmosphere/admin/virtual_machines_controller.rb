@@ -3,7 +3,7 @@ class Atmosphere::Admin::VirtualMachinesController < Atmosphere::Admin::Applicat
     class: 'Atmosphere::VirtualMachine'
 
   def index
-    @virtual_machines = @virtual_machines.joins(:compute_site).order('compute_sites.name').order('virtual_machines.name').group_by(&:compute_site)
+    @virtual_machines = @virtual_machines.joins(:compute_site).order('atmosphere_compute_sites.name').order('atmosphere_virtual_machines.name').group_by(&:compute_site)
   end
 
   def show

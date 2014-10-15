@@ -9,7 +9,7 @@ module Atmosphere
 
     def find
       joined_appliance.where(
-          port_mapping_properties: { id: @pmp.id }
+          atmosphere_port_mapping_properties: { id: @pmp.id }
         ).readonly(false)
     end
 

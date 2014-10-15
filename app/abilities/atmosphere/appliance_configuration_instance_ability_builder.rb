@@ -9,7 +9,7 @@ module Atmosphere
 
       can :show, ApplianceConfigurationInstance do |conf_instance|
         ApplianceSet.joins(:appliances).where(
-            appliances: {
+            atmosphere_appliances: {
               appliance_configuration_instance_id: conf_instance.id
             },
             user_id: user.id

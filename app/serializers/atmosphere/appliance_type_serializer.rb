@@ -19,7 +19,7 @@ module Atmosphere
     def active
       active_vmts = object.virtual_machine_templates
         .joins(:compute_site)
-        .where(state: :active, compute_sites: { active: true })
+        .where(state: :active, atmosphere_compute_sites: { active: true })
 
       active_vmts.count > 0
     end

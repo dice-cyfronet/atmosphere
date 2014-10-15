@@ -1,6 +1,6 @@
 class CreatePortMappingProperties < ActiveRecord::Migration
   def change
-    create_table :port_mapping_properties do |t|
+    create_table :atmosphere_port_mapping_properties do |t|
       t.string :key,                 null: false
       t.string :value,               null: false
 
@@ -10,8 +10,13 @@ class CreatePortMappingProperties < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :port_mapping_properties, :port_mapping_templates
-    add_foreign_key :port_mapping_properties, :compute_sites
+    add_foreign_key :atmosphere_port_mapping_properties,
+                    :atmosphere_port_mapping_templates,
+                    column: 'port_mapping_template_id'
+
+    add_foreign_key :atmosphere_port_mapping_properties,
+                    :atmosphere_compute_sites,
+                    column: 'compute_site_id'
 
   end
 end

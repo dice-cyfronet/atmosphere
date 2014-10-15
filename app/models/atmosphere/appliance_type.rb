@@ -19,7 +19,6 @@
 #
 module Atmosphere
   class ApplianceType < ActiveRecord::Base
-    self.table_name = 'appliance_types'
     include Atmosphere::ApplianceTypeExt
 
     belongs_to :author,
@@ -45,7 +44,7 @@ module Atmosphere
     # AT can be deployed). By allowed compute site we understan active compute site
     # with VMT installed.
     has_many :compute_sites,
-      -> { where(compute_sites: {active: true}).uniq },
+      -> { where(atmosphere_compute_sites: {active: true}).uniq },
       through: :virtual_machine_templates,
       class_name: 'Atmosphere::ComputeSite'
 
@@ -85,14 +84,20 @@ module Atmosphere
       }
 
     scope :def_order, -> { order(:name) }
-    scope :active, -> { joins(:virtual_machine_templates).where(virtual_machine_templates: {state: :active}).uniq }
-    scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM virtual_machine_templates WHERE state = 'active')") }
+    scope :active, -> do
+      joins(:virtual_machine_templates)
+        .where(
+          atmosphere_virtual_machine_templates: { state: :active }
+        ).uniq
+    end
+
+    scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM atmosphere_virtual_machine_templates WHERE state = 'active')") }
 
     scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
       joins(virtual_machine_templates: :compute_site).
       where(
-        compute_sites: { site_id: cs_site_id },
-        virtual_machine_templates: { id_at_site: vmt_id_at_site }
+        atmosphere_compute_sites: { site_id: cs_site_id },
+        atmosphere_virtual_machine_templates: { id_at_site: vmt_id_at_site }
       )
     end
 

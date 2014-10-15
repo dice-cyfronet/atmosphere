@@ -20,7 +20,7 @@ module Atmosphere
         def filter
           filter = super
           appliance_id = params[:appliance_id]
-          filter[:appliances] = {id: appliance_id} unless appliance_id.blank?
+          filter[:atmosphere_appliances] = {id: appliance_id} unless appliance_id.blank?
 
           filter
         end

@@ -14,8 +14,6 @@
 #
 module Atmosphere
   class PortMappingTemplate < ActiveRecord::Base
-    self.table_name = 'port_mapping_templates'
-
     extend Enumerize
     include Slugable
 

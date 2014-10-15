@@ -1,6 +1,6 @@
 class CreateDevModePropertySets < ActiveRecord::Migration
   def change
-    create_table :dev_mode_property_sets do |t|
+    create_table :atmosphere_dev_mode_property_sets do |t|
       t.string  :name,                  null: false
       t.text    :description
       t.boolean :shared,                null: false, default: false
@@ -15,6 +15,8 @@ class CreateDevModePropertySets < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :dev_mode_property_sets, :appliances
+    add_foreign_key :atmosphere_dev_mode_property_sets,
+                    :atmosphere_appliances,
+                    column: 'appliance_id'
   end
 end

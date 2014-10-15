@@ -10,8 +10,6 @@
 # ApplianceComputeSites provide a m:n link between appliances and compute_sites.
 module Atmosphere
   class ApplianceComputeSite < ActiveRecord::Base
-    self.table_name = 'appliance_compute_sites'
-
     belongs_to :appliance,
       class_name: 'Atmosphere::Appliance'
 

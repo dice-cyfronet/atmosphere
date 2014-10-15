@@ -20,8 +20,6 @@
 
 module Atmosphere
   class BillingLog < ActiveRecord::Base
-    self.table_name = 'billing_logs'
-
     belongs_to :user,
       class_name: 'Atmosphere::User'
 

@@ -1,6 +1,11 @@
 class NullifyAtVmtFk < ActiveRecord::Migration
   def change
-    remove_foreign_key :virtual_machine_templates, :appliance_types
-    add_foreign_key :virtual_machine_templates, :appliance_types, dependent: :nullify
+    remove_foreign_key :atmosphere_virtual_machine_templates,
+                       name: 'atmo_vmt_at_fk'
+
+    add_foreign_key :atmosphere_virtual_machine_templates,
+                    :atmosphere_appliance_types,
+                    column: 'appliance_type_id',
+                    dependent: :nullify
   end
 end

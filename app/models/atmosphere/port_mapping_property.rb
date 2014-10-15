@@ -12,8 +12,6 @@
 #
 module Atmosphere
   class PortMappingProperty < ActiveRecord::Base
-    self.table_name = 'port_mapping_properties'
-
     belongs_to :port_mapping_template,
       class_name: 'Atmosphere::PortMappingTemplate'
 

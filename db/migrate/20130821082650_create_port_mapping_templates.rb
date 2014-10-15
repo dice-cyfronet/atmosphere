@@ -1,6 +1,6 @@
 class CreatePortMappingTemplates < ActiveRecord::Migration
   def change
-    create_table :port_mapping_templates do |t|
+    create_table :atmosphere_port_mapping_templates do |t|
       t.string :transport_protocol,             null: false, default: 'tcp'
       t.string :application_protocol,           null: false, default: 'http_https'
       t.string :service_name,                   null: false
@@ -12,7 +12,12 @@ class CreatePortMappingTemplates < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :port_mapping_templates, :appliance_types
-    add_foreign_key :port_mapping_templates, :dev_mode_property_sets
+    add_foreign_key :atmosphere_port_mapping_templates,
+                    :atmosphere_appliance_types,
+                    column: 'appliance_type_id'
+
+    add_foreign_key :atmosphere_port_mapping_templates,
+                    :atmosphere_dev_mode_property_sets,
+                    column: 'dev_mode_property_set_id'
   end
 end

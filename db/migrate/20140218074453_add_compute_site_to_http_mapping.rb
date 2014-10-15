@@ -3,10 +3,13 @@ class AddComputeSiteToHttpMapping < ActiveRecord::Migration
     puts "Deleting all old http mappings"
     Atmosphere::HttpMapping.delete_all
 
-    change_table :http_mappings do |t|
+    change_table :atmosphere_http_mappings do |t|
       t.references :compute_site, null: false
     end
-    add_foreign_key :http_mappings, :compute_sites
+
+    add_foreign_key :atmosphere_http_mappings,
+                    :atmosphere_compute_sites,
+                    column: 'compute_site_id'
 
     puts "Updating http mappings for all existing appliances"
     Atmosphere::Appliance.all.each do |appl|
@@ -15,7 +18,10 @@ class AddComputeSiteToHttpMapping < ActiveRecord::Migration
   end
 
   def down
-    remove_foreign_key :http_mappings, :compute_sites
-    remove_column :http_mappings, :compute_site_id
+    remove_foreign_key :atmosphere_http_mappings,
+                       :atmosphere_compute_sites,
+                       column: 'compute_site_id'
+
+    remove_column :atmosphere_http_mappings, :compute_site_id
   end
 end

@@ -21,8 +21,6 @@
 # For each flavor, the associated hourly cost is defined.
 module Atmosphere
   class VirtualMachineFlavor < ActiveRecord::Base
-    self.table_name = 'virtual_machine_flavors'
-
     belongs_to :compute_site,
       class_name: 'Atmosphere::ComputeSite'
 

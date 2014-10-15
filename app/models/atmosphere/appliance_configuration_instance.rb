@@ -13,8 +13,6 @@ require 'atmosphere/params_regexpable'
 
 module Atmosphere
   class ApplianceConfigurationInstance < ActiveRecord::Base
-    self.table_name = 'appliance_configuration_instances'
-
     belongs_to :appliance_configuration_template,
       class_name: 'Atmosphere::ApplianceConfigurationTemplate'
 

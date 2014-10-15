@@ -13,6 +13,7 @@ require 'will_paginate'
 require 'omniauth'
 require 'fog'
 require 'unf'
+require 'redirus'
 
 require 'bootstrap-sass'
 require 'font-awesome-sass'

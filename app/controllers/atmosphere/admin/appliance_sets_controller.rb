@@ -4,7 +4,7 @@ class Atmosphere::Admin::ApplianceSetsController < Atmosphere::Admin::Applicatio
 
   # GET /admin/appliance_sets
   def index
-    @appliance_sets = @appliance_sets.joins(:user).order('users.login', priority: :desc).group_by(&:user)
+    @appliance_sets = @appliance_sets.joins(:user).order('atmosphere_users.login', priority: :desc).group_by(&:user)
   end
 
   # GET /admin/appliance_sets/1

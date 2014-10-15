@@ -15,8 +15,6 @@ require 'tempfile'
 
 module Atmosphere
   class UserKey < ActiveRecord::Base
-    self.table_name = 'user_keys'
-
     FINGER_PRINT_RE = /([\d\h]{2}:)+[\d\h]{2}/
 
     has_many :appliances,

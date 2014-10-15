@@ -72,7 +72,7 @@ module Atmosphere
 
     def unused_vms
       # TODO ask PN for better query
-      VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM deployments)')
+      VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM atmosphere_deployments)')
     end
 
     def logger

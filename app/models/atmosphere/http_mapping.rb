@@ -14,8 +14,6 @@
 #
 module Atmosphere
   class HttpMapping < ActiveRecord::Base
-    self.table_name = 'http_mappings'
-
     extend Enumerize
     include Slugable
 

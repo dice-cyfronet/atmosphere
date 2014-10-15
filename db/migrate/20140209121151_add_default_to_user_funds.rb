@@ -1,6 +1,6 @@
 class AddDefaultToUserFunds < ActiveRecord::Migration
   def change
-    change_table :user_funds do |t|
+    change_table :atmosphere_user_funds do |t|
       t.column :default, :boolean, default: false
     end
   end

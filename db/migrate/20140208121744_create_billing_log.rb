@@ -4,7 +4,7 @@
 # Note: the 'actor' column should be used to specify which controller/service added the given log entry.
 class CreateBillingLog < ActiveRecord::Migration
   def change
-    create_table :billing_logs do |t|
+    create_table :atmosphere_billing_logs do |t|
       t.datetime :timestamp,        null:false
       t.string :appliance,          null:false, default: "unknown appliance"
       t.string :fund,               null:false, default: "unknown fund"

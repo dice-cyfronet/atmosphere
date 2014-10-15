@@ -1,6 +1,6 @@
 class AddBillingFieldsToAppliances < ActiveRecord::Migration
   def change
-    change_table :appliances do |t|
+    change_table :atmosphere_appliances do |t|
       # The following line does not work because Rails does not support CURRENT_TIMESTAMP as default value in a migration script.
       # As such, prepaid_until must be declared by a direct SQL call to the database (see below).
       # This is rather sad, but yeah - ORMs. Whatcha gonna do. :(
@@ -11,7 +11,7 @@ class AddBillingFieldsToAppliances < ActiveRecord::Migration
     end
 
     # Time for some good old-fashioned SQL because the Rails ORM model is too constraining to support this...
-    execute "ALTER TABLE appliances ADD COLUMN prepaid_until TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    execute "ALTER TABLE atmosphere_appliances ADD COLUMN prepaid_until TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
 
   end
 end

@@ -17,8 +17,6 @@
 
 module Atmosphere
   class VirtualMachineTemplate < ActiveRecord::Base
-    self.table_name = 'virtual_machine_templates'
-
     extend Enumerize
     include Childhoodable
 
@@ -47,15 +45,17 @@ module Atmosphere
     after_destroy :destroy_source_vm
 
     scope :def_order, -> { order(:name) }
+
     scope :unassigned, -> { where(appliance_type_id: nil) }
 
     scope :active, -> { where(state: 'active') }
+
     scope :on_active_cs, -> do
       joins(:compute_site)
-        .where(compute_sites: { active: true })
+        .where(atmosphere_compute_sites: { active: true })
     end
-    scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
+    scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
 
     def uuid
