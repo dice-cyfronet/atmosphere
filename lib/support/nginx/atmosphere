@@ -19,6 +19,7 @@ server {
   ssl on;
   ssl_certificate     /etc/certs/CHANGEME/server.pem;
   ssl_certificate_key /etc/certs/CHANGEME/server.key;
+  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
 
   server_tokens off; # don't show the version number, a security best practice
   root /home/atmosphere/current/public;
