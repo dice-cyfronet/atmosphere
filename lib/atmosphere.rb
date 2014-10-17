@@ -52,8 +52,11 @@ module Atmosphere
 
   # PDP class for defining which Appliance Types user is able to start in
   # development, production mode and which Appliance Types user is able to
-  # manage
+  # manage.
   mattr_accessor :at_pdp_class
+
+  mattr_reader :config_param
+  @@config_param = Struct.new(:regexp, :range).new(/\#{\w*}/, 2..-2)
 
   def self.at_pdp(user)
     (at_pdp_class || Atmosphere::DefaultPdp).new(user)
