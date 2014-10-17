@@ -2,6 +2,8 @@ require 'rails_helper'
 require 'atmosphere'
 
 describe Atmosphere do
+  include TimeHelper
+
   before { Atmosphere.clear_cache! }
 
   context 'cloud client cache' do
@@ -45,37 +47,16 @@ describe Atmosphere do
 
   context 'metrics store' do
     it 'returns null client when no configuration' do
-      Atmosphere.config['influxdb'] = nil
+      Atmosphere.metrics_store = nil
 
       expect(Atmosphere.metrics_store)
         .to be_an_instance_of Atmosphere::Monitoring::NullMetricsStore
     end
 
     it 'returns real client when configuration available' do
-      create_influxdb_config!
+      Atmosphere.metrics_store = 'other_client'
 
-      expect(Atmosphere.metrics_store)
-        .to be_an_instance_of Atmosphere::Monitoring::InfluxdbMetricsStore
+      expect(Atmosphere.metrics_store).to eq 'other_client'
     end
-
-    it 'creates new client when client outdated' do
-      create_influxdb_config!
-      client = Atmosphere.metrics_store
-      time_travel(1.hour)
-
-      expect(Atmosphere.metrics_store).not_to eq client
-    end
-
-    def create_influxdb_config!
-      Atmosphere.config['influxdb'] = Settingslogic.new({})
-      Atmosphere.config.influxdb['host'] = 'influxdb.host.edu.pl'
-      Atmosphere.config.influxdb['username'] = 'influxdbuser'
-      Atmosphere.config.influxdb['password'] = 'influxdbpassword'
-      Atmosphere.config.influxdb['database'] = 'influxdbdatabase'
-    end
-  end
-
-  def time_travel(interval)
-    allow(Time).to receive(:now).and_return(Time.now + interval)
   end
 end

@@ -85,6 +85,11 @@ module Atmosphere
     @@monitoring_client || Atmosphere::Monitoring::NullClient.new
   end
 
+  mattr_accessor :metrics_store
+  def self.metrics_store
+    @@metrics_store || Atmosphere::Monitoring::NullMetricsStore.new
+  end
+
   ## LOGGERS ##
 
   def self.action_logger
@@ -118,10 +123,6 @@ module Atmosphere
     cached.valid? ? cached.value : nil
   end
 
-  def self.metrics_store
-    influxdb_client || Atmosphere::Monitoring::NullMetricsStore.new
-  end
-
   def self.clear_cache!
     @clients_cache = nil
   end
@@ -134,16 +135,6 @@ module Atmosphere
 
   def self.client_cache_entry(key)
     clients_cache[key] || Atmosphere::NullCacheEntry.new
-  end
-
-  def self.influxdb_client
-    cached_client = self.client_cache_entry('influxdb')
-    if config['influxdb'] && !cached_client.valid?
-      client = Atmosphere::Monitoring::InfluxdbMetricsStore.new(config['influxdb'])
-      cached_client = Atmosphere::CacheEntry.new(client, 60.minutes)
-      clients_cache['influxdb'] = cached_client
-    end
-    cached_client.value
   end
 
   def self.config
