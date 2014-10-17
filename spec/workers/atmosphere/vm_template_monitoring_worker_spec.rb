@@ -93,7 +93,7 @@ describe Atmosphere::VmTemplateMonitoringWorker do
       let(:logger) { double }
 
       before do
-        allow(Air).to receive(:monitoring_logger).and_return(logger)
+        allow(Atmosphere).to receive(:monitoring_logger).and_return(logger)
         expect(logger).to receive(:error)
         allow(logger).to receive(:debug)
 

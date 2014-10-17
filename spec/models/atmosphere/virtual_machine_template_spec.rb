@@ -59,7 +59,7 @@ describe Atmosphere::VirtualMachineTemplate do
     let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
     before do
-      allow(Air).to receive(:get_cloud_client).and_return(cc_mock)
+      allow(Atmosphere).to receive(:get_cloud_client).and_return(cc_mock)
       allow(cc_mock).to receive(:servers).and_return(servers_mock)
     end
 

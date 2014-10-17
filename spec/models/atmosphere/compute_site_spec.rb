@@ -78,7 +78,7 @@ describe Atmosphere::ComputeSite do
 
     it 'registers newly created cloud client in Air container if configuration was updated' do
       allow(Fog::Compute).to receive(:new)
-      expect(Air).to receive(:register_cloud_client)
+      expect(Atmosphere).to receive(:register_cloud_client)
       subject.config = '{}'
       subject.save
     end
@@ -90,7 +90,7 @@ describe Atmosphere::ComputeSite do
     end
 
     it 'does not register cloud client in Air container if other attribute was updated' do
-      expect(Air).to_not receive(:register_cloud_client)
+      expect(Atmosphere).to_not receive(:register_cloud_client)
       subject.name = 'modified name'
       subject.save
     end
@@ -104,7 +104,7 @@ describe Atmosphere::ComputeSite do
       end
 
       it 'sets cloud client to nil if config is blank' do
-        expect(Air).to receive(:unregister_cloud_client).with(subject.site_id)
+        expect(Atmosphere).to receive(:unregister_cloud_client).with(subject.site_id)
         subject.config = ''
         subject.save
       end
@@ -115,7 +115,7 @@ describe Atmosphere::ComputeSite do
 
   context 'compute site is destroyed' do
     it 'unregisters cloud client' do
-      expect(Air).to receive(:unregister_cloud_client).with(subject.site_id)
+      expect(Atmosphere).to receive(:unregister_cloud_client).with(subject.site_id)
       subject.destroy
     end
   end

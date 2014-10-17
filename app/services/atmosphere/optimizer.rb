@@ -76,7 +76,7 @@ module Atmosphere
     end
 
     def logger
-      Air.optimizer_logger
+      Atmosphere.optimizer_logger
     end
   end
 end

@@ -72,7 +72,7 @@ module Atmosphere
       private
 
       def log_user_action msg
-        Air.action_logger.info "[#{current_user.login}] #{msg}"
+        Atmosphere.action_logger.info "[#{current_user.login}] #{msg}"
       end
 
       def current_ability

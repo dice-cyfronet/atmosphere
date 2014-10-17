@@ -41,7 +41,7 @@ module Atmosphere
     end
 
     def logger
-      Air.monitoring_logger
+      Atmosphere.monitoring_logger
     end
   end
 end

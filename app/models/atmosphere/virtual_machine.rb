@@ -177,7 +177,7 @@ module Atmosphere
       metrics_hash = {}
       metrics.each {|m| metrics_hash.merge!(m)}
 
-      metrics_store = Air.metrics_store
+      metrics_store = Atmosphere.metrics_store
       appliances.each do |appl|
         metrics_store.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
         metrics_store.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
@@ -215,7 +215,7 @@ module Atmosphere
     end
 
     def monitoring_client
-      Air.monitoring_client
+      Atmosphere.monitoring_client
     end
 
     def cloud_action(aciton_name, sucess_state)

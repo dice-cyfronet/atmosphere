@@ -111,7 +111,7 @@ module Atmosphere
     end
 
     def cloud_client
-      Air.get_cloud_client(self.site_id) || register_cloud_client
+      Atmosphere.get_cloud_client(self.site_id) || register_cloud_client
     end
 
     def dnat_client
@@ -132,13 +132,6 @@ module Atmosphere
 
     private
 
-    def register_cloud_client
-      cloud_site_conf = JSON.parse(self.config).symbolize_keys
-      client = Fog::Compute.new(cloud_site_conf)
-      Air.register_cloud_client(self.site_id, client)
-      client
-    end
-
     def update_cloud_client
       unless config.blank?
         register_cloud_client
@@ -147,8 +140,15 @@ module Atmosphere
       end
     end
 
+    def register_cloud_client
+      cloud_site_conf = JSON.parse(self.config).symbolize_keys
+      client = Fog::Compute.new(cloud_site_conf)
+      Atmosphere.register_cloud_client(self.site_id, client)
+      client
+    end
+
     def unregister_cloud_client
-      Air.unregister_cloud_client(site_id)
+      Atmosphere.unregister_cloud_client(site_id)
     end
 
     def previously_changed?(*args)

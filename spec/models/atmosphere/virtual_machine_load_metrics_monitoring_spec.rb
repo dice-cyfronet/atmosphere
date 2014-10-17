@@ -7,7 +7,7 @@ describe Atmosphere::VirtualMachine do
 
   before {
     Fog.mock!
-    allow(Air).to receive(:monitoring_client).and_return mon_cli_double
+    allow(Atmosphere).to receive(:monitoring_client).and_return mon_cli_double
   }
 
   context 'current load metrics' do
