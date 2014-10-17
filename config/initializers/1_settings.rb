@@ -2,9 +2,6 @@ class Settings < Settingslogic
   source "#{Rails.root}/config/air.yml"
   namespace Rails.env
 
-  Settings['optimizer'] ||= Settings.new({})
-  Settings.optimizer['max_appl_no'] ||= 5
-
   Settings['childhood_age'] ||= 2 # seconds
   Settings['cloud_object_protection_time'] ||= 300 # seconds
   Settings['cloud_client_cache_time'] ||= 8 #hours

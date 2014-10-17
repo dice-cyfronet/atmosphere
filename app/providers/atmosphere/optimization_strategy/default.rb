@@ -27,7 +27,7 @@ module Atmosphere
       attr_reader :appliance
 
       def reuse?(vm)
-        vm.appliances.count < Air.config.optimizer.max_appl_no &&
+        vm.appliances.count < Atmosphere.optimizer.max_appl_no &&
         !vm.appliances.first.development?
       end
 

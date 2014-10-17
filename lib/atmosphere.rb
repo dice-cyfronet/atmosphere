@@ -52,6 +52,10 @@ module Atmosphere
   # manage.
   mattr_accessor :at_pdp_class
 
+  def self.at_pdp(user)
+    (at_pdp_class || Atmosphere::DefaultPdp).new(user)
+  end
+
   mattr_reader :config_param
   @@config_param = Struct.new(:regexp, :range).new(/\#{\w*}/, 2..-2)
 
@@ -59,9 +63,8 @@ module Atmosphere
   @@url_monitoring = Struct.new(:unavail_statuses, :pending, :ok, :lost)
     .new([502], 10, 120, 15)
 
-  def self.at_pdp(user)
-    (at_pdp_class || Atmosphere::DefaultPdp).new(user)
-  end
+  mattr_reader :optimizer
+  @@optimizer = Struct.new(:max_appl_no).new(5)
 
   ## LOGGERS ##
 

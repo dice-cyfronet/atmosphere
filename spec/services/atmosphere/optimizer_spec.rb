@@ -143,7 +143,7 @@ describe Atmosphere::Optimizer do
           let(:config_inst) { create(:appliance_configuration_instance) }
 
           before do
-            allow(Air.config.optimizer).to receive(:max_appl_no).and_return 1
+            allow(Atmosphere.optimizer).to receive(:max_appl_no).and_return 1
           end
 
           it 'instantiates a new vm if already running vm cannot accept more load' do
