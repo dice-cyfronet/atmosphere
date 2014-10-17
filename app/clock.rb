@@ -20,7 +20,7 @@ module Clockwork
     end
   end
 
-  every(Air.config.monitoring.query_interval.minutes, 'monitoring.load') do
+  every(Atmosphere.monitoring.query_interval.minutes, 'monitoring.load') do
     Atmosphere::VmLoadMonitoringWorker.perform_async
   end
 

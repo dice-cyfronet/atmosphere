@@ -7,9 +7,6 @@ class Settings < Settingslogic
   Settings['cloud_client_cache_time'] ||= 8 #hours
   Settings['vmt_at_relation_update_period'] ||= 2 # hours
 
-  Settings['monitoring'] ||= Settingslogic.new({})
-  Settings.monitoring['query_interval'] ||= 5
-
   #vph spedific
   class << self
     def header_mi_authentication_key

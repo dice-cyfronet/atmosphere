@@ -66,6 +66,9 @@ module Atmosphere
   mattr_reader :optimizer
   @@optimizer = Struct.new(:max_appl_no).new(5)
 
+  mattr_reader :monitoring
+  @@monitoring = Struct.new(:query_interval).new(5)
+
   ## LOGGERS ##
 
   def self.action_logger
