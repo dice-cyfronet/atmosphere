@@ -38,7 +38,7 @@ module Atmosphere
     # presented to the user.
     #
     def pdp
-      Air.config.at_pdp_class.new(@user)
+      Atmosphere.at_pdp(@user)
     end
   end
 end

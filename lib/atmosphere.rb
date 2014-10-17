@@ -50,6 +50,15 @@ module Atmosphere
   mattr_accessor :redis_namespace
   @@redis_namespace = 'atmosphere'
 
+  # PDP class for defining which Appliance Types user is able to start in
+  # development, production mode and which Appliance Types user is able to
+  # manage
+  mattr_accessor :at_pdp_class
+
+  def self.at_pdp(user)
+    (at_pdp_class || Atmosphere::DefaultPdp).new(user)
+  end
+
   ## LOGGERS ##
 
   def self.action_logger

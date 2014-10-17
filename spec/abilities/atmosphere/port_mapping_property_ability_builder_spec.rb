@@ -7,8 +7,7 @@ describe Atmosphere::PortMappingPropertyAbilityBuilder do
   let(:ability) { Atmosphere::Ability.new(user) }
 
   before do
-    allow(Air.config).to receive(:at_pdp_class).and_return(pdp_class)
-    allow(pdp_class).to receive(:new).with(user).and_return(pdp)
+    allow(Atmosphere).to receive(:at_pdp).with(user).and_return(pdp)
     user.id = 1
   end
 

@@ -45,10 +45,9 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
       context 'pdp' do
         let(:pdp) { double('pdp') }
-        let(:pdp_class) { double('pdp class', new: pdp) }
 
         before do
-          allow(Air.config).to receive(:at_pdp_class).and_return(pdp_class)
+          allow(Atmosphere).to receive(:at_pdp).and_return(pdp)
         end
 
         it 'uses pdp to limit number of returned ATs' do

@@ -29,7 +29,7 @@ module Atmosphere
         end
 
         def pdp
-          Air.config.at_pdp_class.new(current_user)
+          Atmosphere.at_pdp(current_user)
         end
       end
     end
