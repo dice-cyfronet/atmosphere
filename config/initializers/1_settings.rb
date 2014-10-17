@@ -2,11 +2,6 @@ class Settings < Settingslogic
   source "#{Rails.root}/config/air.yml"
   namespace Rails.env
 
-  Settings['childhood_age'] ||= 2 # seconds
-  Settings['cloud_object_protection_time'] ||= 300 # seconds
-  Settings['cloud_client_cache_time'] ||= 8 #hours
-  Settings['vmt_at_relation_update_period'] ||= 2 # hours
-
   #vph spedific
   class << self
     def header_mi_authentication_key

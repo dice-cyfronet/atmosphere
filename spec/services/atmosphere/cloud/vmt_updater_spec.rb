@@ -47,7 +47,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     target_vmt = create(:virtual_machine_template,
       compute_site: target_cs,
       id_at_site: 'target_vmt_id',
-      created_at: (Air.config.vmt_at_relation_update_period + 1).hours.ago)
+      created_at: (Atmosphere.vmt_at_relation_update_period + 1).hours.ago)
 
     updater.update
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')

@@ -45,7 +45,7 @@ module Atmosphere
     end
 
     def old_enough?
-      server.created < Air.config.childhood_age.seconds.ago
+      server.created < Atmosphere.childhood_age.seconds.ago
     end
 
     def furhter_update_requred?

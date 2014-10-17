@@ -53,7 +53,7 @@ module Atmosphere
 
     def young?
       @all || vmt.created_at.blank? ||
-        vmt.created_at > Air.config.vmt_at_relation_update_period.hours.ago
+        vmt.created_at > Atmosphere.vmt_at_relation_update_period.hours.ago
     end
   end
 end

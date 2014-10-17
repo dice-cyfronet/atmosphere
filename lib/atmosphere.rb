@@ -69,6 +69,18 @@ module Atmosphere
   mattr_reader :monitoring
   @@monitoring = Struct.new(:query_interval).new(5)
 
+  mattr_accessor :childhood_age #seconds
+  @@childhood_age = 2
+
+  mattr_accessor :cloud_object_protection_time #seconds
+  @@cloud_object_protection_time = 300
+
+  mattr_accessor :cloud_client_cache_time #hours
+  @@cloud_client_cache_time = 8
+
+  mattr_accessor :vmt_at_relation_update_period #hours
+  @@vmt_at_relation_update_period = 2
+
   ## LOGGERS ##
 
   def self.action_logger
@@ -86,7 +98,7 @@ module Atmosphere
   ## CLIENTS ##
 
   def self.register_cloud_client(site_id, cloud_client)
-    cache_expiration_time = config.cloud_client_cache_time.hours
+    cache_expiration_time = cloud_client_cache_time.hours
 
     clients_cache[site_id] =
       Atmosphere::CacheEntry.new(cloud_client, cache_expiration_time)
