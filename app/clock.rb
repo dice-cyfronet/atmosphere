@@ -32,15 +32,15 @@ module Clockwork
     Atmosphere::BillingWorker.perform_async
   end
 
-  every(Air.config.http_mapping_monitor.pending.to_i.seconds, 'monitoring.http_mappings.pending') do
+  every(Atmosphere.url_monitoring.pending.seconds, 'monitoring.http_mappings.pending') do
     Atmosphere::HttpMappingMonitoringWorker.perform_async(:pending)
   end
 
-  every(Air.config.http_mapping_monitor.ok.to_i.seconds, 'monitoring.http_mappings.ok') do
+  every(Atmosphere.url_monitoring.ok.seconds, 'monitoring.http_mappings.ok') do
     Atmosphere::HttpMappingMonitoringWorker.perform_async(:ok)
   end
 
-  every(Air.config.http_mapping_monitor.lost.to_i.seconds, 'monitoring.http_mappings.lost') do
+  every(Atmosphere.url_monitoring.lost.seconds, 'monitoring.http_mappings.lost') do
     Atmosphere::HttpMappingMonitoringWorker.perform_async(:lost)
   end
 

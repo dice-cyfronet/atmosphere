@@ -2,10 +2,6 @@ class Settings < Settingslogic
   source "#{Rails.root}/config/air.yml"
   namespace Rails.env
 
-  Settings['sidekiq'] ||= Settingslogic.new({})
-  Settings.sidekiq['url'] ||= "redis://localhost:6379"
-  Settings.sidekiq['namespace'] ||= "air"
-
   Settings['optimizer'] ||= Settings.new({})
   Settings.optimizer['max_appl_no'] ||= 5
 
@@ -14,16 +10,8 @@ class Settings < Settingslogic
   Settings['cloud_client_cache_time'] ||= 8 #hours
   Settings['vmt_at_relation_update_period'] ||= 2 # hours
 
-  Settings['url_check'] ||= Settings.new({})
-  Settings.url_check['unavail_statuses'] ||= [502]
-
   Settings['monitoring'] ||= Settingslogic.new({})
   Settings.monitoring['query_interval'] ||= 5
-
-  Settings['http_mapping_monitor'] ||= Settingslogic.new({})
-  Settings.http_mapping_monitor['pending'] ||= 10
-  Settings.http_mapping_monitor['ok'] ||= 120
-  Settings.http_mapping_monitor['lost'] ||= 15
 
   #vph spedific
   class << self
@@ -37,6 +25,10 @@ class Settings < Settingslogic
       key.upcase.gsub(/_/, '-')
     end
   end
+
+  Settings['sidekiq'] ||= Settingslogic.new({})
+  Settings.sidekiq['url'] ||= "redis://localhost:6379"
+  Settings.sidekiq['namespace'] ||= "air"
 
   Settings['skip_pdp_for_admin'] = false if Settings['skip_pdp_for_admin'].nil?
 
