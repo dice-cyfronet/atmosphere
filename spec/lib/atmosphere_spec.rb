@@ -29,21 +29,14 @@ describe Atmosphere do
 
   context 'monitoring client' do
     it 'returns null client when no configuration' do
-      Atmosphere.config['zabbix'] = nil
+      Atmosphere.monitoring_client = nil
 
       expect(Atmosphere.monitoring_client)
         .to be_an_instance_of Atmosphere::Monitoring::NullClient
     end
 
     it 'returns real client when configuration available' do
-      Atmosphere.config['zabbix'] = Settingslogic.new({})
-      Atmosphere.config.zabbix['url'] = 'https://host'
-      Atmosphere.config.zabbix['user'] = 'zabbix_user'
-      Atmosphere.config.zabbix['password'] = 'zabbix_pass'
-      Atmosphere.config.zabbix['atmo_template_name'] = 'Template OS Linux'
-      Atmosphere.config.zabbix['atmo_group_name'] = 'Atmosphere Internal Monitoring'
-      Atmosphere.config.zabbix['zabbix_agent_port'] = 10050
-      Atmosphere.config.zabbix['query_interval'] = 5
+      Atmosphere.monitoring_client = Atmosphere::Monitoring::ZabbixClient.new
 
       expect(Atmosphere.monitoring_client)
         .to be_an_instance_of Atmosphere::Monitoring::ZabbixClient

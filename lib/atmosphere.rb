@@ -51,7 +51,6 @@ module Atmosphere
   # development, production mode and which Appliance Types user is able to
   # manage.
   mattr_accessor :at_pdp_class
-
   def self.at_pdp(user)
     (at_pdp_class || Atmosphere::DefaultPdp).new(user)
   end
@@ -80,6 +79,11 @@ module Atmosphere
 
   mattr_accessor :vmt_at_relation_update_period #hours
   @@vmt_at_relation_update_period = 2
+
+  mattr_accessor :monitoring_client
+  def self.monitoring_client
+    @@monitoring_client || Atmosphere::Monitoring::NullClient.new
+  end
 
   ## LOGGERS ##
 
@@ -114,10 +118,6 @@ module Atmosphere
     cached.valid? ? cached.value : nil
   end
 
-  def self.monitoring_client
-    zabbix_client || Atmosphere::Monitoring::NullClient.new
-  end
-
   def self.metrics_store
     influxdb_client || Atmosphere::Monitoring::NullMetricsStore.new
   end
@@ -128,18 +128,12 @@ module Atmosphere
 
   private
 
-  def self.zabbix_client
-    if config['zabbix']
-      clients_cache['zabbix'] ||= Atmosphere::Monitoring::ZabbixClient.new
-    end
-  end
-
   def self.clients_cache
     @clients_cache ||= {}
   end
 
-  def self.client_cache_entry(key, null_client_class = Atmosphere::NullCacheEntry)
-    clients_cache[key] || null_client_class.new
+  def self.client_cache_entry(key)
+    clients_cache[key] || Atmosphere::NullCacheEntry.new
   end
 
   def self.influxdb_client
