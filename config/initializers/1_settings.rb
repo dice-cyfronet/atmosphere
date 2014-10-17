@@ -3,10 +3,6 @@ class Settings < Settingslogic
   namespace Rails.env
 
   class << self
-    def header_token_authentication_key
-      to_header_key(token_authentication_key)
-    end
-
     def header_mi_authentication_key
       to_header_key(mi_authentication_key)
     end
