@@ -34,7 +34,10 @@ module Atmosphere
 
     def parameters
       params = ParamsRegexpable.parameters(payload)
-      params.delete(Air.config.mi_authentication_key)
+      unless Atmosphere.delegation_initconf_key.blank?
+        params.delete(Atmosphere.delegation_initconf_key)
+      end
+
       params
     end
   end
