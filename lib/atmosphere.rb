@@ -90,6 +90,8 @@ module Atmosphere
     @@metrics_store || Atmosphere::Monitoring::NullMetricsStore.new
   end
 
+  mattr_accessor :app_version
+
   ## LOGGERS ##
 
   def self.action_logger
@@ -135,9 +137,5 @@ module Atmosphere
 
   def self.client_cache_entry(key)
     clients_cache[key] || Atmosphere::NullCacheEntry.new
-  end
-
-  def self.config
-    Air.config
   end
 end
