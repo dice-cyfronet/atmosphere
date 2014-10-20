@@ -34,7 +34,6 @@ module Atmosphere
     validates :login, uniqueness: { case_sensitive: false }
 
     include Atmosphere::LoginAndEmail
-    include Atmosphere::TokenAuthenticatable
     include Atmosphere::Nondeletable
 
     has_many :appliance_sets,
