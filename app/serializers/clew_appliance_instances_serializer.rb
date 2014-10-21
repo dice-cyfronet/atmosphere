@@ -24,9 +24,21 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
       state_explanation: appliance.state_explanation,
       amount_billed: appliance.amount_billed,
       prepaid_until: appliance.prepaid_until,
-      port_mapping_templates: appliance.appliance_set.appliance_set_type=="development" ? appliance.dev_mode_property_set.port_mapping_templates.map { |pmt| map_pmt(pmt) } : appliance.appliance_type.port_mapping_templates.map { |pmt| map_pmt(pmt) },
+      port_mapping_templates: map_http_mappings(appliance.http_mappings),
       virtual_machines: appliance.deployments.map { |depl| map_vm(depl.virtual_machine) },
     }
+  end
+
+  def map_http_mappings(http_mappings)
+    http_mappings.inject({}) do |hsh, http_mapping|
+      pmt = hsh[http_mapping.port_mapping_template_id] ||
+              map_pmt(http_mapping.port_mapping_template)
+      pmt[:http_mappings] << map_hm(http_mapping)
+
+      hsh[http_mapping.port_mapping_template_id] = pmt
+
+      hsh
+    end.values
   end
 
   def map_pmt(pmt)
@@ -36,7 +48,7 @@ class ClewApplianceInstancesSerializer < ActiveModel::Serializer
       target_port: pmt.target_port,
       transport_protocol: pmt.transport_protocol,
       application_protocol: pmt.application_protocol,
-      http_mappings: pmt.http_mappings.map { |hm| map_hm(hm) },
+      http_mappings: [],
       endpoints: pmt.endpoints
     }
   end
