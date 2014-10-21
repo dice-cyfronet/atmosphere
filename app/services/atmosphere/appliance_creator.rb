@@ -41,10 +41,14 @@ module Atmosphere
     end
 
     def prod_params
-      params.permit(
+      opt_policy_params = {}
+      opt_policy_params[:vms] = params[:vms]
+      prod_params = params.permit(
         :appliance_set_id,
         :name, :description,
         :compute_site_ids)
+      prod_params[:optimization_policy_params] = opt_policy_params
+      prod_params
     end
 
     def dev_params

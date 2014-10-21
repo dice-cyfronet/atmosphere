@@ -13,10 +13,6 @@ module Atmosphere
       @tags_manager = tags_manager_class.new
     end
 
-    def can_reuse_vm?
-      !appliance.development? && appliance.appliance_type.shared
-    end
-
     def reuse_vm!(vm)
       if BillingService.can_afford_vm?(appliance, vm)
         add_vm(vm)

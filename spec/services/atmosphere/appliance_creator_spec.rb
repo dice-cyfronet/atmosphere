@@ -50,4 +50,21 @@ describe Atmosphere::ApplianceCreator do
 
   end
 
+  it 'creates appliance with optimization policy params' do
+    vms = [
+           { 'cpu' => 1, 'mem' => 512, 'compute_site_ids' => [1] },
+           { 'cpu' => 2, 'mem' => 1024, 'compute_site_ids' => [1] }
+          ]
+    created_appl_params = ActionController::Parameters.new(
+        {
+          appliance_set_id: as.id,
+          configuration_template_id: cfg_tmpl.id,
+          vms: vms
+        }
+      )
+      creator = Atmosphere::ApplianceCreator.new(created_appl_params, 'dummy-token')
+      appl = creator.create!
+      expect(appl.optimization_policy_params[:vms]).to eq vms
+  end
+
 end

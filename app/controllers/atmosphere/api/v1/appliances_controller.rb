@@ -1,6 +1,4 @@
 class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
-  include Atmosphere::Api::V1::AppliancesControllerExt
-
   before_filter :init_appliance, only: :create
 
   load_and_authorize_resource :appliance,

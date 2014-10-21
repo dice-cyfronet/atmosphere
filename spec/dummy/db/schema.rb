@@ -42,28 +42,28 @@ ActiveRecord::Schema.define(version: 20141013064633) do
 
   create_table "atmosphere_appliance_sets", force: true do |t|
     t.string   "name"
-    t.integer  "priority",           default: 50,         null: false
-    t.string   "appliance_set_type", default: "workflow", null: false
-    t.integer  "user_id",                                 null: false
+    t.integer  "priority",            default: 50,         null: false
+    t.string   "appliance_set_type",  default: "workflow", null: false
+    t.integer  "user_id",                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "optimization_policy"
   end
 
   add_index "atmosphere_appliance_sets", ["user_id"], name: "index_atmosphere_appliance_sets_on_user_id", using: :btree
 
   create_table "atmosphere_appliance_types", force: true do |t|
-    t.string   "name",                                 null: false
+    t.string   "name",                                null: false
     t.text     "description"
-    t.boolean  "shared",             default: false,   null: false
-    t.boolean  "scalable",           default: false,   null: false
-    t.string   "visible_to",         default: "owner", null: false
+    t.boolean  "shared",            default: false,   null: false
+    t.boolean  "scalable",          default: false,   null: false
+    t.string   "visible_to",        default: "owner", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "metadata_global_id"
   end
 
   add_index "atmosphere_appliance_types", ["name"], name: "index_atmosphere_appliance_types_on_name", unique: true, using: :btree
@@ -84,6 +84,8 @@ ActiveRecord::Schema.define(version: 20141013064633) do
     t.string   "billing_state",                       default: "prepaid", null: false
     t.datetime "prepaid_until",                       default: "now()",   null: false
     t.text     "description"
+    t.string   "optimization_policy"
+    t.text     "optimization_policy_params"
   end
 
   create_table "atmosphere_billing_logs", force: true do |t|

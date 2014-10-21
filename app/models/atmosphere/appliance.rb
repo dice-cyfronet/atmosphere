@@ -23,6 +23,7 @@
 module Atmosphere
   class Appliance < ActiveRecord::Base
     extend Enumerize
+    serialize :optimization_policy_params
 
     belongs_to :appliance_set,
       class_name: 'Atmosphere::ApplianceSet'
@@ -113,8 +114,15 @@ module Atmosphere
     end
 
     def optimization_strategy
-      OptimizationStrategy::Default.new(self)
-    end
+        strategy_name =
+        begin
+          self.optimization_policy || self.appliance_set.optimization_policy || 'default'
+        rescue NameError
+          'default'
+        end
+        strategy_class = ('Atmosphere::OptimizationStrategy::' + strategy_name.to_s.capitalize!).constantize
+        strategy_class.new(self)
+      end
 
     private
 

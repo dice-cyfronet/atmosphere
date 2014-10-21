@@ -7,19 +7,32 @@ module Atmosphere
         @appliance = appliance
       end
 
-      def self.select_tmpl_and_flavor(tmpl, options)
-        VmAndFlavor.new(tmpl, options).select
+      def self.select_tmpls_and_flavors(tmpls, options)
+        VmAndFlavor.new(tmpls, options).select
+      end
+
+      def can_reuse_vm?
+        !appliance.development? && appliance.appliance_type.shared
       end
 
       def vm_to_reuse
         VirtualMachine.reusable_by(appliance).select { |vm| reuse?(vm) }.first
       end
 
-      def new_vm_tmpl_and_flavor
+      def new_vms_tmpls_and_flavors
         tmpls = vmt_candidates_for(appliance)
-        return [nil, nil] if tmpls.blank?
+        return [{template: nil, flavor: nil}] if tmpls.blank?
 
-        Default.select_tmpl_and_flavor(tmpls, preferences)
+        Default.select_tmpls_and_flavors(tmpls, preferences)
+      end
+
+      protected
+      def vmt_candidates_for(appliance)
+        VirtualMachineTemplate.where(
+          appliance_type: appliance.appliance_type,
+          state: 'active',
+          compute_site_id: appliance.compute_sites.active
+        )
       end
 
       private
@@ -29,14 +42,6 @@ module Atmosphere
       def reuse?(vm)
         vm.appliances.count < Atmosphere.optimizer.max_appl_no &&
         !vm.appliances.first.development?
-      end
-
-      def vmt_candidates_for(appliance)
-        VirtualMachineTemplate.where(
-          appliance_type: appliance.appliance_type,
-          state: 'active',
-          compute_site_id: appliance.compute_sites.active
-        )
       end
 
       def preferences
@@ -53,7 +58,7 @@ module Atmosphere
       end
 
       class VmAndFlavor
-        include Utils
+        include Atmosphere::Utils
 
         def initialize(tmpls, options={})
           @tmpls = tmpls
@@ -72,7 +77,6 @@ module Atmosphere
                 end
               ) {|f| f.hourly_cost}
             ).sort!{ |x,y| y.memory <=> x.memory }.last
-
             hsh[opt_fl] = tmpl if opt_fl
             hsh
           end
@@ -84,8 +88,10 @@ module Atmosphere
           ).sort { |x,y| x.memory <=> y.memory }.last
 
           [
-            opt_flavors_and_tmpls_map[globally_opt_flavor] || tmpls.first,
-            globally_opt_flavor
+            {
+              template: opt_flavors_and_tmpls_map[globally_opt_flavor] || tmpls.first,
+              flavor: globally_opt_flavor
+            }
           ]
         end
 

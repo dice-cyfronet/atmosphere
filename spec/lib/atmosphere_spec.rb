@@ -38,10 +38,9 @@ describe Atmosphere do
     end
 
     it 'returns real client when configuration available' do
-      Atmosphere.monitoring_client = Atmosphere::Monitoring::ZabbixClient.new
+      Atmosphere.monitoring_client = 'other_client'
 
-      expect(Atmosphere.monitoring_client)
-        .to be_an_instance_of Atmosphere::Monitoring::ZabbixClient
+      expect(Atmosphere.monitoring_client).to eq 'other_client'
     end
   end
 

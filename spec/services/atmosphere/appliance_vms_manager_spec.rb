@@ -1,31 +1,6 @@
 require 'rails_helper'
 
 describe Atmosphere::ApplianceVmsManager do
-
-  context '#can_reuse_vm?' do
-
-    it 'reuses shared VMs in prod mode' do
-      appl = appliance(development: false, shared: true)
-      subject = Atmosphere::ApplianceVmsManager.new(appl)
-
-      expect(subject.can_reuse_vm?).to be_truthy
-    end
-
-    it 'does not reuse VM in dev mode' do
-      appl = appliance(development: true, shared: true)
-      subject = Atmosphere::ApplianceVmsManager.new(appl)
-
-      expect(subject.can_reuse_vm?).to be_falsy
-    end
-
-    it 'does not reuse not shareable VMs' do
-      appl = appliance(development: false, shared: false)
-      subject = Atmosphere::ApplianceVmsManager.new(appl)
-
-      expect(subject.can_reuse_vm?).to be_falsy
-    end
-  end
-
   def appliance(options)
     double(
       development?: options[:development],

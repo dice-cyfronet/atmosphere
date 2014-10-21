@@ -25,6 +25,7 @@ module Atmosphere
             log_user_action msg
           else
             @appliance_set.save!
+            create_appliances if @appliances_params
             render json: @appliance_set, serializer: ApplianceSetSerializer, status: :created
             log_user_action "appliance set created: #{@appliance_set.to_json}"
           end
@@ -49,7 +50,8 @@ module Atmosphere
 
         private
         def appliance_set_params
-          params.require(:appliance_set).permit(:appliance_set_type, :name, :priority)
+          @appliances_params = params[:appliance_set][:appliances] if params[:appliance_set][:appliances]
+          params.require(:appliance_set).permit(:appliance_set_type, :name, :priority, :optimization_policy)
         end
 
         def appliance_set_update_params
@@ -59,6 +61,15 @@ module Atmosphere
         def create_appliance_set
           @appliance_set = ApplianceSet.new params[:appliance_set]
           @appliance_set.user = current_user
+        end
+
+        def create_appliances
+          @appliances_params.each do |appl_params|
+            appl_params[:appliance_set_id] = @appliance_set.id
+            creator = ApplianceCreator.new(appl_params, delegate_auth)
+            appl = creator.create!
+            @appliance_set.appliances << appl
+          end
         end
 
         def conflicted?(type)
