@@ -5,7 +5,6 @@ require_relative "../config/boot"
 require_relative "../config/environment"
 
 module Clockwork
-
   every(1.minute, 'monitoring.templates') do
     Atmosphere::ComputeSite.active.select(:id, :name).each do |cs|
       Rails.logger.debug "Creating templates monitoring task for #{cs.name}"
@@ -42,9 +41,5 @@ module Clockwork
 
   every(Atmosphere.url_monitoring.lost.seconds, 'monitoring.http_mappings.lost') do
     Atmosphere::HttpMappingMonitoringWorker.perform_async(:lost)
-  end
-
-  every(5.minutes, 'cleaning mi loging strategy cache') do
-    Atmosphere::MiCacheCleanerWorker.perform_async
   end
 end
