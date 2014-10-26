@@ -2,7 +2,7 @@ module Atmosphere
   class FlavorWorker
     include Sidekiq::Worker
 
-    sidekiq_options queue: :flavors
+    sidekiq_options queue: :monitoring
     sidekiq_options :retry => false
 
     def perform

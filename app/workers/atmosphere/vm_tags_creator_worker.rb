@@ -2,7 +2,7 @@ module Atmosphere
   class VmTagsCreatorWorker
     include Sidekiq::Worker
 
-    sidekiq_options queue: :tags
+    sidekiq_options queue: :cloud
     sidekiq_options retry: 4
 
     sidekiq_retries_exhausted do |msg|
