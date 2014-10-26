@@ -1,6 +1,6 @@
-# Atmosphere
+# Atmosphere [![Build Status](https://travis-ci.org/dice-cyfronet/atmosphere.svg)](https://travis-ci.org/dice-cyfronet/atmosphere) [![Code Climate](https://codeclimate.com/github/dice-cyfronet/atmosphere/badges/gpa.svg)](https://codeclimate.com/github/dice-cyfronet/atmosphere) [![Test Coverage](https://codeclimate.com/github/dice-cyfronet/atmosphere/badges/coverage.svg)](https://codeclimate.com/github/dice-cyfronet/atmosphere) [![Dependency Status](https://gemnasium.com/dice-cyfronet/atmosphere.svg)](https://gemnasium.com/dice-cyfronet/atmosphere)
 
-PN overview
+
 
 ## Requirements
 
