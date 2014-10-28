@@ -1,6 +1,5 @@
 module Atmosphere
   class ClewApplianceInstancesSerializer < ActiveModel::Serializer
-
     attribute :appliances
 
     def appliances
@@ -24,21 +23,35 @@ module Atmosphere
         state_explanation: appliance.state_explanation,
         amount_billed: appliance.amount_billed,
         prepaid_until: appliance.prepaid_until,
-        port_mapping_templates: map_http_mappings(appliance.http_mappings),
+        port_mapping_templates: pmts(appliance),
         virtual_machines: appliance.deployments.map { |depl| map_vm(depl.virtual_machine) },
       }
     end
 
-    def map_http_mappings(http_mappings)
-      http_mappings.inject({}) do |hsh, http_mapping|
-        pmt = hsh[http_mapping.port_mapping_template_id] ||
-                map_pmt(http_mapping.port_mapping_template)
-        pmt[:http_mappings] << map_hm(http_mapping)
-
-        hsh[http_mapping.port_mapping_template_id] = pmt
-
+    def pmts(appliance)
+      pmts_hsh = appliance_pmts(appliance).inject({}) do |hsh, pmt|
+        hsh[pmt.id] = map_pmt(pmt)
         hsh
-      end.values
+      end
+
+      add_http_mappings(appliance.http_mappings, pmts_hsh)
+
+      pmts_hsh.values
+    end
+
+    def appliance_pmts(appliance)
+      if appliance.development?
+        appliance.dev_mode_property_set.port_mapping_templates
+      else
+        appliance.appliance_type.port_mapping_templates
+      end
+    end
+
+    def add_http_mappings(http_mappings, pmts_hsh)
+      http_mappings.each do |http_mapping|
+        pmt = pmts_hsh[http_mapping.port_mapping_template_id]
+        pmt[:http_mappings] << map_hm(http_mapping)
+      end
     end
 
     def map_pmt(pmt)
