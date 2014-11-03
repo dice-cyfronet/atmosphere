@@ -7,4 +7,8 @@ class Atmosphere::Admin::ApplicationController < Atmosphere::ApplicationControll
   def only_admin_allowed
     raise CanCan::AccessDenied unless current_user && current_user.admin?
   end
+
+  def current_ability
+    @current_ability ||= Atmosphere.ability_class.new(current_user, true)
+  end
 end

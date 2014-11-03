@@ -87,6 +87,12 @@ module Atmosphere
 
   mattr_accessor :app_version
 
+  mattr_accessor :ability_class
+  @@ability_class = 'Atmosphere::Ability'
+  def self.ability_class
+    @@ability_class.constantize
+  end
+
   ## LOGGERS ##
 
   def self.action_logger

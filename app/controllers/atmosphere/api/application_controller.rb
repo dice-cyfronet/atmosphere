@@ -77,7 +77,8 @@ module Atmosphere
       end
 
       def current_ability
-        @current_ability ||= ::Ability.new(current_user, load_admin_abilities?)
+        @current_ability ||= Atmosphere.ability_class
+                              .new(current_user, load_admin_abilities?)
       end
 
       def load_admin_abilities?
