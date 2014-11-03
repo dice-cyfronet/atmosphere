@@ -30,3 +30,4 @@
 /spec/dummy/tmp
 /.project
 nbproject/
+coverage
