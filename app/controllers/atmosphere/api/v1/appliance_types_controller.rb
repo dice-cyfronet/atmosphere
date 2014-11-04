@@ -108,7 +108,7 @@ module Atmosphere
         end
 
         def appliance_type_params
-          params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :security_proxy_id, :appliance_id)
+          params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :appliance_id)
         end
 
         def pdp
