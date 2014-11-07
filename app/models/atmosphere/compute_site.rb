@@ -60,11 +60,18 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::ApplianceComputeSite'
 
-    validates_presence_of :site_id, :site_type, :technology
+    validates :site_id, presence: true
+
+    validates :site_type,
+              presence: true,
+              inclusion: %w(public private)
+
+    validates :technology,
+              presence: true,
+              inclusion: %w(openstack aws)
+
     enumerize :site_type, in: [:public, :private], predicates: true
     enumerize :technology, in: [:openstack, :aws], predicates: true
-    validates :site_type, inclusion: %w(public private)
-    validates :technology, inclusion: %w(openstack aws)
 
     scope :with_appliance_type, ->(appliance_type) do
       joins(virtual_machines: {appliances: :appliance_set})

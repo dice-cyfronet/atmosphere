@@ -41,27 +41,52 @@ module Atmosphere
       autosave: true,
       class_name: 'Atmosphere::Endpoint'
 
-    validates_presence_of :appliance_type, if: 'dev_mode_property_set == nil'
-    validates_presence_of :dev_mode_property_set, if: 'appliance_type == nil'
+    validates :appliance_type,
+              presence: true,
+              if: 'dev_mode_property_set == nil'
 
-    validates_absence_of :appliance_type, if: 'dev_mode_property_set != nil'
-    validates_absence_of :dev_mode_property_set, if: 'appliance_type != nil'
+    validates :appliance_type,
+              absence: true,
+              if: 'dev_mode_property_set != nil'
 
-    before_validation :check_only_one_belonging
+    validates :dev_mode_property_set,
+              presence: true,
+              if: 'appliance_type == nil'
 
-    validates_presence_of :service_name, :target_port, :application_protocol, :transport_protocol
+    validates :dev_mode_property_set,
+              absence: true,
+              if: 'appliance_type != nil'
+
+    validates :transport_protocol,
+              presence: true,
+              inclusion: { in: %w(tcp udp) }
+
+    validates :application_protocol,
+              presence: true,
+              inclusion: { in: %w(http https http_https none) },
+              if: 'transport_protocol == "tcp"'
+
+    validates :application_protocol,
+              presence: true,
+              inclusion: { in: %w(none) },
+              if: 'transport_protocol == "udp"'
+
+    validates :service_name,
+              presence: true,
+              uniqueness: { scope: [:appliance_type, :dev_mode_property_set] }
+
+    validates :target_port,
+              presence: true,
+              uniqueness: { scope: [:appliance_type, :dev_mode_property_set] },
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 0
+              }
 
     enumerize :application_protocol, in: [:http, :https, :http_https, :none]
     enumerize :transport_protocol, in: [:tcp, :udp]
 
-    validates_inclusion_of :transport_protocol, in: %w(tcp udp)
-    validates_inclusion_of :application_protocol, in: %w(http https http_https none), if: 'transport_protocol == "tcp"'
-    validates_inclusion_of :application_protocol, in: %w(none), if: 'transport_protocol == "udp"'
-
-    validates_uniqueness_of :service_name, scope: [:appliance_type, :dev_mode_property_set]
-    validates_uniqueness_of :target_port, scope: [:appliance_type, :dev_mode_property_set]
-    validates :target_port, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-
+    before_validation :check_only_one_belonging
     before_validation :slug_service_name
 
     after_create :add_port_mappings_to_associated_vms

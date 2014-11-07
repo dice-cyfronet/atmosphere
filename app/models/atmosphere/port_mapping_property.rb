@@ -18,15 +18,26 @@ module Atmosphere
     belongs_to :compute_site,
       class_name: 'Atmosphere::ComputeSite'
 
-    validates_presence_of :key, :value
+    validates :key,
+              presence: true,
+              uniqueness: { scope: :port_mapping_template_id }
 
-    validates_presence_of :port_mapping_template, if: 'compute_site == nil'
-    validates_presence_of :compute_site, if: 'port_mapping_template == nil'
+    validates :value,
+              presence: true
 
-    validates_absence_of :port_mapping_template, if: 'compute_site != nil'
-    validates_absence_of :compute_site, if: 'port_mapping_template != nil'
+    validates :port_mapping_template,
+              presence: true,
+              if: 'compute_site == nil'
+    validates :port_mapping_template,
+              absence: true,
+              if: 'compute_site != nil'
 
-    validates_uniqueness_of :key, scope: :port_mapping_template_id
+    validates :compute_site,
+              presence: true,
+              if: 'port_mapping_template == nil'
+    validates :compute_site,
+              absence: true,
+              if: 'port_mapping_template != nil'
 
     def to_s
       "#{key} #{value}"

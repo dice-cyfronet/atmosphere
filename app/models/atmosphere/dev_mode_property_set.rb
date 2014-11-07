@@ -27,16 +27,37 @@ module Atmosphere
         autosave: true,
         class_name: 'Atmosphere::PortMappingTemplate'
 
-    validates_presence_of :appliance
+    validates :appliance,
+              presence: true
 
-    validates_presence_of :name
+    validates :name,
+              presence: true
 
-    validates :shared, inclusion: [true, false]
-    validates :scalable, inclusion: [true, false]
+    validates :shared,
+              inclusion: [true, false]
 
-    validates :preference_memory, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
-    validates :preference_disk, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
-    validates :preference_cpu, numericality: { greater_than_or_equal_to: 0.0, allow_nil: true }
+    validates :scalable,
+              inclusion: [true, false]
+
+    validates :preference_memory,
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 0,
+                allow_nil: true
+              }
+
+    validates :preference_disk,
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 0,
+                allow_nil: true
+              }
+
+    validates :preference_cpu,
+              numericality: {
+                greater_than_or_equal_to: 0.0,
+                allow_nil: true
+              }
 
     def self.create_from(appliance_type)
       copy_params = ['name', 'description', 'shared',

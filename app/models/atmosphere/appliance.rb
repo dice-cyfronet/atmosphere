@@ -66,14 +66,15 @@ module Atmosphere
       autosave: true,
       class_name: 'Atmosphere::DevModePropertySet'
 
-    validates_presence_of :appliance_set, :appliance_type, :appliance_configuration_instance
+    validates :appliance_set, presence: true
+    validates :appliance_type, presence: true
+    validates :appliance_configuration_instance, presence: true
+    validates :state, presence: true
+    validates :billing_state, presence: true
+    validates :amount_billed, numericality: true
 
     enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
-    validates_presence_of :state
     enumerize :billing_state, in: ["initial", "prepaid", "expired", "error"], predicates: true
-    validates_presence_of :billing_state, default: "initial"
-
-    validates_numericality_of :amount_billed
 
     attr_readonly :dev_mode_property_set
 

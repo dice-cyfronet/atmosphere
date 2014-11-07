@@ -23,10 +23,20 @@ module Atmosphere
     belongs_to :user,
       class_name: 'Atmosphere::User'
 
-    validates_presence_of :name, :public_key, :user
-    validates_uniqueness_of :name, scope: :user_id
-    attr_readonly :name, :public_key, :fingerprint
+    validates :name,
+              presence: true,
+              uniqueness: { scope: :user_id }
+
+    validates :public_key,
+              presence: true
+
+    validates :user,
+              presence: true
+
     validate :check_key_type, :generate_fingerprint, unless: :persisted?
+
+    attr_readonly :name, :public_key, :fingerprint
+
     before_destroy :disallow_if_used_in_running_vm
     before_destroy :delete_in_clouds
 

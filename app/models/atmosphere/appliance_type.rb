@@ -20,6 +20,7 @@
 module Atmosphere
   class ApplianceType < ActiveRecord::Base
     include Atmosphere::ApplianceTypeExt
+    extend Enumerize
 
     belongs_to :author,
       class_name: 'Atmosphere::User',
@@ -44,44 +45,46 @@ module Atmosphere
     # AT can be deployed). By allowed compute site we understan active compute site
     # with VMT installed.
     has_many :compute_sites,
-      -> { where(atmosphere_compute_sites: {active: true}).uniq },
-      through: :virtual_machine_templates,
-      class_name: 'Atmosphere::ComputeSite'
+             -> { where(atmosphere_compute_sites: {active: true}).uniq },
+             through: :virtual_machine_templates,
+             class_name: 'Atmosphere::ComputeSite'
 
-    extend Enumerize
-    enumerize :visible_to, in: [:owner, :developer, :all]
+    validates :visible_to, presence: true
 
-    validates_presence_of :name, :visible_to
-    validates_uniqueness_of :name
+    validates :name,
+              uniqueness: true,
+              presence: true
 
     validates :visible_to,
-      inclusion: %w(owner developer all)
+              inclusion: %w(owner developer all)
 
     validates :shared,
-      inclusion: [true, false]
+              inclusion: [true, false]
 
     validates :scalable,
-      inclusion: [true, false]
+              inclusion: [true, false]
 
     validates :preference_memory,
-      numericality: {
-        only_integer: true,
-        greater_than_or_equal_to: 0,
-        allow_nil: true
-      }
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 0,
+                allow_nil: true
+              }
 
     validates :preference_disk,
-      numericality: {
-        only_integer: true,
-        greater_than_or_equal_to: 0,
-        allow_nil: true
-      }
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 0,
+                allow_nil: true
+              }
 
     validates :preference_cpu,
-      numericality: {
-        greater_than_or_equal_to: 0.0,
-        allow_nil: true
-      }
+              numericality: {
+                greater_than_or_equal_to: 0.0,
+                allow_nil: true
+              }
+
+    enumerize :visible_to, in: [:owner, :developer, :all]
 
     scope :def_order, -> { order(:name) }
     scope :active, -> do

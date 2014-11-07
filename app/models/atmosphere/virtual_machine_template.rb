@@ -20,6 +20,11 @@ module Atmosphere
     extend Enumerize
     include Childhoodable
 
+    ALLOWED_STATES = [
+      'active', 'deleted', 'error', 'saving',
+      'queued', 'killed', 'pending_delete'
+    ]
+
     belongs_to :source_vm,
       class_name: 'Atmosphere::VirtualMachine',
       foreign_key: 'virtual_machine_id'
@@ -34,11 +39,25 @@ module Atmosphere
     belongs_to :appliance_type,
       class_name: 'Atmosphere::ApplianceType'
 
-    validates_presence_of :id_at_site, :name, :state, :compute_site_id
-    validates_uniqueness_of :id_at_site, scope: :compute_site_id
-    enumerize :state, in: ['active', 'deleted', 'error', 'saving', 'queued', 'killed', 'pending_delete']
-    validates :state, inclusion: %w(active deleted error saving queued killed pending_delete)
-    validates :architecture, inclusion: %w(i386 x86_64)
+    validates :compute_site_id,
+              presence: true
+
+    validates :compute_site_id,
+              presence: true
+
+    validates :id_at_site,
+              presence: true,
+              uniqueness: { scope: :compute_site_id }
+
+    validates :state,
+              presence: true,
+              inclusion: ALLOWED_STATES
+
+    validates :architecture,
+              inclusion: %w(i386 x86_64)
+
+    enumerize :state, in: ALLOWED_STATES
+
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt

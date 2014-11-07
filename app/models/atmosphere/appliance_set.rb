@@ -21,14 +21,26 @@ module Atmosphere
         dependent: :destroy,
         class_name: 'Atmosphere::Appliance'
 
-    validates_presence_of :priority, :appliance_set_type, :user
+    validates :user, presence: true
 
-    validates :priority, numericality: { only_integer: true }, inclusion: 1..100
+    validates :priority,
+              presence: true,
+              numericality: { only_integer: true },
+              inclusion: 1..100
+
+    validates :appliance_set_type,
+              presence: true,
+              inclusion: %w(portal development workflow)
+
+    validates :optimization_policy,
+              inclusion: %w(manual),
+              if: :optimization_policy
+
+    validates :appliance_set_type,
+              uniqueness: { scope: :user },
+              if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
     enumerize :appliance_set_type, in: [:portal, :development, :workflow]
-    validates :appliance_set_type, inclusion: %w(portal development workflow)
-    validates :optimization_policy, inclusion: %w(manual), if: :optimization_policy
-    validates :appliance_set_type, uniqueness: { scope: :user }, if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
     attr_readonly :appliance_set_type
 

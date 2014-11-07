@@ -27,12 +27,23 @@ module Atmosphere
     has_many :virtual_machines,
       class_name: 'Atmosphere::VirtualMachine'
 
-    validates_presence_of :flavor_name
-    validates_numericality_of :cpu, greater_than_or_equal_to: 0
-    validates_numericality_of :memory, greater_than_or_equal_to: 0
-    validates_numericality_of :hdd, greater_than_or_equal_to: 0
-    validates_numericality_of :hourly_cost, greater_than_or_equal_to: 0
-    validates :supported_architectures, inclusion: %w(i386 x86_64 i386_and_x86_64)
+    validates :flavor_name,
+              presence: true
+
+    validates :cpu,
+              numericality: { greater_than_or_equal_to: 0 }
+
+    validates :memory,
+              numericality: { greater_than_or_equal_to: 0 }
+
+    validates :hdd,
+              numericality: { greater_than_or_equal_to: 0 }
+
+    validates :hourly_cost,
+              numericality: { greater_than_or_equal_to: 0 }
+
+    validates :supported_architectures,
+              inclusion: %w(i386 x86_64 i386_and_x86_64)
 
     scope :with_prefs, ->(options) do
       FlavorsWithRequirements.new(self, options).find

@@ -16,15 +16,24 @@
 module Atmosphere
   class Endpoint < ActiveRecord::Base
     include Atmosphere::EndpointExt
+    extend Enumerize
 
     belongs_to :port_mapping_template,
       class_name: 'Atmosphere::PortMappingTemplate'
 
-    extend Enumerize
-    enumerize :endpoint_type, in: [:ws, :rest, :webapp]
+    validates :endpoint_type,
+              inclusion: %w(ws rest webapp)
 
-    validates :endpoint_type, inclusion: %w(ws rest webapp)
-    validates_presence_of :port_mapping_template, :invocation_path, :name
+    validates :port_mapping_template,
+              presence: true
+
+    validates :invocation_path,
+              presence: true
+
+    validates :name,
+              presence: true
+
+    enumerize :endpoint_type, in: [:ws, :rest, :webapp]
 
     scope :def_order, -> { order(:description) }
 

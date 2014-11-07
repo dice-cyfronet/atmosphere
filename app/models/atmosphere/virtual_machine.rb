@@ -21,6 +21,12 @@ module Atmosphere
     extend Enumerize
     include Childhoodable
 
+    ALLOWED_STATES = [
+      'active', 'build', 'deleted', 'error', 'hard_reboot',
+      'password', 'reboot', 'rebuild', 'rescue', 'resize',
+      'revert_resize', 'shutoff', 'suspended', 'unknown',
+      'verify_resize', 'saving', 'paused'
+    ]
 
     has_many :saved_templates,
       dependent: :nullify,
@@ -49,16 +55,21 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::Deployment'
 
-    validates_presence_of :name
-    validates_uniqueness_of :id_at_site, scope: :compute_site_id
-    enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving', 'paused']
-    validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving paused)
+    validates :name,
+              presence: true
 
-    after_destroy :delete_dnat, if: :ip?
-    after_update :regenerate_dnat, if: :ip_changed?
+    validates :id_at_site,
+              uniqueness: { scope: :compute_site_id }
+
+    validates :state, inclusion: ALLOWED_STATES
+
+    enumerize :state, in: ALLOWED_STATES
+
     before_update :update_in_monitoring, if: :ip_changed?
     before_destroy :unregister_from_monitoring, if: :in_monitoring?
     before_destroy :cant_destroy_non_managed_vm
+    after_update :regenerate_dnat, if: :ip_changed?
+    after_destroy :delete_dnat, if: :ip?
 
     scope :manageable, -> { where(managed_by_atmosphere: true) }
     scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }

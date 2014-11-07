@@ -20,8 +20,9 @@ module Atmosphere
       class_name: 'Atmosphere::ApplianceConfigurationInstance',
       dependent: :nullify
 
-    validates_presence_of :name, :appliance_type
-    validates_uniqueness_of :name, scope: :appliance_type
+    validates :name, presence: true
+    validates :appliance_type, presence: true
+    validates :name, uniqueness: { scope: :appliance_type }
 
     scope :with_config_instance, ->(config_instance) do
       joins(:appliance_configuration_instances)

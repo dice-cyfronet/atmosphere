@@ -38,9 +38,16 @@ module Atmosphere
         dependent: :destroy,
         class_name: 'Atmosphere::ComputeSiteFund'
 
-    validates_presence_of :name
-    validates_numericality_of :balance
-    validates_numericality_of :overdraft_limit, less_than_or_equal_to: 0
-    validates :termination_policy, inclusion: {in: ["delete", "suspend", "no_action"]}
+    validates :name,
+              presence: true
+
+    validates :balance,
+              numericality: true
+
+    validates :overdraft_limit,
+              numericality: { less_than_or_equal_to: 0 }
+
+    validates :termination_policy,
+              inclusion: {in: ["delete", "suspend", "no_action"]}
   end
 end

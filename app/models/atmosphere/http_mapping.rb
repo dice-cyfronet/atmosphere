@@ -26,16 +26,33 @@ module Atmosphere
     belongs_to :compute_site,
       class_name: 'Atmosphere::ComputeSite'
 
-    validates_presence_of :url, :application_protocol, :appliance, :port_mapping_template, :compute_site
+    validates :url,
+              presence: true
 
-    validates_inclusion_of :application_protocol, in: %w(http https)
-    validates :custom_name, uniqueness: {
-        scope: [:compute_site_id, :application_protocol],
-        allow_blank: true
-      }
+    validates :application_protocol,
+              presence: true,
+              inclusion: { in: %w(http https) }
 
-    enumerize :application_protocol, in: [:http, :https]
-    enumerize :monitoring_status, in: [:pending, :ok, :lost, :not_monitored]
+    validates :appliance,
+              presence: true
+
+    validates :port_mapping_template,
+              presence: true
+
+    validates :compute_site,
+              presence: true
+
+    validates :custom_name,
+              uniqueness: {
+                scope: [:compute_site_id, :application_protocol],
+                allow_blank: true
+              }
+
+    enumerize :application_protocol,
+              in: [:http, :https]
+
+    enumerize :monitoring_status,
+              in: [:pending, :ok, :lost, :not_monitored]
 
     before_save :slug_custom_name
     around_destroy :rm_proxy_after_destroy

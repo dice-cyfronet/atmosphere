@@ -18,9 +18,21 @@ module Atmosphere
     belongs_to :port_mapping_template,
       class_name: 'Atmosphere::PortMappingTemplate'
 
-    validates_presence_of :public_ip, :source_port, :virtual_machine, :port_mapping_template
+    validates :public_ip,
+              presence: true
 
-    validates :source_port, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :virtual_machine,
+              presence: true
+
+    validates :port_mapping_template,
+              presence: true
+
+    validates :source_port,
+              presence: true,
+              numericality: {
+                only_integer: true,
+                greater_than_or_equal_to: 0
+              }
 
     before_destroy :delete_dnat
 

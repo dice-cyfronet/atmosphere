@@ -23,8 +23,9 @@ module Atmosphere
     belongs_to :user,
       class_name: 'Atmosphere::User'
 
-    validates_presence_of :appliance, :fund, :actor
-    validates_numericality_of :amount_billed
-
+    validates :appliance, presence: true
+    validates :fund, presence: true
+    validates :actor, presence: true
+    validates :amount_billed, numericality: true
   end
 end
