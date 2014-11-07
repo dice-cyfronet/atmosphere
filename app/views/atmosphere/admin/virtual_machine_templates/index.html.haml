@@ -6,7 +6,7 @@
     %tr
       %th
         = t('compute_sites.name')
-      %th{ :style => "min-width: 35rem;"}
+      %th{ style: "min-width: 35rem;"}
         = t('virtual_machine_templates.uuid')
       %th
         = t('virtual_machine_templates.name')
@@ -14,7 +14,7 @@
         = t('virtual_machine_templates.state')
       %th
         = t('virtual_machine_templates.managed_by_atmosphere')
-      %th{ :style => "text-align: right; min-width: 8rem;" }
+      %th{ style: "text-align: right; min-width: 8rem;" }
         = t('actions')
 
     - @virtual_machine_templates.each do |compute_site, sets|
@@ -22,12 +22,12 @@
         %tr
           - if i==0
             %td{rowspan: sets.count}= compute_site.name
-          %td{ :style => "font-family: monospace;" }
+          %td{ style: "font-family: monospace;" }
             = virtual_machine_template.id_at_site
           %td= virtual_machine_template.name
           %td= virtual_machine_template.state
           %td= virtual_machine_template.managed_by_atmosphere
-          %td{ :style => "text-align: right" }
+          %td{ style: "text-align: right" }
             .btn-group
               = link_to admin_virtual_machine_template_path(virtual_machine_template),
                 class: 'btn btn-success btn-xs', title: t('virtual_machine_templates.show') do
@@ -35,6 +35,6 @@
               = link_to edit_admin_virtual_machine_template_path(virtual_machine_template),
                 class: 'btn btn-warning btn-xs', title: t('virtual_machine_templates.edit') do
                 =icon 'edit'
-              = link_to admin_virtual_machine_template_path(virtual_machine_template), :method => :delete, :data => { :confirm => t('are_you_sure') },
+              = link_to admin_virtual_machine_template_path(virtual_machine_template), method: :delete, data: { confirm: t('are_you_sure') },
                 class: 'btn btn-danger btn-xs', title: t('virtual_machine_templates.remove') do
                 =icon 'trash-o'

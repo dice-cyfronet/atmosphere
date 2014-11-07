@@ -24,7 +24,7 @@ describe Atmosphere::VirtualMachineFlavor do
       saved = fl.save
       expect(saved).to be false
       expect(fl.errors.messages).to eq({
-          :supported_architectures => ['is not included in the list']
+          supported_architectures: ['is not included in the list']
         })
     end
   end

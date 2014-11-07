@@ -27,8 +27,8 @@ module Atmosphere
 
       def collect
         qb = QueryBuilder.new
-        qb.add_params(:itemids => ids)
-        qb.add_params(:limit => HostMetric::ITEM_LIMIT * metrics.size)
+        qb.add_params(itemids: ids)
+        qb.add_params(limit: HostMetric::ITEM_LIMIT * metrics.size)
         results = client.history(qb)
         sorted = {}
         results.each do |res|

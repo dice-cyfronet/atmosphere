@@ -24,7 +24,7 @@ module Atmosphere
       class_name: 'Atmosphere::User'
 
     validates_presence_of :name, :public_key, :user
-    validates_uniqueness_of :name, :scope => :user_id
+    validates_uniqueness_of :name, scope: :user_id
     attr_readonly :name, :public_key, :fingerprint
     validate :check_key_type, :generate_fingerprint, unless: :persisted?
     before_destroy :disallow_if_used_in_running_vm

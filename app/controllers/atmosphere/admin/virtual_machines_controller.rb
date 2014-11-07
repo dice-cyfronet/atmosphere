@@ -29,6 +29,6 @@ class Atmosphere::Admin::VirtualMachinesController < Atmosphere::Admin::Applicat
 
   private
     def virtual_machine_params
-      params.require(:virtual_machine).permit(:virtual_machine_template_id, :name, {:appliance_ids => []})
+      params.require(:virtual_machine).permit(:virtual_machine_template_id, :name, {appliance_ids: []})
     end
 end

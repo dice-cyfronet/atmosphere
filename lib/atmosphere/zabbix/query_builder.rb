@@ -5,8 +5,8 @@ module Atmosphere
 
       def defaults
         {
-            :output => "extend",
-            :limit => DEFAULT_LIMIT
+          output: "extend",
+          limit: DEFAULT_LIMIT
         }
       end
 
@@ -26,8 +26,8 @@ module Atmosphere
 
       def build_get(entity)
         {
-            :method => "#{entity}.get",
-            :params => build_params
+          method: "#{entity}.get",
+          params: build_params
         }
       end
 

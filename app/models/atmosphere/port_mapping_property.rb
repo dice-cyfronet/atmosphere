@@ -26,7 +26,7 @@ module Atmosphere
     validates_absence_of :port_mapping_template, if: 'compute_site != nil'
     validates_absence_of :compute_site, if: 'port_mapping_template != nil'
 
-    validates_uniqueness_of :key, :scope => :port_mapping_template_id
+    validates_uniqueness_of :key, scope: :port_mapping_template_id
 
     def to_s
       "#{key} #{value}"

@@ -6,7 +6,7 @@
     %tr
       %th
         = t('compute_sites.name')
-      %th{ :style => "min-width: 35rem;"}
+      %th{ style: "min-width: 35rem;"}
         = t('virtual_machines.uuid')
       %th
         = t('virtual_machines.name')
@@ -16,7 +16,7 @@
         = t('virtual_machines.ip_address')
       %th
         = t('virtual_machines.appliances')
-      %th{ :style => "text-align: right; min-width: 10rem;" }
+      %th{ style: "text-align: right; min-width: 10rem;" }
         = t('actions')
 
     - @virtual_machines.each do |compute_site, sets|
@@ -24,24 +24,24 @@
         %tr
           - if i==0
             %td{rowspan: sets.count}= compute_site.name
-          %td{ :style => "font-family: monospace;" }
+          %td{ style: "font-family: monospace;" }
             = virtual_machine.id_at_site
           %td= virtual_machine.name
           %td= virtual_machine.state
-          %td{ :style => "font-family: monospace;" }
+          %td{ style: "font-family: monospace;" }
             = virtual_machine.ip
           %td= model_collection_to_s virtual_machine.appliances
-          %td{ :style => "text-align: right" }
+          %td{ style: "text-align: right" }
             .btn-group
               = link_to admin_virtual_machine_path(virtual_machine),
                 class: 'btn btn-success btn-xs', title: t('virtual_machines.show') do
                 =icon 'bars'
-              = link_to reboot_admin_virtual_machine_path(virtual_machine), :method => :post,
+              = link_to reboot_admin_virtual_machine_path(virtual_machine), method: :post,
                 class: 'btn btn-warning btn-xs', title: t('virtual_machines.reboot') do
                 =icon 'refresh'
-              = link_to save_as_template_admin_virtual_machine_path(virtual_machine), :method => :post,
+              = link_to save_as_template_admin_virtual_machine_path(virtual_machine), method: :post,
                 class: 'btn btn-success btn-xs', title: t('virtual_machines.save') do
                 =icon 'save'
-              = link_to admin_virtual_machine_path(virtual_machine), :method => :delete, :data => { :confirm => t('are_you_sure') },
+              = link_to admin_virtual_machine_path(virtual_machine), method: :delete, data: { confirm: t('are_you_sure') },
                 class: 'btn btn-danger btn-xs', title: t('virtual_machines.destroy') do
                 =icon 'trash-o'

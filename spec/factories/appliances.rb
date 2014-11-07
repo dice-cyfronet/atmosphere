@@ -9,7 +9,7 @@ FactoryGirl.define do
     compute_sites Atmosphere::ComputeSite.all
 
     # Create a rich fund by default so there's no risk of interfering with non-billing tests.
-    fund { FactoryGirl.create(:fund, :balance => 1000000) }
+    fund { FactoryGirl.create(:fund, balance: 1000000) }
     # Use arbitrary last billing date
     last_billing Date.parse('2014-01-14 12:00')
     prepaid_until Date.parse('2014-02-08 12:00')

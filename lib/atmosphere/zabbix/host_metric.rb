@@ -16,9 +16,9 @@ module Atmosphere
 
       def collect
         qb = QueryBuilder.new
-        qb.add_params(:itemids => @id)
-        qb.add_params(:history => @type)
-        qb.add_params(:limit => ITEM_LIMIT)
+        qb.add_params(itemids: @id)
+        qb.add_params(history: @type)
+        qb.add_params(limit: ITEM_LIMIT)
         store_results(client.history(qb))
       end
 

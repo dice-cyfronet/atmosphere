@@ -16,7 +16,7 @@
         = t('appliance_sets.site')
       %th
         = t('appliance_sets.flavor')
-      %th{ :style => "text-align: right; min-width: 8rem;" }
+      %th{ style: "text-align: right; min-width: 8rem;" }
         = t('actions')
 
     - @appliance_sets.each do |user, sets|
@@ -72,7 +72,7 @@
             %td(colspan='4')
               = t('appliance_sets.no_appliances')
 
-          %td{ :style => "text-align: right" }
+          %td{ style: "text-align: right" }
             .btn-group
               = link_to [:admin, appliance_set],
                 class: 'btn btn-success btn-xs', title: t('appliance_sets.show') do

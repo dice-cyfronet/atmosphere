@@ -50,7 +50,7 @@ module Atmosphere
       class_name: 'Atmosphere::Deployment'
 
     validates_presence_of :name
-    validates_uniqueness_of :id_at_site, :scope => :compute_site_id
+    validates_uniqueness_of :id_at_site, scope: :compute_site_id
     enumerize :state, in: ['active', 'build', 'deleted', 'error', 'hard_reboot', 'password', 'reboot', 'rebuild', 'rescue', 'resize', 'revert_resize', 'shutoff', 'suspended', 'unknown', 'verify_resize', 'saving', 'paused']
     validates :state, inclusion: %w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving paused)
 

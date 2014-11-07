@@ -3,7 +3,7 @@ module Atmosphere
     include Sidekiq::Worker
 
     sidekiq_options queue: :monitoring
-    sidekiq_options :retry => false
+    sidekiq_options retry: false
 
     def perform(site_id)
       begin

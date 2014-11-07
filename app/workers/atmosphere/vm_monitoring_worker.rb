@@ -3,7 +3,7 @@ module Atmosphere
     include Sidekiq::Worker
 
     sidekiq_options queue: :monitoring
-    sidekiq_options :retry => false
+    sidekiq_options retry: false
 
     def initialize(vm_updater_class=VmUpdater, vm_destroyer_class=VmDestroyer)
       @vm_updater_class = vm_updater_class

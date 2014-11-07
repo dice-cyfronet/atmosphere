@@ -31,25 +31,25 @@ module Atmosphere
         useip = 1
 
         # Request ids
-        groupid = client.api.hostgroups.get_id(:name => @group_name)
-        templateid = client.api.templates.get_id(:host => @template_name)
+        groupid = client.api.hostgroups.get_id(name: @group_name)
+        templateid = client.api.templates.get_id(host: @template_name)
 
         # TODO create_or_update method is more suitable in this place but for some reason it does not update old values (eg. ip)
         begin
           host_id = client.api.hosts.create(
-              :host => unique_id,
-              :interfaces => [
-                  {
-                      :type => type,
-                      :ip => ip,
-                      :port => port,
-                      :useip => useip,
-                      :main => main,
-                      :dns => dns
-                  }
-              ],
-              :groups => [ :groupid => groupid],
-              :templates => [ :templateid => templateid]
+            host: unique_id,
+            interfaces: [
+              {
+                type: type,
+                ip: ip,
+                port: port,
+                useip: useip,
+                main: main,
+                dns: dns
+              }
+            ],
+            groups: [groupid: groupid],
+            templates: [templateid: templateid]
           )
 
           host_id

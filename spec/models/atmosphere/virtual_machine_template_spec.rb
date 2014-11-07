@@ -46,7 +46,7 @@ describe Atmosphere::VirtualMachineTemplate do
       vmt = build(:virtual_machine_template, architecture: 'invalid architecture')
       saved = vmt.save
       expect(saved).to be false
-      expect(vmt.errors.messages).to eq({:architecture => ['is not included in the list']})
+      expect(vmt.errors.messages).to eq({architecture: ['is not included in the list']})
     end
   end
 

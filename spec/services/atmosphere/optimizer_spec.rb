@@ -58,7 +58,7 @@ describe Atmosphere::Optimizer do
         let(:appl_vm_manager) do
           double('appliance_vms_manager',
             :can_reuse_vm? => false,
-            :save => true
+            save: true
           )
         end
 
@@ -354,7 +354,7 @@ describe Atmosphere::Optimizer do
     let(:appl_vm_manager) do
       double('appliance_vms_manager',
         :can_reuse_vm? => false,
-        :save => true
+        save: true
       )
     end
 
@@ -514,7 +514,7 @@ describe Atmosphere::Optimizer do
       let(:appl_vm_manager) do
         double('appliance_vms_manager',
           :can_reuse_vm? => false,
-          :save => true
+          save: true
         )
       end
 
