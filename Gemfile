@@ -43,4 +43,6 @@ group :test do
   # gem 'factory_girl'
   gem 'ffaker'
   gem 'database_cleaner'
+
+  gem "codeclimate-test-reporter", require: nil
 end
