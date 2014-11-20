@@ -42,6 +42,3 @@
               = link_to save_as_template_admin_virtual_machine_path(virtual_machine), method: :post,
                 class: 'btn btn-success btn-xs', title: t('virtual_machines.save') do
                 =icon 'save'
-              = link_to admin_virtual_machine_path(virtual_machine), method: :delete, data: { confirm: t('are_you_sure') },
-                class: 'btn btn-danger btn-xs', title: t('virtual_machines.destroy') do
-                =icon 'trash-o'
