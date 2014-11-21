@@ -4,7 +4,8 @@ export __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 pushd $(dirname $(dirname ${__dir}))
     bundle install
-    bundle exec rake db:reset
+    bundle exec rake db:create
+    bundle exec rake db:migrate
 popd
 
 pushd ${__dir}
