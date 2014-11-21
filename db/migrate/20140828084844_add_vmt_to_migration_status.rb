@@ -12,7 +12,7 @@ class AddVmtToMigrationStatus < ActiveRecord::Migration
     remove_index :atmosphere_migration_jobs,
                  name: 'atmo_mj_ix'
     
-    add_index :migration_jobs,
+    add_index :atmosphere_migration_jobs,
               [:appliance_type_id, :virtual_machine_template_id, :compute_site_source_id, :compute_site_destination_id],
               unique: true,
               name: 'atmo_mj_ix'
