@@ -176,6 +176,18 @@ ActiveRecord::Schema.define(version: 20140919131652) do
     t.string   "base_url",                                     null: false
   end
 
+  create_table "migration_jobs", force: true do |t|
+    t.integer  "appliance_type_id"
+    t.integer  "compute_site_source_id"
+    t.integer  "compute_site_destination_id"
+    t.text     "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "virtual_machine_template_id"
+  end
+
+  add_index "migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "migration_jobs_index", unique: true, using: :btree
+
   create_table "port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
     t.string   "value",                    null: false
@@ -340,6 +352,11 @@ ActiveRecord::Schema.define(version: 20140919131652) do
   add_foreign_key "http_mappings", "appliances", name: "http_mappings_appliance_id_fk"
   add_foreign_key "http_mappings", "compute_sites", name: "http_mappings_compute_site_id_fk"
   add_foreign_key "http_mappings", "port_mapping_templates", name: "http_mappings_port_mapping_template_id_fk"
+
+  add_foreign_key "migration_jobs", "appliance_types", name: "migration_jobs_appliance_type_id_fk"
+  add_foreign_key "migration_jobs", "compute_sites", name: "migration_jobs_compute_site_destination_id_fk", column: "compute_site_destination_id"
+  add_foreign_key "migration_jobs", "compute_sites", name: "migration_jobs_compute_site_source_id_fk", column: "compute_site_source_id"
+  add_foreign_key "migration_jobs", "virtual_machine_templates", name: "migration_jobs_virtual_machine_template_id_fk"
 
   add_foreign_key "port_mapping_properties", "compute_sites", name: "port_mapping_properties_compute_site_id_fk"
   add_foreign_key "port_mapping_properties", "port_mapping_templates", name: "port_mapping_properties_port_mapping_template_id_fk"

@@ -25,6 +25,10 @@
       class: 'btn btn-warning', title: t('edit') do
       =icon 'bars'
       = t('edit')
+    = link_to share_admin_virtual_machine_template_path(@virtual_machine_template),
+      class: 'btn btn-warning', title: t('share') do
+      =icon 'copy'
+      = t('share')
     = link_to admin_virtual_machine_templates_path,
       class: 'btn btn-default', title: t('back') do
       =icon 'reply'

@@ -17,6 +17,17 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
   def edit
   end
 
+  # GET /virtual_machine_templates/1/share
+  def share
+  end
+  
+  # POST /virtual_machine_templates/1/export
+  def export
+    cs_id = virtual_machine_template_params[:compute_site_id]
+    @virtual_machine_template.export(cs_id)
+    redirect_to admin_virtual_machine_templates_url, notice: 'Virtual machine template migration task was successfully enqueued.'
+  end
+
   # PATCH/PUT /virtual_machine_templates/1
   def update
     if @virtual_machine_template.update(virtual_machine_template_params)
