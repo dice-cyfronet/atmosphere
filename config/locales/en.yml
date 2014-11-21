@@ -144,6 +144,10 @@ en:
     remove: Remove this Virtual Machine Template
     version: Version
     managed_by_atmosphere: Managed
+  migration_jobs:
+    title: Migration
+    long_title: Migration Jobs
+    long_title_single: Migration Jobs
   user_keys:
     title: User keys
     long_title: User keys
