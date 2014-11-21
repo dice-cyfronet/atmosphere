@@ -2,11 +2,13 @@
 
 export __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-pushd $(dirname $(dirname ${__dir}))
+pushd $(dirname $(dirname $(dirname ${__dir})))
     bundle install
     bundle exec rake db:migrate
 popd
 
-pushd ${__dir}
+pushd $(dirname ${__dir})
     bundle exec rake db:seed
 popd
+
+echo "Default credentials 'admin:s3cr3t!!!'."
