@@ -66,6 +66,6 @@ class Atmosphere::Admin::PortMappingTemplatesController < Atmosphere::Admin::App
   end
 
   def initialize_manager
-    @manager = Atmosphere::AffectedApplianceAwareManager.new(@port_mapping_template, AppliancesAffectedByPmt)
+    @manager = Atmosphere::AffectedApplianceAwareManager.new(@port_mapping_template, Atmosphere::AppliancesAffectedByPmt)
   end
 end
