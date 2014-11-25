@@ -22,6 +22,10 @@ module Atmosphere
         end
         tmpls_and_flavors
       end
+
+      def can_manually_scale?
+        true
+      end
     end
   end
 end

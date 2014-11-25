@@ -9,6 +9,7 @@ module Atmosphere
     def run(hint)
       satisfy_appliance(hint[:created_appliance]) if hint[:created_appliance]
       terminate_unused_vms if hint[:destroyed_appliance]
+      scale(hint[:scaling]) if hint[:scaling]
     end
 
     #private
@@ -74,6 +75,17 @@ module Atmosphere
 
     def select_tmpls_and_flavors(tmpls, options={})
       OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
+    end
+
+    def scale(hint)
+      appliance = hint[:appliance]
+      quantity = hint[:quantity]
+      optimization_strategy = appliance.optimization_strategy
+      if optimization_strategy.can_manually_scale?
+        # TODO add scaling code implement it as delayed job
+      else
+        # TODO add exception - no rights for manual scaling
+      end
     end
 
     private
