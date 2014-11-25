@@ -1,6 +1,5 @@
 module Atmosphere
   class ApplianceCreator
-
     attr_reader :appliance
 
     def initialize(params, delegated_auth)
@@ -9,16 +8,10 @@ module Atmosphere
       @delegated_auth = delegated_auth
     end
 
-    def create!
-      check_for_at_instantiation_possibility!
-
-      appliance.transaction do
-        apply_preferences
-        init_appliance_configuration
-        init_billing
-
-        appliance.save!
-      end
+    def build
+      apply_preferences
+      init_appliance_configuration
+      init_billing
 
       appliance
     end
@@ -28,7 +21,7 @@ module Atmosphere
     attr_reader :params, :delegated_auth
 
     def create_params
-      c_params = production? ? prod_params : dev_params
+      c_params = development? ? dev_params : prod_params
 
       at = config_template.appliance_type
 
@@ -43,20 +36,18 @@ module Atmosphere
     def prod_params
       opt_policy_params = {}
       opt_policy_params[:vms] = params[:vms]
-      prod_params = params.permit(
-        :appliance_set_id,
-        :name, :description,
-        :compute_site_ids)
+      prod_params = params.permit(:appliance_set_id,
+                                  :name, :description,
+                                  :compute_site_ids)
       prod_params[:optimization_policy_params] = opt_policy_params
       prod_params
     end
 
     def dev_params
-      params.permit(
-        :appliance_set_id,
-        :user_key_id,
-        :name, :description,
-        :compute_site_ids)
+      params.permit(:appliance_set_id,
+                    :user_key_id,
+                    :name, :description,
+                    :compute_site_ids)
     end
 
     def allowed_compute_sites
@@ -68,40 +59,34 @@ module Atmosphere
     end
 
     def apply_preferences
-      preferences && appliance.create_dev_mode_property_set(preferences)
-    end
-
-    def init_billing
-      # Add Time.now.utc() as prepaid_until - this effectively means that the appliance is unpaid.
-      # The requestor must bill this new appliance prior to exposing it to the end user.
-      appliance.prepaid_until = Time.now.utc
+      appliance.create_dev_mode_property_set(preferences) if development?
     end
 
     def preferences
-      params.permit(dev_mode_property_set: [:preference_memory, :preference_cpu, :preference_disk])[:dev_mode_property_set] unless production?
+      prefs = params.permit(
+                dev_mode_property_set: [
+                  :preference_memory,
+                  :preference_cpu,
+                  :preference_disk
+                ])
+      prefs[:dev_mode_property_set] || {}
+    end
+
+    def init_billing
+      # Add Time.now.utc() as prepaid_until - this effectively means
+      # that the appliance is unpaid.
+      # The requestor must bill this new appliance prior to exposing
+      # it to the end user.
+      appliance.prepaid_until = Time.now.utc
     end
 
     def init_appliance_configuration
-      appliance.appliance_configuration_instance = configuration_instance
+      appliance.appliance_configuration_instance =
+        ApplianceConfigurationInstance.get(config_template, config_params)
     end
 
-    def check_for_at_instantiation_possibility!
-      raise CanCan::AccessDenied unless can_create_appliance?
-    end
-
-    def can_create_appliance?
-      type = appliance.appliance_type
-      visible_to = type.visible_to
-
-      case visible_to.to_sym
-        when :owner     then appliance.appliance_set.user == type.author
-        when :developer then appliance.appliance_set.appliance_set_type.development?
-        else true
-      end
-    end
-
-    def production?
-      appliance_set.production?
+    def development?
+      appliance_set.development?
     end
 
     def appliance_set
@@ -113,15 +98,12 @@ module Atmosphere
     end
 
     def config_template
-      @config_template ||= ApplianceConfigurationTemplate.find(config_template_id)
+      @config_template ||=
+        ApplianceConfigurationTemplate.find(config_template_id)
     end
 
     def config_template_id
       params[:configuration_template_id]
-    end
-
-    def configuration_instance
-      @config_instance ||= ApplianceConfigurationInstance.get(config_template, config_params)
     end
 
     def config_params

@@ -147,6 +147,14 @@ module Atmosphere
       visible_to.developer?
     end
 
+    def appropriate_for?(appliance_set)
+      case visible_to.to_sym
+      when :owner then appliance_set.user == author
+      when :developer then appliance_set.appliance_set_type.development?
+      else true
+      end
+    end
+
     private
 
     def self.appliance_type_attributes(appliance, overwrite)

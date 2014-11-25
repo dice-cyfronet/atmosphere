@@ -3,11 +3,10 @@ module Atmosphere
     module V1
       class ApplianceSetsController < Atmosphere::Api::ApplicationController
         load_and_authorize_resource :appliance_set,
-          class: 'Atmosphere::ApplianceSet'
+                                    class: 'Atmosphere::ApplianceSet'
         respond_to :json
 
         before_filter :create_appliance_set, only: :create
-
 
         def index
           respond_with @appliance_sets.where(filter).order(:id)
@@ -49,9 +48,14 @@ module Atmosphere
         end
 
         private
+
         def appliance_set_params
-          @appliances_params = params[:appliance_set][:appliances] if params[:appliance_set][:appliances]
-          params.require(:appliance_set).permit(:appliance_set_type, :name, :priority, :optimization_policy)
+          if params[:appliance_set][:appliances]
+            @appliances_params = params[:appliance_set][:appliances]
+          end
+
+          params.require(:appliance_set).
+            permit(:appliance_set_type, :name, :priority, :optimization_policy)
         end
 
         def appliance_set_update_params
@@ -67,19 +71,26 @@ module Atmosphere
           @appliances_params.each do |appl_params|
             appl_params[:appliance_set_id] = @appliance_set.id
             creator = ApplianceCreator.new(appl_params, delegate_auth)
-            appl = creator.create!
+            appl = creator.build
             @appliance_set.appliances << appl
           end
         end
 
         def conflicted?(type)
-          not type.workflow? and current_user.appliance_sets.where(appliance_set_type: type).count > 0
+          !type.workflow? && as_with_type(type).count > 0
+        end
+
+        def as_with_type(type)
+          current_user.appliance_sets.where(appliance_set_type: type)
         end
 
         def set_appliance_sets
-          if current_user
-            @appliance_sets = load_all? ? ApplianceSet.all : current_user.appliance_sets
-          end
+          return unless current_user
+          @appliance_sets = if load_all?
+                              ApplianceSet.all
+                            else
+                              current_user.appliance_sets
+                            end
         end
 
         def model_class

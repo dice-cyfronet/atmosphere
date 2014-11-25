@@ -163,4 +163,12 @@ describe Atmosphere::Appliance do
       expect(appl.user_data).to eq 'user_data'
     end
   end
+
+  it 'owned by the user' do
+    user = build(:user)
+    as = build(:appliance_set, user: user)
+    appl = create(:appliance, appliance_set: as)
+
+    expect(appl.owned_by?(user)).to be_truthy
+  end
 end

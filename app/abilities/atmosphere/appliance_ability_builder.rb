@@ -8,7 +8,9 @@ module Atmosphere
           Appliance, appliance_set: { user_id: user.id }
 
       can :create, Appliance do |appl|
-        appl.appliance_set.user_id == user.id && can_start?(appl)
+        appl.owned_by?(user) &&
+          appl.appliance_type.appropriate_for?(appl.appliance_set) &&
+            can_start?(appl)
       end
 
       can :reboot, Appliance, appliance_set: {

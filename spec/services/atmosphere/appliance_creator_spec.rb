@@ -12,15 +12,15 @@ describe Atmosphere::ApplianceCreator do
   context 'compute site ids not provided' do
 
     it 'creates appliance with allowed active compute site only' do
-      created_appl_params = ActionController::Parameters
-                              .new(appliance_set_id: as.id,
-                                   configuration_template_id: cfg_tmpl.id)
-      creator = Atmosphere::ApplianceCreator
-                  .new(created_appl_params, 'dummy-token')
+      created_appl_params = ActionController::Parameters.
+                              new(appliance_set_id: as.id,
+                                  configuration_template_id: cfg_tmpl.id)
+      creator = Atmosphere::ApplianceCreator.
+                  new(created_appl_params, 'dummy-token')
 
-      appl = creator.create!
+      appl = creator.build
 
-      expect(appl.compute_sites.count).to eq 1
+      expect(appl.compute_sites).to eq [active_cs]
       expect(appl.compute_sites.first.active).to be true
     end
 
@@ -29,16 +29,16 @@ describe Atmosphere::ApplianceCreator do
   context 'compute site ids provided' do
 
     it 'creates appliance with allowed active compute site only' do
-      created_appl_params = ActionController::Parameters
-                              .new(appliance_set_id: as.id,
-                                   configuration_template_id: cfg_tmpl.id,
-                                   compute_site_ids: [active_cs, inactive_cs])
-      creator = Atmosphere::ApplianceCreator
-                  .new(created_appl_params, 'dummy-token')
+      created_appl_params = ActionController::Parameters.
+                              new(appliance_set_id: as.id,
+                                  configuration_template_id: cfg_tmpl.id,
+                                  compute_site_ids: [active_cs, inactive_cs])
+      creator = Atmosphere::ApplianceCreator.
+                  new(created_appl_params, 'dummy-token')
 
-      appl = creator.create!
+      appl = creator.build
 
-      expect(appl.compute_sites.count).to eq 1
+      expect(appl.compute_sites).to eq [active_cs]
       expect(appl.compute_sites.first.active).to be true
     end
   end
@@ -48,16 +48,16 @@ describe Atmosphere::ApplianceCreator do
            { 'cpu' => 1, 'mem' => 512, 'compute_site_ids' => [1] },
            { 'cpu' => 2, 'mem' => 1024, 'compute_site_ids' => [1] }
           ]
-    created_appl_params = ActionController::Parameters
-                            .new(appliance_set_id: as.id,
-                                 configuration_template_id: cfg_tmpl.id,
-                                 vms: vms)
-      creator = Atmosphere::ApplianceCreator
-                  .new(created_appl_params, 'dummy-token')
+    created_appl_params = ActionController::Parameters.
+                            new(appliance_set_id: as.id,
+                                configuration_template_id: cfg_tmpl.id,
+                                vms: vms)
+    creator = Atmosphere::ApplianceCreator.
+                new(created_appl_params, 'dummy-token')
 
-      appl = creator.create!
+    appl = creator.build
 
-      expect(appl.optimization_policy_params[:vms]).to eq vms
+    expect(appl.optimization_policy_params[:vms]).to eq vms
   end
 
 end

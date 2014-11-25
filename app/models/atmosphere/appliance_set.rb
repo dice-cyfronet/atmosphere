@@ -63,7 +63,11 @@ module Atmosphere
         includes(appliances: { deployments: { virtual_machine: :virtual_machine_flavor } }).references(appliances: { deployments: { virtual_machine: :virtual_machine_flavor } })}
 
     def production?
-      not appliance_set_type.development?
+      !appliance_set_type.development?
+    end
+
+    def development?
+      appliance_set_type.development?
     end
   end
 end
