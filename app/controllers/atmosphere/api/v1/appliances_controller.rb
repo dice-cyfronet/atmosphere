@@ -1,8 +1,8 @@
 class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
-  before_filter :init_appliance, only: :create
+  before_filter :build_appliance, only: :create
 
   load_and_authorize_resource :appliance,
-    class: 'Atmosphere::Appliance'
+                              class: 'Atmosphere::Appliance'
 
   before_filter :init_vm_search, only: :index
 
@@ -18,8 +18,8 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def create
     log_user_action "create new appliance with following params #{params}"
-    appliance = @creator.create!
-    render json: appliance, status: :created
+    @appliance.save!
+    render json: @appliance, status: :created
     log_user_action "appliance created: #{@appliance.to_json}"
   end
 
@@ -41,15 +41,15 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def endpoints
-    endpoints = Atmosphere::Endpoint
-      .appl_endpoints(@appliance)
-      .order(:id).collect do |endpoint|
+    endpoints = Atmosphere::Endpoint.
+      appl_endpoints(@appliance).
+      order(:id).map do |endpoint|
         {
           id: endpoint.id,
           type: endpoint.endpoint_type,
-          urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.port_mapping_template_id).collect do |mapping|
-            "#{mapping.url}/#{endpoint.invocation_path}"
-          end
+          urls: @appliance.http_mappings.
+            where(port_mapping_template_id: endpoint.port_mapping_template_id).
+            map { |mapping| "#{mapping.url}/#{endpoint.invocation_path}" }
         }
       end
 
@@ -73,7 +73,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def reboot_action?
-    params.has_key? :reboot
+    params.key? :reboot
   end
 
   def filter
@@ -98,9 +98,9 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     params.require(:appliance).permit(:name, :description)
   end
 
-  def init_appliance
-    @creator = Atmosphere::ApplianceCreator.new(params.require(:appliance), delegate_auth)
-    @appliance = @creator.appliance
+  def build_appliance
+    @appliance = Atmosphere::ApplianceCreator.
+                  new(params.require(:appliance), delegate_auth).build
   end
 
   def load_admin_abilities?

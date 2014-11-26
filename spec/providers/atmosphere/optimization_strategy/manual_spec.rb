@@ -30,7 +30,8 @@ describe Atmosphere::OptimizationStrategy::Manual do
         }
       )
     creator = Atmosphere::ApplianceCreator.new(created_appl_params, 'dummy-token')
-    appl = creator.create!
+    appl = creator.build
+    appl.save!
 
     manual_policy = Atmosphere::OptimizationStrategy::Manual.new(appl)
 

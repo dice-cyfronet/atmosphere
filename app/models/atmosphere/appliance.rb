@@ -125,6 +125,10 @@ module Atmosphere
         strategy_class.new(self)
       end
 
+    def owned_by?(user)
+      appliance_set.user_id == user.id
+    end
+
     private
 
     def assign_default_fund

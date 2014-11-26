@@ -201,4 +201,32 @@ describe Atmosphere::ApplianceType do
 
     expect(at.compute_sites).to eq [active_cs]
   end
+
+  context '#appropriate_for?' do
+    it 'does not allow to use dev appliance in prod appliance set' do
+      at, as = at_and_as(:developer, :portal)
+      dev_as = build(:appliance_set, appliance_set_type: :development)
+
+      expect(at.appropriate_for?(as)).to be_falsy
+      expect(at.appropriate_for?(dev_as)).to be_truthy
+    end
+
+    it 'owner at appropriate only for owner' do
+      at, as = at_and_as(:owner, :portal)
+      user = build(:user)
+      at.author = user
+      as.user = user
+      other_user_as = create(:appliance_set)
+
+      expect(at.appropriate_for?(as)).to be_truthy
+      expect(at.appropriate_for?(other_user_as)).to be_falsy
+    end
+
+    def at_and_as(at_type, as_type)
+      at = build(:appliance_type, visible_to: at_type)
+      as = build(:appliance_set, appliance_set_type: as_type)
+
+      [at, as]
+    end
+  end
 end
