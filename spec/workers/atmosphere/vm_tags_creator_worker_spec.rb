@@ -108,7 +108,11 @@ describe Atmosphere::VmTagsCreatorWorker do
         Atmosphere::VmTagsCreatorWorker.new.perform(vm_mock.id, tags_map)
       end
     end
-
   end
 
+  it 'report raven issue when retries exhausted' do
+    Atmosphere::VmTagsCreatorWorker.within_sidekiq_retries_exhausted_block do
+      expect(Raven).to receive(:capture_message)
+    end
+  end
 end
