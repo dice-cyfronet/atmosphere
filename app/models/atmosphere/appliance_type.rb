@@ -155,6 +155,10 @@ module Atmosphere
       end
     end
 
+    def version
+      virtual_machine_templates.maximum(:version) || 0
+    end
+
     private
 
     def self.appliance_type_attributes(appliance, overwrite)

@@ -58,6 +58,7 @@ module Atmosphere
 
     enumerize :state, in: ALLOWED_STATES
 
+    before_save :set_version, if: :appliance_type_id_changed?
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
@@ -177,6 +178,14 @@ module Atmosphere
 
     def cant_destroy_non_managed_vmt
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    end
+
+    def set_version
+      if new_record?
+        self.version ||= appliance_type.version + 1 if appliance_type
+      else
+        self.version = appliance_type.version + 1 if appliance_type
+      end
     end
   end
 end

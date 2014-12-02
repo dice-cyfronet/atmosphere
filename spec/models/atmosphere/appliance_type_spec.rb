@@ -229,4 +229,20 @@ describe Atmosphere::ApplianceType do
       [at, as]
     end
   end
+
+  context '::version' do
+    it 'returns 0 when no VMT assigned' do
+      at = create(:appliance_type)
+
+      expect(at.version).to eq 0
+    end
+
+    it 'calculates higher version' do
+      at = create(:appliance_type)
+      create(:virtual_machine_template, appliance_type: at)
+      create(:virtual_machine_template, appliance_type: at)
+
+      expect(at.version).to eq 2
+    end
+  end
 end
