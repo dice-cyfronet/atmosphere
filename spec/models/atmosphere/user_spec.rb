@@ -41,4 +41,14 @@ describe Atmosphere::User do
       expect(subject.password).to eq subject.password_confirmation
     end
   end
+
+  describe '#check_fund_assignment' do
+    subject { create(:fund); create(:poor_chap) }
+
+    it 'appoints only one default fund' do
+      subject.save # Forcing another save after 'create' perform the initial poor_chap.save
+      expect(subject.funds.count).to eq 1
+    end
+  end
+
 end
