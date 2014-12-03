@@ -16,10 +16,10 @@
       %tr
         %td(rowspan=3)= fund.name
         %td
-          .pull-right= "#{fund.balance / 10000}.#{fund.balance % 10000}"
+          .pull-right= fund_balance_decorator fund.balance
         %td= fund.currency_label
         %td
-          .pull-right= "#{fund.overdraft_limit / 10000}.#{fund.overdraft_limit % 10000}"
+          .pull-right= fund_balance_decorator fund.overdraft_limit
         %td= fund.currency_label
         %td
           - label_map = {suspend: :primary, no_action: :success, delete: :danger}
