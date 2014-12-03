@@ -102,7 +102,7 @@ module Atmosphere
     # This method is provided to ensure compatibility with old versions of Atmosphere which do not supply fund information when creating users.
     # Once the platform APIs are updated, this method will be deprecated and should be removed.
     def check_fund_assignment
-      if funds.blank? and Atmosphere::Fund.all.count > 0
+      if Atmosphere::UserFund.where(user: self).blank? and Atmosphere::Fund.all.count > 0
         user_funds << Atmosphere::UserFund.new(user: self, fund: Atmosphere::Fund.first, default: true)
       end
     end
