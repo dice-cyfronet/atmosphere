@@ -11,7 +11,8 @@
 # Linking table between Users and Funds
 module Atmosphere
   class UserFund < ActiveRecord::Base
-    belongs_to :user
+    belongs_to :user,
+      class_name: 'Atmosphere::User'
 
     belongs_to :fund,
       class_name: 'Atmosphere::Fund'
