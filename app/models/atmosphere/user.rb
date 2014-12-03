@@ -59,7 +59,7 @@ module Atmosphere
       dependent: :nullify,
       class_name: 'Atmosphere::BillingLog'
 
-    before_save :check_fund_assignment
+    after_create :check_fund_assignment
 
     scope :with_vm, ->(vm) do
       joins(appliance_sets: { appliances: :virtual_machines })
