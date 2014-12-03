@@ -171,6 +171,32 @@ en:
     new: New Security Policy
     edit: Edit this Security Policy
     remove: Remove this Security Policy
+  funds:
+    title: Funds
+    long_title: Funds
+    long_title_single: Fund
+    name: Name
+    balance: Balance
+    currency_label: Currency
+    overdraft_limit: Overdraft limit
+    termination_policy: Termination policy
+    delete:
+      label: delete
+      help: The instance will be deleted when funding expires. Deleted instances cannot be recovered.
+    suspend:
+      label: suspend
+      help: |
+        The instance will be suspended when funding expires. Suspended instances cannot be accessed by users but can
+        still be reinitialized if additional funding becomes available.
+    no_action:
+      label: no action
+      help: |
+        The billing system will permit the instance to continue running when funding expires. The balance of the
+        corresponding fund may become negative as a result of further charges.
+    no_sites: no compute sites assigned
+    no_users: no users allowed to use this fund
+  users:
+    title: Users
 
   profiles:
     title: Profile
