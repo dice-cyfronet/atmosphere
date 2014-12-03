@@ -28,7 +28,11 @@ module Atmosphere
         end
       end
 
-      unless vmt.save
+      state_changed_to_active = changed_to_active?
+
+      if vmt.save
+        follow_action if state_changed_to_active
+      else
         logger.error "unable to create/update #{vmt.id} template because: #{vmt.errors.to_json}"
       end
     end
@@ -54,6 +58,14 @@ module Atmosphere
     def young?
       @all || vmt.created_at.blank? ||
         vmt.created_at > Atmosphere.vmt_at_relation_update_period.hours.ago
+    end
+
+    def changed_to_active?
+      vmt.state_changed? && vmt.state.active?
+    end
+
+    def follow_action
+      Atmosphere::Cloud::RemoveOlderVmtWorker.perform_async(vmt.id)
     end
   end
 end

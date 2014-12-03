@@ -80,6 +80,44 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(target_vmt.appliance_type).to be_nil
   end
 
+  it 'triggers removing old VMT after state changed into active' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('id', nil, nil)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
+      to receive(:perform_async)
+
+    updater.update
+  end
+
+  it 'does not remove old VMT when old state is ACTIVE' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('id', nil, nil)
+    create(:virtual_machine_template,
+           id_at_site: 'id',
+           state: :active,
+           compute_site: target_cs)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
+      to_not receive(:perform_async)
+
+    updater.update
+  end
+
+  it 'does not remove old VMT when new status is different than ACTIVE' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('id', nil, nil)
+    image.status = 'BUILD'
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
+      to_not receive(:perform_async)
+
+    updater.update
+  end
+
   def open_stack_image(image_id, source_cs, source_uuid)
     Fog::Compute::OpenStack::Image.new({
       id: image_id,
