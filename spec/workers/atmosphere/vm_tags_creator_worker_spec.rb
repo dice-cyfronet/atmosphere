@@ -12,7 +12,8 @@ describe Atmosphere::VmTagsCreatorWorker do
 
   before do
     allow(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
-    allow(Atmosphere::VirtualMachine).to receive(:find).with(vm_id).and_return(vm_mock)
+    allow(Atmosphere::VirtualMachine).
+      to receive(:find_by).with(id: vm_id).and_return(vm_mock)
     allow(vm_mock).to receive(:id).and_return vm_id
     allow(vm_mock).to receive(:id_at_site).and_return id_at_site
     allow(vm_mock).to receive(:compute_site).and_return cs_mock
@@ -67,6 +68,18 @@ describe Atmosphere::VmTagsCreatorWorker do
       end
 
     end
+  end
+
+  it 'do nothing when VM was already deleted', focus: true do
+    allow(Atmosphere::VirtualMachine).
+      to receive(:find_by).
+      with(id: 'non_existing').
+      and_return(nil)
+
+    expect do
+      Atmosphere::VmTagsCreatorWorker.new.
+        perform('non_existing', tags_map)
+    end.to_not raise_error
   end
 
   context 'inactive vm' do
