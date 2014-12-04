@@ -48,6 +48,7 @@ Atmosphere::Engine.routes.draw do
     end
     resources :virtual_machine_templates, except: [:new, :create]
     resources :user_keys, except: [:edit, :update]
+    resources :funds, only: [:index]
   end
 
   namespace :api, defaults: { format: :json } do

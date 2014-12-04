@@ -1,0 +1,50 @@
+%h1= t 'funds.long_title'
+
+%p
+  %table.table.table-hover.table-condensed
+    %tr
+      %th= t 'funds.name'
+      %th
+        .pull-right= t 'funds.balance'
+      %th
+      %th
+        .pull-right= t 'funds.overdraft_limit'
+      %th
+      %th= t 'funds.termination_policy'
+
+    - @funds.each do |fund|
+      %tr
+        %td(rowspan=3)= fund.name
+        %td
+          .pull-right= fund_balance_full_precision fund.balance
+        %td= fund.currency_label
+        %td
+          .pull-right= fund_balance_full_precision fund.overdraft_limit
+        %td= fund.currency_label
+        %td
+          - label_map = {suspend: :primary, no_action: :success, delete: :danger}
+          %span{class: "label label-#{label_map[fund.termination_policy.to_sym]} has_bottom_tooltip",
+                title: t("funds.#{fund.termination_policy}.help")}
+            = t "funds.#{fund.termination_policy}.label"
+
+      %tr
+        %td(colspan=5)
+          = succeed ':' do
+            %strong= t 'compute_sites.title'
+          - if fund.compute_sites.present?
+            = fund.compute_sites.map(&:name).join(', ')
+          - else
+            %i
+              = surround '(',')' do
+                = t 'funds.no_sites'
+
+      %tr
+        %td(colspan=5)
+          = succeed ':' do
+            %strong= t 'users.title'
+          - if fund.users.present?
+            = fund.users.map(&:login).join(', ')
+          - else
+            %i
+              = surround '(',')' do
+                = t 'funds.no_users'
