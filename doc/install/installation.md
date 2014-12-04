@@ -340,6 +340,9 @@ bundle exec rake db:seed
 exit
 ```
 
+Default credentials `admin:s3cr3t!!!`.
+
+
 ## 8. Logrotate
 
 ```
