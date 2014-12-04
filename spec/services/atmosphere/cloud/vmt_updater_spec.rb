@@ -38,6 +38,24 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(target_vmt.managed_by_atmosphere).to be_truthy
   end
 
+  it 'updates VMT version when it is migrated from other compute site' do
+    _, source_vmt, source_cs = at_with_vmt_on_cs
+    target_cs = create(:compute_site)
+    image = open_stack_image('target_vmt_id',
+                             source_cs.site_id,
+                             source_vmt.id_at_site)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    source_vmt.version = 13
+    source_vmt.save
+
+    updater.update
+    target_vmt = Atmosphere::VirtualMachineTemplate.
+                  find_by(id_at_site: 'target_vmt_id')
+
+    expect(target_vmt.version).to eq 13
+  end
+
   it 'does not update VMT--AT relation when VMT is old' do
     at, source_vmt, source_cs = at_with_vmt_on_cs
     target_cs = create(:compute_site)

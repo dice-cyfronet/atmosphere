@@ -71,12 +71,17 @@ module Atmosphere
     scope :active, -> { where(state: 'active') }
 
     scope :on_active_cs, -> do
-      joins(:compute_site)
-        .where(atmosphere_compute_sites: { active: true })
+      joins(:compute_site).
+        where(atmosphere_compute_sites: { active: true })
     end
 
     scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
+    scope :on_cs_with_uuid, ->(cs_id, source_uuid) do
+      joins(:compute_site).
+        where(atmosphere_compute_sites: { site_id: cs_id },
+              id_at_site: source_uuid)
+    end
 
     def uuid
       "#{compute_site.site_id}-tmpl-#{id_at_site}"
