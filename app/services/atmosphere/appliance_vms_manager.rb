@@ -3,6 +3,7 @@
 #
 module Atmosphere
   class ApplianceVmsManager
+
     def initialize(appliance,
         updater_class = Proxy::ApplianceProxyUpdater,
         vm_creator_class = Cloud::VmCreator,
@@ -29,6 +30,25 @@ module Atmosphere
       end
     end
 
+    def scale_up!(quantity)
+      source_vm = @appliance.active_vms.first
+      if BillingService.can_afford_flavors?(@appliance, source_vm.virtual_machine_flavor, quantity)
+        quantity.times { instantiate_vm(source_vm.source_template, source_vm.virtual_machine_flavor, source_vm.name) }
+      else
+        #TODO review response
+        not_enough_funds
+      end
+    end
+
+    def scale_down!(quantity)
+      vms_to_stop = @appliance.active_vms.last(quantity)
+      if vms_to_stop.count >= quantity
+        vms_to_stop.each { |vm| Cloud::VmDestroyWorker.perform_async(vm.id) }
+      else
+        not_enough_vms
+      end
+    end
+
     def save
       appliance.save.tap { |saved| bill if saved }
     end
@@ -36,6 +56,10 @@ module Atmosphere
     private
 
     attr_reader :appliance, :updater
+
+    def not_enough_vms
+      #TODO implement
+    end
 
     def not_enough_funds
       unsatisfied('Not enough funds')

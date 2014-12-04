@@ -82,7 +82,12 @@ module Atmosphere
       quantity = hint[:quantity]
       optimization_strategy = appliance.optimization_strategy
       if optimization_strategy.can_manually_scale?
-        # TODO add scaling code implement it as delayed job
+        appl_manager = new ApplianceVmsManager(appliance)
+        if (quantity>0)
+          appl_manager.scale_up(quantity)
+        else
+          appl_manager.scale_down(-quantity)
+        end
       else
         # TODO add exception - no rights for manual scaling
       end

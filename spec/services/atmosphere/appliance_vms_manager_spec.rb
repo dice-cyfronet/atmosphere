@@ -201,4 +201,75 @@ describe Atmosphere::ApplianceVmsManager do
     end
   end
 
+  context 'scaling', :focus => true do
+
+    let(:appl) do
+      double('appliance',
+             :state= => true,
+             :billing_state= => true,
+             :state_explanation= => true,
+
+             user_data: 'user data',
+             user_key: 'user key',
+
+             name: 'name',
+             id: 1,
+
+             virtual_machines: double(create: vm)
+      )
+    end
+    let(:tags_mng) { double('tags manager') }
+    let(:tags_manager_class) { double('tags manager class', new: tags_mng) }
+    let(:updater) { double('updater', update: true) }
+    let(:updater_class) { double('updater class', new: updater) }
+
+    let(:vm_creator) { double('vm creator', :spawn_vm! => 'server_id') }
+    let(:vm_creator_class) { double('vm creator class') }
+
+    let(:tmpl)   { double('tmpl', compute_site: 'cs') }
+    let(:flavor) { 'flavor' }
+    let(:name)   { 'name' }
+    let(:vm)     { double('vm', errors: { to_json: {} }) }
+    let(:vm2)     { double('vm2', errors: { to_json: {} }) }
+
+    subject { Atmosphere::ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
+
+    before do
+      allow(tags_mng).to receive(:create_tags_for_vm)
+      allow(appl).to receive(:active_vms).and_return([vm])
+      allow(vm).to receive(:virtual_machine_flavor).and_return(flavor)
+      allow(vm).to receive(:source_template).and_return(tmpl)
+      allow(vm).to receive(:name).and_return(name)
+    end
+
+    context 'when user can afford new vm and scale up' do
+      it 'scale up' do
+        expect(Atmosphere::BillingService).to receive(:can_afford_flavors?).with(appl, flavor, 3).and_return(true)
+        expect(vm_creator_class).to receive(:new).with(tmpl,
+                                                       {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
+                                    .exactly(3).times
+                                    .and_return(vm_creator)
+        allow(vm).to receive(:valid?).and_return(true)
+        subject.scale_up!(3)
+      end
+    end
+
+    context 'when user cannot afford new vm and scale up' do
+      it 'scale up' do
+        expect(Atmosphere::BillingService).to receive(:can_afford_flavors?).with(appl, flavor, 3).and_return(false)
+        allow(vm).to receive(:valid?).and_return(true)
+        subject.scale_up!(3)
+      end
+    end
+
+    context 'scaling down' do
+      it 'scale down' do
+        expect(Atmosphere::Cloud::VmDestroyWorker).to receive (:perform_async)
+        allow(vm).to receive(:id).and_return(true)
+        subject.scale_down!(1)
+      end
+    end
+
+  end
+
 end
