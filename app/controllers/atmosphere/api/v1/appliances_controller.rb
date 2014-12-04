@@ -59,7 +59,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   def action
     return reboot if reboot_action?
     return scale if scale_action?
-    # place for other actions...
+    # place for other optimizer...
 
     render_json_error('Action not found', status: :bad_request)
   end
