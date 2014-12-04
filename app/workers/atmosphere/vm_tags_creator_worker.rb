@@ -15,7 +15,14 @@ module Atmosphere
     end
 
     def perform(vm_id, tags_map)
-      vm = VirtualMachine.find(vm_id)
+      vm = VirtualMachine.find_by(id: vm_id)
+
+      tag(vm, tags_map) if vm
+    end
+
+    private
+
+    def tag(vm, tags_map)
       cs = vm.compute_site
       if cs.technology == 'openstack'
         tag_vm_on_openstack(vm, cs.cloud_client, tags_map)
@@ -23,8 +30,6 @@ module Atmosphere
         tag_vm_on_amazon(vm, cs.cloud_client, tags_map)
       end
     end
-
-    private
 
     def tag_vm_on_openstack(vm, cloud_client, tags_map)
       if vm.state == 'active'
