@@ -70,7 +70,7 @@ describe Atmosphere::VmTagsCreatorWorker do
     end
   end
 
-  it 'do nothing when VM was already deleted', focus: true do
+  it 'do nothing when VM was already deleted' do
     allow(Atmosphere::VirtualMachine).
       to receive(:find_by).
       with(id: 'non_existing').
