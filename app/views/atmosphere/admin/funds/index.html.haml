@@ -1,6 +1,12 @@
 %h1= t 'funds.long_title'
 
 %p
+  = link_to new_admin_fund_path,
+    class: 'btn btn-success btn-xs has_bottom_tooltip',
+    title: t('funds.new.help') do
+    = icon 'plus'
+    = t 'add_new'
+
   %table.table.table-hover.table-condensed
     %tr
       %th= t 'funds.name'
@@ -10,7 +16,9 @@
       %th
         .pull-right= t 'funds.overdraft_limit'
       %th
-      %th= t 'funds.termination_policy'
+      %th.text-center= t 'funds.termination_policy'
+      %th
+        .pull-right= t 'actions'
 
     - @funds.each do |fund|
       %tr
@@ -21,14 +29,27 @@
         %td
           .pull-right= fund_balance_full_precision fund.overdraft_limit
         %td= fund.currency_label
+        %td.text-center
+          - label_map = { suspend: :primary, no_action: :success, delete: :danger }
+          %span{ class: "label label-#{label_map[fund.termination_policy.to_sym]} has_bottom_tooltip",
+                 title: t("funds.termination_policies.#{fund.termination_policy}.help") }
+            = t "funds.termination_policies.#{fund.termination_policy}.label"
         %td
-          - label_map = {suspend: :primary, no_action: :success, delete: :danger}
-          %span{class: "label label-#{label_map[fund.termination_policy.to_sym]} has_bottom_tooltip",
-                title: t("funds.#{fund.termination_policy}.help")}
-            = t "funds.#{fund.termination_policy}.label"
+          .btn-group.pull-right
+            = link_to edit_admin_fund_path(fund),
+              class: 'btn btn-warning btn-xs has_bottom_tooltip',
+              title: t('funds.update.help') do
+              = icon 'edit'
+            = link_to admin_fund_path(fund),
+              method: :delete,
+              data: { confirm: t('are_you_sure') },
+              class: 'btn btn-danger btn-xs has_bottom_tooltip',
+              title: t('funds.destroy.help') do
+              = icon 'trash-o'
+
 
       %tr
-        %td(colspan=5)
+        %td(colspan=6)
           = succeed ':' do
             %strong= t 'compute_sites.title'
           - if fund.compute_sites.present?
@@ -39,7 +60,7 @@
                 = t 'funds.no_sites'
 
       %tr
-        %td(colspan=5)
+        %td(colspan=6)
           = succeed ':' do
             %strong= t 'users.title'
           - if fund.users.present?

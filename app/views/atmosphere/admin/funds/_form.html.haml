@@ -1,0 +1,26 @@
+= simple_form_for([:admin, @fund]) do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :name
+    .col-xs-4
+      = f.input :balance, as: :integer
+    .col-xs-4
+      = f.input :overdraft_limit
+    .col-xs-4
+      = f.input :currency_label
+    .span.help-block
+      = t 'funds.new.balance_help'
+    .col-xs-4
+      = f.input :termination_policy
+    .col-xs-8
+      .span.help-block
+        = t 'funds.new.termination_policy_help'
+        %dl
+          - Atmosphere::Fund.termination_policy.values.each do |termination_policy|
+            %dd
+              %strong= t "funds.termination_policies.#{termination_policy}.label"
+            %dd= t "funds.termination_policies.#{termination_policy}.help"
+
+  .actions
+    = f.button :submit, class: 'btn btn-success'
