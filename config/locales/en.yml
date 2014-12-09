@@ -180,19 +180,34 @@ en:
     currency_label: Currency
     overdraft_limit: Overdraft limit
     termination_policy: Termination policy
-    delete:
-      label: delete
-      help: The instance will be deleted when funding expires. Deleted instances cannot be recovered.
-    suspend:
-      label: suspend
-      help: |
-        The instance will be suspended when funding expires. Suspended instances cannot be accessed by users but can
-        still be reinitialized if additional funding becomes available.
-    no_action:
-      label: no action
-      help: |
-        The billing system will permit the instance to continue running when funding expires. The balance of the
-        corresponding fund may become negative as a result of further charges.
+    new:
+      help: Create a new fund - the fund will be created with no Compute Sites and no Users assigned
+      success: A new fund was successfully created.
+      balance_help: |
+        Both balance and the overdraft limit are given as integers, with 0.0001 precision.
+        That is, if you type in 245500 and set the currency to EUR, the fund users will have
+        24 Euro and 55 cents at their disposal.
+      termination_policy_help: 'Particular policies work as follows:'
+    update:
+      help: Change field values of this fund
+      success: Fund was successfuly updated
+    destroy:
+      help: Remove this fund (may cause users to lose their default and only fund!)
+      success: Fund was removed, along with its associations to Compute Sites and Users
+    termination_policies:
+      delete:
+        label: delete
+        help: The instance will be deleted when funding expires. Deleted instances cannot be recovered.
+      suspend:
+        label: suspend
+        help: |
+          The instance will be suspended when funding expires. Suspended instances cannot be accessed by users but can
+          still be reinitialized if additional funding becomes available.
+      no_action:
+        label: no action
+        help: |
+          The billing system will permit the instance to continue running when funding expires. The balance of the
+          corresponding fund may become negative as a result of further charges.
     no_sites: no compute sites assigned
     no_users: no users allowed to use this fund
   users:
