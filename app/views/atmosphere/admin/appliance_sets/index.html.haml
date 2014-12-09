@@ -35,7 +35,7 @@
                     = appliance.fund ? appliance.fund.name : t('appliance_sets.no_fund_assigned')
                 = t('appliance_sets.amount_billed')
                 %strong
-                  = number_to_currency(appliance.amount_billed/10000.0, unit: '')
+                  = fund_balance_full_precision appliance.amount_billed
                   = appliance.fund ? appliance.fund.currency_label : '?'
                 %br
                 - appliance.virtual_machines.each do |virtual_machine|
