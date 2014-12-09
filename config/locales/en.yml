@@ -182,7 +182,7 @@ en:
     termination_policy: Termination policy
     unique_compute_site: No need to duplicate a Compute Site assignment to the same Fund.
     new:
-      help: Create a new fund - the fund will be created with no Compute Sites and no Users assigned
+      help: Create a new fund - the fund will be created with no Compute Sites and no Users assigned.
       success: A new fund was successfully created.
       balance_help: |
         Both balance and the overdraft limit are given as integers, with 0.0001 precision.
@@ -190,19 +190,19 @@ en:
         24 Euro and 55 cents at their disposal.
       termination_policy_help: 'Particular policies work as follows:'
     update:
-      help: Change field values of this fund
-      success: Fund was successfuly updated
+      help: Change field values of this fund.
+      success: Fund was successfuly updated.
     destroy:
-      help: Remove this fund (may cause users to lose their default and only fund!)
-      success: Fund was removed, along with its associations to Compute Sites and Users
+      help: Remove this fund (may cause users to lose their default and only fund!).
+      success: Fund was removed, along with its associations to Compute Sites and Users.
     remove_site:
-      help: This will remove %{cs} from the list of Compute Sites where users are able to use that fund
+      help: This will remove %{cs} from the list of Compute Sites where users are able to use that Fund.
       success: Compute Site %{cs} was removed from the list of supported sites for Fund %{fund}.
     add_site:
       help: Append a Compute Site to the list of sites supported by this Fund.
       success: Compute Site %{cs} was added to the list of sites supported by Fund %{fund}.
     remove_user:
-      help: This will remove %{user} from this Fund so this person can no longer use this resources.
+      help: This will remove %{user} from this Fund, preventing this person from drawing upon this Fund's resources.
       success: User %{user} was removed from the list of users assigned to Fund %{fund}.
     add_user:
       help: Add a User to the list of people who can use resources from this Fund.
