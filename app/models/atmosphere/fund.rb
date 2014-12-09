@@ -50,8 +50,10 @@ module Atmosphere
               numericality: { less_than_or_equal_to: 0 }
 
     validates :termination_policy,
-              inclusion: {in: ["delete", "suspend", "no_action"]}
-    enumerize :termination_policy, in: [:delete, :suspend, :no_action], predicates: true
+              inclusion: { in: ["delete", "suspend", "no_action"] }
+    enumerize :termination_policy,
+              in: [:delete, :suspend, :no_action],
+              predicates: true
 
   end
 end
