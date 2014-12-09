@@ -1,14 +1,14 @@
 class Atmosphere::Admin::UserFundsController < Atmosphere::Admin::ApplicationController
   load_and_authorize_resource :user_fund,
-    class: 'Atmosphere::UserFund'
+                              class: 'Atmosphere::UserFund'
 
   # POST /user_funds
   def create
     if @user_fund.save
       redirect_to admin_funds_path,
-        notice:  t('funds.add_user.success',
-                   user: @user_fund.user.full_name,
-                   fund: @user_fund.fund.name)
+                  notice: t('funds.add_user.success',
+                            user: @user_fund.user.full_name,
+                            fund: @user_fund.fund.name)
     else
       redirect_to admin_funds_path, alert: @user_fund.errors.full_messages
     end
@@ -18,17 +18,19 @@ class Atmosphere::Admin::UserFundsController < Atmosphere::Admin::ApplicationCon
   def destroy
     @user_fund.destroy
     redirect_to admin_funds_url,
-      notice:  t('funds.remove_user.success',
-                 user: @user_fund.user.full_name,
-                 fund: @user_fund.fund.name)
+                notice: t('funds.remove_user.success',
+                          user: @user_fund.user.full_name,
+                          fund: @user_fund.fund.name)
   end
 
+
   private
-    # Only allow a trusted parameter "white list" through.
-    def user_fund_params
-      params.require(:user_fund).permit(
-          :fund_id, :user_id
-      )
-    end
+
+  # Only allow a trusted parameter "white list" through.
+  def user_fund_params
+    params.require(:user_fund).permit(
+      :fund_id, :user_id
+    )
+  end
 
 end
