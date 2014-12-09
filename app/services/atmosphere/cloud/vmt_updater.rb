@@ -48,10 +48,10 @@ module Atmosphere
     end
 
     def appliance_type
-      source_cs_id, source_uuid = source_cs_and_uuid
+      source_cs_id, source_id_at_site = source_cs_and_uuid
 
-      if source_cs_id && source_uuid
-        ApplianceType.with_vmt(source_cs_id, source_uuid).first
+      if source_cs_id && source_id_at_site
+        ApplianceType.with_vmt(source_cs_id, source_id_at_site).first
       end
     end
 
@@ -60,11 +60,11 @@ module Atmosphere
     end
 
     def source_vmt
-      source_cs_id, source_uuid = source_cs_and_uuid
+      source_cs_id, source_id_at_site = source_cs_and_uuid
 
-      unless @source_vmt && source_cs_id && source_uuid
+      unless @source_vmt && source_cs_id && source_id_at_site
         @source_vmt = VirtualMachineTemplate.
-          on_cs_with_uuid(source_cs_id, source_uuid).
+          on_cs_with_src(source_cs_id, source_id_at_site).
           first
       end
 

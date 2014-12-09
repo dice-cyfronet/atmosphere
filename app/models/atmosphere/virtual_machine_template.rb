@@ -77,10 +77,10 @@ module Atmosphere
 
     scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
-    scope :on_cs_with_uuid, ->(cs_id, source_uuid) do
+    scope :on_cs_with_src, ->(cs_id, source_id) do
       joins(:compute_site).
         where(atmosphere_compute_sites: { site_id: cs_id },
-              id_at_site: source_uuid)
+              id_at_site: source_id)
     end
 
     def uuid
