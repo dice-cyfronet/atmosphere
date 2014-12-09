@@ -196,7 +196,7 @@ en:
       help: Remove this fund (may cause users to lose their default and only fund!)
       success: Fund was removed, along with its associations to Compute Sites and Users
     remove_site:
-      help: This will remove %{cs} from the list of Compute Sits where users are able to use that fund
+      help: This will remove %{cs} from the list of Compute Sites where users are able to use that fund
       success: Compute Site %{cs} was removed from the list of supported sites for Fund %{fund}.
     add_site:
       help: Append a Compute Site to the list of sites supported by this Fund.

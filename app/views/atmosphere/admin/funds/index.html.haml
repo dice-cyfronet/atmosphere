@@ -54,13 +54,16 @@
             %strong= t 'compute_sites.title'
           - if fund.compute_site_funds.present?
             - fund.compute_site_funds.each do |compute_site_fund|
-              = compute_site_fund.compute_site.name
-              = link_to admin_compute_site_fund_path(compute_site_fund),
-                method: :delete,
-                data: { confirm: t('are_you_sure') },
-                class: 'btn btn-default btn-xs has_bottom_tooltip',
-                title: t('funds.remove_site.help', cs: compute_site_fund.compute_site.name) do
-                = icon 'times'
+              .btn-group
+                %span.btn.btn-default.btn-xs.disabled.non-opaque
+                  = compute_site_fund.compute_site.name
+                = link_to admin_compute_site_fund_path(compute_site_fund),
+                  method: :delete,
+                  data: { confirm: t('are_you_sure') },
+                  class: 'btn btn-default btn-xs has_bottom_tooltip',
+                  title: t('funds.remove_site.help',
+                  cs: compute_site_fund.compute_site.name) do
+                  = icon 'times'
           - else
             %i.text-muted
               = surround '(',')' do
@@ -87,13 +90,15 @@
             %strong= t 'users.title'
           - if fund.users.present?
             - fund.user_funds.each do |user_fund|
-              = user_fund.user.login
-              = link_to admin_user_fund_path(user_fund),
-                method: :delete,
-                data: { confirm: t('are_you_sure') },
-                class: 'btn btn-default btn-xs has_bottom_tooltip',
-                title: t('funds.remove_user.help', user: user_fund.user) do
-                = icon 'times'
+              .btn-group
+                %span.btn.btn-default.btn-xs.disabled.non-opaque
+                  = user_fund.user.login
+                = link_to admin_user_fund_path(user_fund),
+                  method: :delete,
+                  data: { confirm: t('are_you_sure') },
+                  class: 'btn btn-default btn-xs has_bottom_tooltip',
+                  title: t('funds.remove_user.help', user: user_fund.user) do
+                  = icon 'times'
           - else
             %i.text-muted
               = surround '(',')' do
