@@ -15,5 +15,8 @@ module Atmosphere
 
     belongs_to :fund,
       class_name: 'Atmosphere::Fund'
+
+    validates :compute_site_id,
+              uniqueness: { scope: :fund_id, message: I18n.t('funds.unique_compute_site') }
   end
 end
