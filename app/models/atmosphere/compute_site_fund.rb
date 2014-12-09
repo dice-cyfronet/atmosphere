@@ -11,12 +11,15 @@
 module Atmosphere
   class ComputeSiteFund < ActiveRecord::Base
     belongs_to :compute_site,
-      class_name: 'Atmosphere::ComputeSite'
+               class_name: 'Atmosphere::ComputeSite'
 
     belongs_to :fund,
-      class_name: 'Atmosphere::Fund'
+               class_name: 'Atmosphere::Fund'
 
     validates :compute_site_id,
-              uniqueness: { scope: :fund_id, message: I18n.t('funds.unique_compute_site') }
+              uniqueness: {
+                scope: :fund_id,
+                message: I18n.t('funds.unique_compute_site')
+              }
   end
 end
