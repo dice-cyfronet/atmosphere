@@ -359,11 +359,28 @@ describe Atmosphere::VirtualMachine do
   end
 
   context '#unused_vms', focus: true do
-    it 'returns vms not assigned to appliance' do
-      vm = create(:virtual_machine, managed_by_atmosphere: true)
+    it 'returns VMs not assigned to appliance' do
+      vm = create(:virtual_machine,
+                  managed_by_atmosphere: true)
       appl = create(:appliance)
-      v = create(:virtual_machine, appliances: [appl], managed_by_atmosphere: true)
-      
+      create(:virtual_machine,
+             appliances: [appl],
+             managed_by_atmosphere: true)
+
+      unused_vms = Atmosphere::VirtualMachine.unused_vms
+
+      expect(unused_vms.count).to eq 1
+      expect(unused_vms.first.id).to eq vm.id
+    end
+
+    it 'returns VMs not used to save VMT' do
+      vm = create(:virtual_machine,
+                  managed_by_atmosphere: true)
+      vmt = create(:virtual_machine_template)
+      create(:virtual_machine,
+             saved_templates: [vmt],
+             managed_by_atmosphere: true)
+
       unused_vms = Atmosphere::VirtualMachine.unused_vms
 
       expect(unused_vms.count).to eq 1
