@@ -93,7 +93,6 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
       vm_ids = to_array(params[:virtual_machine_ids])
       filter[:atmosphere_deployments] = { virtual_machine_id: vm_ids}
     end
-
     filter
   end
 
