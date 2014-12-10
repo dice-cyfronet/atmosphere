@@ -360,10 +360,10 @@ describe Atmosphere::VirtualMachine do
 
   context '#unused_vms', focus: true do
     it 'returns vms not assigned to appliance' do
-      vm = create(:virtual_machine)
+      vm = create(:virtual_machine, managed_by_atmosphere: true)
       appl = create(:appliance)
-      v = create(:virtual_machine, appliances: [appl])
-
+      v = create(:virtual_machine, appliances: [appl], managed_by_atmosphere: true)
+      
       unused_vms = Atmosphere::VirtualMachine.unused_vms
 
       expect(unused_vms.count).to eq 1
