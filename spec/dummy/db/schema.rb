@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141013064633) do
+ActiveRecord::Schema.define(version: 20141202081811) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -265,6 +265,7 @@ ActiveRecord::Schema.define(version: 20141013064633) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "architecture",          default: "x86_64"
+    t.integer  "version"
   end
 
   add_index "atmosphere_virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "atmo_vm_tmpls_on_cs_id_and_id_at_site_ix", unique: true, using: :btree

@@ -250,4 +250,40 @@ describe Atmosphere::VirtualMachineTemplate do
   end
 
   it_behaves_like 'childhoodable'
+
+  describe '::version' do
+    it 'set version to 1 for first appliance type VMT' do
+      at = create(:appliance_type)
+      vmt = create(:virtual_machine_template, appliance_type: at)
+
+      expect(vmt.version).to eq 1
+    end
+
+    it 'increment version for new added VMT' do
+      at = create(:appliance_type)
+      create(:virtual_machine_template, appliance_type: at)
+      vmt = create(:virtual_machine_template, appliance_type: at)
+
+      expect(vmt.version).to eq 2
+    end
+
+    it 'does not set version when it is already set' do
+      at = create(:appliance_type)
+      vmt = create(:virtual_machine_template,
+                   appliance_type: at,
+                   version: 15)
+
+      expect(vmt.version).to eq 15
+    end
+
+    it 'set version when assigment to AT changes' do
+      vmt = create(:virtual_machine_template, version: 15)
+      at = create(:appliance_type)
+
+      vmt.appliance_type = at
+      vmt.save
+
+      expect(vmt.version).to eq 1
+    end
+  end
 end

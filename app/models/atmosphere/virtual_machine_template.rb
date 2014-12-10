@@ -58,6 +58,7 @@ module Atmosphere
 
     enumerize :state, in: ALLOWED_STATES
 
+    before_save :set_version, if: :appliance_type_id_changed?
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
@@ -70,12 +71,17 @@ module Atmosphere
     scope :active, -> { where(state: 'active') }
 
     scope :on_active_cs, -> do
-      joins(:compute_site)
-        .where(atmosphere_compute_sites: { active: true })
+      joins(:compute_site).
+        where(atmosphere_compute_sites: { active: true })
     end
 
     scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
+    scope :on_cs_with_src, ->(cs_id, source_id) do
+      joins(:compute_site).
+        where(atmosphere_compute_sites: { site_id: cs_id },
+              id_at_site: source_id)
+    end
 
     def uuid
       "#{compute_site.site_id}-tmpl-#{id_at_site}"
@@ -177,6 +183,14 @@ module Atmosphere
 
     def cant_destroy_non_managed_vmt
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    end
+
+    def set_version
+      if new_record?
+        self.version ||= appliance_type.version + 1 if appliance_type
+      else
+        self.version = appliance_type.version + 1 if appliance_type
+      end
     end
   end
 end

@@ -14,6 +14,8 @@
         = t('virtual_machine_templates.state')
       %th
         = t('virtual_machine_templates.managed_by_atmosphere')
+      %th
+        = t('virtual_machine_templates.version')
       %th{ style: "text-align: right; min-width: 8rem;" }
         = t('actions')
 
@@ -27,6 +29,7 @@
           %td= virtual_machine_template.name
           %td= virtual_machine_template.state
           %td= virtual_machine_template.managed_by_atmosphere
+          %td= virtual_machine_template.version
           %td{ style: "text-align: right" }
             .btn-group
               = link_to admin_virtual_machine_template_path(virtual_machine_template),

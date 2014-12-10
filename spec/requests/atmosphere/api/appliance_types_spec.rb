@@ -325,6 +325,39 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
         expect(response.status).to eq 404
       end
+
+      it 'save new VMT from devel appliance when owner of AT and appliance' do
+        user = create(:developer)
+        at = create(:appliance_type, author: user)
+        appl = user_appliance(user, :development)
+
+        update_body = { appliance_type: { appliance_id: appl.id } }
+        put api("/appliance_types/#{at.id}", user), update_body
+
+        expect(Atmosphere::Cloud::SaveWorker).
+          to have_enqueued_job(appl.id.to_s, at.id)
+      end
+
+      it 'allow to save only devel appliance' do
+        user = create(:developer)
+        at = create(:appliance_type, author: user)
+        appl = user_appliance(user, :workflow)
+
+        update_body = { appliance_type: { appliance_id: appl.id } }
+        put api("/appliance_types/#{at.id}", user), update_body
+
+        expect(Atmosphere::Cloud::SaveWorker).
+          to_not have_enqueued_job(appl.id.to_s, at.id)
+        expect(response.status).to eq 403
+      end
+
+      def user_appliance(user, as_type)
+        as = create(:appliance_set,
+                    appliance_set_type: as_type,
+                    user: user)
+
+        create(:appliance, appliance_set: as)
+      end
     end
 
     context 'when authenticated as admin' do

@@ -63,11 +63,14 @@ module Atmosphere
         def update
           log_user_action "update appliance type #{@appliance_type.id} with following params #{params}"
           update_params = appliance_type_params
-          update_params.delete 'appliance_id'
+          appliance_id = update_params.delete 'appliance_id'
           author_id = update_params.delete(:author_id)
           update_params[:author] = Atmosphere::User.find(author_id) if author_id
 
-          @appliance_type.update_attributes!(update_params)
+          Atmosphere::ApplianceType.transaction do
+            @appliance_type.update_attributes!(update_params)
+            perform_save(appliance_id) if appliance_id
+          end
           render json: @appliance_type, serializer: ApplianceTypeSerializer
           log_user_action "appliance type updated: #{@appliance_type.to_json}"
         end
@@ -91,6 +94,14 @@ module Atmosphere
         end
 
         private
+
+        def perform_save(appliance_id)
+          appl = Atmosphere::Appliance.find(appliance_id)
+          authorize!(:save_vm_as_tmpl, appl)
+
+          Atmosphere::Cloud::SaveWorker.
+            perform_async(appliance_id, @appliance_type.id)
+        end
 
         def process_active_query
           active = params[:active]

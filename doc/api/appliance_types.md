@@ -118,6 +118,12 @@ Parameters:
 + `id` (required) - The ID of an appliance type
 + All other parameters are optional and are the same as for `POST` method
 
+When `appliance_id` parameter is given than additional `save action` is
+performed. This action checks if user is able to save appliance as selected
+appliance type (appliance need to be owned and started in development mode).
+As a conclusion new virtual machine template will be created and old templates
+will be removed.
+
 ## Delete appliance type
 
 Delete user appliance type. You need to be an appliance type owner (or admin) do delete this entity.

@@ -139,6 +139,7 @@ en:
     show: Show this Virtual Machine Template
     edit: Edit this Virtual Machine Template
     remove: Remove this Virtual Machine Template
+    version: Version
   user_keys:
     title: User keys
     long_title: User keys
