@@ -180,6 +180,7 @@ en:
     currency_label: Currency
     overdraft_limit: Overdraft limit
     termination_policy: Termination policy
+    unique_compute_site: No need to duplicate a Compute Site assignment to the same Fund.
     new:
       help: Create a new fund - the fund will be created with no Compute Sites and no Users assigned
       success: A new fund was successfully created.
