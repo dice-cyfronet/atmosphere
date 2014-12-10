@@ -7,3 +7,18 @@
 .form-actions {
   margin-top: 30px;
 }
+
+.tiny-select {
+  height: 22px;
+  line-height: 22px;
+  padding: 0 5px;
+  font-size: 12px;
+}
+
+.tiny-select-wrapper {
+  margin-bottom: 0;
+}
+
+.non-opaque {
+  opacity: 1 !important;
+}

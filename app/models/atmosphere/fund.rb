@@ -55,5 +55,13 @@ module Atmosphere
               in: [:delete, :suspend, :no_action],
               predicates: true
 
+
+    def unsupported_compute_sites
+      ComputeSite.where.not(id: compute_sites)
+    end
+
+    def unassigned_users
+      User.where.not(id: users)
+    end
   end
 end
