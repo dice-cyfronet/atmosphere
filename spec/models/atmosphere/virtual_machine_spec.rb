@@ -357,4 +357,17 @@ describe Atmosphere::VirtualMachine do
       expect(vm.state).to eq new_state
     end
   end
+
+  context '#unused_vms', focus: true do
+    it 'returns vms not assigned to appliance' do
+      vm = create(:virtual_machine)
+      appl = create(:appliance)
+      v = create(:virtual_machine, appliances: [appl])
+
+      unused_vms = Atmosphere::VirtualMachine.unused_vms
+
+      expect(unused_vms.count).to eq 1
+      expect(unused_vms.first.id).to eq vm.id
+    end
+  end
 end

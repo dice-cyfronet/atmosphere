@@ -84,6 +84,11 @@ module Atmosphere
       )
     end
 
+    scope :unused_vms, -> do
+      manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id)'\
+                       ' FROM atmosphere_deployments)')
+    end
+
     def uuid
       "#{compute_site.site_id}-vm-#{id_at_site}"
     end
