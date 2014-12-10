@@ -23,9 +23,21 @@ module Atmosphere
         tmpls_and_flavors
       end
 
-      def can_manually_scale?
+      def can_scale_manually?
         true
       end
+
+      def vms_to_stop(appliance, quantity)
+        appliance.active_vms.last(quantity)
+      end
+
+      def vms_to_start(appliance, quantity)
+        source_vm = appliance.active_vms.first
+        vms_to_stop = []
+        quantity.times { vms_to_stop << { template: source_vm.source_template, flavor: source_vm.virtual_machine_flavor, name: source_vm.name } }
+        vms_to_stop
+      end
+
     end
   end
 end

@@ -30,45 +30,34 @@ module Atmosphere
       end
     end
 
-    def scale_up!(quantity)
-      source_vm = @appliance.active_vms.first
-      if BillingService.can_afford_flavors?(@appliance, source_vm.virtual_machine_flavor, quantity)
-        quantity.times { instantiate_vm(source_vm.source_template, source_vm.virtual_machine_flavor, source_vm.name) }
+    def start_vms!(vms_descs)
+      if BillingService.can_afford_flavors?(@appliance, vms_desc.map{ |desc| desc[:flavor]})
+        vms_desc.each { |desc| instantiate_vm(desc[:template], desc[:flavor], desc[:name]) }
       else
-        #TODO review response
-        not_enough_funds
+        unsatisfied('Not enough funds to scale')
       end
     end
 
-    def scale_down!(quantity)
-      vms_to_stop = @appliance.active_vms.last(quantity)
-      if vms_to_stop.count >= quantity
-        vms_to_stop.each { |vm| Cloud::VmDestroyWorker.perform_async(vm.id) }
-      else
-        not_enough_vms
-      end
+    def stop_vms!(vms_to_stop)
+      vms_to_stop.each { |vm| Cloud::VmDestroyWorker.perform_async(vm.id) }
     end
 
     def save
       appliance.save.tap { |saved| bill if saved }
     end
 
+    def unsatisfied(msg)
+      appliance.state = :unsatisfied
+      appliance.state_explanation = msg
+    end
+
     private
 
     attr_reader :appliance, :updater
 
-    def not_enough_vms
-      #TODO implement
-    end
-
     def not_enough_funds
       unsatisfied('Not enough funds')
       appliance.billing_state = 'expired'
-    end
-
-    def unsatisfied(msg)
-      appliance.state = :unsatisfied
-      appliance.state_explanation = msg
     end
 
     def instantiate_vm(tmpl, flavor, name)
@@ -116,7 +105,7 @@ module Atmosphere
       appliance_satisfied(vm)
     end
 
-    def appliance_satisfied(vm)
+    def   appliance_satisfied(vm)
       appliance.state = :satisfied
       updater.update(new_vm: vm)
       @tags_manager.create_tags_for_vm(vm)

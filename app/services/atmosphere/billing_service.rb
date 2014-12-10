@@ -156,7 +156,7 @@ module Atmosphere
     end
 
     #TODO document
-    def self.can_afford_flavors?(appliance, flavor, quantity)
+    def self.can_afford_flavors?(appliance, flavors)
       #TODO implement
       true
     end

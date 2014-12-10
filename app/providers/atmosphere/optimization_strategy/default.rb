@@ -26,7 +26,7 @@ module Atmosphere
         Default.select_tmpls_and_flavors(tmpls, preferences)
       end
 
-      def can_manually_scale?
+      def can_scale_manually?
         false
       end
 
