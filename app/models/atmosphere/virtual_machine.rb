@@ -84,7 +84,7 @@ module Atmosphere
       )
     end
 
-    scope :unused_vms, -> do
+    scope :unused, -> do
       manageable.where(%{id NOT IN (SELECT DISTINCT(virtual_machine_id)
                             FROM atmosphere_deployments)
                         AND id NOT IN (SELECT DISTINCT(virtual_machine_id)

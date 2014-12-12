@@ -60,7 +60,7 @@ module Atmosphere
 
     def terminate_unused_vms
       logger.info { "Terminating unused VMs started" }
-      VirtualMachine.unused_vms.each do |vm|
+      VirtualMachine.unused.each do |vm|
         logger.info { " - Destroying #{vm.id_at_site} VM scheduled" }
         Cloud::VmDestroyWorker.perform_async(vm.id)
       end
