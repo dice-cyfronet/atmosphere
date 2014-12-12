@@ -5,6 +5,8 @@ module Atmosphere
         load_and_authorize_resource :virtual_machine,
           class: 'Atmosphere::VirtualMachine'
 
+        before_filter :add_required_query_relations, only: :index
+
         respond_to :json
 
         def index
@@ -30,6 +32,12 @@ module Atmosphere
           end
 
           filter
+        end
+
+        def add_required_query_relations
+          if params[:appliance_id]
+            @virtual_machines = @virtual_machines.joins(:appliances)
+          end
         end
 
         def model_class
