@@ -200,13 +200,17 @@ en:
       help: This will remove %{cs} from the list of Compute Sites where users are able to use that Fund.
       success: Compute Site %{cs} was removed from the list of supported sites for Fund %{fund}.
     add_site:
+      prompt: Add compute site...
       help: Append a Compute Site to the list of sites supported by this Fund.
+      all_assigned: all compute sites assigned
       success: Compute Site %{cs} was added to the list of sites supported by Fund %{fund}.
     remove_user:
       help: This will remove %{user} from this Fund, preventing this person from drawing upon this Fund's resources.
       success: User %{user} was removed from the list of users assigned to Fund %{fund}.
     add_user:
+      prompt: Add user...
       help: Add a User to the list of people who can use resources from this Fund.
+      all_assigned: all users assigned
       success: User %{user} was added to the list of people who are allowed to use Fund %{fund}.
     termination_policies:
       delete:
@@ -224,8 +228,6 @@ en:
           corresponding fund may become negative as a result of further charges.
     no_sites: no compute sites assigned
     no_users: no users allowed to use this fund
-    all_sites_assigned: all sites assigned
-    all_users_assigned: all users assigned
   users:
     title: Users
 

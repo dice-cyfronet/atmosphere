@@ -29,8 +29,9 @@ module Atmosphere
         class_name: 'Atmosphere::User'
 
     has_many :user_funds,
-        dependent: :destroy,
-        class_name: 'Atmosphere::UserFund'
+             -> { includes(:user).order('atmosphere_users.full_name') },
+             dependent: :destroy,
+             class_name: 'Atmosphere::UserFund'
 
     has_many :compute_sites,
         through: :compute_site_funds,
@@ -55,13 +56,12 @@ module Atmosphere
               in: [:delete, :suspend, :no_action],
               predicates: true
 
-
     def unsupported_compute_sites
       ComputeSite.where.not(id: compute_sites)
     end
 
     def unassigned_users
-      User.where.not(id: users)
+      User.where.not(id: users).order(:full_name)
     end
   end
 end

@@ -74,6 +74,7 @@
               = f.association :fund, as: :hidden
               = f.association :compute_site,
                 collection: fund.unsupported_compute_sites,
+                prompt: t('funds.add_site.prompt'),
                 input_html: { class: 'form-control tiny-select has_bottom_tooltip self-submit',
                   title: t('funds.add_site.help') },
                 wrapper_html: { class: 'tiny-select-wrapper' },
@@ -81,7 +82,7 @@
           - else
             %i.text-muted.pull-right
               = surround '(',')' do
-                = t 'funds.all_sites_assigned'
+                = t 'funds.add_site.all_assigned'
 
 
       %tr
@@ -92,7 +93,9 @@
             - fund.user_funds.each do |user_fund|
               .btn-group
                 %span.btn.btn-default.btn-xs.disabled.non-opaque
-                  = user_fund.user.login
+                  = user_fund.user.full_name
+                  = surround '(', ')' do
+                    = user_fund.user.login
                 = link_to admin_user_fund_path(user_fund),
                   method: :delete,
                   data: { confirm: t('are_you_sure') },
@@ -109,6 +112,8 @@
               = f.association :fund, as: :hidden
               = f.association :user,
                 collection: fund.unassigned_users,
+                label_method: :descriptive_name,
+                prompt: t('funds.add_user.prompt'),
                 input_html: { class: 'form-control tiny-select has_bottom_tooltip self-submit',
                   title: t('funds.add_user.help') },
                 wrapper_html: { class: 'tiny-select-wrapper' },
@@ -116,7 +121,7 @@
           - else
             %i.text-muted.pull-right
               = surround '(',')' do
-                = t 'funds.all_users_assigned'
+                = t 'funds.add_user.all_assigned'
 
 
 :javascript
