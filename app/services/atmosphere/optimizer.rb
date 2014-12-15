@@ -60,7 +60,7 @@ module Atmosphere
 
     def terminate_unused_vms
       logger.info { "Terminating unused VMs started" }
-      unused_vms.each do |vm|
+      VirtualMachine.unused.each do |vm|
         logger.info { " - Destroying #{vm.id_at_site} VM scheduled" }
         Cloud::VmDestroyWorker.perform_async(vm.id)
       end
@@ -77,11 +77,6 @@ module Atmosphere
     end
 
     private
-
-    def unused_vms
-      # TODO ask PN for better query
-      VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM atmosphere_deployments)')
-    end
 
     def logger
       Atmosphere.optimizer_logger
