@@ -87,6 +87,10 @@ module Atmosphere
       "#{login} <#{email}>"
     end
 
+    def descriptive_name
+      "#{full_name} (#{login}) <#{email}>"
+    end
+
     def admin?
       has_role? :admin
     end
