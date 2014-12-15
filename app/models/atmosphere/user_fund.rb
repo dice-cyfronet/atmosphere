@@ -16,5 +16,11 @@ module Atmosphere
 
     belongs_to :fund,
       class_name: 'Atmosphere::Fund'
+
+    validates :user_id,
+              uniqueness: {
+                  scope: :fund_id,
+                  message: I18n.t('funds.unique_user')
+              }
   end
 end
