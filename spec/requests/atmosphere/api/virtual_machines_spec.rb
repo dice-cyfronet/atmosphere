@@ -55,6 +55,11 @@ describe Atmosphere::Api::V1::VirtualMachinesController do
         get api('/virtual_machines?all=true', admin)
         expect(vms_response.size).to eq 3
       end
+
+      it 'returns all VM assigned with appliance' do
+        get api("/virtual_machines?all=true&appliance_id=#{appl1.id}", admin)
+        expect(vms_response.size).to eq 2
+      end
     end
   end
 
