@@ -31,12 +31,12 @@ Gem::Specification.new do |s|
   s.files = Dir['{app,config,db,lib,doc}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.1.6'
+  s.add_dependency 'rails', '~> 4.1.8'
   s.add_dependency 'pg'
   s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'
-  s.add_dependency 'sass-rails', '~> 4.0.3'
-  s.add_dependency 'coffee-rails', '~> 4.0.0'
+  s.add_dependency 'sass-rails'
+  s.add_dependency 'coffee-rails', '~> 4.1.0'
   s.add_dependency 'jquery-rails'
   s.add_dependency 'turbolinks'
   s.add_dependency 'jquery-turbolinks'
