@@ -16,7 +16,7 @@ class @Billing
       tooltip:
         formatter: ->
           '<b>' + this.x + '</b><br/>' +
-          this.series.name + ': ' + this.y + '<br/>' +
+          this.series.name + ': ' + (this.y / 10000) + '<br/>' +
           'Total: ' + this.point.stackTotal
       plotOptions:
         column:
@@ -29,7 +29,7 @@ class @Billing
               textShadow: '0 0 3px black, 0 0 3px black'
             formatter: ->
               if this.y != 0
-                this.y
+                this.y / 10000
               else
                 null
       series: dataSeries
