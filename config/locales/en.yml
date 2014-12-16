@@ -42,6 +42,7 @@ en:
   editing: Editing
   edit: Edit
   show: Show
+  hide: Hide
   save: Save
   create: Create
   delete: Delete
@@ -229,6 +230,11 @@ en:
           corresponding fund may become negative as a result of further charges.
     no_sites: no compute sites assigned
     no_users: no users allowed to use this fund
+  billing:
+    consumption_title: Billing data for %{user}
+    load_for_all:
+      label: Show for all users
+    load_for_user: Show funds consumption data for %{user}
   users:
     title: Users
 

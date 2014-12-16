@@ -51,6 +51,7 @@ Atmosphere::Engine.routes.draw do
     resources :funds
     resources :compute_site_funds, only: [:create, :destroy]
     resources :user_funds, only: [:create, :destroy]
+    resources :billing_logs, only: [:index]
   end
 
   namespace :api, defaults: { format: :json } do

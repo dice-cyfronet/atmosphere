@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Atmosphere::FundsHelper, type: :helper do
 
-  describe 'fund_balance_full_precision' do
+  describe '#fund_balance_full_precision' do
 
     it 'properly format positive number lower than 10000' do
       expect(fund_balance_full_precision(345)).to eq '0.0345'
@@ -27,6 +27,19 @@ describe Atmosphere::FundsHelper, type: :helper do
     it 'floor floats since it works only for integers' do
       expect(fund_balance_full_precision(37.233)).to eq '0.0037'
       expect(fund_balance_full_precision(37.87)).to eq '0.0037'
+    end
+
+  end
+
+
+  describe '#last_months_names' do
+
+    it 'returns last 12 months' do
+      expect(last_months_names.last).
+        to eq Date::MONTHNAMES[Time.now.month]
+      expect(last_months_names.first).
+        to eq Date::MONTHNAMES[(Time.now.month + 1) % 12]
+      expect(last_months_names.size).to eq 12
     end
 
   end

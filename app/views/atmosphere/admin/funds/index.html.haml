@@ -92,10 +92,17 @@
           - if fund.users.present?
             - fund.user_funds.each do |user_fund|
               .btn-group
+                - user = user_fund.user
                 %span.btn.btn-default.btn-xs.disabled.non-opaque
-                  = user_fund.user.full_name
+                  = user.full_name
                   = surround '(', ')' do
-                    = user_fund.user.login
+                    = user.login
+                = link_to admin_billing_logs_path(user_id: user.id),
+                  remote: true,
+                  data: { billing: 'on' },
+                  title: t('billing.load_for_user', user: user.full_name),
+                  class: 'btn btn-default btn-xs has_bottom_tooltip' do
+                  = icon 'bar-chart'
                 = link_to admin_user_fund_path(user_fund),
                   method: :delete,
                   data: { confirm: t('are_you_sure') },
@@ -124,7 +131,22 @@
                 = t 'funds.add_user.all_assigned'
 
 
+%hr
+
+#billing
+
+
 :javascript
   $('body').on('change', '.self-submit', function() {
     this.form.submit();
+  });
+
+  $(function() {
+    $.get('#{admin_billing_logs_path}', function(data) {
+      $('#billing').html(data);
+    });
+  });
+
+  $('body').on('ajax:success', '[data-billing=on]', function(evt, data, status, xhr){
+    $('#billing').html(data);
   });
