@@ -31,15 +31,15 @@ module Atmosphere
     # This gets less then exactly last year: it gets all logs up to the first
     # day of the month that was 11 months before
     scope :last_year, -> {
-      where(timestamp: (Time.now-11.months).beginning_of_month..Time.now)
+      where(timestamp: (Time.now - 11.months).beginning_of_month..Time.now)
     }
 
     # Provides given logs in by-month data series
     # Ensures 0 sum for month with no data
     def self.month_data_series(logs)
       (1..12).map do |month|
-        month_sum = logs.detect{|l| l[0][1].month == month}
-        month_sum || 0
+        month_sum = logs.detect { |l| l[0][1].month == month }
+        month_sum ? month_sum[1] : 0
       end
     end
 

@@ -31,7 +31,6 @@ describe Atmosphere::FundsHelper, type: :helper do
 
   end
 
-
   describe '#last_months_names' do
 
     it 'returns last 12 months' do

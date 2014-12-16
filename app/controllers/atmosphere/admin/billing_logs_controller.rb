@@ -11,7 +11,7 @@ class Atmosphere::Admin::BillingLogsController < Atmosphere::Admin::ApplicationC
     billing_logs = billing_logs.where(user: @user) if @user
 
     billing_logs = billing_logs.sum_currency_by_month
-    billing_logs = billing_logs.group_by{|x| x[0][0]}
+    billing_logs = billing_logs.group_by { |x| x[0][0] }
 
     @data_series =
       if billing_logs.present?
@@ -24,7 +24,7 @@ class Atmosphere::Admin::BillingLogsController < Atmosphere::Admin::ApplicationC
       else
         [{
           name: 'No consumption',
-          data: [0]*12
+          data: [0] * 12
         }]
       end.to_json
 
