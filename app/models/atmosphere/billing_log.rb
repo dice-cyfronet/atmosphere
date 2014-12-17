@@ -34,7 +34,7 @@ module Atmosphere
       where(timestamp: (Time.now - 11.months).beginning_of_month..Time.now)
     }
 
-    # Provides given logs in by-month data series
+    # Turns logs into data series by month
     # Ensures 0 sum for month with no data
     def self.month_data_series(logs)
       (1..12).map do |month|
@@ -44,9 +44,8 @@ module Atmosphere
     end
 
     scope :sum_currency_by_month, -> {
-      order(:currency).
-        group(["currency", "DATE_TRUNC('month', timestamp)"]).
-        sum(:amount_billed)
+      group(["currency", "DATE_TRUNC('month', timestamp)"]).
+      sum(:amount_billed)
     }
 
   end
