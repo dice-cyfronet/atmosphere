@@ -19,8 +19,7 @@ class @Billing
       tooltip:
         formatter: ->
           '<b>' + this.x + '</b><br/>' +
-          this.series.name + ': ' + (this.y / 10000) + '<br/>' +
-          'Total: ' + this.point.stackTotal
+          this.series.name + ': ' + (this.y / 10000)
       plotOptions:
         column:
           stacking: 'normal'
