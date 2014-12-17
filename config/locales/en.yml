@@ -235,6 +235,7 @@ en:
     load_for_all:
       label: Show for all users
     load_for_user: Show funds consumption data for %{user}
+    loading: Loading billing data
   users:
     title: Users
 

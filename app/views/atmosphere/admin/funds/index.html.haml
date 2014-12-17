@@ -133,6 +133,10 @@
 
 %hr
 
+%h5#billing-chart-spinner.text-muted
+  %em= t 'billing.loading'
+  .inline-spinner
+
 #billing
 
 
@@ -147,6 +151,10 @@
     });
   });
 
-  $('body').on('ajax:success', '[data-billing=on]', function(evt, data, status, xhr){
-    $('#billing').html(data);
-  });
+  $('body').
+    on('ajax:beforeSend', '[data-billing=on]', function(evt, data, status, xhr){
+      $('#billing-chart-spinner').show();
+    }).
+    on('ajax:success', '[data-billing=on]', function(evt, data, status, xhr){
+      $('#billing').html(data);
+    });

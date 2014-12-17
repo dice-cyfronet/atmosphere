@@ -4,6 +4,9 @@ class @Billing
     $('#billing-chart').highcharts
       chart:
         type: 'column'
+        events:
+          load: ->
+            $('#billing-chart-spinner').hide()
       title:
         text: 'Funds consumption by month for ' + modeName
       xAxis:
