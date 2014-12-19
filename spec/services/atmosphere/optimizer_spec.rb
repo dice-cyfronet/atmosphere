@@ -570,7 +570,7 @@ describe Atmosphere::Optimizer do
     end
   end
 
-  context 'scaling', focus: true do
+  context 'scaling' do
     let(:strategy) { double() }
     let(:appliance) { double(optimization_strategy: strategy) }
 
