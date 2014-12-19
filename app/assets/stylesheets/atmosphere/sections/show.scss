@@ -1,0 +1,15 @@
+.show-table {
+  @extend .table;
+  @extend .table-hover;
+  @extend .table-condensed;
+
+  tr {
+    td:nth-child(1) {
+      font-weight: bold;
+    }
+
+    td:nth-child(2) {
+      font-family: monospace;
+    }
+  }
+}

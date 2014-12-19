@@ -1,8 +1,21 @@
-%p#notice= notice
-
 %h1
   = t('show')
   = t('appliance_sets.long_title_single')
+
+%p
+  %table.show-table
+    %tr
+      %td= t('appliance_set.name')
+      %td= @appliance_set.name
+    %tr
+      %td= t('appliance_set.priority')
+      %td= @appliance_set.priority
+    %tr
+      %td= t('appliance_set.appliance_set_type')
+      %td= @appliance_set.appliance_set_type
+    %tr
+      %td= t('appliance_set.user')
+      %td= @appliance_set.user
 
 %p
   .btn-group
