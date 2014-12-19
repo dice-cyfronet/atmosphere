@@ -21,6 +21,7 @@ require 'nprogress-rails'
 require 'jquery-rails'
 require 'turbolinks'
 require 'jquery-turbolinks'
+require 'highcharts-rails'
 
 require 'github-markup'
 require 'redcarpet'

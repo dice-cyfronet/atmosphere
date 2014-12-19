@@ -15,6 +15,7 @@ PATH
       github-markup
       gravtastic
       haml-rails
+      highcharts-rails (~> 4.0.4)
       influxdb
       jquery-rails
       jquery-turbolinks
@@ -223,7 +224,7 @@ GEM
     guard-spring (0.0.4)
       guard
       spring
-    haml (4.1.0.beta.1)
+    haml (4.0.5)
       tilt
     haml-rails (0.6.0)
       actionpack (>= 4.0.1)
@@ -232,6 +233,8 @@ GEM
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
     hashie (3.3.2)
+    highcharts-rails (4.0.4.1)
+      railties (>= 3.1)
     hike (1.2.3)
     hitimes (1.2.2)
     hpricot (0.8.6)
@@ -439,6 +442,7 @@ DEPENDENCIES
   foreman
   guard-rspec
   guard-spring
+  highcharts-rails
   letter_opener
   pry-rails
   quiet_assets

@@ -5,6 +5,8 @@
 #= require nprogress
 #= require nprogress-turbolinks
 #= require bootstrap
+#= require highcharts
+#= require ./billing
 
 $ ->
   # Flash
