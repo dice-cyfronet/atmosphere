@@ -5,79 +5,43 @@
   = t('compute_sites.long_title_single')
 
 %p
-  %table.table.table-hover.table-condensed
+  %table.show-table
     %tr
-      %td
-        %b
-          = t('compute_sites.site')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.site_id
+      %td= t('compute_sites.site')
+      %td= @compute_site.site_id
     %tr
-      %td
-        %b
-          = t('compute_sites.name')
-      %td
-        = @compute_site.name
+      %td= t('compute_sites.name')
+      %td= @compute_site.name
     %tr
-      %td
-        %b
-          = t('compute_sites.location')
-      %td
-        = @compute_site.location
+      %td= t('compute_sites.location')
+      %td= @compute_site.location
     %tr
-      %td
-        %b
-          = t('compute_sites.site_type')
-      %td
-        = @compute_site.site_type
+      %td= t('compute_sites.site_type')
+      %td= @compute_site.site_type
     %tr
-      %td
-        %b
-          = t('compute_sites.technology')
-      %td
-        = @compute_site.technology
+      %td= t('compute_sites.technology')
+      %td= @compute_site.technology
     %tr
-      %td
-        %b
-          = t('compute_sites.http_proxy_url')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.http_proxy_url
+      %td= t('compute_sites.http_proxy_url')
+      %td= @compute_site.http_proxy_url
     %tr
-      %td
-        %b
-          = t('compute_sites.https_proxy_url')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.https_proxy_url
+      %td= t('compute_sites.https_proxy_url')
+      %td= @compute_site.https_proxy_url
     %tr
-      %td
-        %b
-          = t('compute_sites.configuration')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.config
+      %td= t('compute_sites.configuration')
+      %td= @compute_site.config
     %tr
-      %td
-        %b
-          = t('compute_sites.template_filters')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.template_filters
+      %td= t('compute_sites.template_filters')
+      %td= @compute_site.template_filters
     %tr
-      %td
-        %b
-          = t('compute_sites.wrangler_url')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.wrangler_url
+      %td= t('compute_sites.wrangler_url')
+      %td= @compute_site.wrangler_url
     %tr
-      %td
-        %b
-          = t('compute_sites.wrangler_username')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.wrangler_username
+      %td= t('compute_sites.wrangler_username')
+      %td= @compute_site.wrangler_username
     %tr
-      %td
-        %b
-          = t('compute_sites.wrangler_password')
-      %td{ style: "font-family: monospace;" }
-        = @compute_site.wrangler_password
+      %td= t('compute_sites.wrangler_password')
+      %td= @compute_site.wrangler_password
 
 %p
   .btn-group
