@@ -31,8 +31,8 @@ module Atmosphere
     end
 
     def start_vms!(vms_descs)
-      if BillingService.can_afford_flavors?(@appliance, vms_desc.map{ |desc| desc[:flavor]})
-        vms_desc.each { |desc| instantiate_vm(desc[:template], desc[:flavor], desc[:name]) }
+      if BillingService.can_afford_flavors?(appliance, vms_descs.map{ |desc| desc[:flavor]})
+        vms_descs.each { |desc| instantiate_vm(desc[:template], desc[:flavor], desc[:name]) }
       else
         unsatisfied('Not enough funds to scale')
       end
@@ -105,7 +105,7 @@ module Atmosphere
       appliance_satisfied(vm)
     end
 
-    def   appliance_satisfied(vm)
+    def appliance_satisfied(vm)
       appliance.state = :satisfied
       updater.update(new_vm: vm)
       @tags_manager.create_tags_for_vm(vm)

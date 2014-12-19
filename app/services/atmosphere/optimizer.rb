@@ -81,20 +81,21 @@ module Atmosphere
       appliance = hint[:appliance]
       quantity = hint[:quantity]
       optimization_strategy = appliance.optimization_strategy
-      appl_manager = new ApplianceVmsManager(appliance)
+      appl_manager = ApplianceVmsManager.new(appliance)
       if optimization_strategy.can_scale_manually?
         if (quantity>0)
           vms = optimization_strategy.vms_to_start(appliance, quantity)
           appl_manager.start_vms!(vms)
         else
           vms = optimization_strategy.vms_to_stop(appliance, -quantity)
-          if (vms.count < quantity)
+          if (vms.count < quantity.abs)
             appl_manager.unsatisfied("Not enough vms to scale down")
           else
             appl_manager.stop_vms!(vms)
           end
         end
       else
+        #TODO - verify if the state unsatisfied is any meaningful in this case
         appl_manager.unsatisfied("Chosen optimization strategy does not allow for manual scaling")
       end
       appl_manager.save
