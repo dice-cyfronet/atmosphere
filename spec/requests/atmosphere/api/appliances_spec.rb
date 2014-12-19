@@ -622,6 +622,35 @@ describe Atmosphere::Api::V1::AppliancesController do
     end
   end
 
+  context 'POST /appliances/:id/action scale' do
+
+    context 'when authenticated' do
+
+      let(:scale_up_action_body) { { scale: 1 } }
+      let(:scale_down_action_body) { { scale: -1 } }
+
+      let(:optimizer) { double('optimizer') }
+
+      it 'scales up' do
+        appliance = appliance_for(user, mode: :development)
+        expect(Atmosphere::Optimizer).to receive(:instance) { optimizer }
+        expect(optimizer).to receive(:run).with(hash_including(scaling: {appliance: appliance, quantity: 1}))
+        post api("/appliances/#{appliance.id}/action", user), scale_up_action_body
+        expect(response.status).to eq 200
+      end
+
+      it 'scales down' do
+        appliance = appliance_for(user, mode: :development)
+        vm = create(:virtual_machine, appliances: [appliance])
+        expect(Atmosphere::Optimizer).to receive(:instance) { optimizer }
+        expect(optimizer).to receive(:run).with(hash_including(scaling: {appliance: appliance, quantity: -1}))
+        post api("/appliances/#{appliance.id}/action", user), scale_down_action_body
+        expect(response.status).to eq 200
+      end
+
+    end
+  end
+
   def appliance_for(user, options = {})
     as_mode = options[:mode] || :workflow
     as = create(:appliance_set,

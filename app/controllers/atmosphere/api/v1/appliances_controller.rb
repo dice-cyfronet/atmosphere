@@ -75,7 +75,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def scale
     authorize!(:scale, @appliance)
-    optimizer.run(scaling: { appliance: @appliance, quantity: params[:scale] })
+    optimizer.run(scaling: { appliance: @appliance, quantity: params[:scale].to_i })
     render json: {}, status: 200
   end
 
@@ -126,7 +126,6 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def optimizer
-    Optimizer.instance
+    Atmosphere::Optimizer.instance
   end
-
 end

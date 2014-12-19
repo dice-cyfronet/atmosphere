@@ -3,7 +3,6 @@
 #
 module Atmosphere
   class ApplianceVmsManager
-
     def initialize(appliance,
         updater_class = Proxy::ApplianceProxyUpdater,
         vm_creator_class = Cloud::VmCreator,

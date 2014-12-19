@@ -34,10 +34,11 @@ module Atmosphere
       def vms_to_start(appliance, quantity)
         source_vm = appliance.active_vms.first
         vms_to_stop = []
-        quantity.times { vms_to_stop << { template: source_vm.source_template, flavor: source_vm.virtual_machine_flavor, name: source_vm.name } }
+        quantity.times { vms_to_stop << {template: source_vm.source_template,
+                                         flavor: source_vm.virtual_machine_flavor,
+                                         name: source_vm.name} }
         vms_to_stop
       end
-
     end
   end
 end

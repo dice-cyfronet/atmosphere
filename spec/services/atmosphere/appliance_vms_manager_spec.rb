@@ -234,8 +234,8 @@ describe Atmosphere::ApplianceVmsManager do
     let(:flavor2) { 'flavor2' }
     let(:name2)   { 'name2' }
 
-    let(:vm)     { double('vm', errors: { to_json: {} }, id: 123) }
-    let(:vm2)     { double('vm2', errors: { to_json: {} }, id: 456)}
+    let(:vm)     { double('vm', id: 123) }
+    let(:vm2)     { double('vm2', id: 456) }
 
     subject { Atmosphere::ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
 
