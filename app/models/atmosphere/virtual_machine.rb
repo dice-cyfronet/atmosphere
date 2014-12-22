@@ -151,8 +151,8 @@ module Atmosphere
       compute_site.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
     end
 
-    def delete_dnat(ip = nil)
-      compute_site.dnat_client.remove(ip || self.ip)
+    def delete_dnat(ip = self.ip)
+      compute_site.dnat_client.remove(ip)
     end
 
     def update_in_monitoring
