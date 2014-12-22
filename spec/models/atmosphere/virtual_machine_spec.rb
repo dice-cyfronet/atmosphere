@@ -206,7 +206,7 @@ describe Atmosphere::VirtualMachine do
       context 'is performed' do
         context 'wrangler service is called' do
           before do
-            expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+            expect(wrg).to receive(:remove).with(priv_ip)
           end
 
           it 'after VM is destroyed if IP was not blank' do
@@ -217,10 +217,16 @@ describe Atmosphere::VirtualMachine do
             vm.ip = nil
             vm.save
           end
+
+          it 'if VM ip was updated from non-blank value to non-blank' do
+            allow(wrg).to receive(:add_dnat_for_vm).and_return([])
+            vm.ip = priv_ip_2
+            vm.save
+          end
         end
         context 'removes port mappings from DB' do
           before do
-            allow(wrg).to receive(:remove_dnat_for_vm).with(vm).and_return(true)
+            allow(wrg).to receive(:remove).and_return(true)
           end
 
           it 'after VM is destroyed if IP was not blank' do
@@ -249,7 +255,8 @@ describe Atmosphere::VirtualMachine do
     context 'regeneration' do
 
       it 'deletes dnat if ip is changed to blank' do
-          expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+          old_ip = vm.ip
+          expect(wrg).to receive(:remove).with(old_ip)
           vm.ip = nil
           vm.save
       end
@@ -271,7 +278,8 @@ describe Atmosphere::VirtualMachine do
 
       context 'is performed' do
         it 'after not blank IP was changed' do
-          expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+          old_ip = vm.ip
+          expect(wrg).to receive(:remove).with(old_ip)
           expect(wrg).to receive(:add_dnat_for_vm).with(vm, [pmt_1]).and_return([])
           vm.ip = '8.8.8.8'
           vm.save
