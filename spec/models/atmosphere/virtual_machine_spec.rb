@@ -255,16 +255,16 @@ describe Atmosphere::VirtualMachine do
     context 'regeneration' do
 
       it 'deletes dnat if ip is changed to blank' do
-          old_ip = vm.ip
-          expect(wrg).to receive(:remove).with(old_ip)
-          vm.ip = nil
-          vm.save
+        old_ip = vm.ip
+        expect(wrg).to receive(:remove).with(old_ip)
+        vm.ip = nil
+        vm.save
       end
 
       it 'adds dnat if blank IP was changed to not blank' do
-          expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([])
-          vm_ipless.ip = '8.8.8.8'
-          vm_ipless.save
+        expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([])
+        vm_ipless.ip = '8.8.8.8'
+        vm_ipless.save
       end
 
       context 'is not performed' do
