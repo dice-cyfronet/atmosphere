@@ -9,11 +9,3 @@
     font-family: monospace;
   }
 }
-
-.vmt-table {
-  @extend .action-table;
-
-  td:nth-child(1) {
-    font-family: monospace;
-  }
-}
