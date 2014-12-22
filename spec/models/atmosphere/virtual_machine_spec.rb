@@ -262,7 +262,8 @@ describe Atmosphere::VirtualMachine do
       end
 
       it 'adds dnat if blank IP was changed to not blank' do
-        expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([])
+        expect(wrg).to receive(:add_dnat_for_vm).
+          with(vm_ipless, [pmt_1]).and_return([])
         vm_ipless.ip = '8.8.8.8'
         vm_ipless.save
       end
