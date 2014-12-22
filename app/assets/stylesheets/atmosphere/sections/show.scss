@@ -1,15 +1,19 @@
-.show-table {
-  @extend .table;
-  @extend .table-hover;
-  @extend .table-condensed;
+.vm-table {
+  @extend .action-table;
 
-  tr {
-    td:nth-child(1) {
-      font-weight: bold;
-    }
+  td:nth-child(1) {
+    font-family: monospace;
+  }
 
-    td:nth-child(2) {
-      font-family: monospace;
-    }
+  td:nth-child(4) {
+    font-family: monospace;
+  }
+}
+
+.vmt-table {
+  @extend .action-table;
+
+  td:nth-child(1) {
+    font-family: monospace;
   }
 }

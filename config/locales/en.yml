@@ -129,6 +129,7 @@ en:
     reboot: Reboot this Virtual Machine
     save: Save this Virtual Machine as Template
     destroy: Destroy this Virtual Machine
+    managed_by_atmosphere: Managed
   virtual_machine_templates:
     title: Templates
     long_title: Virtual Machine Templates
@@ -141,6 +142,7 @@ en:
     edit: Edit this Virtual Machine Template
     remove: Remove this Virtual Machine Template
     version: Version
+    managed_by_atmosphere: Managed
   user_keys:
     title: User keys
     long_title: User keys
