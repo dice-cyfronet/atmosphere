@@ -605,67 +605,49 @@ describe Atmosphere::Optimizer do
     end
 
     context 'can scale manually' do
-
       before do
         allow(strategy).to receive(:can_scale_manually?).and_return(true)
       end
 
       let(:vms) {double('vms')}
 
-
       it 'runs scaling up' do
+        allow(strategy).to receive(:vms_to_start).with(2).and_return(vms)
 
-        detail = {}
-        detail[:appliance] = appliance
-        detail[:quantity] = 2
-
-        hint = {}
-        hint[:scaling] = detail
-
-        expect(strategy).to receive(:vms_to_start).with(appliance, detail[:quantity]).and_return(vms)
         expect(appl_vm_manager).to receive(:start_vms!).with(vms)
         expect(appl_vm_manager).to receive(:save)
 
-        subject.run(hint)
-
+        subject.run(scale_hint(2))
       end
 
       it 'runs scaling down succesfully' do
+        allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms)
+        allow(vms).to receive(:count).and_return(2)
 
-        detail = {}
-        detail[:appliance] = appliance
-        detail[:quantity] = -2
-
-        hint = {}
-        hint[:scaling] = detail
-
-        expect(strategy).to receive(:vms_to_stop).with(appliance, -detail[:quantity]).and_return(vms)
-        expect(vms).to receive(:count).and_return(2)
         expect(appl_vm_manager).to receive(:stop_vms!).with(vms)
         expect(appl_vm_manager).to receive(:save)
 
-        subject.run(hint)
-
+        subject.run(scale_hint(-2))
       end
 
       it 'runs scaling down without enogh vms' do
+        allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms)
+        allow(vms).to receive(:count).and_return(1)
 
-        detail = {}
-        detail[:appliance] = appliance
-        detail[:quantity] = -2
-
-        hint = {}
-        hint[:scaling] = detail
-
-        expect(strategy).to receive(:vms_to_stop).with(appliance, -detail[:quantity]).and_return(vms)
-        expect(vms).to receive(:count).and_return(1)
         expect(appl_vm_manager).to receive(:unsatisfied)
         expect(appl_vm_manager).to receive(:save)
 
-        subject.run(hint)
+        subject.run(scale_hint(-2))
+      end
 
+      def scale_hint(quantity)
+        hint = {
+          scaling: {
+            appliance: appliance,
+            quantity: quantity
+          }
+        }
       end
     end
   end
-
 end

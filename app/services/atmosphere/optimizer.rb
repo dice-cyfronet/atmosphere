@@ -83,12 +83,12 @@ module Atmosphere
       optimization_strategy = appliance.optimization_strategy
       appl_manager = ApplianceVmsManager.new(appliance)
       if optimization_strategy.can_scale_manually?
-        if (quantity>0)
-          vms = optimization_strategy.vms_to_start(appliance, quantity)
+        if quantity > 0
+          vms = optimization_strategy.vms_to_start(quantity)
           appl_manager.start_vms!(vms)
         else
-          vms = optimization_strategy.vms_to_stop(appliance, -quantity)
-          if (vms.count < quantity.abs)
+          vms = optimization_strategy.vms_to_stop(-quantity)
+          if vms.count < quantity.abs
             appl_manager.unsatisfied("Not enough vms to scale down")
           else
             appl_manager.stop_vms!(vms)

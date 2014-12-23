@@ -1,6 +1,8 @@
 module Atmosphere
   module OptimizationStrategy
     class Manual < OptimizationStrategy::Default
+      attr_reader :appliance
+
       def initialize(appliance)
         @appliance = appliance
       end
@@ -16,7 +18,7 @@ module Atmosphere
       def new_vms_tmpls_and_flavors
         tmpls_and_flavors = []
         tmpls = vmt_candidates_for(@appliance)
-        @appliance.optimization_policy_params['vms'].each do |vm|
+        appliance.optimization_policy_params['vms'].each do |vm|
           options = {cpu: vm['cpu'], memory: vm['mem']}
           tmpls_and_flavors += Default.select_tmpls_and_flavors(tmpls, options)
         end
@@ -27,17 +29,16 @@ module Atmosphere
         true
       end
 
-      def vms_to_stop(appliance, quantity)
+      def vms_to_stop(quantity)
         appliance.active_vms.last(quantity)
       end
 
-      def vms_to_start(appliance, quantity)
+      def vms_to_start(quantity)
         source_vm = appliance.active_vms.first
-        vms_to_stop = []
-        quantity.times { vms_to_stop << {template: source_vm.source_template,
-                                         flavor: source_vm.virtual_machine_flavor,
-                                         name: source_vm.name} }
-        vms_to_stop
+
+        [{ template: source_vm.source_template,
+           flavor: source_vm.virtual_machine_flavor,
+           name: source_vm.name }] * quantity
       end
     end
   end
