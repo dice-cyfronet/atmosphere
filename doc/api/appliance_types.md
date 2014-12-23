@@ -20,6 +20,7 @@ GET /appliance_types
       "preference_memory": 1024, (in MB)
       "preference_disk": 10, (in GB)
       "active": true,
+      "saving": false,
       "author_id": 1,
       "security_proxy_id": 1,
       "appliance_ids": [2, 4],
@@ -60,7 +61,8 @@ Parameters:
     "preference_cpu": 1.0,
     "preference_memory": 1024, (in MB)
     "preference_disk": 10, (in GB)
-    active: false,
+    "active": false,
+    "saving": true,
     "author_id": 1,
     "security_proxy_id": 1,
     "appliance_ids": [2, 4],
@@ -73,6 +75,7 @@ Parameters:
 ```
 
 The `active` parameters set to true means that this `appliance type` is connected with one or more `virtual machine templates` and there is possible to spawn `appliance` from this appliance type. This parameter is read only.
+The `saving` parameter depicts the appliance type having at least one virtual machine template in the saving state.
 
 <a name="visible_to"></a> The `visible_to` parameter distinguish when such appliance type can be used. Allowed values are as follow:
 
