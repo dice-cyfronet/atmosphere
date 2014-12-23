@@ -89,12 +89,21 @@ module Atmosphere
     scope :def_order, -> { order(:name) }
     scope :active, -> do
       joins(:virtual_machine_templates)
-        .where(
+      .where(
           atmosphere_virtual_machine_templates: { state: :active }
-        ).uniq
+      ).uniq
     end
 
     scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM atmosphere_virtual_machine_templates WHERE state = 'active')") }
+
+    scope :saving, -> do
+      joins(:virtual_machine_templates)
+      .where(
+          atmosphere_virtual_machine_templates: { state: :saving }
+      ).uniq
+    end
+
+    scope :not_saving, -> { where("id NOT IN (SELECT appliance_type_id FROM atmosphere_virtual_machine_templates WHERE state = 'saving')") }
 
     scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
       joins(virtual_machine_templates: :compute_site).

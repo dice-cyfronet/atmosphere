@@ -14,6 +14,8 @@ module Atmosphere
 
         def index
           process_active_query
+          process_saving_query
+
           ats = @appliance_types.where(filter).order(:id)
           respond_with pdp.filter(ats, params[:mode])
         end
@@ -110,11 +112,17 @@ module Atmosphere
           end
         end
 
+        def process_saving_query
+          saving = params[:saving]
+          unless saving.blank?
+            @appliance_types = to_boolean(saving) ? @appliance_types.saving : @appliance_types.not_saving
+          end
+        end
+
         def filter
           filter = super
           author_id = params[:author_id]
           filter[:user_id] = author_id unless author_id.blank?
-
           filter
         end
 
