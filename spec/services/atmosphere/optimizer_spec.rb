@@ -641,7 +641,7 @@ describe Atmosphere::Optimizer do
       end
 
       def scale_hint(quantity)
-        hint = {
+        {
           scaling: {
             appliance: appliance,
             quantity: quantity
