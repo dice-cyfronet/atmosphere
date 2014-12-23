@@ -31,6 +31,7 @@ module Atmosphere
       end
 
       protected
+
       def vmt_candidates_for(appliance)
         VirtualMachineTemplate.where(
           appliance_type: appliance.appliance_type,
