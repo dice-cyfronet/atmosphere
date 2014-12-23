@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Atmosphere::Api::V1::ApplianceTypesController, focus: true do
+describe Atmosphere::Api::V1::ApplianceTypesController do
   include ApiHelpers
 
   describe 'GET /appliance_types' do
