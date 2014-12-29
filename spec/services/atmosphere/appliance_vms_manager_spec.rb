@@ -201,76 +201,59 @@ describe Atmosphere::ApplianceVmsManager do
     end
   end
 
-  context 'scaling' do
-
-    let(:appl) do
-      double('appliance',
-             :state= => true,
-             :billing_state= => true,
-             :state_explanation= => true,
-
-             user_data: 'user data',
-             user_key: 'user key',
-
-             name: 'name',
-             id: 1,
-
-             virtual_machines: double(create: vm)
-      )
-    end
-
-    let(:tags_mng) { double('tags manager') }
-    let(:tags_manager_class) { double('tags manager class', new: tags_mng) }
-    let(:updater) { double('updater', update: true) }
-    let(:updater_class) { double('updater class', new: updater) }
-    let(:vm_creator) { double('vm creator', :spawn_vm! => 'server_id') }
+  context 'scaling'  do
+    let(:appl) { build(:appliance) }
     let(:vm_creator_class) { double('vm creator class') }
 
-    let(:tmpl)   { double('tmpl', compute_site: 'cs') }
-    let(:flavor) { 'flavor' }
-    let(:name)   { 'name' }
-
-    let(:tmpl2)   { double('tmpl2', compute_site: 'cs') }
-    let(:flavor2) { 'flavor2' }
-    let(:name2)   { 'name2' }
-
-    let(:vm)     { double('vm', id: 123) }
-    let(:vm2)     { double('vm2', id: 456) }
-
-    subject { Atmosphere::ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
+    subject do
+      Atmosphere::ApplianceVmsManager.
+        new(appl,
+            double(new: double(update: true)),
+            vm_creator_class,
+            double(new: double(create_tags_for_vm: true)))
+    end
 
     context 'when user can afford new vm and scale up' do
       it 'start 2 new instances' do
-        allow(tags_mng).to receive(:create_tags_for_vm)
-        expect(Atmosphere::BillingService).to receive(:can_afford_flavors?).with(appl, [flavor, flavor2]).and_return(true)
-        expect(vm_creator_class).to receive(:new).with(tmpl,
-                                                       {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
-                                    .exactly(1).times
-                                    .and_return(vm_creator)
-        expect(vm_creator_class).to receive(:new).with(tmpl2,
-                                                       {flavor: flavor2, name: name2, user_data: 'user data', user_key: 'user key'})
-                                    .exactly(1).times
-                                    .and_return(vm_creator)
+        first = vmt_desc('first')
+        second = vmt_desc('second')
 
-        allow(vm).to receive(:valid?).and_return(true)
-        vms_desc = []
-        vms_desc << {template: tmpl, flavor: flavor, name: name }
-        vms_desc << {template: tmpl2, flavor: flavor2, name: name2 }
-        subject.start_vms!(vms_desc)
+        expect_vm_started(first, 'first_id')
+        expect_vm_started(second, 'second_id')
+
+        subject.start_vms!([first, second])
+      end
+
+      def expect_vm_started(desc, vm_id_at_site)
+        first_creator = instance_double('Cloud::VmCreator')
+        allow(vm_creator_class).
+          to receive(:new).
+          with(desc[:template],
+               hash_including(flavor: desc[:flavor], name: desc[:name])).
+          and_return(first_creator)
+
+        expect(first_creator).to receive(:spawn_vm!).and_return(vm_id_at_site)
+      end
+
+      def vmt_desc(name)
+        {
+          template: create(:virtual_machine_template),
+          flavor: create(:virtual_machine_flavor),
+          name: name
+        }
       end
     end
 
-    context 'when user can afford new vm and scale up' do
-      it 'stop 1 instance' do
-        expect(Atmosphere::Cloud::VmDestroyWorker).to receive(:perform_async).with(vm.id).and_return(true)
-        expect(Atmosphere::Cloud::VmDestroyWorker).to receive(:perform_async).with(vm2.id).and_return(true)
-        vms = []
-        vms << vm
-        vms << vm2
-        subject.stop_vms!(vms)
-      end
-    end
+    it 'stops 2 vms' do
+      vm1 = double(id: 1)
+      vm2 = double(id: 2)
 
+      expect(Atmosphere::Cloud::VmDestroyWorker).
+        to receive(:perform_async).with(1).and_return(true)
+      expect(Atmosphere::Cloud::VmDestroyWorker).
+        to receive(:perform_async).with(2).and_return(true)
+
+      subject.stop_vms!([vm1, vm2])
+    end
   end
-
 end
