@@ -147,7 +147,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
             expect(ats_response[0]).to appliance_type_eq at2
           end
 
-          it 'returns only not_saving types', focus: true do
+          it 'returns only not_saving types' do
             user = create(:user)
             at1 = create(:appliance_type, visible_to: :all)
             at2 = create(:appliance_type, visible_to: :all)
