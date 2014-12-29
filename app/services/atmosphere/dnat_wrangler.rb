@@ -4,6 +4,9 @@ module Atmosphere
   class DnatWrangler
     include Wrangler
 
+    MIN_PORT_NO = 0
+    MAX_PORT_NO = 65535
+
     def initialize(wrangler_url, wrangler_username, wrangler_password)
       @wrangler_url = wrangler_url
       @wrangler_username = wrangler_username
@@ -73,7 +76,7 @@ module Atmosphere
     end
 
     def dnat_client
-      conn = Faraday.new(url: @wrangler_url) do |faraday|
+      Faraday.new(url: @wrangler_url) do |faraday|
         faraday.request :url_encoded
         faraday.response :logger
         faraday.adapter Faraday.default_adapter
