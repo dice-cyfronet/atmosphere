@@ -201,4 +201,59 @@ describe Atmosphere::ApplianceVmsManager do
     end
   end
 
+  context 'scaling'  do
+    let(:appl) { build(:appliance) }
+    let(:vm_creator_class) { double('vm creator class') }
+
+    subject do
+      Atmosphere::ApplianceVmsManager.
+        new(appl,
+            double(new: double(update: true)),
+            vm_creator_class,
+            double(new: double(create_tags_for_vm: true)))
+    end
+
+    context 'when user can afford new vm and scale up' do
+      it 'start 2 new instances' do
+        first = vmt_desc('first')
+        second = vmt_desc('second')
+
+        expect_vm_started(first, 'first_id')
+        expect_vm_started(second, 'second_id')
+
+        subject.start_vms!([first, second])
+      end
+
+      def expect_vm_started(desc, vm_id_at_site)
+        first_creator = instance_double('Cloud::VmCreator')
+        allow(vm_creator_class).
+          to receive(:new).
+          with(desc[:template],
+               hash_including(flavor: desc[:flavor], name: desc[:name])).
+          and_return(first_creator)
+
+        expect(first_creator).to receive(:spawn_vm!).and_return(vm_id_at_site)
+      end
+
+      def vmt_desc(name)
+        {
+          template: create(:virtual_machine_template),
+          flavor: create(:virtual_machine_flavor),
+          name: name
+        }
+      end
+    end
+
+    it 'stops 2 vms' do
+      vm1 = double(id: 1)
+      vm2 = double(id: 2)
+
+      expect(Atmosphere::Cloud::VmDestroyWorker).
+        to receive(:perform_async).with(1).and_return(true)
+      expect(Atmosphere::Cloud::VmDestroyWorker).
+        to receive(:perform_async).with(2).and_return(true)
+
+      subject.stop_vms!([vm1, vm2])
+    end
+  end
 end

@@ -14,7 +14,11 @@ module Atmosphere
       end
 
       can :reboot, Appliance, appliance_set: {
-        user_id: user.id, appliance_set_type: 'development'
+          user_id: user.id, appliance_set_type: 'development'
+      }
+
+      can :scale, Appliance, appliance_set: {
+          user_id: user.id
       }
     end
 

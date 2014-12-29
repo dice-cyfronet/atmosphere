@@ -29,8 +29,25 @@ module Atmosphere
       end
     end
 
+    def start_vms!(vms_descs)
+      if BillingService.can_afford_flavors?(appliance, vms_descs.map{ |desc| desc[:flavor]})
+        vms_descs.each { |desc| instantiate_vm(desc[:template], desc[:flavor], desc[:name]) }
+      else
+        unsatisfied('Not enough funds to scale')
+      end
+    end
+
+    def stop_vms!(vms_to_stop)
+      vms_to_stop.each { |vm| Cloud::VmDestroyWorker.perform_async(vm.id) }
+    end
+
     def save
       appliance.save.tap { |saved| bill if saved }
+    end
+
+    def unsatisfied(msg)
+      appliance.state = :unsatisfied
+      appliance.state_explanation = msg
     end
 
     private
@@ -40,11 +57,6 @@ module Atmosphere
     def not_enough_funds
       unsatisfied('Not enough funds')
       appliance.billing_state = 'expired'
-    end
-
-    def unsatisfied(msg)
-      appliance.state = :unsatisfied
-      appliance.state_explanation = msg
     end
 
     def instantiate_vm(tmpl, flavor, name)

@@ -26,7 +26,12 @@ module Atmosphere
         Default.select_tmpls_and_flavors(tmpls, preferences)
       end
 
+      def can_scale_manually?
+        false
+      end
+
       protected
+
       def vmt_candidates_for(appliance)
         VirtualMachineTemplate.where(
           appliance_type: appliance.appliance_type,
