@@ -56,12 +56,12 @@ describe Atmosphere::DnatWrangler do
 
       it 'logs error if wrangler returns non 204 status when deleting DNAT for vm' do
         expect(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}.")
-        subject.remove_dnat_for_vm(vm)
+        subject.remove(vm.ip)
       end
 
       it 'returns false if wrangler returns non 204 status when deleting DNAT for vm' do
         allow(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}.")
-        expect(subject.remove_dnat_for_vm(vm)).to be_falsy
+        expect(subject.remove(vm.ip)).to be_falsy
       end
 
       it 'logs error if wrangler returns non 204 status when deleting DNAT for mapping' do
@@ -95,7 +95,7 @@ describe Atmosphere::DnatWrangler do
         end
 
         it 'calls remote wrangler service for vm' do
-          subject.remove_dnat_for_vm(vm)
+          subject.remove(vm.ip)
           subject.remove_port_mapping(pm)
           subject.remove_port_mapping(pm2)
           stubs.verify_stubbed_calls
@@ -114,11 +114,7 @@ describe Atmosphere::DnatWrangler do
         end
 
         it 'if vm does not have an IP' do
-          subject.remove_dnat_for_vm(vm_ipless)
-        end
-
-        it 'if vm does not have port mappings'  do
-          subject.remove_dnat_for_vm(vm_mappingless)
+          subject.remove(vm_ipless.ip)
         end
 
       end
@@ -164,11 +160,11 @@ describe Atmosphere::DnatWrangler do
 
     context 'when deleting DNAT' do
       it 'returns true for ipless vm' do
-        expect(subject.remove_dnat_for_vm(vm_ipless)).to be true
+        expect(subject.remove(vm_ipless.ip)).to be true
       end
 
       it 'returns true for a vm with an ip' do
-        expect(subject.remove_dnat_for_vm(vm)).to be true
+        expect(subject.remove(vm.ip)).to be true
       end
     end
 

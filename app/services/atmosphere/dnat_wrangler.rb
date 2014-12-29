@@ -1,8 +1,5 @@
-require 'atmosphere/wrangler'
-
 module Atmosphere
   class DnatWrangler
-    include Wrangler
 
     MIN_PORT_NO = 0
     MAX_PORT_NO = 65535
@@ -11,11 +8,6 @@ module Atmosphere
       @wrangler_url = wrangler_url
       @wrangler_username = wrangler_username
       @wrangler_password = wrangler_password
-    end
-
-    def remove_dnat_for_vm(vm)
-      return true unless vm.ip and @wrangler_url and not vm.port_mappings.blank?
-      remove(vm.ip)
     end
 
     def remove_port_mapping(pm)
@@ -54,7 +46,7 @@ module Atmosphere
     end
 
     def remove(ip, port = nil, protocol = nil)
-      return true unless use_wrangler?
+      return true unless use_wrangler? && ip
       path = build_path_for_params(ip, port, protocol)
       resp = dnat_client.delete(path)
       if not resp.status == 204
