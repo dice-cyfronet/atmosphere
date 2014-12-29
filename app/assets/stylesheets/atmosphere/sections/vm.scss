@@ -1,0 +1,11 @@
+.vm-table {
+  @extend .action-table;
+
+  td:nth-child(1) {
+    font-family: monospace;
+  }
+
+  td:nth-child(4) {
+    font-family: monospace;
+  }
+}

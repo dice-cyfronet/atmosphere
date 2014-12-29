@@ -13,3 +13,18 @@
     }
   }
 }
+
+.action-table {
+  @extend .table;
+  @extend .table-hover;
+  @extend .table-condensed;
+
+  th:last-child {
+    text-align: right;
+    min-width: 10rem;
+  }
+
+  td:last-child {
+    text-align: right;
+  }
+}
