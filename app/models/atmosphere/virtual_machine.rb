@@ -130,7 +130,7 @@ module Atmosphere
     # Deletes all dnat redirections and then adds. Use it when IP of the vm has changed and existing redirection would not work any way.
     def regenerate_dnat
       if ip_was
-        if delete_dnat
+        if delete_dnat(ip_was)
           port_mappings.delete_all
         end
       end
@@ -151,8 +151,8 @@ module Atmosphere
       compute_site.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
     end
 
-    def delete_dnat
-      compute_site.dnat_client.remove_dnat_for_vm(self)
+    def delete_dnat(ip = self.ip)
+      compute_site.dnat_client.remove(ip)
     end
 
     def update_in_monitoring
