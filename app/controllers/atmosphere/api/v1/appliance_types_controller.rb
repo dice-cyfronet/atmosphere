@@ -108,14 +108,24 @@ module Atmosphere
         def process_active_query
           active = params[:active]
           unless active.blank?
-            @appliance_types = to_boolean(active) ? @appliance_types.active : @appliance_types.inactive
+            @appliance_types =
+              if to_boolean(active)
+                @appliance_types.active
+              else
+                @appliance_types.inactive
+              end
           end
         end
 
         def process_saving_query
           saving = params[:saving]
           unless saving.blank?
-            @appliance_types = to_boolean(saving) ? @appliance_types.saving : @appliance_types.not_saving
+            @appliance_types =
+              if to_boolean(saving)
+                @appliance_types.saving
+              else
+                @appliance_types.not_saving
+              end
           end
         end
 

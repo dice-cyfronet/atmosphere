@@ -100,11 +100,14 @@ module Atmosphere
     end
 
     scope :without_vmt_state, ->(state) do
-      where(%q{
+      query = <<-SQL
         id NOT IN (
           SELECT appliance_type_id
             FROM atmosphere_virtual_machine_templates
-            WHERE state = ?)}, state)
+            WHERE state = ?)
+      SQL
+
+      where(query, state)
     end
 
     scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
