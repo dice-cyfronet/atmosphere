@@ -622,7 +622,7 @@ describe Atmosphere::Optimizer do
 
       it 'runs scaling down succesfully' do
         allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms)
-        allow(vms).to receive(:count).and_return(2)
+        allow(vms).to receive(:count).and_return(3)
 
         expect(appl_vm_manager).to receive(:stop_vms!).with(vms)
         expect(appl_vm_manager).to receive(:save)
@@ -632,7 +632,7 @@ describe Atmosphere::Optimizer do
 
       it 'runs scaling down without enogh vms' do
         allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms)
-        allow(vms).to receive(:count).and_return(1)
+        allow(vms).to receive(:count).and_return(2)
 
         expect(appl_vm_manager).to receive(:unsatisfied)
         expect(appl_vm_manager).to receive(:save)

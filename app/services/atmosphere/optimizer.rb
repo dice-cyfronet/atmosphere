@@ -88,7 +88,7 @@ module Atmosphere
           appl_manager.start_vms!(vms)
         else
           vms = optimization_strategy.vms_to_stop(-quantity)
-          if vms.count < quantity.abs
+          if vms.count <= quantity.abs
             appl_manager.unsatisfied("Not enough vms to scale down")
           else
             appl_manager.stop_vms!(vms)
