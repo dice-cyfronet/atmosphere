@@ -126,9 +126,47 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
             create(:virtual_machine_template, state: :active, appliance_type: at1)
             create(:virtual_machine_template, state: :active, appliance_type: at1)
 
-            get api("/appliance_types?active=true", user)
+            get api('/appliance_types?active=true', user)
 
             expect(ats_response.size).to eq 1
+          end
+        end
+
+        context 'using saving flag' do
+          it 'returns only saving types' do
+            user = create(:user)
+            at1 = create(:filled_appliance_type, author: user)
+            at2 = create(:appliance_type, visible_to: :all)
+            create(:appliance_type, visible_to: :all)
+            create(:virtual_machine_template,
+                   state: :active,
+                   appliance_type: at1)
+            create(:virtual_machine_template,
+                   state: :saving,
+                   appliance_type: at2)
+
+            get api('/appliance_types?saving=true', user)
+
+            expect(ats_response.size).to eq 1
+            expect(ats_response[0]).to appliance_type_eq at2
+          end
+
+          it 'returns only not_saving types' do
+            user = create(:user)
+            at1 = create(:appliance_type, visible_to: :all)
+            at2 = create(:appliance_type, visible_to: :all)
+            at3 = create(:appliance_type, visible_to: :all)
+            create(:virtual_machine_template,
+                   state: :active,
+                   appliance_type: at1)
+            create(:virtual_machine_template,
+                   state: :saving,
+                   appliance_type: at3)
+
+            get api('/appliance_types?saving=false', user)
+            expect(ats_response.size).to eq 2
+            expect(ats_response[0]).to appliance_type_eq at1
+            expect(ats_response[1]).to appliance_type_eq at2
           end
         end
       end

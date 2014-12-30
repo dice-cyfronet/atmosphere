@@ -87,14 +87,28 @@ module Atmosphere
     enumerize :visible_to, in: [:owner, :developer, :all]
 
     scope :def_order, -> { order(:name) }
-    scope :active, -> do
-      joins(:virtual_machine_templates)
-        .where(
-          atmosphere_virtual_machine_templates: { state: :active }
-        ).uniq
+
+    scope :active, -> { with_vmt_state(:active) }
+    scope :inactive, -> { without_vmt_state(:active) }
+
+    scope :saving, -> { with_vmt_state(:saving) }
+    scope :not_saving, -> { without_vmt_state(:saving) }
+
+    scope :with_vmt_state, ->(state) do
+      joins(:virtual_machine_templates).
+        where(atmosphere_virtual_machine_templates: { state: state }).uniq
     end
 
-    scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM atmosphere_virtual_machine_templates WHERE state = 'active')") }
+    scope :without_vmt_state, ->(state) do
+      query = <<-SQL
+        id NOT IN (
+          SELECT appliance_type_id
+            FROM atmosphere_virtual_machine_templates
+            WHERE state = ?)
+      SQL
+
+      where(query, state)
+    end
 
     scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
       joins(virtual_machine_templates: :compute_site).

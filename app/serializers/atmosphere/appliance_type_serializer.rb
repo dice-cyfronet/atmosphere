@@ -6,22 +6,34 @@ module Atmosphere
     include Atmosphere::ApplianceTypeSerializerExt
     embed :ids
 
-    attributes :id, :name, :description, :shared, :scalable, :visible_to, :author_id
+    attributes :id, :name, :description,
+               :shared, :scalable, :visible_to, :author_id
     attributes :preference_cpu, :preference_memory, :preference_disk
-    attributes :active
+    attributes :active, :saving
 
-    has_many :appliances, :port_mapping_templates, :appliance_configuration_templates, :virtual_machine_templates, :compute_sites
+    has_many :appliances, :port_mapping_templates,
+             :appliance_configuration_templates,
+             :virtual_machine_templates,
+             :compute_sites
+
+    private
 
     def author_id
       object.user_id
     end
 
     def active
-      active_vmts = object.virtual_machine_templates
-        .joins(:compute_site)
-        .where(state: :active, atmosphere_compute_sites: { active: true })
+      vmt_with_state?(:active)
+    end
 
-      active_vmts.count > 0
+    def saving
+      vmt_with_state?(:saving)
+    end
+
+    def vmt_with_state?(state)
+      object.virtual_machine_templates.
+        on_active_cs.where(state: state).
+          count > 0
     end
 
     def compute_sites
