@@ -245,4 +245,25 @@ describe Atmosphere::ApplianceType do
       expect(at.version).to eq 2
     end
   end
+
+  context '#without_vmt_state' do
+    it 'return AT without VM in concrete state' do
+      active1 = create(:virtual_machine_template, state: :active)
+      active2 = create(:virtual_machine_template, state: :active)
+      saving1 = create(:virtual_machine_template, state: :saving)
+      saving2 = create(:virtual_machine_template, state: :saving)
+
+      create(:appliance_type,
+             virtual_machine_templates: [active1])
+      create(:appliance_type,
+             virtual_machine_templates: [active2, saving1])
+      saving = create(:appliance_type,
+                      virtual_machine_templates: [saving2])
+
+      without_active = Atmosphere::ApplianceType.without_vmt_state(:active)
+
+      expect(without_active.count).to eq 1
+      expect(without_active).to include saving
+    end
+  end
 end
