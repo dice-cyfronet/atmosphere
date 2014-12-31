@@ -610,6 +610,8 @@ describe Atmosphere::Optimizer do
       end
 
       let(:vms) {double('vms')}
+      let(:vms_to_stop) {double('vms to stop')}
+      let(:appl) {double('appliance')}
 
       it 'runs scaling up' do
         allow(strategy).to receive(:vms_to_start).with(2).and_return(vms)
@@ -621,23 +623,25 @@ describe Atmosphere::Optimizer do
       end
 
       it 'runs scaling down succesfully' do
-        allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms)
+        allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms_to_stop)
+        allow(vms_to_stop).to receive(:count).and_return(2)
         allow(vms).to receive(:count).and_return(3)
-
-        expect(appl_vm_manager).to receive(:stop_vms!).with(vms)
+        allow(appliance).to receive(:virtual_machines).and_return(vms)
+        expect(appl_vm_manager).to receive(:stop_vms!).with(vms_to_stop)
         expect(appl_vm_manager).to receive(:save)
 
         subject.run(scale_hint(-2))
       end
 
       it 'runs scaling down without enogh vms' do
-        allow(strategy).to receive(:vms_to_stop).with(2).and_return(vms)
-        allow(vms).to receive(:count).and_return(2)
-
+        allow(strategy).to receive(:vms_to_stop).with(3).and_return(vms_to_stop)
+        allow(vms_to_stop).to receive(:count).and_return(3)
+        allow(vms).to receive(:count).and_return(3)
+        allow(appliance).to receive(:virtual_machines).and_return(vms)
         expect(appl_vm_manager).to receive(:unsatisfied)
         expect(appl_vm_manager).to receive(:save)
 
-        subject.run(scale_hint(-2))
+        subject.run(scale_hint(-3))
       end
 
       def scale_hint(quantity)
