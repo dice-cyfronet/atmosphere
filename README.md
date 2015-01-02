@@ -1,7 +1,17 @@
 # Atmosphere [![Build Status](https://travis-ci.org/dice-cyfronet/atmosphere.svg)](https://travis-ci.org/dice-cyfronet/atmosphere) [![Code Climate](https://codeclimate.com/github/dice-cyfronet/atmosphere/badges/gpa.svg)](https://codeclimate.com/github/dice-cyfronet/atmosphere) [![Test Coverage](https://codeclimate.com/github/dice-cyfronet/atmosphere/badges/coverage.svg)](https://codeclimate.com/github/dice-cyfronet/atmosphere) [![Dependency Status](https://gemnasium.com/dice-cyfronet/atmosphere.svg)](https://gemnasium.com/dice-cyfronet/atmosphere)
 
-TODO: PN general atmosphere introduction with appliance type, appliance explanation.
+Atmosphere is a hybrid computational cloud management framework which sits atop computational cloud sites and provides a consistent interface for creation and management of cloud-based services and applications. It provides a set of APIs as well as an embeddable administrative GUI through which computational clouds can be managed. Atmosphere also provides separate tools for developers of services and for their end users.
+ 
+Atmosphere introduces an abstraction above cloud-based virtual machines by referring to services as **Appliance types** and their instances (VMs) as **Appliances**:
 
+- An **Appliance Type** represents an image of a cloud-based service, along with ancillary metadata and all other types of information required to expose the service to end users. From the end user's perspective, an Appliance Type is just a service template which can be launched (instantiated) on demand.
+- An **Appliance** represents a running instance of an Appliance Type. An Appliance is always spawned in the context of a specific user account, however Appliances have a many-to-many relation with virtual machines. For services which are declared as "shared", a single Virtual Machine may map to many Appliances, thus enabling many users to share a single VM even though each user sees their own "virtual service". For services which are declared as "scalable", the opposite happens - a user may launch an Appliance which Atmosphere will then link to many Virtual Machines, redirecting incoming requests to specific VMs in accordance with an internal optimization strategy.
+
+The above abstraction enables the platform to conserve hardware resources while also providing scale-out capabilities for more demanding applications.
+
+Atmosphere also resolves a host of other issues involved in operating computational clouds. It is capable of automatically creating redirections to services exposed by Appliances in private IP spaces, through the use of two types of proxies: a NAT-based port proxy for arbitrary interfaces, and a Nginx-based HTTP proxy for web interfaces (SOAP, REST, web applications etc.) A billing system is provided to keep track of financial resource usage and a set of monitoring workers are in place to validate the accessibility of service interfaces. A template migration mechanism is also provided whereby Appliance Types stored on one participating cloud site may be automatically propagated to other cloud sites, with on-the-fly image conversion where necessary.
+
+The principal use of Atmosphere is in aggregating multiple computational cloud sites into a coherent infrastructure which the users perceive as a single, shared resource space.
 
 ## Requirements
 
@@ -11,7 +21,7 @@ TODO: PN general atmosphere introduction with appliance type, appliance explanat
 - Ubuntu 14.04
 
 It may be possible to install Atmosphere on other operating systems. The above list only includes
-operating systems, which have **already** been used for Atmosphere deployment in production mode. What is more,
+operating systems which have **already** been used for Atmosphere deployment in production mode. What is more,
 some commands used in the installation manual are Debian-specific (e.g. `apt-get`). If your OS uses a different
 package management system, you will need to modify these commands appropriately (e.g. by calling `yum` if you are using CentOS).
 
@@ -29,7 +39,7 @@ Atmosphere requires Ruby (MRI) >= 2.1.
 
 **6GB** is the **recommended** minimum memory size.
 
-Notice: The 25 workers of Sidekiq will show up as separate processes in your process overview (such as top or htop) but they share the same RAM allocation since Sidekiq is a multithreaded application.
+Note: The 25 workers of Sidekiq will show up as separate processes in your process overview (such as top or htop) but they share the same RAM allocation since Sidekiq is a multithreaded application.
 
 ### Storage
 

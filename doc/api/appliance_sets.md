@@ -1,6 +1,6 @@
 ## List user appliance sets
 
-Get a list of user appliance sets. For normal user only owned appliance sets are returned, admin is able to set flag `all` into `true` (e.g. by adding `?all=true` to the request path) and thus receive all users appliance sets.
+Get a list of user appliance sets. For normal users only owned appliance sets are returned. An admin is able to set the `all` flag to `true` (e.g. by adding `?all=true` to the request path) and thus receive all users' appliance sets.
 
 ```
 GET /appliance_sets
@@ -46,7 +46,7 @@ Parameters:
 
 ## New appliance set
 
-Creates a new appliance set. Every user is able to create one `portal` appliance set and many `workflow` appliance sets. Additionaly **developer** is able to create one `development` appliance set.
+Create a new appliance set. Every user is able to create one `portal` appliance set and many `workflow` appliance sets. Additionally **developer** is able to create one `development` appliance set.
 
 ```
 POST /appliance_sets
@@ -80,10 +80,10 @@ Parameters:
 + `priority` (optional) - Appliance set priority (number between 1 and 100)
 + `appliance_set_type` (optional) - Appliance set type (`portal`, `workflow` or `development`). Default `workflow`.
 + `optimization_policy` (optional) - Optimization policy that will be used to allocate resources for the appliance set. Allowed values: `manual` and `default`. Default value is `default`.
-+ `appliances` (optional) - An array of hashes each defining an appliance that will be added to the appliance set. Hash for a single appliance containts the following parameters:
++ `appliances` (optional) - An array of hashes each defining an appliance that will be added to the appliance set. Hash for a single appliance contains the following parameters:
     + `configuration_template_id` (required if `appliances` parameter is provided) - The ID of appliance configuration id used to instantiate appliance.
     + `params` (optional) - if configuration template has dynamic content than params are used to inject specific values into configuration placeholders.
-    + `vms` (optional) - if `manual` optimization policy is selected (see `optimization_policy` parameter) then this parameter provides a specification of virtual machines that will be spawned for an appliance. The format of this parameter is the an array of hashes. Hash for single virtual machine may contatin the following keys:
+    + `vms` (optional) - if `manual` optimization policy is selected (see `optimization_policy` parameter) then this parameter provides a specification of virtual machines that will be spawned for an appliance. The format of this parameter is the an array of hashes. Hash for single virtual machine may contain the following keys:
         + `cpu` (optional) - How many cpu cores are required for a virtual machine.
         + `mem` (optional) - How much RAM memory is required for a virtual machine.
         + `compute_site_ids` (optional) - An array of ids of compute sites that can be used to host virtual machine. 

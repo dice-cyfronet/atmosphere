@@ -1,6 +1,6 @@
 ## List compute sites
 
-Get a list of registered compute sites. Normal user sees only basic information about compute site. Administrator additional is able to see compute site configuration.
+Get a list of registered compute sites. Normal users see only basic information about each compute site. Administrators are able to see compute site configurations.
 
 ```
 GET /compute_sites

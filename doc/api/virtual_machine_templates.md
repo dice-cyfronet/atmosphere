@@ -1,6 +1,6 @@
 ## List user virtual machines
 
-Get a list of virtual machines used by appliances added to user appliance sets. Normal user is able to list only virtual machine templates managed by atmosphere and belonging to appliance types visible to the user. Admin is able to browse all virtual machine templates by adding 'all' flag with value set to 'true' into query param.
+Get a list of virtual machines used by appliances added to user appliance sets. Normal user is able to list only virtual machine templates managed by atmosphere and belonging to appliance types visible to the user. Admin is able to browse all virtual machine templates by adding the 'all' flag with value set to 'true' into query param.
 
 ```
 GET /virtual_machine_templates

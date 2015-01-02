@@ -1,6 +1,6 @@
 ## List registered users
 
-Get a list of registered users. For normal `user` basic information is returned (login and full name), for `admin` full users details are returned if flag `all` is set to `true`.
+Get a list of registered users. For normal users only basic information is returned (login and full name), while admins can obtain full user details if the `all` flag is set to `true`.
 
 ```
 GET /users

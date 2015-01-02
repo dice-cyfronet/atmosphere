@@ -1,6 +1,6 @@
 ## List information about appliance types endpoints
 
-Get list of appliance types with endpoints. You can limit number of appliance types and endpoints returned by filtering endpoint type or giving endpoint ids.
+Get list of appliance types with endpoints. You can limit number of appliance types and endpoints returned by filtering endpoint type or providing endpoint ids.
 
 ```
 GET /appliance_endpoints

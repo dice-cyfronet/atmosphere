@@ -12,7 +12,7 @@ If no, or an invalid, `private_token` or `mi_ticket` is provided then an error m
 }
 ```
 
-API requests should be prefixed with `api` and the API version. Current API version is equals to `v1`
+API requests should be prefixed with `api` and the API version. Current API version is `v1`
 
 Example of a valid API request:
 

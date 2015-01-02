@@ -56,15 +56,15 @@ Parameters:
 
 + `pending` - initial state after appliance is started. It means that appliance is starting and this endpoint is not reachable yet.
 + `ok` - endpoint is reachable
-+ `lost` - endpoint was `ok` but right now it is unreachable
++ `lost` - endpoint used to be `ok` but right now it is unreachable
 + `not_monitored` - endpoint is not monitored
 
 ## Update custom http mapping name
 
-Custom name should be used to create customized redirection. If need to be
-unique for whole compute site and http mapping type. Custom name can be
-constructed using letters, numbers and `-`, all other chars will be skiped
-(`_` and spaces are converted into `-`).
+Custom name should be used to create customized redirection. It must be
+unique throughout the entire compute site and http mapping type. Custom name can be
+constructed using letters, numbers and `-`, all other chars will be skipped
+(`_` and spaces converted into `-`).
 
 ```
 PUT /http_mappings/:id

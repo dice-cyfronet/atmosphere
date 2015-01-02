@@ -1,6 +1,6 @@
 ## List port mappings
 
-Get a list of port mappings. A regular user only is allowed to see the  port mappings related to virtual machines assigned to owned appliances. Administrator is able to see all port mappings by adding query parameter `all` set to `true`.
+Get a list of port mappings. A regular user only is allowed to see the port mappings related to virtual machines assigned to owned appliances. An administrator is able to see all port mappings by adding query parameter `all` set to `true`.
 
 ```
 GET /port_mappings
