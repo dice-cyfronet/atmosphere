@@ -35,7 +35,7 @@ It is possible to filter virtual machine flavors based on either:
 + a combination of mimimum value of cpu, memory, hdd
 + a combination of other attributes available in JSON response
 
-If invalid filters are given, for example both appliance_configuration_instance_id and appliance_type_id are provided a 409 Conflict is returned.
+If invalid filters are given, for example both appliance_configuration_instance_id and appliance_type_id are provided, a 409 Conflict message is returned.
 
 Filters are expressed as query params.
 
@@ -47,7 +47,7 @@ Filters are expressed as query params.
 + `cpu` - number of guaranteed VCPU
 + `memory` - number of guaranteed memory (in MB)
 + `hdd` - number of guaranteed hdd (in GB)
-+ `hourly_cost` - cost calculated for every started hour when machine is runnig (1 = 0.0001 $)
++ `hourly_cost` - cost calculated for every started hour when machine is running (1 = 0.0001 $)
 + `compute_site_id` - compute site identifier, where this flavor is available
 + `id_at_site` - internal compute site identifier
 + `supported_architectures` - what kind of VM can be started using this flavor (32 or 64 bit architecture)

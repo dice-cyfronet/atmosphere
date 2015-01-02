@@ -1,6 +1,6 @@
 ## List of owned user keys
 
-Get list of all keys belonging to current user. For normal user only owned keys are turned, admin is able to set flag `all` into `true` (e.g. by adding `?all=true` to the request path) and thus receive list of all users keys.
+Get list of all keys belonging to current user. For normal user only owned keys are returned; an admin is able to set the `all` flag to `true` (e.g. by adding `?all=true` to the request path) and thus receive a list of all keys.
 
 ```
 GET /user_keys
@@ -69,7 +69,7 @@ Parameters:
 
 ## Delete user key
 
-Normal user is able to remove only owned user keys. Admin is able to remove any user key.
+Normal user is able to remove only owned keys. An admin is able to remove any user key.
 
 ```
 DELETE /user_keys/:id

@@ -35,7 +35,7 @@ GET /appliance_types
 }
 ```
 
-You can use any field presented above to filter number of returned appliance types. Additionally, you can add `mode` query param, with one of following values: `production`, `development`, `manage`. As a results atomic services available in concrete mode will be returned.
+You can use any field presented above to filter number of returned appliance types. Additionally, you can add `mode` query param, with one of following values: `production`, `development`, `manage`. As a results atomic services available in a specific mode will be returned.
 
 ## Details of an appliance type
 
@@ -74,12 +74,12 @@ Parameters:
 }
 ```
 
-The `active` parameters set to true means that this `appliance type` is connected with one or more `virtual machine templates` and there is possible to spawn `appliance` from this appliance type. This parameter is read only.
+The `active` parameters set to true means that this `appliance type` is connected with one or more `virtual machine templates` and it is possible to spawn `appliance` from this appliance type. This parameter is read only.
 The `saving` parameter depicts the appliance type having at least one virtual machine template in the saving state.
 
-<a name="visible_to"></a> The `visible_to` parameter distinguish when such appliance type can be used. Allowed values are as follow:
+<a name="visible_to"></a> The `visible_to` parameter distinguishes when a given appliance type can be used. Allowed values are as follows:
 
-+ `owner` - Appliance Type can be started in `development` and `production` mode but only by the Appliance Type `owner` (and `admin`). This kind of Appliance Types are only visible for the Appliance Type `owner` (and `admin`, when `all` flag is set to `true`)
++ `owner` - Appliance Type can be started in `development` and `production` mode but only by the Appliance Type `owner` (or `admin`). This kind of Appliance Types are only visible for the Appliance Type `owner` (and `admin`, when `all` flag is set to `true`)
 + `all` - Appliance Type can be started in `development` and `production` mode by `all` users
 + `developer` - Appliance Types with this type are only visible for the users with `developer` role (and `admin`) and they can be started only in `development` mode.
 
@@ -99,12 +99,12 @@ All parameters presented bellow will overwrite parameters defined in `Dev Mode P
 
 + `name` (optional) - New appliance type name (required if `appliance_id` it empty)
 + `description` (optional) - New appliance type description
-+ `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared amoung many users
-+ `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scalled up or down
++ `shared` (optional) - `true`/`false` - defines if one virtual machine created from this appliance types can be shared among many users
++ `scalable` (optional) - `true`/`false` - defines if application delivered by this appliance type is able to be scaled up or down
 + `visible_to` (optional) - `owner` - default - appliance type can be used only by appliance type owner (in both development and production modes) / `developer` - appliance type can be started only in development mode / `all` - appliance type is production ready - it can be started in both development and production mode by everyone
-+ `preference_cpu` (optional) - hint for optimalized to determine cpu required by the application installed on appliance type
-+ `preference_memory` (optional) - hint for optimalized to determine memory (in MB) required by the application installed on appliance type
-+ `preference_disk` (optional) - hint for optimalized to determine disk space (in GB) required by the application installed on appliance type
++ `preference_cpu` (optional) - hint for optimized to determine cpu required by the application installed on appliance type
++ `preference_memory` (optional) - hint for optimized to determine memory (in MB) required by the application installed on appliance type
++ `preference_disk` (optional) - hint for optimized to determine disk space (in GB) required by the application installed on appliance type
 + `author_id` (optional) - appliance type author id. If this value is not set than current user is set as an new `Appliance Type` owner.
 + `security_proxy_id` (optional) - security proxy configuration id used by this appliance type
 
