@@ -58,7 +58,8 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def action
     return reboot if reboot_action?
-    # place for other actions...
+    return scale if scale_action?
+    # place for other optimizer...
 
     render_json_error('Action not found', status: :bad_request)
   end
@@ -72,8 +73,18 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     render json: {}, status: 200
   end
 
+  def scale
+    authorize!(:scale, @appliance)
+    optimizer.run(scaling: { appliance: @appliance, quantity: params[:scale].to_i })
+    render json: {}, status: 200
+  end
+
   def reboot_action?
     params.key? :reboot
+  end
+
+  def scale_action?
+    params.has_key? :scale
   end
 
   def filter
@@ -82,7 +93,6 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
       vm_ids = to_array(params[:virtual_machine_ids])
       filter[:atmosphere_deployments] = { virtual_machine_id: vm_ids}
     end
-
     filter
   end
 
@@ -113,5 +123,9 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def model_class
     Atmosphere::Appliance
+  end
+
+  def optimizer
+    Atmosphere::Optimizer.instance
   end
 end

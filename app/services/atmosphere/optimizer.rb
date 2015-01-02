@@ -9,6 +9,7 @@ module Atmosphere
     def run(hint)
       satisfy_appliance(hint[:created_appliance]) if hint[:created_appliance]
       terminate_unused_vms if hint[:destroyed_appliance]
+      scale(hint[:scaling]) if hint[:scaling]
     end
 
     #private
@@ -74,6 +75,30 @@ module Atmosphere
 
     def select_tmpls_and_flavors(tmpls, options={})
       OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
+    end
+
+    def scale(hint)
+      appliance = hint[:appliance]
+      quantity = hint[:quantity]
+      optimization_strategy = appliance.optimization_strategy
+      appl_manager = ApplianceVmsManager.new(appliance)
+      if optimization_strategy.can_scale_manually?
+        if quantity > 0
+          vms = optimization_strategy.vms_to_start(quantity)
+          appl_manager.start_vms!(vms)
+        else
+          if appliance.virtual_machines.count > quantity.abs
+            vms = optimization_strategy.vms_to_stop(-quantity)
+            appl_manager.stop_vms!(vms)
+          else
+            appl_manager.unsatisfied("Not enough vms to scale down")
+          end
+        end
+      else
+        #TODO - verify if the state unsatisfied is any meaningful in this case
+        appl_manager.unsatisfied("Chosen optimization strategy does not allow for manual scaling")
+      end
+      appl_manager.save
     end
 
     private
