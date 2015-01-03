@@ -96,10 +96,6 @@ describe Atmosphere::Optimizer do
         expect(appl2.state_explanation).to eq 'Not enough funds'
       end
 
-      it 'set biling state to expired' do
-        expect(appl2.billing_state).to eq 'expired'
-      end
-
       it 'has no VM assigned' do
         expect(appl2.virtual_machines.count).to eq 0
       end

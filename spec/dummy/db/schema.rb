@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141202081811) do
+ActiveRecord::Schema.define(version: 20150103133015) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,20 +69,18 @@ ActiveRecord::Schema.define(version: 20141202081811) do
   add_index "atmosphere_appliance_types", ["name"], name: "index_atmosphere_appliance_types_on_name", unique: true, using: :btree
 
   create_table "atmosphere_appliances", force: true do |t|
-    t.integer  "appliance_set_id",                                        null: false
-    t.integer  "appliance_type_id",                                       null: false
+    t.integer  "appliance_set_id",                                    null: false
+    t.integer  "appliance_type_id",                                   null: false
     t.integer  "user_key_id"
-    t.integer  "appliance_configuration_instance_id",                     null: false
-    t.string   "state",                               default: "new",     null: false
+    t.integer  "appliance_configuration_instance_id",                 null: false
+    t.string   "state",                               default: "new", null: false
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "fund_id"
     t.datetime "last_billing"
     t.string   "state_explanation"
-    t.integer  "amount_billed",                       default: 0,         null: false
-    t.string   "billing_state",                       default: "prepaid", null: false
-    t.datetime "prepaid_until",                       default: "now()",   null: false
+    t.integer  "amount_billed",                       default: 0,     null: false
     t.text     "description"
     t.string   "optimization_policy"
     t.text     "optimization_policy_params"
@@ -123,8 +121,10 @@ ActiveRecord::Schema.define(version: 20141202081811) do
   end
 
   create_table "atmosphere_deployments", force: true do |t|
-    t.integer "virtual_machine_id"
-    t.integer "appliance_id"
+    t.integer  "virtual_machine_id"
+    t.integer  "appliance_id"
+    t.string   "billing_state",      default: "prepaid", null: false
+    t.datetime "prepaid_until",      default: "now()",   null: false
   end
 
   create_table "atmosphere_dev_mode_property_sets", force: true do |t|

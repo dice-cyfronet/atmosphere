@@ -42,6 +42,9 @@ describe Atmosphere::Api::V1::ClewController do
       it 'returns appropriate response' do
         get api("/clew/appliance_instances", user)
         expect(response.status).to eq 200
+
+        appl.reload
+
         expected_response = {"clew_appliance_instances"=>
                  {"appliances"=>
                       [{"id"=>appl.id,

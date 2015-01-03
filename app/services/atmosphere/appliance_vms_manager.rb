@@ -56,7 +56,6 @@ module Atmosphere
 
     def not_enough_funds
       unsatisfied('Not enough funds')
-      appliance.billing_state = 'expired'
     end
 
     def instantiate_vm(tmpl, flavor, name)

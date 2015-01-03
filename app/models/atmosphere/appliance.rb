@@ -70,11 +70,9 @@ module Atmosphere
     validates :appliance_type, presence: true
     validates :appliance_configuration_instance, presence: true
     validates :state, presence: true
-    validates :billing_state, presence: true
     validates :amount_billed, numericality: true
 
     enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
-    enumerize :billing_state, in: ["initial", "prepaid", "expired", "error"], predicates: true
 
     attr_readonly :dev_mode_property_set
 
@@ -83,7 +81,7 @@ module Atmosphere
     before_destroy :final_billing, prepend: true
     after_destroy :remove_appliance_configuration_instance_if_needed
     after_destroy :optimize_destroyed_appliance
-    after_create :initial_billing, :optimize_saved_appliance
+    after_create :optimize_saved_appliance
 
     scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(atmosphere_virtual_machines: {compute_site: compute_site}) }
 
@@ -129,6 +127,18 @@ module Atmosphere
       appliance_set.user_id == user.id
     end
 
+    def prepaid_until
+      # Helper method which determines how long this appliance will remain prepaid
+      if deployments.blank?
+        # Invoking this method on an appliance which has no deployments is a "nasal demons" scenario (the question doesn't make sense and neither
+        # will the answer). Returning fixed time is least likely to break anything on the requestor side.
+        result = Time.parse('2000-01-01 12:00')
+      else
+        result = deployments.max_by { |dep| dep.prepaid_until }.prepaid_until
+      end
+      result
+    end
+
     private
 
     def assign_default_fund
@@ -154,12 +164,6 @@ module Atmosphere
 
     def optimize_saved_appliance
       optimizer.run(created_appliance: self)
-    end
-
-    def initial_billing
-      # This method sets billing details for a newly created appliance
-      self.prepaid_until = Time.now.utc
-      self.billing_state = "expired"
     end
 
     def optimize_destroyed_appliance

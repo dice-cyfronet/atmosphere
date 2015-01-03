@@ -12,7 +12,6 @@ describe Atmosphere::ApplianceVmsManager do
     it 'sets state to unsatisfied with explanation message and billing state' do
       expect(appl).to have_received(:state=).with(:unsatisfied)
       expect(appl).to have_received(:state_explanation=)
-      expect(appl).to have_received(:billing_state=).with('expired')
     end
 
     it 'does not update appliance services' do

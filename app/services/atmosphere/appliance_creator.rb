@@ -11,7 +11,6 @@ module Atmosphere
     def build
       apply_preferences
       init_appliance_configuration
-      init_billing
 
       appliance
     end
@@ -70,14 +69,6 @@ module Atmosphere
                   :preference_disk
                 ])
       prefs[:dev_mode_property_set] || {}
-    end
-
-    def init_billing
-      # Add Time.now.utc() as prepaid_until - this effectively means
-      # that the appliance is unpaid.
-      # The requestor must bill this new appliance prior to exposing
-      # it to the end user.
-      appliance.prepaid_until = Time.now.utc
     end
 
     def init_appliance_configuration
