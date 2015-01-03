@@ -22,7 +22,8 @@ module Atmosphere
     # This method effects billing for a single appliance.
     # It works by iterating over this appliance's deployments and billing each one separately
     # A message is written to billing logs.
-    # apply_prepayment determines whether the deployment should be prepaid (false when shutting down appliance or deployment)
+    # apply_prepayment determines whether the deployment should be prepaid
+    # (false when shutting down appliance or deployment)
     def self.bill_appliance(appl, billing_time, message, apply_prepayment = true)
       appl.deployments.each do |dep|
         bill_deployment(dep, billing_time, message, apply_prepayment)
@@ -33,7 +34,8 @@ module Atmosphere
     def self.bill_deployment(dep, billing_time, message, apply_prepayment = true)
       appl = dep.appliance # Shorthand
       if dep.prepaid_until.blank?
-        # This should not happen - it means that we do not know when this deployment will run out of funds. Therefore we cannot meaningfully bill it again and must return an error.
+        # This should not happen - it means that we do not know when this deployment will run out of funds.
+        # Therefore we cannot meaningfully bill it again and must return an error.
         Rails.logger.error("Unable to determine current payment validity date for deployment #{dep.id} belonging to appliance #{appl.id}. Skipping.")
         BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Unable to determine current payment validity date for deployment.", actor: "bill_appliance", amount_billed: 0).save
         dep.billing_state = "error"

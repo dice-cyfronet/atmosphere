@@ -130,8 +130,9 @@ module Atmosphere
     def prepaid_until
       # Helper method which determines how long this appliance will remain prepaid
       if deployments.blank?
-        # Invoking this method on an appliance which has no deployments is a "nasal demons" scenario (the question doesn't make sense and neither
-        # will the answer). Returning fixed time is least likely to break anything on the requestor side.
+        # Invoking this method on an appliance which has no deployments is a "nasal demons"
+        # scenario (the question doesn't make sense and neither will the answer).
+        # Returning fixed time is least likely to break anything on the requestor side.
         result = Time.parse('2000-01-01 12:00')
       else
         result = deployments.max_by { |dep| dep.prepaid_until }.prepaid_until
@@ -142,12 +143,15 @@ module Atmosphere
     private
 
     def assign_default_fund
-      # This is a "goalkeeper" method which will assign this appliance to its owner's default fund, if no fund has been specified yet.
-      # It is provided to ensure compatibility with old APIs of Atmosphere which do not request funds to be specified when instantiating appliances
+      # This is a "goalkeeper" method which will assign this appliance
+      # to its owner's default fund, if no fund has been specified yet.
+      # It is provided to ensure compatibility with old APIs of Atmosphere
+      # which do not request funds to be specified when instantiating appliances
       # Once the APIs have been updated, this method will be deprecated and should be removed.
       if self.fund.blank?
         self.fund = self.appliance_set.user.default_fund
-        # Note that id the user does not have a default fund assigned, this method will be unable to figure out any useful fund for this appliance.
+        # Note that id the user does not have a default fund assigned,
+        # this method will be unable to figure out any useful fund for this appliance.
       end
     end
 
