@@ -169,18 +169,6 @@ module Atmosphere
       state == 'saving' || state == :saving
     end
 
-    def save_template_in_cloud
-      logger.info "Saving template"
-      cs = source_vm.compute_site
-      cloud_client = cs.cloud_client
-      id_at_site = cloud_client.save_template(source_vm.id_at_site, name)
-      logger.info "Created template #{id_at_site}"
-      self.id_at_site = id_at_site
-      self.compute_site = cs
-      self.state = :saving
-      #self.appliance_type = vm.appliance_type
-    end
-
     def cant_destroy_non_managed_vmt
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
     end
