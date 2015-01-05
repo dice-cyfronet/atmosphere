@@ -40,11 +40,8 @@ describe Atmosphere::VirtualMachine do
   it { should validate_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
 
   context 'destruction' do
-    let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
-    before do
-      allow(cc_mock).to receive(:servers).and_return(servers_mock)
-    end
+    let(:cc_mock) { double('cloud client mock', servers: servers_mock) }
 
     it 'is not performed if it is being saved as template' do
       create(:virtual_machine_template, source_vm: vm, state: :saving)
@@ -95,6 +92,28 @@ describe Atmosphere::VirtualMachine do
       )
       allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
+    end
+
+    it 'ignores when VM does not exist on OpenStack' do
+      delete_with_success_when_exception(Fog::Compute::OpenStack::NotFound)
+    end
+
+    it 'ignores when VM does not exist on Amazon' do
+      delete_with_success_when_exception(Fog::Compute::AWS::NotFound)
+    end
+
+    def delete_with_success_when_exception(e)
+      allow(vm.compute_site).
+        to receive(:cloud_client).
+        and_return(cc_mock)
+
+      allow(servers_mock).
+        to receive(:destroy).
+        with(vm.id_at_site).
+        and_raise(e)
+
+      expect { vm.destroy }.
+        to change { Atmosphere::VirtualMachine.count }.by(-1)
     end
   end
 

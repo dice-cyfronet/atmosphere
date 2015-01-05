@@ -138,9 +138,10 @@ module Atmosphere
 
     def perform_delete_in_cloud
       logger.info "Deleting template #{uuid}"
-      cloud_client = self.compute_site.cloud_client
-      cloud_client.images.destroy self.id_at_site
+      cloud_client.images.destroy id_at_site
       logger.info "Destroyed template #{uuid}"
+    rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
+      logger.info("VMT with #{id_at_site} does not exist - continuing")
     end
 
     private
@@ -183,6 +184,10 @@ module Atmosphere
 
     def cant_destroy_non_managed_vmt
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    end
+
+    def cloud_client
+      compute_site.cloud_client
     end
 
     def set_version
