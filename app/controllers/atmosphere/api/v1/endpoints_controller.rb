@@ -2,6 +2,8 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
   load_and_authorize_resource :endpoint,
     class: 'Atmosphere::Endpoint'
 
+  include Atmosphere::Api::Auditable
+
   before_filter :find_endpoints, only: :index
 
   respond_to :json
@@ -15,24 +17,18 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
   end
 
   def create
-    log_user_action "create new endpoint with following params #{params}"
     @endpoint.save!
     render json: @endpoint, status: :created
-    log_user_action "endpoint created: #{@endpoint.to_json}"
   end
 
   def update
-    log_user_action "update endpoint #{@endpoint.id} with following params #{params}"
     @endpoint.update_attributes!(endpoint_params)
     render json: @endpoint
-    log_user_action "endpoint updated: #{@endpoint.to_json}"
   end
 
   def destroy
-    log_user_action "destroy endpoint #{@endpoint.id}"
     if @endpoint.destroy
       render json: {}
-      log_user_action "endpoint #{@endpoint.id} destroyed"
     else
       render_error @endpoint
     end

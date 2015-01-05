@@ -10,6 +10,8 @@ module Atmosphere
           only: :create,
           class: 'Atmosphere::ApplianceType'
 
+        include Atmosphere::Api::Auditable
+
         respond_to :json
 
         def index
@@ -25,7 +27,6 @@ module Atmosphere
         end
 
         def create
-          log_user_action "create new appliance type with following params #{params}"
           appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
           tmpl = nil
           vm = nil
@@ -59,11 +60,9 @@ module Atmosphere
           end
 
           render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
-          log_user_action "appliance type created: #{@appliance_type.to_json}"
         end
 
         def update
-          log_user_action "update appliance type #{@appliance_type.id} with following params #{params}"
           update_params = appliance_type_params
           appliance_id = update_params.delete 'appliance_id'
           author_id = update_params.delete(:author_id)
@@ -74,14 +73,11 @@ module Atmosphere
             perform_save(appliance_id) if appliance_id
           end
           render json: @appliance_type, serializer: ApplianceTypeSerializer
-          log_user_action "appliance type updated: #{@appliance_type.to_json}"
         end
 
         def destroy
-          log_user_action "destroy appliance type #{@appliance_type.id}"
           if @appliance_type.destroy
             render json: {}
-            log_user_action "appliance type #{@appliance_type.id} destroyed"
           else
             render_error @appliance_type
           end
