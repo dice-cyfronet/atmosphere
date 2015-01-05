@@ -141,7 +141,7 @@ module Atmosphere
       cloud_client.images.destroy id_at_site
       logger.info "Destroyed template #{uuid}"
     rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
-      logger.info("VMT with #{id_at_site} does not exist - continuing")
+      logger.warn("VMT with #{id_at_site} does not exist - continuing")
     end
 
     private

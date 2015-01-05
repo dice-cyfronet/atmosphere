@@ -228,7 +228,7 @@ module Atmosphere
         )
       end
     rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
-      logger.info("VM with #{id_at_site} does not exist - continuing")
+      logger.warn("VM with #{id_at_site} does not exist - continuing")
     end
 
     def cant_destroy_non_managed_vm
