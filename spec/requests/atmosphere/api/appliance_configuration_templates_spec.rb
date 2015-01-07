@@ -163,6 +163,8 @@ describe Atmosphere::Api::V1::ApplianceConfigurationTemplatesController do
 
       it 'returns 403 Forbidden when creating configuration template for not owned appliance type' do
         post api("/appliance_configuration_templates", user), new_not_owned_config_template_request
+
+        expect(response.status).to eq 403
       end
 
       it 'does not creates new configuration template when creating new one for not owned appliance type' do
