@@ -13,7 +13,8 @@ GET /appliance_sets
       "id": 1,
       "name": "Foobar Appliance Set",
       "priority": 50,
-      "appliance_set_type": "workflow"
+      "appliance_set_type": "workflow",
+      "optimization_policy": "default"
     }, {
       ...
     }
@@ -39,7 +40,8 @@ Parameters:
     "id": 1,
     "name": "Foobar Appliance Set",
     "priority": 50,
-    "appliance_set_type": "workflow"
+    "appliance_set_type": "workflow",
+    "optimization_policy": "manual"
   }
 }
 ```
@@ -60,10 +62,10 @@ Parameters:
     "name": "Foobar Appliance Set",
     "priority": 50,
     "appliance_set_type": "workflow",
-    "optimalization_policy": "manual",
+    "optimization_policy": "manual",
     "appliances": [
-      { 
-        "configuration_template_id": 1, 
+      {
+        "configuration_template_id": 1,
         "params": { "a": "piersza wartosc, "b": "druga wartosc" },
         "vms": [
            { "cpu": 1, "mem": 512, compute_site_ids: [1] }
@@ -86,7 +88,7 @@ Parameters:
     + `vms` (optional) - if `manual` optimization policy is selected (see `optimization_policy` parameter) then this parameter provides a specification of virtual machines that will be spawned for an appliance. The format of this parameter is the an array of hashes. Hash for single virtual machine may contain the following keys:
         + `cpu` (optional) - How many cpu cores are required for a virtual machine.
         + `mem` (optional) - How much RAM memory is required for a virtual machine.
-        + `compute_site_ids` (optional) - An array of ids of compute sites that can be used to host virtual machine. 
+        + `compute_site_ids` (optional) - An array of ids of compute sites that can be used to host virtual machine.
 
 
 
