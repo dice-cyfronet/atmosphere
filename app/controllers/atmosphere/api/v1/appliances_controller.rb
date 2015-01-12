@@ -4,6 +4,8 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   load_and_authorize_resource :appliance,
                               class: 'Atmosphere::Appliance'
 
+  include Atmosphere::Api::Auditable
+
   before_filter :init_vm_search, only: :index
 
   respond_to :json
@@ -17,24 +19,18 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def create
-    log_user_action "create new appliance with following params #{params}"
     @appliance.save!
     render json: @appliance, status: :created
-    log_user_action "appliance created: #{@appliance.to_json}"
   end
 
   def update
-    log_user_action "update appliance #{@appliance.id} with following params #{params}"
     @appliance.update_attributes!(update_params)
     render json: @appliance
-    log_user_action "appliance name updated: #{@appliance_type.to_json}"
   end
 
   def destroy
-    log_user_action "destroy appliance #{@appliance.id}"
     if @appliance.destroy
       render json: {}
-      log_user_action "appliance #{@appliance.id} destroyed"
     else
       render_error @appliance
     end

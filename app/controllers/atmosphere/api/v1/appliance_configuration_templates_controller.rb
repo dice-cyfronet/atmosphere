@@ -5,10 +5,13 @@ module Atmosphere
         load_and_authorize_resource :appliance_configuration_template,
           class: 'Atmosphere::ApplianceConfigurationTemplate'
 
+        include Atmosphere::Api::Auditable
+
         respond_to :json
 
         def index
-          respond_with @appliance_configuration_templates.where(filter).order(:id)
+          respond_with @appliance_configuration_templates.
+                         where(filter).order(:id)
         end
 
         def show
@@ -16,24 +19,22 @@ module Atmosphere
         end
 
         def create
-          log_user_action "create new appliance configuration template with following params #{params}"
           @appliance_configuration_template.save!
-          render json: @appliance_configuration_template, status: :created
-          log_user_action "appliance configuration template created: #{@appliance_configuration_template.to_json}"
+
+          render json: @appliance_configuration_template,
+                 status: :created
         end
 
         def update
-          log_user_action "update appliance configuration template #{@appliance_configuration_template.id} with following params #{params}"
-          @appliance_configuration_template.update_attributes!(update_params)
+          @appliance_configuration_template.
+            update_attributes!(update_params)
+
           render json: @appliance_configuration_template
-          log_user_action "appliance configuration template updated: #{@appliance_configuration_template.to_json}"
         end
 
         def destroy
-          log_user_action "destroy appliance configuration template #{@appliance_configuration_template.id}"
           if @appliance_configuration_template.destroy
             render json: {}
-            log_user_action "appliance configuration template #{@appliance_configuration_template.id} destroyed"
           else
             render_error @appliance_configuration_template
           end
@@ -42,11 +43,13 @@ module Atmosphere
         private
 
         def appliance_configuration_template_params
-          params.require(:appliance_configuration_template).permit(:name, :payload, :appliance_type_id)
+          params.require(:appliance_configuration_template).
+            permit(:name, :payload, :appliance_type_id)
         end
 
         def update_params
-          params.require(:appliance_configuration_template).permit(:name, :payload)
+          params.require(:appliance_configuration_template).
+            permit(:name, :payload)
         end
 
         def model_class
