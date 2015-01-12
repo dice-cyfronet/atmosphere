@@ -1,7 +1,7 @@
 # Atmosphere [![Build Status](https://travis-ci.org/dice-cyfronet/atmosphere.svg)](https://travis-ci.org/dice-cyfronet/atmosphere) [![Code Climate](https://codeclimate.com/github/dice-cyfronet/atmosphere/badges/gpa.svg)](https://codeclimate.com/github/dice-cyfronet/atmosphere) [![Test Coverage](https://codeclimate.com/github/dice-cyfronet/atmosphere/badges/coverage.svg)](https://codeclimate.com/github/dice-cyfronet/atmosphere) [![Dependency Status](https://gemnasium.com/dice-cyfronet/atmosphere.svg)](https://gemnasium.com/dice-cyfronet/atmosphere)
 
 Atmosphere is a hybrid computational cloud management framework which sits atop computational cloud sites and provides a consistent interface for creation and management of cloud-based services and applications. It provides a set of APIs as well as an embeddable administrative GUI through which computational clouds can be managed. Atmosphere also provides separate tools for developers of services and for their end users.
- 
+
 Atmosphere introduces an abstraction above cloud-based virtual machines by referring to services as **Appliance types** and their instances (VMs) as **Appliances**:
 
 - An **Appliance Type** represents an image of a cloud-based service, along with ancillary metadata and all other types of information required to expose the service to end users. From the end user's perspective, an Appliance Type is just a service template which can be launched (instantiated) on demand.
@@ -110,3 +110,5 @@ rake atmosphere:install:migrations
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new pull request
+6. When feature is ready add "ready for review" label and mention atmosphere
+   development team (e.g. "/cc @dice-cyfronet/atmo-dev-team please take a look")
