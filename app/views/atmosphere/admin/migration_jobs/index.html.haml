@@ -4,34 +4,22 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th
-        = t('migration_jobs.appliance_type')
-      %th
-        = t('migration_jobs.virtual_machine_template')
-      %th{ :style => "min-width: 35rem;"}
+      %th= t('migration_jobs.appliance_type')
+      %th= t('migration_jobs.virtual_machine_template')
+      %th.table-cell-uuid
         = t('migration_jobs.virtual_machine_template_uuid')
-      %th
-        = t('migration_jobs.compute_site_source')
-      %th
-        = t('migration_jobs.compute_site_destination')
-      %th
-        = t('migration_jobs.status')
-      %th
-        = t('migration_jobs.last_update')
+      %th= t('migration_jobs.compute_site_source')
+      %th= t('migration_jobs.compute_site_destination')
+      %th= t('migration_jobs.status')
+      %th= t('migration_jobs.last_update')
 
     - @migration_jobs.each do |migration_job|
       %tr
-        %td
-          = migration_job.appliance_type.name if migration_job.appliance_type
-        %td
-          = migration_job.virtual_machine_template.name if migration_job.virtual_machine_template
-        %td{ :style => "font-family: monospace;" }
+        %td= migration_job.appliance_type.name if migration_job.appliance_type
+        %td= migration_job.virtual_machine_template.name if migration_job.virtual_machine_template
+        %td.table-cell-monospace
           = migration_job.virtual_machine_template.id_at_site if migration_job.virtual_machine_template
-        %td
-          = migration_job.compute_site_source.name if migration_job.compute_site_source
-        %td
-          = migration_job.compute_site_destination.name if migration_job.compute_site_destination
-        %td
-          = migration_job.status.lines.last if migration_job.status
-        %td
-          = migration_job.updated_at
+        %td= migration_job.compute_site_source.name if migration_job.compute_site_source
+        %td= migration_job.compute_site_destination.name if migration_job.compute_site_destination
+        %td= migration_job.status.lines.last if migration_job.status
+        %td= migration_job.updated_at

@@ -14,20 +14,20 @@
       - cs, vmts = kv
       .tab-pane{ id: "#{cs.site_id}-tab", class: ("active" if i==0) }
         %table.vmt-table
-          %th= t('virtual_machine_templates.uuid')
+          %th.table-cell-uuid= t('virtual_machine_templates.uuid')
           %th= t('virtual_machine_templates.name')
           %th= t('virtual_machine_templates.state')
           %th= t('virtual_machine_templates.managed_by_atmosphere')
           %th= t('virtual_machine_templates.version')
-          %th= t('actions')
+          %th.table-cell-actions= t('actions')
           - vmts.each do |vmt|
             %tr
-              %td= vmt.id_at_site
+              %td.table-cell-monospace= vmt.id_at_site
               %td= vmt.name
               %td= vmt.state
               %td= vmt.managed_by_atmosphere
               %td= vmt.version
-              %td
+              %td.table-cell-actions
                 .btn-group
                   = link_to admin_virtual_machine_template_path(vmt),
                             class: 'btn btn-success btn-xs',
