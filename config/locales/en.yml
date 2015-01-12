@@ -142,7 +142,7 @@ en:
     state: State
     show: Show this Virtual Machine Template
     edit: Edit this Virtual Machine Template
-    share: Share this Virtual Machine Template
+    export: Export this Virtual Machine Template
     remove: Remove this Virtual Machine Template
     version: Version
     managed_by_atmosphere: Managed
