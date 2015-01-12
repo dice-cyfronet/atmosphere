@@ -9,11 +9,17 @@ module Atmosphere
 
     def attributes
       hash = super
-      if scope.has_role? :admin
+      if show_details?
         hash['email'] = object.email
         hash['roles'] = object.roles.to_a
       end
       hash
+    end
+
+    private
+
+    def show_details?
+      scope.has_role?(:admin) || scope == object
     end
   end
 end
