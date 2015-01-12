@@ -7,23 +7,30 @@ module Atmosphere
       @destination_compute_site = destination_compute_site
     end
 
+    def select_migrator
+      case @destination_compute_site.technology
+      when 'aws'
+        migrator_class = Migration::Worker::OpenstackAmazonMigrator
+      when 'openstack'
+        migrator_class = Migration::Worker::OpenstackOpenstackMigrator
+      end
+      migrator_class
+    end
+
+    def enqueue_job
+      Sidekiq::Client.push(
+      'queue' => "migration_#{@source_compute_site.site_id}",
+      'class' => migrator_class,
+      'args' => [@virtual_machine_template.id_at_site,
+                 @destination_compute_site.site_id])
+    end
+
     def execute
       if @source_compute_site.technology == 'openstack'
-        migrator_class = nil
-
-        case @destination_compute_site.technology
-        when 'aws'
-          migrator_class = Migration::Worker::OpenstackAmazonMigrator
-        when 'openstack'
-          migrator_class = Migration::Worker::OpenstackOpenstackMigrator
-        end
+        migrator_class = select_migrator
 
         if !migrator_class.nil?
-          Sidekiq::Client.push(
-            'queue' => "migration_#{@source_compute_site.site_id}",
-            'class' => migrator_class,
-            'args' => [@virtual_machine_template.id_at_site,
-                       @destination_compute_site.site_id])
+          enqueue_job
         end
       end
     end

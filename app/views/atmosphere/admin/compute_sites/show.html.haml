@@ -8,7 +8,7 @@
   %table.show-table
     %tr
       %td= t('compute_sites.site')
-      %td= @compute_site.site_id
+      %td.table-cell-monospace= @compute_site.site_id
     %tr
       %td= t('compute_sites.name')
       %td= @compute_site.name
@@ -23,25 +23,25 @@
       %td= @compute_site.technology
     %tr
       %td= t('compute_sites.http_proxy_url')
-      %td= @compute_site.http_proxy_url
+      %td.table-cell-monospace= @compute_site.http_proxy_url
     %tr
       %td= t('compute_sites.https_proxy_url')
-      %td= @compute_site.https_proxy_url
+      %td.table-cell-monospace= @compute_site.https_proxy_url
     %tr
       %td= t('compute_sites.configuration')
-      %td= @compute_site.config
+      %td.table-cell-monospace= @compute_site.config
     %tr
       %td= t('compute_sites.template_filters')
-      %td= @compute_site.template_filters
+      %td.table-cell-monospace= @compute_site.template_filters
     %tr
       %td= t('compute_sites.wrangler_url')
-      %td= @compute_site.wrangler_url
+      %td.table-cell-monospace= @compute_site.wrangler_url
     %tr
       %td= t('compute_sites.wrangler_username')
-      %td= @compute_site.wrangler_username
+      %td.table-cell-monospace= @compute_site.wrangler_username
     %tr
       %td= t('compute_sites.wrangler_password')
-      %td= @compute_site.wrangler_password
+      %td.table-cell-monospace= @compute_site.wrangler_password
 
 %p
   .btn-group
