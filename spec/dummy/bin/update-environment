@@ -8,7 +8,6 @@ pushd $(dirname $(dirname $(dirname ${__dir})))
 popd
 
 pushd $(dirname ${__dir})
-    bundle exec rake assets:precompile
     bundle exec rake db:seed
     bundle exec rake billing:bootstrap
 popd
