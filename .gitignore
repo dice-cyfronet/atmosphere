@@ -32,6 +32,3 @@
 /.project
 nbproject/
 coverage
-
-# Ignore assets
-spec/dummy/public/assets/
