@@ -9,6 +9,8 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
     only: :index,
     class: 'Atmosphere::PortMappingTemplate'
 
+  include Atmosphere::Api::Auditable
+
   before_filter :initialize_manager, only: [:create, :update, :destroy]
   respond_to :json
 
@@ -21,25 +23,19 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
   end
 
   def create
-    log_user_action "create new port mapping template with following params #{params}"
     @manager.save!
     render json: @manager.object, status: :created
-    log_user_action "port mapping template created: #{@port_mapping_template.to_json}"
   end
 
   def update
-    log_user_action "update port mapping template #{@port_mapping_template.id} with following params #{params}"
     update_params = port_mapping_template_params
     @manager.update!(update_params)
     render json: @manager.object
-    log_user_action "port mapping template updated: #{@port_mapping_template.to_json}"
   end
 
   def destroy
-    log_user_action "destroy port mapping template #{@port_mapping_template.id}"
     if @manager.destroy
       render json: {}
-      log_user_action "port mapping template destroyed: #{@port_mapping_template.id}"
     else
       render_error @manager.object
     end

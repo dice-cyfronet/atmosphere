@@ -5,10 +5,13 @@ module Atmosphere
         load_and_authorize_resource :http_mapping,
           class: 'Atmosphere::HttpMapping'
 
+        include Atmosphere::Api::Auditable
+
         respond_to :json
 
         def index
-          respond_with HttpMappingSerializer.page(params, @http_mappings).order(:id)
+          respond_with HttpMappingSerializer.
+                        page(params, @http_mappings).order(:id)
         end
 
         def show
@@ -16,13 +19,8 @@ module Atmosphere
         end
 
         def update
-          log_user_action "Setting #{update_params[:custom_name]} custom name " +
-                          " for #{@http_mapping.id} http mapping."
-
           @http_mapping.update_attributes!(update_params)
           render json: @http_mapping
-          log_user_action "Custon name #{update_params[:custom_name]} set " +
-                          "for #{@http_mapping.id} http mapping."
         end
 
         private

@@ -1,0 +1,11 @@
+en:
+  user_action:
+    create_started: "create new %{name} with following params %{params}"
+    create_finished: "%{name} created: %{params}"
+    create_error: "%{name} is invalid: %{params}"
+    update_started: "update %{name} %{id} with following params %{params}"
+    update_finished: "%{name} updated: %{params}"
+    update_error: "%{name} is invalid: %{params}"
+    destroy_started: "destroy %{name} %{id}"
+    destroy_finished: "%{name} %{id} destroyed"
+    destroy_error: "cannot delete %{name} because of: %{params}"
