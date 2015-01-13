@@ -1,3 +1,6 @@
+require 'migratio/worker/openstack_amazon_migrator'
+require 'migratio/worker/openstack_openstack_migrator'
+
 module Atmosphere
   class VmtMigrator
     def initialize(virtual_machine_template,
@@ -10,14 +13,14 @@ module Atmosphere
     def select_migrator
       case @destination_compute_site.technology
       when 'aws'
-        migrator_class = Migration::Worker::OpenstackAmazonMigrator
+        migrator_class = Migratio::Worker::OpenstackAmazonMigrator
       when 'openstack'
-        migrator_class = Migration::Worker::OpenstackOpenstackMigrator
+        migrator_class = Migratio::Worker::OpenstackOpenstackMigrator
       end
       migrator_class
     end
 
-    def enqueue_job
+    def enqueue_job migrator_class
       Sidekiq::Client.push(
       'queue' => "migration_#{@source_compute_site.site_id}",
       'class' => migrator_class,
@@ -30,7 +33,7 @@ module Atmosphere
         migrator_class = select_migrator
 
         if !migrator_class.nil?
-          enqueue_job
+          enqueue_job migrator_class
         end
       end
     end
