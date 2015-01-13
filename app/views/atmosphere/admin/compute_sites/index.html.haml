@@ -9,16 +9,11 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th
-        = t('compute_sites.site')
-      %th
-        = t('compute_sites.name')
-      %th
-        = t('compute_sites.location')
-      %th
-        = t('compute_sites.site_type')
-      %th
-        = t('compute_sites.technology')
+      %th= t('compute_sites.site')
+      %th= t('compute_sites.name')
+      %th= t('compute_sites.location')
+      %th= t('compute_sites.site_type')
+      %th= t('compute_sites.technology')
       %th.table-cell-actions
         = t('actions')
 
@@ -26,14 +21,10 @@
       %tr
         %td.table-cell-monospace
           = compute_site.site_id
-        %td
-          = compute_site.name
-        %td
-          = compute_site.location
-        %td
-          = compute_site.site_type
-        %td
-          = compute_site.technology
+        %td= compute_site.name
+        %td= compute_site.location
+        %td= compute_site.site_type
+        %td= compute_site.technology
         %td.table-cell-actions
           .btn-group
             = link_to admin_compute_site_path(compute_site),

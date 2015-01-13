@@ -4,20 +4,13 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th
-        = t('appliance_sets.user')
-      %th
-        = t('appliance_sets.type')
-      %th
-        = t('appliance_sets.appliance_type')
-      %th
-        = t('appliance_sets.virtual_machines')
-      %th
-        = t('appliance_sets.site')
-      %th
-        = t('appliance_sets.flavor')
-      %th.table-cell-actions
-        = t('actions')
+      %th t('appliance_sets.user')
+      %th t('appliance_sets.type')
+      %th t('appliance_sets.appliance_type')
+      %th t('appliance_sets.virtual_machines')
+      %th t('appliance_sets.site')
+      %th t('appliance_sets.flavor')
+      %th.table-cell-actions t('actions')
 
     - @appliance_sets.each do |user, sets|
       - sets.each_with_index do |appliance_set, i|
