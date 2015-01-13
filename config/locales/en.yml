@@ -232,6 +232,9 @@ en:
           corresponding fund may become negative as a result of further charges.
     no_sites: no compute sites assigned
     no_users: no users allowed to use this fund
+    set_default:
+      to_true: Set %{fund} to be the default fund for %{user}.
+      to_false: This is the default fund for %{user}.
   billing:
     consumption_title: Billing data for %{user}
     load_for_all:

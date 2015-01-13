@@ -50,7 +50,7 @@ Atmosphere::Engine.routes.draw do
     resources :user_keys, except: [:edit, :update]
     resources :funds
     resources :compute_site_funds, only: [:create, :destroy]
-    resources :user_funds, only: [:create, :destroy]
+    resources :user_funds, only: [:create, :destroy, :update]
     resources :billing_logs, only: [:index]
   end
 
