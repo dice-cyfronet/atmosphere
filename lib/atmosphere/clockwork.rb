@@ -4,17 +4,13 @@ module Atmopshere
 
     included do
       every(1.minute, 'monitoring.templates') do
-        Atmosphere::ComputeSite.active.select(:id, :name).each do |cs|
-          Rails.logger.debug "Creating templates monitoring task for #{cs.name}"
-          Atmosphere::VmTemplateMonitoringWorker.perform_async(cs.id)
-        end
+        action_on_actice_cses('templates monitoring',
+                              Atmosphere::VmTemplateMonitoringWorker)
       end
 
       every(30.seconds, 'monitoring.vms') do
-        Atmosphere::ComputeSite.active.select(:id, :name).each do |cs|
-          Rails.logger.debug "Creating vms monitoring task for #{cs.name}"
-          Atmosphere::VmMonitoringWorker.perform_async(cs.id)
-        end
+        action_on_actice_cses('vms monitoring',
+                              Atmosphere::VmMonitoringWorker)
       end
 
       every(Atmosphere.monitoring.query_interval.minutes, 'monitoring.load') do
@@ -29,16 +25,26 @@ module Atmopshere
         Atmosphere::BillingWorker.perform_async
       end
 
-      every(Atmosphere.url_monitoring.pending.seconds, 'monitoring.http_mappings.pending') do
+      every(Atmosphere.url_monitoring.pending.seconds,
+            'monitoring.http_mappings.pending') do
         Atmosphere::HttpMappingMonitoringWorker.perform_async(:pending)
       end
 
-      every(Atmosphere.url_monitoring.ok.seconds, 'monitoring.http_mappings.ok') do
+      every(Atmosphere.url_monitoring.ok.seconds,
+            'monitoring.http_mappings.ok') do
         Atmosphere::HttpMappingMonitoringWorker.perform_async(:ok)
       end
 
-      every(Atmosphere.url_monitoring.lost.seconds, 'monitoring.http_mappings.lost') do
+      every(Atmosphere.url_monitoring.lost.seconds,
+            'monitoring.http_mappings.lost') do
         Atmosphere::HttpMappingMonitoringWorker.perform_async(:lost)
+      end
+
+      def self.action_on_actice_cses(name, task)
+        Atmosphere::ComputeSite.active.select(:id, :name).each do |cs|
+          Rails.logger.debug "Creating #{name} task for #{cs.name}"
+          task.perform_async(cs.id)
+        end
       end
     end
   end
