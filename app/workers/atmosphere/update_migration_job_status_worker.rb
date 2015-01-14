@@ -2,7 +2,7 @@ module Atmosphere
   class UpdateMigrationJobStatusWorker
     include Sidekiq::Worker
 
-    sidekiq_options queue: :migration_jobs
+    sidekiq_options queue: :feedback
     sidekiq_options retry: false
 
     def perform(vmt_uuid, source_site_id, dest_site_id, status)
