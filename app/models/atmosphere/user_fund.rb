@@ -24,7 +24,7 @@ module Atmosphere
               }
 
     around_save :ensure_single_default
-    after_destroy :reallocate_default
+    after_destroy :reallocate_default if :default
 
 
     private
@@ -48,11 +48,8 @@ module Atmosphere
     end
 
     def reallocate_default
-      ufs = UserFund.where(user_id: user_id)
-      if ufs.count > 0 && ufs.none?(&:default)
-        ufs.first.update_attributes(default: true)
-      end
+      uf = UserFund.find_by(user_id: user_id)
+      uf && uf.update_attributes(default: true)
     end
-
   end
 end
