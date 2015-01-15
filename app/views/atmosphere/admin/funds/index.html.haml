@@ -1,12 +1,13 @@
-%h1= t 'funds.long_title'
+%h1
+  = t 'funds.long_title'
+  .pull-right
+    = link_to new_admin_fund_path,
+      class: 'btn btn-success has_bottom_tooltip',
+      title: t('funds.new.help') do
+      = icon 'plus'
+      = t 'add_new'
 
 %p
-  = link_to new_admin_fund_path,
-    class: 'btn btn-success btn-xs has_bottom_tooltip',
-    title: t('funds.new.help') do
-    = icon 'plus'
-    = t 'add_new'
-
   %table.table.table-hover.table-condensed
     %tr
       %th.col-md-2= t 'funds.name'
