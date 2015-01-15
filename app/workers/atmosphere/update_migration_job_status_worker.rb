@@ -6,9 +6,9 @@ module Atmosphere
     sidekiq_options retry: false
 
     def perform(vmt_uuid, source_site_id, dest_site_id, status)
-      vmt = VirtualMachineTemplate.find_by id_at_site: vmt_uuid
-      source_cs = ComputeSite.find_by site_id: source_site_id
-      dest_cs = ComputeSite.find_by site_id: dest_site_id
+      vmt = VirtualMachineTemplate.find_by(id_at_site: vmt_uuid)
+      source_cs = ComputeSite.find_by(site_id: source_site_id)
+      dest_cs = ComputeSite.find_by(site_id: dest_site_id)
 
       migration_job = MigrationJob.find_or_initialize_by(
                         appliance_type_id: vmt.appliance_type_id,
