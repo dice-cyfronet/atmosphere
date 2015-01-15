@@ -61,18 +61,17 @@ describe Atmosphere::UserFund do
     end
 
     it 'does not prematurely default to an invalid fund' do
-      begin
-        create(:user_fund,
-               fund: user_fund.fund,
-               user: user_fund.user,
-               default: true)
-      rescue ActiveRecord::RecordInvalid
-      end
-      expect(Atmosphere::UserFund.count).to eq 1
+      expect do
+        uf = build(:user_fund,
+                   fund: user_fund.fund,
+                   user: user_fund.user,
+                   default: true)
+        uf.save
+      end.to change { Atmosphere::UserFund.count }.by 0
+
       expect(user_fund.reload.default).to be_truthy
     end
   end
-
 
   describe '#reallocate_default' do
 
