@@ -13,11 +13,10 @@ module Atmosphere
     def select_migrator
       case @destination_compute_site.technology
       when 'aws'
-        migrator_class = Migratio::Worker::OpenstackAmazonMigrator
+        Migratio::Worker::OpenstackAmazonMigrator
       when 'openstack'
-        migrator_class = Migratio::Worker::OpenstackOpenstackMigrator
+        Migratio::Worker::OpenstackOpenstackMigrator
       end
-      migrator_class
     end
 
     def enqueue_job migrator_class

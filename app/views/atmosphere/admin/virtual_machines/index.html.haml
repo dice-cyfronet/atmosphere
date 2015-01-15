@@ -14,20 +14,20 @@
       - cs, vms = kv
       .tab-pane{ id: "#{cs.site_id}-tab", class: ("active" if i==0) }
         %table.vm-table
-          %th.table-cell-uuid= t('virtual_machines.uuid')
+          %th.uuid= t('virtual_machines.uuid')
           %th= t('virtual_machines.name')
           %th= t('virtual_machines.state')
           %th= t('virtual_machines.ip_address')
           %th= t('virtual_machines.appliances')
-          %th.table-cell-actions= t('actions')
+          %th.actions= t('actions')
           - vms.each do |vm|
             %tr
-              %td.table-cell-monospace= vm.id_at_site
+              %td.monospace= vm.id_at_site
               %td= vm.name
               %td= vm.state
-              %td.table-cell-monospace= vm.ip
+              %td.monospace= vm.ip
               %td= model_collection_to_s vm.appliances
-              %td.table-cell-actions
+              %td.actions
                 .btn-group
                   = link_to admin_virtual_machine_path(vm),
                             class: 'btn btn-success btn-xs',

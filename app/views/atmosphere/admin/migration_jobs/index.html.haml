@@ -6,7 +6,7 @@
     %tr
       %th= t('migration_jobs.appliance_type')
       %th= t('migration_jobs.virtual_machine_template')
-      %th.table-cell-uuid
+      %th.uuid
         = t('migration_jobs.virtual_machine_template_uuid')
       %th= t('migration_jobs.compute_site_source')
       %th= t('migration_jobs.compute_site_destination')
@@ -17,7 +17,7 @@
       %tr
         %td= migration_job.appliance_type.name if migration_job.appliance_type
         %td= migration_job.virtual_machine_template.name if migration_job.virtual_machine_template
-        %td.table-cell-monospace
+        %td.monospace
           = migration_job.virtual_machine_template.id_at_site if migration_job.virtual_machine_template
         %td= migration_job.compute_site_source.name if migration_job.compute_site_source
         %td= migration_job.compute_site_destination.name if migration_job.compute_site_destination
