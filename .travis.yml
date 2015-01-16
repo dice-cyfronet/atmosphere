@@ -6,7 +6,6 @@ rvm:
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - cp config/database.yml.travis spec/dummy/config/database.yml
-  - cp spec/dummy/config/air.yml.example spec/dummy/config/air.yml
 
 addons:
   code_climate:
