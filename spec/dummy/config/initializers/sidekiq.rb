@@ -1,6 +1,6 @@
 sidekiq_connection = {
-  url: Settings.sidekiq.url,
-  namespace: Settings.sidekiq.namespace
+  url: 'redis://localhost:6379',
+  namespace: 'atmosphere'
 }
 
 Sidekiq.configure_server do |config|

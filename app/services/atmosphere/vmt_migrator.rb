@@ -19,7 +19,7 @@ module Atmosphere
       end
     end
 
-    def enqueue_job migrator_class
+    def enqueue_job(migrator_class)
       Sidekiq::Client.push(
       'queue' => "migration_#{@source_compute_site.site_id}",
       'class' => migrator_class,

@@ -183,7 +183,8 @@ ActiveRecord::Schema.define(version: 20141202081811) do
     t.integer  "virtual_machine_template_id"
   end
 
-  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
+  add_index "atmosphere_migration_jobs", ["appliance_type_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
+  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix_2", unique: true, using: :btree
 
   create_table "atmosphere_port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
