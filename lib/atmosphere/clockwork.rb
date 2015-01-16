@@ -3,21 +3,21 @@ module Atmopshere
     extend ActiveSupport::Concern
 
     included do
-      every(Atmosphere.monitoring.vmt, 'monitoring.templates') do
+      every(Atmosphere.monitoring.intervals.vmt, 'monitoring.templates') do
         action_on_actice_cses('templates monitoring',
                               Atmosphere::VmTemplateMonitoringWorker)
       end
 
-      every(Atmosphere.monitoring.vm, 'monitoring.vms') do
+      every(Atmosphere.monitoring.intervals.vm, 'monitoring.vms') do
         action_on_actice_cses('vms monitoring',
                               Atmosphere::VmMonitoringWorker)
       end
 
-      every(Atmosphere.monitoring.load, 'monitoring.load') do
+      every(Atmosphere.monitoring.intervals.load, 'monitoring.load') do
         Atmosphere::VmLoadMonitoringWorker.perform_async
       end
 
-      every(Atmosphere.monitoring.flavor, 'monitoring.flavors') do
+      every(Atmosphere.monitoring.intervals.flavor, 'monitoring.flavors') do
         Atmosphere::FlavorWorker.perform_async
       end
 

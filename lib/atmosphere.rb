@@ -62,8 +62,9 @@ module Atmosphere
   @@optimizer = Struct.new(:max_appl_no).new(5)
 
   mattr_reader :monitoring
-  @@monitoring = Struct.new(:load, :vm, :vmt, :flavor).
-    new(5.minutes, 30.seconds, 1.minute, 120.minutes)
+  @@monitoring = Struct.new(:intervals).new(
+    Struct.new(:load, :vm, :vmt, :flavor).
+      new(5.minutes, 30.seconds, 1.minute, 120.minutes))
 
   mattr_accessor :childhood_age #seconds
   @@childhood_age = 2

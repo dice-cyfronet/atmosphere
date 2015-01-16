@@ -54,10 +54,10 @@ Atmosphere.setup do |config|
   # virtual machine templates (vmt), flavors (flavor) and updating information
   # about virtual machines load (load)
   #
-  # config.monitoring.vm = 30.seconds
-  # config.monitoring.vmt = 1.minute
-  # config.monitoring.flavor = 120.minutes
-  # config.monitoring.load = 5.minutes
+  # config.monitoring.intervals.vm = 30.seconds
+  # config.monitoring.intervals.vmt = 1.minute
+  # config.monitoring.intervals.flavor = 120.minutes
+  # config.monitoring.intervals.load = 5.minutes
 
   # Delay for registering new VM inside Atmosphere. This delay was introduced
   # bacause mointoring is an asynchronous process which sometine was triggered
