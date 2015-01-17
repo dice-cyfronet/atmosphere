@@ -55,14 +55,16 @@ module Atmosphere
   @@config_param = Struct.new(:regexp, :range).new(/\#{\w*}/, 2..-2)
 
   mattr_reader :url_monitoring
-  @@url_monitoring = Struct.new(:unavail_statuses, :pending, :ok, :lost)
-    .new([502], 10, 120, 15)
+  @@url_monitoring = Struct.new(:unavail_statuses, :pending, :ok, :lost).
+    new([502], 10, 120, 15)
 
   mattr_reader :optimizer
   @@optimizer = Struct.new(:max_appl_no).new(5)
 
   mattr_reader :monitoring
-  @@monitoring = Struct.new(:query_interval).new(5)
+  @@monitoring = Struct.new(:intervals).new(
+    Struct.new(:load, :vm, :vmt, :flavor).
+      new(5.minutes, 30.seconds, 1.minute, 120.minutes))
 
   mattr_accessor :childhood_age #seconds
   @@childhood_age = 2
