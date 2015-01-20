@@ -34,7 +34,7 @@ module Atmosphere
       class_name: 'Atmosphere::VirtualMachine'
 
     has_many :migration_job,
-      dependent: :destroy,
+      dependent: :nullify,
       class_name: 'Atmosphere::MigrationJob'
 
     belongs_to :compute_site,

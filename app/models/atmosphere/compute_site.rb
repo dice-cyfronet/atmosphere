@@ -61,7 +61,7 @@ module Atmosphere
       class_name: 'Atmosphere::ApplianceComputeSite'
 
     has_many :migration_job,
-      dependent: :destroy,
+      dependent: :nullify,
       class_name: 'Atmosphere::MigrationJob',
       foreign_key: 'compute_site_source_id'
 
