@@ -48,6 +48,8 @@ en:
   share: Share
   create: Create
   delete: Delete
+  export: Export
+  migrate: Migrate
   new: New
   uuid: UUID
   background_jobs: Background Jobs
@@ -142,7 +144,7 @@ en:
     state: State
     show: Show this Virtual Machine Template
     edit: Edit this Virtual Machine Template
-    export: Export this Virtual Machine Template
+    migrate: Migrate this Virtual Machine Template to other Compute Site
     remove: Remove this Virtual Machine Template
     version: Version
     managed_by_atmosphere: Managed

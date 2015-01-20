@@ -21,12 +21,12 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
   def edit
   end
 
-  # GET /virtual_machine_templates/1/share
-  def share
+  # GET /virtual_machine_templates/1/select_destination
+  def select_destination
   end
 
-  # POST /virtual_machine_templates/1/export
-  def export
+  # POST /virtual_machine_templates/1/migrate
+  def migrate
     cs_id = virtual_machine_template_params[:compute_site_id]
     @virtual_machine_template.export(cs_id)
     redirect_to admin_virtual_machine_templates_url,

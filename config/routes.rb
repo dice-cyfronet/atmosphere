@@ -48,8 +48,8 @@ Atmosphere::Engine.routes.draw do
     end
     resources :virtual_machine_templates, except: [:new, :create] do
       member do
-        get :share
-        post :export
+        get :select_destination
+        post :migrate
       end
     end
     resources :user_keys, except: [:edit, :update]
