@@ -27,6 +27,13 @@ module Atmosphere
     has_many :virtual_machines,
       class_name: 'Atmosphere::VirtualMachine'
 
+    has_many :os_families,
+      through: :virtual_machine_flavor_os_families,
+      class_name: 'Atmosphere::OSFamily'
+
+    has_many :virtual_machine_flavor_os_families,
+      class_name: 'Atmosphere::VirtualMachineFlavorOSFamily'
+
     validates :flavor_name,
               presence: true
 
@@ -59,6 +66,29 @@ module Atmosphere
     end
 
     scope :active, -> { where(active: true) }
+
+    # Assumes only 1 vmf_osf for a specific os_family
+    def get_hourly_cost_for(os_family)
+      incarnation = virtual_machine_flavor_os_families.select{|vmf_osf| vmf_osf.os_family == os_family}.first
+      if incarnation.is_a?(Atmosphere::VirtualMachineFlavorOSFamily)
+        incarnation.hourly_cost
+      else
+        nil #GIGO
+      end
+    end
+
+    # Upserts a binding between this VMF and an OS family, setting hourly cost
+    def set_hourly_cost_for(os_family, cost)
+      incarnation = virtual_machine_flavor_os_families.select{|vmf_osf| vmf_osf.os_family == os_family}.first
+      if incarnation.is_a?(Atmosphere::VirtualMachineFlavorOSFamily)
+        incarnation.hourly_cost = cost
+        incarnation.save
+      else
+        incarnation = Atmosphere::VirtualMachineFlavorOSFamily.new(virtual_machine_flavor: self, os_family: os_family,
+          hourly_cost: hourly_cost)
+        incarnation.save
+      end
+    end
 
     def usable?
       active && compute_site && compute_site.active

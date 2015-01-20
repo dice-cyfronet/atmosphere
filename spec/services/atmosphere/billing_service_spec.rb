@@ -7,7 +7,12 @@ describe Atmosphere::BillingService do
   let!(:non_cs_fund) { create(:fund, compute_sites: [])}
   let!(:empty_fund) { create(:fund, balance: 0, overdraft_limit: 0, compute_sites: [cs] )}
   let!(:non_cs_fund) { create(:fund, compute_sites: [])}
+
   let!(:wf) { create(:workflow_appliance_set) }
+
+  let!(:windows_osfamily) { create(:os_family, os_family_name: 'Windows') }
+  let!(:linux_osfamily) { create(:os_family, os_family_name: 'Linux') }
+
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: cs)}
@@ -40,6 +45,7 @@ describe Atmosphere::BillingService do
 
     it 'throws exception for malformed appliance' do
       appl = create(:appliance, fund: nil, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
+
       expect{Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)}.to raise_exception(Atmosphere::BillingException)
       expect{Atmosphere::BillingService.can_afford_flavor?(appl, not_shareable_vm1.virtual_machine_flavor)}.to raise_exception(Atmosphere::BillingException)
     end
@@ -141,7 +147,7 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingService.can_afford_flavor?(standalone_zus_appl, cheap_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(amber_gold_appl, expensive_flavor)).to eq true
 
-      # aplien_appl cannot afford anything because its fund is not bound to ComputeSite cs
+      # alien_appl cannot afford anything because its fund is not bound to ComputeSite cs
       expect(Atmosphere::BillingService.can_afford_flavor?(alien_appl, cheap_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(alien_appl, free_flavor)).to eq false
     end
@@ -162,6 +168,43 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, free_vm)).to eq false
     end
 
+  end
+
+  context 'os_families' do
+    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 100)}
+    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 50)}
+
+    let(:poor_fund) { create(:fund, balance: 75, overdraft_limit: 0, compute_sites: [cs] )}
+
+    let(:config_inst) { create(:appliance_configuration_instance) }
+
+    let!(:windows_appl_type) { create(:not_shareable_appliance_type, os_family: windows_osfamily) }
+    let!(:linux_appl_type) { create(:not_shareable_appliance_type, os_family: linux_osfamily) }
+
+    let!(:windows_appliance) { create(:appliance, fund: poor_fund, appliance_set: wf,
+      appliance_type: windows_appl_type, appliance_configuration_instance: config_inst,
+      virtual_machines: [not_shareable_vm1]) }
+
+    let!(:linux_appliance) { create(:appliance, fund: poor_fund, appliance_set: wf,
+      appliance_type: linux_appl_type, appliance_configuration_instance: config_inst,
+      virtual_machines: [not_shareable_vm2]) }
+
+    it 'can or cannot afford flavors depending on os_family' do
+
+      windows_flavor.os_families = [windows_osfamily]
+      linux_flavor.os_families = [linux_osfamily]
+      windows_flavor.save
+      linux_flavor.save
+      windows_flavor.set_hourly_cost_for(windows_osfamily, 100)
+      linux_flavor.set_hourly_cost_for(linux_osfamily, 50)
+
+
+
+      expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, windows_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, linux_flavor)).to eq true
+      expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, windows_flavor)).to eq false
+      expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, linux_flavor)).to eq false
+    end
   end
 
   context 'routine billing' do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150103133015) do
+ActiveRecord::Schema.define(version: 20150113100404) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,19 +53,21 @@ ActiveRecord::Schema.define(version: 20150103133015) do
   add_index "atmosphere_appliance_sets", ["user_id"], name: "index_atmosphere_appliance_sets_on_user_id", using: :btree
 
   create_table "atmosphere_appliance_types", force: true do |t|
-    t.string   "name",                                null: false
+    t.string   "name",                                        null: false
     t.text     "description"
-    t.boolean  "shared",            default: false,   null: false
-    t.boolean  "scalable",          default: false,   null: false
-    t.string   "visible_to",        default: "owner", null: false
+    t.boolean  "shared",                    default: false,   null: false
+    t.boolean  "scalable",                  default: false,   null: false
+    t.string   "visible_to",                default: "owner", null: false
     t.float    "preference_cpu"
     t.integer  "preference_memory"
     t.integer  "preference_disk"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "atmosphere_os_families_id"
   end
 
+  add_index "atmosphere_appliance_types", ["atmosphere_os_families_id"], name: "index_atmosphere_appliance_types_on_atmosphere_os_families_id", using: :btree
   add_index "atmosphere_appliance_types", ["name"], name: "index_atmosphere_appliance_types_on_name", unique: true, using: :btree
 
   create_table "atmosphere_appliances", force: true do |t|
@@ -173,6 +175,10 @@ ActiveRecord::Schema.define(version: 20150103133015) do
     t.string   "base_url",                                     null: false
   end
 
+  create_table "atmosphere_os_families", force: true do |t|
+    t.string "os_family_name", default: "Windows", null: false
+  end
+
   create_table "atmosphere_port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
     t.string   "value",                    null: false
@@ -241,6 +247,12 @@ ActiveRecord::Schema.define(version: 20150103133015) do
   add_index "atmosphere_users", ["authentication_token"], name: "index_atmosphere_users_on_authentication_token", unique: true, using: :btree
   add_index "atmosphere_users", ["email"], name: "index_atmosphere_users_on_email", unique: true, using: :btree
   add_index "atmosphere_users", ["login"], name: "index_atmosphere_users_on_login", unique: true, using: :btree
+
+  create_table "atmosphere_virtual_machine_flavor_os_families", force: true do |t|
+    t.integer "hourly_cost"
+    t.integer "virtual_machine_flavor_id"
+    t.integer "os_family_id"
+  end
 
   create_table "atmosphere_virtual_machine_flavors", force: true do |t|
     t.string  "flavor_name",                                null: false
