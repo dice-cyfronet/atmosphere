@@ -37,7 +37,7 @@ en:
   keep_it_secret: Keep it secret, keep it safe!
   reset: Reset
   are_you_sure: Are you sure?
-  are_you_sure_cs: Warning! This will delete all Virtual Machine Templates which exist on this CS. Are you sure?
+  are_you_sure_cs: Warning! This will irrevocably destroy all Virtual Machine Templates and Virtual Machines running on this CS which have been created by Atmosphere. Are you sure?
   actions: Actions
   add_new: Add new
   editing: Editing
