@@ -33,6 +33,10 @@ module Atmosphere
       dependent: :nullify,
       class_name: 'Atmosphere::VirtualMachine'
 
+    has_many :migration_job,
+      dependent: :destroy,
+      class_name: 'Atmosphere::MigrationJob'
+
     belongs_to :compute_site,
       class_name: 'Atmosphere::ComputeSite'
 

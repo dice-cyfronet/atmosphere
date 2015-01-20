@@ -37,9 +37,9 @@
                             class: 'btn btn-warning btn-xs',
                             title: t('virtual_machine_templates.edit') do
                     =icon 'edit'
-                  = link_to share_admin_virtual_machine_template_path(vmt),
+                  = link_to select_destination_admin_virtual_machine_template_path(vmt),
                             class: 'btn btn-warning btn-xs',
-                            title: t('virtual_machine_templates.export') do
+                            title: t('virtual_machine_templates.migrate') do
                     =icon 'copy'
                   = link_to admin_virtual_machine_template_path(vmt),
                             method: :delete,

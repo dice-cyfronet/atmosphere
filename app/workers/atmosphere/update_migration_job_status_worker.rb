@@ -11,10 +11,10 @@ module Atmosphere
       dest_cs = ComputeSite.find_by(site_id: dest_site_id)
 
       migration_job = MigrationJob.find_or_initialize_by(
-                        appliance_type_id: vmt.appliance_type_id,
                         virtual_machine_template: vmt,
                         compute_site_source: source_cs,
                         compute_site_destination: dest_cs)
+      migration_job.appliance_type_id = vmt.appliance_type_id
       migration_job.status = "#{migration_job.status} #{status}"
       migration_job.save
     end
