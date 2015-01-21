@@ -91,25 +91,7 @@
           = succeed ':' do
             %strong= t 'users.title'
           - if fund.users.present?
-            - fund.user_funds.each do |user_fund|
-              .btn-group
-                - user = user_fund.user
-                %span.btn.btn-default.btn-xs.disabled.non-opaque
-                  = user.full_name
-                  = surround '(', ')' do
-                    = user.login
-                = link_to admin_billing_logs_path(user_id: user.id),
-                  remote: true,
-                  data: { billing: 'on' },
-                  title: t('billing.load_for_user', user: user.full_name),
-                  class: 'btn btn-default btn-xs has_bottom_tooltip' do
-                  = icon 'bar-chart'
-                = link_to admin_user_fund_path(user_fund),
-                  method: :delete,
-                  data: { confirm: t('are_you_sure') },
-                  class: 'btn btn-default btn-xs has_bottom_tooltip',
-                  title: t('funds.remove_user.help', user: user_fund.user) do
-                  = icon 'times'
+            = render partial: 'user_fund', collection: fund.user_funds
           - else
             %i.text-muted
               = surround '(',')' do

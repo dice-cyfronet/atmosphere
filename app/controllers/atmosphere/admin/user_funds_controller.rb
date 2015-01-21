@@ -14,6 +14,12 @@ class Atmosphere::Admin::UserFundsController < Atmosphere::Admin::ApplicationCon
     end
   end
 
+  # PATCH/PUT /user_funds/1
+  def update
+    @user_fund.update user_fund_params
+    redirect_to admin_funds_url
+  end
+
   # DELETE /user_funds/1
   def destroy
     @user_fund.destroy
@@ -29,7 +35,7 @@ class Atmosphere::Admin::UserFundsController < Atmosphere::Admin::ApplicationCon
   # Only allow a trusted parameter "white list" through.
   def user_fund_params
     params.require(:user_fund).permit(
-      :fund_id, :user_id
+      :fund_id, :user_id, :default
     )
   end
 
