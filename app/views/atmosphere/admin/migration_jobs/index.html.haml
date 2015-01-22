@@ -15,11 +15,10 @@
 
     - @migration_jobs.each do |migration_job|
       %tr
-        %td= migration_job.appliance_type.name if migration_job.appliance_type
-        %td= migration_job.virtual_machine_template.name if migration_job.virtual_machine_template
-        %td.monospace
-          = migration_job.virtual_machine_template.id_at_site if migration_job.virtual_machine_template
-        %td= migration_job.compute_site_source.name if migration_job.compute_site_source
-        %td= migration_job.compute_site_destination.name if migration_job.compute_site_destination
-        %td= migration_job.status.lines.last if migration_job.status
+        %td= migration_job.appliance_type_name
+        %td= migration_job.virtual_machine_template_name
+        %td.monospace= migration_job.virtual_machine_template_id_at_site
+        %td= migration_job.compute_site_source_name
+        %td= migration_job.compute_site_destination_name
+        %td= migration_job.status_last_line
         %td= migration_job.updated_at

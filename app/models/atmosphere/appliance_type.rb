@@ -42,7 +42,7 @@ module Atmosphere
       class_name: 'Atmosphere::VirtualMachineTemplate'
 
     has_many :migration_job,
-      dependent: :destroy,
+      dependent: :nullify,
       class_name: 'Atmosphere::MigrationJob'
 
     # Required for API (returning all compute sites on which a given

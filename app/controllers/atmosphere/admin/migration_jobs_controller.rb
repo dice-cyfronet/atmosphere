@@ -13,5 +13,6 @@ class Atmosphere::Admin::MigrationJobsController < Atmosphere::Admin::Applicatio
     @migration_jobs = @migration_jobs.includes(:appliance_type,
                                                :compute_site_source,
                                                :compute_site_destination)
+    @migration_jobs = @migration_jobs.decorate
   end
 end
