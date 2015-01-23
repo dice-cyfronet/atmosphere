@@ -11,10 +11,10 @@ describe Atmosphere::VmUpdater do
   let(:updated_vm) { Atmosphere::VirtualMachine.find_by(id_at_site: 'id_at_site') }
 
   before do
-    allow(Atmosphere::VirtualMachineTemplate)
-      .to receive(:find_by)
-        .with(compute_site: cs, id_at_site: "vmt_id_at_site")
-          .and_return(vmt)
+    allow(Atmosphere::VirtualMachineTemplate).
+      to receive(:find_by).
+      with(compute_site: cs, id_at_site: 'vmt_id_at_site').
+      and_return(vmt)
     #Zabbix.stub(:register_host).and_return 1
     #Zabbix.stub(:unregister_host)
     #Zabbix.stub(:host_metrics)
@@ -46,9 +46,10 @@ describe Atmosphere::VmUpdater do
 
       before do
         vm = create(:virtual_machine,
-                      id_at_site: 'id_at_site',
-                      saved_templates: [vmt],
-                      compute_site: cs)
+                    id_at_site: 'id_at_site',
+                    saved_templates: [vmt],
+                    compute_site: cs,
+                    created_at: 10.seconds.ago)
 
         vm.saved_templates << vmt
       end
@@ -70,7 +71,10 @@ describe Atmosphere::VmUpdater do
       end
 
       it 'invokes updater when ip changed' do
-        vm = create(:virtual_machine, id_at_site: 'id_at_site', compute_site: cs)
+        vm = create(:virtual_machine,
+                    id_at_site: 'id_at_site',
+                    compute_site: cs,
+                    created_at: 10.seconds.ago)
         appl1 = create(:appliance, virtual_machines: [vm])
         appl2 = create(:appliance, virtual_machines: [vm])
         appl_updater = double
@@ -103,10 +107,11 @@ describe Atmosphere::VmUpdater do
 
       it 'invokes updater when VM with IP changed state to active' do
         vm = create(:virtual_machine,
-                id_at_site: 'id_at_site',
-                ip: '10.100.1.2',
-                compute_site: cs,
-                state: :shutoff)
+                    id_at_site: 'id_at_site',
+                    ip: '10.100.1.2',
+                    compute_site: cs,
+                    state: :shutoff,
+                    created_at: 10.seconds.ago)
         appl1 = create(:appliance, virtual_machines: [vm])
 
         expect(updater).to receive(:update)
@@ -138,13 +143,21 @@ describe Atmosphere::VmUpdater do
 
       it 'invokes updater when state changed to other' do
         vm = create(:virtual_machine,
-          id_at_site: 'id_at_site', state: :active,
-          compute_site: cs, ip: '10.100.1.2')
+                    id_at_site: 'id_at_site',
+                    state: :active,
+                    compute_site: cs,
+                    ip: '10.100.1.2',
+                    created_at: 10.seconds.ago)
         appl = create(:appliance, virtual_machines: [vm])
         appl_updater = double
 
-        expect(updater_class).to receive(:new).with(appl).and_return(appl_updater)
-        expect(appl_updater).to receive(:update).once
+        expect(updater_class).
+          to receive(:new).
+          with(appl).
+          and_return(appl_updater)
+        expect(appl_updater).
+          to receive(:update).
+          once
 
         subject.update
       end
@@ -194,7 +207,13 @@ describe Atmosphere::VmUpdater do
 
     context 'and VM exists' do
       let!(:vm) do
-        create(:virtual_machine, id_at_site: 'id_at_site', state: :build, name: 'old_name', source_template: vmt, compute_site: cs)
+        create(:virtual_machine,
+               id_at_site: 'id_at_site',
+               state: :build,
+               name: 'old_name',
+               source_template: vmt,
+               compute_site: cs,
+               created_at: 10.seconds.ago)
       end
 
       it 'reuses existing VM' do
@@ -289,11 +308,11 @@ describe Atmosphere::VmUpdater do
 
     it 'updates VM IP if vm.updated_at_site is nil' do
       vm = create(:virtual_machine,
-          updated_at_site: nil,
-          id_at_site: 'id_at_site',
-          ip: nil,
-          compute_site: cs
-        )
+                  updated_at_site: nil,
+                  id_at_site: 'id_at_site',
+                  ip: nil,
+                  compute_site: cs,
+                  created_at: 10.seconds.ago)
       allow(server).to receive(:updated).and_return(vm_update_at)
 
       Atmosphere::VmUpdater.new(cs, server, updater_class).update
@@ -304,11 +323,11 @@ describe Atmosphere::VmUpdater do
 
     it 'updates VM if server.updated > vm.updated_at_site' do
       vm = create(:virtual_machine,
-          updated_at_site: vm_update_at,
-          id_at_site: 'id_at_site',
-          ip: nil,
-          compute_site: cs
-        )
+                  updated_at_site: vm_update_at,
+                  id_at_site: 'id_at_site',
+                  ip: nil,
+                  compute_site: cs,
+                  created_at: 10.seconds.ago)
       allow(server).to receive(:updated).and_return(vm_update_at + 1)
 
       Atmosphere::VmUpdater.new(cs, server, updater_class).update
@@ -319,11 +338,10 @@ describe Atmosphere::VmUpdater do
 
     it 'does not update VM IP if server.updated_at_site < vm.updated_at' do
       vm = create(:virtual_machine,
-          updated_at_site: vm_update_at,
-          id_at_site: 'id_at_site',
-          ip: nil,
-          compute_site: cs
-        )
+                  updated_at_site: vm_update_at,
+                  id_at_site: 'id_at_site',
+                  ip: nil,
+                  compute_site: cs)
       allow(server).to receive(:updated).and_return(vm_update_at - 1)
 
       Atmosphere::VmUpdater.new(cs, server, updater_class).update
