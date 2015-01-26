@@ -151,7 +151,8 @@ module Atmosphere
     def export(compute_site_id)
       destination_compute_site = ComputeSite.find(compute_site_id)
       if destination_compute_site != compute_site
-        vmt_migrator = VmtMigrator.new(self, compute_site, destination_compute_site)
+        vmt_migrator = VmtMigrator.new(self, compute_site,
+                                       destination_compute_site)
         vmt_migrator.execute
       end
     end
