@@ -15,6 +15,6 @@ class AddVmtToMigrationStatus < ActiveRecord::Migration
                :compute_site_source_id,
                :compute_site_destination_id],
               unique: true,
-              name: 'atmo_mj_ix_2'
+              name: 'atmo_mj_ix'
   end
 end
