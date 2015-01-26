@@ -288,6 +288,7 @@ ActiveRecord::Schema.define(version: 20141202081811) do
   add_index "atmosphere_virtual_machines", ["compute_site_id", "id_at_site"], name: "atmo_vm_cs_id_id_at_site_ix", unique: true, using: :btree
   add_index "atmosphere_virtual_machines", ["virtual_machine_template_id"], name: "atmo_vm_vmt_ix", using: :btree
 
+  Foreigner.load
   add_foreign_key "atmosphere_appliance_configuration_instances", "atmosphere_appliance_configuration_templates", name: "ac_instances_ac_template_id_fk", column: "appliance_configuration_template_id"
 
   add_foreign_key "atmosphere_appliance_configuration_templates", "atmosphere_appliance_types", name: "atmo_config_templates_at_id_fk", column: "appliance_type_id"
