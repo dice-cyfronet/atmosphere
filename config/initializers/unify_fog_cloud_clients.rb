@@ -9,6 +9,7 @@ require 'fog/aws/models/compute/server'
 require 'fog/azure/models/compute/images'
 require 'fog/aws/models/compute/images'
 require 'fog/openstack/models/compute/images'
+require 'fog/azure/models/compute/server'
 
 # open stack client does not provide import_key_pair method
 # while aws does
@@ -101,6 +102,11 @@ class Fog::Compute::AWS::Server
   end
 end
 
+class Fog::Compute::Azure::Server
+  def id
+    identity
+  end
+end
 
 
 class Fog::Compute::OpenStack::Image
@@ -212,9 +218,7 @@ class Fog::Compute::AWS::Flavor
     def tags
       {}
     end
-
   end
-
 
   # ============= END AZURE ==========
 
