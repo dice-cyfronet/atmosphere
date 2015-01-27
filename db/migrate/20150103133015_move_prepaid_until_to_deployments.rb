@@ -26,8 +26,20 @@ class MovePrepaidUntilToDeployments < ActiveRecord::Migration
   end
 
   def down
-    # Sorry, this cannot be undone as there is no meaningful way to restore the values for Atmosphere::Appliance columns
-    # in a situation where deployments are added and deleted while the Appliance is alive.
-    raise ActiveRecord::IrreversibleMigration
+    add_column :atmosphere_appliances, :billing_state, :string, null:false, default:"prepaid"
+    execute "ALTER TABLE atmosphere_appliances ADD COLUMN prepaid_until TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
+
+    Atmosphere::Appliance.find_each do |a|
+      dep = a.deployments.first
+      unless dep.blank?
+        a.billing_state = dep.billing_state
+        a.prepaid_until = dep.prepaid_until
+        a.save
+      end
+    end
+
+    remove_column :atmosphere_deployments, :billing_state
+    remove_column :atmosphere_deployments, :prepaid_until
+
   end
 end

@@ -40,12 +40,24 @@ class AddOsfamilies < ActiveRecord::Migration
     end
 
     # Note: a separate migration will be needed to remove Atmosphere::VirtualMachineFlavor.hourly_cost
+    remove_column :atmosphere_virtual_machine_flavors, :hourly_cost
 
   end
 
   def down
-    # Can't go back since flavor prices would have been rewritten - it is now impossible for Atmo
-    # to determine the 'base' price for each flavor.
-    raise ActiveRecord::IrreversibleMigration
+    add_column :atmosphere_virtual_machine_flavors, :hourly_cost, :integer, default: 0
+
+    Atmosphere::VirtualMachineFlavor.find_each do |f|
+      f_osfamily = f.virtual_machine_flavor_os_families.first
+      unless f_osfamily.blank?
+        f.hourly_cost = f_osfamily.hourly_cost
+        f.save
+      end
+    end
+
+    remove_column :atmosphere_appliance_types, :atmosphere_os_families_id
+
+    drop_table :atmosphere_virtual_machine_flavor_os_families
+    drop_table :atmosphere_os_families
   end
 end

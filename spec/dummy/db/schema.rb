@@ -259,7 +259,6 @@ ActiveRecord::Schema.define(version: 20150113100404) do
     t.float   "cpu"
     t.float   "memory"
     t.float   "hdd"
-    t.integer "hourly_cost",                                null: false
     t.integer "compute_site_id"
     t.string  "id_at_site"
     t.string  "supported_architectures", default: "x86_64"

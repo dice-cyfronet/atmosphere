@@ -149,12 +149,15 @@ module Atmosphere
         # If this VM is not assigned to appliance then just assume def prepayment interval
         billable_time = @appliance_prepayment_interval/3600 # Time in hours
       end
-
-      amt_due = (billable_time*(vm.virtual_machine_flavor.get_hourly_cost_for(appliance.appliance_type.os_family))/(vm.appliances.count+1)).round
+      hourly_cost = vm.virtual_machine_flavor.get_hourly_cost_for(appliance.appliance_type.os_family)
+      if hourly_cost.blank? # Will happen when there is a mismatch between AT ostype and flavor ostype
+        return false
+      end
+      amt_due = ((billable_time*hourly_cost)/(vm.appliances.count+1)).round
       if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and appliance.fund.compute_sites.include? vm.compute_site
-        true
+        return true
       else
-        false
+        return false
       end
     end
 
@@ -165,11 +168,15 @@ module Atmosphere
         raise Atmosphere::BillingException.new(message: "can_afford_flavor? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
       end
       billable_time = @appliance_prepayment_interval/3600 # Time in hours
-      amt_due = (billable_time*(flavor.get_hourly_cost_for(appliance.appliance_type.os_family))).round
+      hourly_cost = flavor.get_hourly_cost_for(appliance.appliance_type.os_family)
+      if hourly_cost.blank? # Will happen when there is a mismatch between AT ostype and flavor ostype
+        return false
+      end
+      amt_due = (billable_time*(hourly_cost)).round
       if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and appliance.fund.compute_sites.include? flavor.compute_site
-        true
+        return true
       else
-        false
+        return false
       end
     end
 

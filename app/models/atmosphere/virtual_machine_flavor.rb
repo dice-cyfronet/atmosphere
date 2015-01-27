@@ -46,9 +46,6 @@ module Atmosphere
     validates :hdd,
               numericality: { greater_than_or_equal_to: 0 }
 
-    validates :hourly_cost,
-              numericality: { greater_than_or_equal_to: 0 }
-
     validates :supported_architectures,
               inclusion: %w(i386 x86_64 i386_and_x86_64)
 

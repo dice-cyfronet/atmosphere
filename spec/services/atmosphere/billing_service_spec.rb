@@ -59,7 +59,7 @@ describe Atmosphere::BillingService do
 
       appl.reload
       expect(appl.deployments.first.billing_state).to eq("prepaid")
-      expect(appl.amount_billed).to eq appl.virtual_machines.first.virtual_machine_flavor.hourly_cost
+      expect(appl.amount_billed).to eq appl.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost
       expect(Atmosphere::BillingLog.all.count).to eq 1
     end
 
@@ -96,17 +96,17 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingLog.all.count).to eq 1
 
       cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost))
+      expect(cs_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost))
 
       appl2 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
       Atmosphere::BillingService.bill_appliance(appl2, Time.now.utc, "mock billing", true)
       appl2.reload
-      expect(appl1.amount_billed).to eq appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost
-      expect(appl2.amount_billed).to eq (appl2.virtual_machines.first.virtual_machine_flavor.hourly_cost*0.5).round
+      expect(appl1.amount_billed).to eq appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost
+      expect(appl2.amount_billed).to eq (appl2.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost*0.5).round
 
       cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - (appl2.virtual_machines.first.virtual_machine_flavor.hourly_cost*1.5).round
+      expect(cs_fund.balance).to eq original_balance - (appl2.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost*1.5).round
 
     end
   end
@@ -115,9 +115,9 @@ describe Atmosphere::BillingService do
 
     let(:config_inst) { create(:appliance_configuration_instance) }
 
-    let!(:free_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 0) }
-    let!(:cheap_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 10) }
-    let!(:expensive_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 100) }
+    let!(:free_flavor) { create(:virtual_machine_flavor, compute_site: cs) }
+    let!(:cheap_flavor) { create(:virtual_machine_flavor, compute_site: cs) }
+    let!(:expensive_flavor) { create(:virtual_machine_flavor, compute_site: cs) }
 
     let!(:switzerland) { create(:fund, balance: 1000000, overdraft_limit: 0, compute_sites: [cs])}
     let!(:middle_class) { create(:fund, balance: 100, overdraft_limit: 0, compute_sites: [cs] )}
@@ -134,6 +134,10 @@ describe Atmosphere::BillingService do
     let!(:alien_appl) { create(:appliance, fund: alien_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines:[])}
 
     it 'can or cannot afford flavors' do
+      free_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 0)
+      cheap_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 10)
+      expensive_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 100)
+
       rich_appl = create(:appliance, fund: switzerland, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
       middle_class_appl = create(:appliance, fund: middle_class, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm2])
       zus_appl1 = create(:appliance, fund: zus, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
@@ -171,8 +175,8 @@ describe Atmosphere::BillingService do
   end
 
   context 'os_families' do
-    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 100)}
-    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs, hourly_cost: 50)}
+    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
+    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
 
     let(:poor_fund) { create(:fund, balance: 75, overdraft_limit: 0, compute_sites: [cs] )}
 
@@ -197,8 +201,6 @@ describe Atmosphere::BillingService do
       linux_flavor.save
       windows_flavor.set_hourly_cost_for(windows_osfamily, 100)
       linux_flavor.set_hourly_cost_for(linux_osfamily, 50)
-
-
 
       expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, windows_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, linux_flavor)).to eq true
@@ -232,7 +234,7 @@ describe Atmosphere::BillingService do
       # An appliance with a nearly-expired fund
       expiring_appl = create(:appliance, fund: empty_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst3, virtual_machines: [not_shareable_vm3])
 
-      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost # Cost per 1h of use for a single (full) VM
+      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
       Atmosphere::BillingService.bill_all_appliances
 
@@ -305,7 +307,7 @@ describe Atmosphere::BillingService do
       # Standard non-shared appliance
       appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst1, virtual_machines: [not_shareable_vm1])
 
-      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.hourly_cost # Cost per 1h of use for a single (full) VM
+      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
 

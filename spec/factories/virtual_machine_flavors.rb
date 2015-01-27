@@ -5,14 +5,13 @@ FactoryGirl.define do
     cpu { rand(max=16) + 1 }
     memory { rand(max=16384) + 512 }
     hdd { rand(max=1000) + 1 }
-    hourly_cost { rand(max=100) + 1 }
 
     # Create a new incarnation record for this flavor (bind to os_family and rewrite price
     after(:build) do |vmf|
       vmf_osf = Atmosphere::VirtualMachineFlavorOSFamily.new
       vmf_osf.virtual_machine_flavor = vmf
       vmf_osf.os_family = Atmosphere::OSFamily.first
-      vmf_osf.hourly_cost = vmf.hourly_cost
+      vmf_osf.hourly_cost = rand(max=100) + 1
       vmf_osf.save
     end
 
