@@ -49,7 +49,7 @@ module Atmosphere
       return true unless use_wrangler? && ip
       path = build_path_for_params(ip, port, protocol)
       resp = dnat_client.delete(path)
-      if not resp.status == 204
+      unless [200, 204].include?(resp.status)
         Rails.logger.error "Wrangler returned #{resp.status} when trying to remove redirections for #{build_req_params_msg(ip, port, protocol)}."
         return false
       end
