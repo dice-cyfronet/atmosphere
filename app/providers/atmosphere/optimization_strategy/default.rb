@@ -89,7 +89,7 @@ module Atmosphere
           globally_opt_flavor = (
             min_elements_by(
               opt_flavors_and_tmpls_map.keys
-            ) { |f| f.get_hourly_cost_for(@appliance.appliance_type.os_family)}
+            ) { |f| f.get_hourly_cost_for(tmpls.first.appliance_type.os_family)}
           ).sort { |x,y| x.memory <=> y.memory }.last
 
           [

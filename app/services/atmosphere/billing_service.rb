@@ -95,7 +95,8 @@ module Atmosphere
 
       vm = dep.virtual_machine # Shorthand
       # Find out how many appliances are using this VM and split costs equally
-      hourly_charge = (vm.virtual_machine_flavor.hourly_cost/vm.appliances.count).round #TODO: figure out if we should limit this to appliances with billing_state == :prepaid
+      os_family = dep.appliance.appliance_type.os_family
+      hourly_charge = (vm.virtual_machine_flavor.get_hourly_cost_for(os_family)/vm.appliances.count).round #TODO: figure out if we should limit this to appliances with billing_state == :prepaid
       Rails.logger.debug("Calculated hourly charge for using VM #{vm.id} is #{hourly_charge}. This VM currently has #{vm.appliances.count} appliances using it.")
       charge = (hourly_charge*billable_time).round
 

@@ -7,6 +7,10 @@ module Atmosphere
       :compute_site_id, :id_at_site,
       :supported_architectures, :active
 
+    def hourly_cost
+      100
+    end
+
     def active
       object.usable?
     end

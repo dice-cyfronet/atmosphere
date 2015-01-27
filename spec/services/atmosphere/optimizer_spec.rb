@@ -371,8 +371,12 @@ describe Atmosphere::Optimizer do
       it 'if cheaper flavor does not support architecture' do
         cs = create(:compute_site)
         tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, compute_site: cs)
-        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, hourly_cost: 10, compute_site: cs, supported_architectures: 'i386')
-        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, hourly_cost: 20, compute_site: cs, supported_architectures: 'x86_64')
+        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, compute_site: cs, supported_architectures: 'i386')
+        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, compute_site: cs, supported_architectures: 'x86_64')
+
+        fl_32b.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+        fl_64b.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
+
         selected_tmpl, selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_64b])
         expect(selected_tmpl).to eq tmpl_64b
         expect(selected_flavor).to eq fl_64b
@@ -410,14 +414,16 @@ describe Atmosphere::Optimizer do
           all_discarded_flavors = amazon.virtual_machine_flavors + openstack.virtual_machine_flavors - [flavor]
           all_discarded_flavors.each {|f|
             if(f.memory >= appl_type.preference_memory and f.cpu >= appl_type.preference_cpu)
-              expect(f.hourly_cost >= flavor.hourly_cost).to be true
+              expect(f.get_hourly_cost_for(Atmosphere::OSFamily.first) >= flavor.get_hourly_cost_for(Atmosphere::OSFamily.first)).to be true
             end
           }
         end
 
         it 'selects flavor with more ram if prices are equal' do
           biggest_os_flavor = openstack.virtual_machine_flavors.max_by {|f| f.memory}
-          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, hourly_cost: biggest_os_flavor.hourly_cost, compute_site: amazon)
+          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, compute_site: amazon)
+          optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, biggest_os_flavor.get_hourly_cost_for(Atmosphere::OSFamily.first))
+
           amazon.reload
           appl_type.preference_memory = biggest_os_flavor.memory
           appl_type.save
@@ -550,6 +556,7 @@ describe Atmosphere::Optimizer do
             expect(flavor.cpu).to eq 4
           end
           @appl.dev_mode_property_set.preference_cpu = 4
+
 
           @appl.save!
         end
