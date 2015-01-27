@@ -80,7 +80,7 @@ module Atmosphere
                   f.cpu >= min_cpu &&
                   f.hdd >= min_hdd
                 end
-              ) {|f| f.get_hourly_cost_for(@appliance.appliance_type.os_family)}
+              ) {|f| f.get_hourly_cost_for(tmpl.appliance_type.os_family)}
             ).sort!{ |x,y| y.memory <=> x.memory }.last
             hsh[opt_fl] = tmpl if opt_fl
             hsh
