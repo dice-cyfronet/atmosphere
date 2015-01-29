@@ -16,6 +16,25 @@ ActiveRecord::Schema.define(version: 20150121162000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "atmosphere_action_logs", force: true do |t|
+    t.string   "message"
+    t.string   "log_level"
+    t.integer  "action_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "atmosphere_action_logs", ["action_id"], name: "index_atmosphere_action_logs_on_action_id", using: :btree
+
+  create_table "atmosphere_actions", force: true do |t|
+    t.string   "type"
+    t.integer  "appliance_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "atmosphere_actions", ["appliance_id"], name: "index_atmosphere_actions_on_appliance_id", using: :btree
+
   create_table "atmosphere_appliance_compute_sites", force: true do |t|
     t.integer "appliance_id"
     t.integer "compute_site_id"
