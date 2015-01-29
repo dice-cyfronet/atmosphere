@@ -66,6 +66,10 @@ module Atmosphere
       autosave: true,
       class_name: 'Atmosphere::DevModePropertySet'
 
+    has_many :actions,
+             dependent: :destroy,
+             class_name: 'Atmosphere::Action'
+
     validates :appliance_set, presence: true
     validates :appliance_type, presence: true
     validates :appliance_configuration_instance, presence: true
