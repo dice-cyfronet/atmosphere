@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20150121162000) do
   add_index "atmosphere_action_logs", ["action_id"], name: "index_atmosphere_action_logs_on_action_id", using: :btree
 
   create_table "atmosphere_actions", force: true do |t|
-    t.string   "type"
+    t.string   "action_type"
     t.integer  "appliance_id"
     t.datetime "created_at"
     t.datetime "updated_at"

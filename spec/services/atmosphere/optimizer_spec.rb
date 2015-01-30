@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Atmosphere::Optimizer, focus: true do
+describe Atmosphere::Optimizer do
   include VmtOnCsHelpers
 
   before do
@@ -570,7 +570,7 @@ describe Atmosphere::Optimizer, focus: true do
     end
   end
 
-  context 'scaling', focus: true  do
+  context 'scaling' do
     let(:strategy) { double() }
     let(:appliance) { create(:appliance) }
 

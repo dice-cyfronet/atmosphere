@@ -17,7 +17,7 @@ module Atmosphere
 
       action = Action.create { |action|
         action.appliance = appliance
-        action.type = :satisfy_appliance
+        action.action_type = :satisfy_appliance
       }
 
       logger.info { "Satisfying appliance with #{appliance.id} id started" }
@@ -88,7 +88,7 @@ module Atmosphere
       quantity = hint[:quantity]
       action = Action.create { |action|
         action.appliance = appliance
-        action.type = :scale
+        action.action_type = :scale
       }
       optimization_strategy = appliance.optimization_strategy
       appl_manager = ApplianceVmsManager.new(appliance)
