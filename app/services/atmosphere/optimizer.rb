@@ -14,6 +14,12 @@ module Atmosphere
 
     #private
     def satisfy_appliance(appliance)
+
+      action = Action.create { |action|
+        action.appliance = appliance
+        action.type = :satisfy_appliance
+      }
+
       logger.info { "Satisfying appliance with #{appliance.id} id started" }
       appl_manager = ApplianceVmsManager.new(appliance)
       optimization_strategy = appliance.optimization_strategy
@@ -80,6 +86,10 @@ module Atmosphere
     def scale(hint)
       appliance = hint[:appliance]
       quantity = hint[:quantity]
+      action = Action.create { |action|
+        action.appliance = appliance
+        action.type = :scale
+      }
       optimization_strategy = appliance.optimization_strategy
       appl_manager = ApplianceVmsManager.new(appliance)
       if optimization_strategy.can_scale_manually?

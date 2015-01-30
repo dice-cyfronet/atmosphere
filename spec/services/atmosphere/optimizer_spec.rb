@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Atmosphere::Optimizer do
+describe Atmosphere::Optimizer, focus: true do
   include VmtOnCsHelpers
 
   before do
@@ -570,16 +570,17 @@ describe Atmosphere::Optimizer do
     end
   end
 
-  context 'scaling' do
+  context 'scaling', focus: true  do
     let(:strategy) { double() }
-    let(:appliance) { double(optimization_strategy: strategy) }
+    let(:appliance) { create(:appliance) }
 
-    let(:appl_vm_manager) { double('appliance_vms_manager') }
+    let(:appl_vm_manager) { double('appliance_vms_manager'  ) }
 
     before do
 
       allow(Atmosphere::ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
-
+      expect(appl_vm_manager).to receive(:save)
+      allow(appliance).to receive(:optimization_strategy) { strategy }
 
     end
 
