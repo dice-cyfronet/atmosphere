@@ -4,7 +4,7 @@
 module Atmosphere
   class ActionSerializer < ActiveModel::Serializer
 
-    attributes :id
+    attributes :id, :action_type
 
     has_many :action_logs
 
