@@ -49,7 +49,7 @@ describe Atmosphere::VmUpdater do
                     id_at_site: 'id_at_site',
                     saved_templates: [vmt],
                     compute_site: cs,
-                    created_at: 10.seconds.ago)
+                    created_at: old_vm_creation_time)
 
         vm.saved_templates << vmt
       end
@@ -74,7 +74,7 @@ describe Atmosphere::VmUpdater do
         vm = create(:virtual_machine,
                     id_at_site: 'id_at_site',
                     compute_site: cs,
-                    created_at: 10.seconds.ago)
+                    created_at: old_vm_creation_time)
         appl1 = create(:appliance, virtual_machines: [vm])
         appl2 = create(:appliance, virtual_machines: [vm])
         appl_updater = double
@@ -111,7 +111,7 @@ describe Atmosphere::VmUpdater do
                     ip: '10.100.1.2',
                     compute_site: cs,
                     state: :shutoff,
-                    created_at: 10.seconds.ago)
+                    created_at: old_vm_creation_time)
         appl1 = create(:appliance, virtual_machines: [vm])
 
         expect(updater).to receive(:update)
@@ -147,7 +147,7 @@ describe Atmosphere::VmUpdater do
                     state: :active,
                     compute_site: cs,
                     ip: '10.100.1.2',
-                    created_at: 10.seconds.ago)
+                    created_at: old_vm_creation_time)
         appl = create(:appliance, virtual_machines: [vm])
         appl_updater = double
 
@@ -213,7 +213,7 @@ describe Atmosphere::VmUpdater do
                name: 'old_name',
                source_template: vmt,
                compute_site: cs,
-               created_at: 10.seconds.ago)
+               created_at: old_vm_creation_time)
       end
 
       it 'reuses existing VM' do
@@ -312,7 +312,7 @@ describe Atmosphere::VmUpdater do
                   id_at_site: 'id_at_site',
                   ip: nil,
                   compute_site: cs,
-                  created_at: 10.seconds.ago)
+                  created_at: old_vm_creation_time)
       allow(server).to receive(:updated).and_return(vm_update_at)
 
       Atmosphere::VmUpdater.new(cs, server, updater_class).update
@@ -327,7 +327,7 @@ describe Atmosphere::VmUpdater do
                   id_at_site: 'id_at_site',
                   ip: nil,
                   compute_site: cs,
-                  created_at: 10.seconds.ago)
+                  created_at: old_vm_creation_time)
       allow(server).to receive(:updated).and_return(vm_update_at + 1)
 
       Atmosphere::VmUpdater.new(cs, server, updater_class).update
@@ -379,5 +379,9 @@ describe Atmosphere::VmUpdater do
       public_ip_address: nil,
       addresses: {'private' => [ {'addr' => '10.100.2.3'} ]}
     )
+  end
+
+  def old_vm_creation_time
+    (Atmosphere.childhood_age.seconds + 1).ago
   end
 end
