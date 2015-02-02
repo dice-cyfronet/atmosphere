@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141202081811) do
+ActiveRecord::Schema.define(version: 20150121162000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -175,16 +175,15 @@ ActiveRecord::Schema.define(version: 20141202081811) do
 
   create_table "atmosphere_migration_jobs", force: true do |t|
     t.integer  "appliance_type_id"
+    t.integer  "virtual_machine_template_id"
     t.integer  "compute_site_source_id"
     t.integer  "compute_site_destination_id"
     t.text     "status"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "virtual_machine_template_id"
   end
 
-  add_index "atmosphere_migration_jobs", ["appliance_type_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
-  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix_2", unique: true, using: :btree
+  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
 
   create_table "atmosphere_port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
