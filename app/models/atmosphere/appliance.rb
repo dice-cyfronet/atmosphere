@@ -142,7 +142,7 @@ module Atmosphere
 
     # This method provided for backward compatibility
     def billing_state
-      if deployments.any?{|d| d.billing_state == 'prepaid'}
+      if deployments.any? { |d| d.billing_state == 'prepaid' }
         'prepaid'
       else
         'expired'
