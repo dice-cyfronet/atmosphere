@@ -8,6 +8,17 @@ module Atmosphere
              dependent: :destroy,
              class_name: 'Atmosphere::ActionLog'
 
+    def log(message, level = :info)
+      ActionLog.create(action: self, log_level: level)
+    end
+
+    def warn(message)
+      log(message, :warn)
+    end
+
+    def error(message)
+      log(message, :error)
+    end
 
   end
 end
