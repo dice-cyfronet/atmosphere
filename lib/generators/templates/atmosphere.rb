@@ -50,6 +50,15 @@ Atmosphere.setup do |config|
   #
   # config.optimizer.max_appl_no = 5
 
+  # Cloud monitoring worker intervals for monitoring virtual machines (vm) and
+  # virtual machine templates (vmt), flavors (flavor) and updating information
+  # about virtual machines load (load)
+  #
+  # config.monitoring.intervals.vm = 30.seconds
+  # config.monitoring.intervals.vmt = 1.minute
+  # config.monitoring.intervals.flavor = 120.minutes
+  # config.monitoring.intervals.load = 5.minutes
+
   # Delay for registering new VM inside Atmosphere. This delay was introduced
   # bacause mointoring is an asynchronous process which sometine was triggered
   # durring the process of spawning new appliance. As a conclusion we had a

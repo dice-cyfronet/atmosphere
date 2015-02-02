@@ -23,12 +23,18 @@ Gem::Specification.new do |s|
                     'ymnowako@cyf-kr.edu.pl',
                     'pawel@suder.info'
                   ]
-  s.homepage    = 'https://gitlab.dev.cyfronet.pl/atmosphere/air/'
+  s.homepage    = 'https://github.com/dice-cyfronet/atmosphere/'
   s.summary     = 'Atmosphere cloud platform'
   s.description = 'Atmosphere cloud platform'
   s.license     = 'MIT'
 
-  s.files = Dir['{app,config,db,lib,doc}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+  s.files = Dir[
+                 '{app,config,db,lib,doc}/**/*',
+                 'spec/factories/**/*',
+                 'MIT-LICENSE',
+                 'Rakefile',
+                 'README.md'
+  ]
   s.test_files = Dir['spec/**/*']
 
   s.add_dependency 'rails', '~> 4.1.8'

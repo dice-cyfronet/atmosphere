@@ -1,11 +1,10 @@
 %h1
   = t('user_keys.long_title')
-
-%p
-  = link_to new_admin_user_key_path,
-    class: 'btn btn-success btn-xs', title: t('user_keys.new') do
-    =icon 'plus'
-    = t('add_new')
+  .pull-right
+    = link_to new_admin_user_key_path,
+      class: 'btn btn-success', title: t('user_keys.new') do
+      =icon 'plus'
+      = t('add_new')
 
 %p
   %table.table.table-hover.table-condensed

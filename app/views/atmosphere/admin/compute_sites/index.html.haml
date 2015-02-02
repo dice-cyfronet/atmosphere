@@ -1,11 +1,10 @@
 %h1
   = t('compute_sites.long_title')
-
-%p
-  = link_to new_admin_compute_site_path,
-    class: 'btn btn-success btn-xs', title: t('compute_sites.new') do
-    =icon 'plus'
-    = t('add_new')
+  .pull-right
+    = link_to new_admin_compute_site_path,
+      class: 'btn btn-success', title: t('compute_sites.new') do
+      =icon 'plus'
+      = t('add_new')
 
 %p
   %table.table.table-hover.table-condensed
@@ -39,6 +38,6 @@
             = link_to edit_admin_compute_site_path(compute_site),
               class: 'btn btn-warning btn-xs', title: t('compute_sites.edit') do
               =icon 'edit'
-            = link_to admin_compute_site_path(compute_site), method: :delete, data: { confirm: t('are_you_sure') },
+            = link_to admin_compute_site_path(compute_site), method: :delete, data: { confirm: t('are_you_sure_cs') },
               class: 'btn btn-danger btn-xs', title: t('compute_sites.remove') do
               =icon 'trash-o'

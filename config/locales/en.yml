@@ -37,6 +37,7 @@ en:
   keep_it_secret: Keep it secret, keep it safe!
   reset: Reset
   are_you_sure: Are you sure?
+  are_you_sure_cs: Warning! This will irrevocably destroy all Virtual Machine Templates and Virtual Machines running on this CS which have been created by Atmosphere. Are you sure?
   actions: Actions
   add_new: Add new
   editing: Editing
@@ -232,6 +233,9 @@ en:
           corresponding fund may become negative as a result of further charges.
     no_sites: no compute sites assigned
     no_users: no users allowed to use this fund
+    set_default:
+      to_true: Set %{fund} to be the default fund for %{user}.
+      to_false: This is the default fund for %{user}.
   billing:
     consumption_title: Billing data for %{user}
     load_for_all:
