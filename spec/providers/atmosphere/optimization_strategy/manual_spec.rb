@@ -18,6 +18,10 @@ describe Atmosphere::OptimizationStrategy::Manual do
   let(:as) { create(:appliance_set, user: user)}
 
   it 'return templates and flavors for each defined vm in opt policy params' do
+
+    fl1.set_hourly_cost_for(Atmosphere::OSFamily.first, 5)
+    fl2.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+
     vms = [
            { 'cpu' => 1, 'mem' => 512, 'compute_site_ids' => [cs.id] },
            { 'cpu' => 2, 'mem' => 1024, 'compute_site_ids' => [cs.id] }
