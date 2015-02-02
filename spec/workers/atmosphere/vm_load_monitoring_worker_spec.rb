@@ -6,10 +6,26 @@ describe Atmosphere::VmLoadMonitoringWorker do
     Fog.mock!
   }
 
-  let!(:vm1) { create(:virtual_machine, ip: '10.100.0.1', monitoring_id: 1, managed_by_atmosphere: true) }
-  let!(:vm2) { create(:virtual_machine, ip: '10.100.0.2', monitoring_id: 2, managed_by_atmosphere: true) }
-  let!(:vm3) { create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true) }
-      let!(:vm4) { create(:virtual_machine, ip: '10.100.0.4', monitoring_id: 3) }
+  let!(:vm1) do
+    create(
+      :virtual_machine,
+      ip: '10.100.0.1',
+      monitoring_id: 1,
+      managed_by_atmosphere: true
+    )
+  end
+  let!(:vm2) do
+    create(
+      :virtual_machine,
+      ip: '10.100.0.2',
+      monitoring_id: 2,
+      managed_by_atmosphere: true
+    )
+  end
+  let!(:vm3) do
+    create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
+  end
+  let!(:vm4) { create(:virtual_machine, ip: '10.100.0.4', monitoring_id: 3) }
 
   context 'as a sidekiq worker' do
     it 'responds to #perform' do
@@ -21,9 +37,9 @@ describe Atmosphere::VmLoadMonitoringWorker do
   end
 
   context 'Zabbix' do
-    it 'queries Zabbix for each vm with zabbix id that are managed by atmosphere' do  
-      allow(Atmosphere::VirtualMachine)
-        .to receive(:monitorable).and_return [vm1, vm2]
+    it 'queries Zabbix for each monitorable vm' do
+      allow(Atmosphere::VirtualMachine).
+        to receive(:monitorable).and_return [vm1, vm2]
 
       expect(vm1).to receive(:current_load_metrics)
       expect(vm2).to receive(:current_load_metrics)
@@ -42,8 +58,8 @@ describe Atmosphere::VmLoadMonitoringWorker do
       allow(vm1).to receive(:current_load_metrics).and_return metrics_double_1
       allow(vm2).to receive(:current_load_metrics).and_return metrics_double_2
 
-      allow(Atmosphere::VirtualMachine)
-        .to receive(:monitorable).and_return [vm1, vm2]
+      allow(Atmosphere::VirtualMachine).
+        to receive(:monitorable).and_return [vm1, vm2]
 
       expect(vm1).to receive(:save_load_metrics).with(metrics_double_1)
       expect(vm2).to receive(:save_load_metrics).with(metrics_double_2)

@@ -34,7 +34,7 @@ module Atmosphere
         false
       end
 
-      def handle_event(hash)
+      def handle_event(_hash)
         nil
       end
 
