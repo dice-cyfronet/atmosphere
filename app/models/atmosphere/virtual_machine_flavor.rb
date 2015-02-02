@@ -82,7 +82,7 @@ module Atmosphere
         incarnation.save
       else
         incarnation = Atmosphere::VirtualMachineFlavorOSFamily.new(virtual_machine_flavor: self, os_family: os_family,
-          hourly_cost: hourly_cost)
+          hourly_cost: cost)
         incarnation.save
       end
     end

@@ -89,12 +89,6 @@ describe Atmosphere::BillingService do
 
       original_balance = cs_fund.balance
 
-      # cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      # cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
-      # cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 30)
-      # cs.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 40)
-      # cs.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 50)
-
       appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
@@ -171,12 +165,6 @@ describe Atmosphere::BillingService do
       cheap_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 10)
       expensive_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 100)
 
-      # cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      # cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
-      # cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 30)
-      # cs.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 40)
-      # cs.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 50)
-
       expect(Atmosphere::BillingService.can_afford_vm?(rich_appl, expensive_vm)).to eq true
       expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, shareable_vm)).to eq true
       expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, cheap_vm)).to eq false
@@ -238,13 +226,6 @@ describe Atmosphere::BillingService do
       empty_fund.save
       original_balance = cs_fund.balance
       empty_original_balance = empty_fund.balance
-
-
-      # cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      # cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
-      # cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 30)
-      # cs.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 40)
-      # cs.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 50)
 
       # Standard non-shared appliance
       appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [not_shareable_vm1])

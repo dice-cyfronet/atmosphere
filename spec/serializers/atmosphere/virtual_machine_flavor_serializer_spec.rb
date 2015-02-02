@@ -1,37 +1,65 @@
 require 'rails_helper'
 
 describe Atmosphere::VirtualMachineFlavorSerializer do
-  it 'sets active flag to true for flavor on active compute site' do
-    flavor = flavor_on_cs(cs_active: true, active: true)
 
-    result = serialize(flavor)
+  context 'basic tests' do
+    it 'sets active flag to true for flavor on active compute site' do
+      flavor = flavor_on_cs(cs_active: true, active: true)
 
-    expect(result['virtual_machine_flavor']['active']).to be_truthy
+      result = serialize(flavor)
+
+      expect(result['virtual_machine_flavor']['active']).to be_truthy
+    end
+
+    it 'sets active flag to true for flavor on inactive compute site' do
+      flavor = flavor_on_cs(cs_active: false, active: true)
+
+      result = serialize(flavor)
+
+      expect(result['virtual_machine_flavor']['active']).to be_falsy
+    end
+
+    it 'sets active falg to false for flavor without compute site' do
+      flavor = create(:flavor, compute_site: nil, active: true)
+
+      result = serialize(flavor)
+
+      expect(result['virtual_machine_flavor']['active']).to be_falsy
+    end
+
+    it 'sets active flag to false when vm flavor is non active' do
+      flavor = flavor_on_cs(cs_active: true, active: false)
+
+      result = serialize(flavor)
+
+      expect(result['virtual_machine_flavor']['active']).to be_falsy
+    end
   end
 
-  it 'sets active flag to true for flavor on inactive compute site' do
-    flavor = flavor_on_cs(cs_active: false, active: true)
+  context 'hourly cost tests' do
 
-    result = serialize(flavor)
+    let(:os_family1) { create(:os_family, os_family_name: 'foo') }
+    let(:os_family2) { create(:os_family, os_family_name: 'bar') }
 
-    expect(result['virtual_machine_flavor']['active']).to be_falsy
+    let(:vmf1) { create(:flavor) }
+
+    it 'returns proper hourly cost for VMF' do
+
+      vmf1.set_hourly_cost_for(Atmosphere::OSFamily.first, 37)
+      vmf1.set_hourly_cost_for(os_family1, 50)
+      vmf1.set_hourly_cost_for(os_family2, 25)
+
+      vmf1.reload
+
+      result = serialize(vmf1)
+
+      expect(result['virtual_machine_flavor']['hourly_cost']).to eq 50
+      expect(result['virtual_machine_flavor']['cost_map'].count).to eq 3
+
+    end
+
   end
 
-  it 'sets active falg to false for flavor without compute site' do
-    flavor = create(:flavor, compute_site: nil, active: true)
-
-    result = serialize(flavor)
-
-    expect(result['virtual_machine_flavor']['active']).to be_falsy
-  end
-
-  it 'sets active flag to false when vm flavor is non active' do
-    flavor = flavor_on_cs(cs_active: true, active: false)
-
-    result = serialize(flavor)
-
-    expect(result['virtual_machine_flavor']['active']).to be_falsy
-  end
 
   def serialize(flavor)
     serializer = Atmosphere::VirtualMachineFlavorSerializer.new(flavor)
