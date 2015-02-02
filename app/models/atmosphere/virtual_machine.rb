@@ -73,6 +73,7 @@ module Atmosphere
 
     scope :manageable, -> { where(managed_by_atmosphere: true) }
     scope :active, -> { where("state = 'active' AND ip IS NOT NULL") }
+    scope :monitorable, -> { manageable.where('monitoring_id IS NOT NULL AND ip IS NOT NULL')}
 
     scope :reusable_by, ->(appliance) do
       manageable.joins(:appliances).where(
