@@ -92,6 +92,15 @@ module Atmosphere
       virtual_machine_flavor_os_families.max_by(&:hourly_cost).hourly_cost
     end
 
+    # Returns a full cost map for this flavor (depending on os_family)
+    def cost_map
+      result = {}
+      virtual_machine_flavor_os_families.each do |f|
+        result[f.os_family.os_family_name] = f.hourly_cost
+      end
+      result
+    end
+
     def usable?
       active && compute_site && compute_site.active
     end
