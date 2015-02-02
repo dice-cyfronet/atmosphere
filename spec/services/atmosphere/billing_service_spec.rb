@@ -46,6 +46,8 @@ describe Atmosphere::BillingService do
     it 'throws exception for malformed appliance' do
       appl = create(:appliance, fund: nil, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
 
+      appl.update_columns(fund_id: nil)
+
       expect{Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)}.to raise_exception(Atmosphere::BillingException)
       expect{Atmosphere::BillingService.can_afford_flavor?(appl, not_shareable_vm1.virtual_machine_flavor)}.to raise_exception(Atmosphere::BillingException)
     end
