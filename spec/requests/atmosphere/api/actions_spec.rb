@@ -44,6 +44,7 @@ describe Atmosphere::Api::V1::ActionsController do
         get api('/actions', user)
         expect(actions_response.size).to eq 1
         expect(actions_response[0]["id"]).to eq action.id
+        expect(actions_response[0]["appliance_id"]).to eq action.appliance_id
       end
 
 
@@ -53,6 +54,7 @@ describe Atmosphere::Api::V1::ActionsController do
         expect(actions_response[0]["action_logs"][0]["id"]).to eq action_log.id
         expect(actions_response[0]["action_logs"][0]["log_level"]).to eq action_log.log_level
         expect(actions_response[0]["action_logs"][0]["message"]).to eq action_log.message
+
       end
     end
   end

@@ -12,7 +12,7 @@ module Atmosphere
         end
 
         def show
-          respond_with @actions
+          respond_with @action
         end
 
         private

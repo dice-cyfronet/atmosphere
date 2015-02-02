@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :action, :class => 'Atmosphere::Action' do
+  factory :action, class: 'Atmosphere::Action' do
 
     appliance
 
