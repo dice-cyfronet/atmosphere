@@ -79,26 +79,39 @@ describe Atmosphere::DnatWrangler do
     context 'when removing DNAT' do
 
       context 'using wrangler client' do
+        it 'removes existing redirection' do
+          stub_dnat_with_response_status(200)
 
-        stubs = nil
-        before do
+          expect(subject.remove(vm.ip)).to be_truthy
+          expect(subject.remove_port_mapping(pm)).to be_truthy
+          expect(subject.remove_port_mapping(pm2)).to be_truthy
+        end
+
+        it 'removes non existing redirection' do
+          stub_dnat_with_response_status(204)
+
+          expect(subject.remove(vm.ip)).to be_truthy
+          expect(subject.remove_port_mapping(pm)).to be_truthy
+          expect(subject.remove_port_mapping(pm2)).to be_truthy
+        end
+
+        def stub_dnat_with_response_status(status)
           stubs = Faraday::Adapter::Test::Stubs.new do |stub|
-            stub.delete("/dnat/#{priv_ip}") {[204, {}, nil]}
-            stub.delete("/dnat/#{priv_ip}/#{priv_port.to_s}/#{protocol}") {[204, {}, nil]}
-            stub.delete("/dnat/#{priv_ip}/#{priv_port_2.to_s}/#{protocol}") {[204, {}, nil]}
+            stub.delete("/dnat/#{priv_ip}") { [status, {}, nil] }
+
+            stub.delete("/dnat/#{priv_ip}/#{priv_port}/#{protocol}") do
+              [status, {}, nil]
+            end
+            stub.delete("/dnat/#{priv_ip}/#{priv_port_2}/#{protocol}") do
+              [status, {}, nil]
+            end
           end
           stubbed_dnat_client = Faraday.new do |builder|
             builder.adapter :test, stubs
           end
-          allow(subject).to receive(:dnat_client)
-            .and_return stubbed_dnat_client
-        end
 
-        it 'calls remote wrangler service for vm' do
-          subject.remove(vm.ip)
-          subject.remove_port_mapping(pm)
-          subject.remove_port_mapping(pm2)
-          stubs.verify_stubbed_calls
+          allow(subject).to receive(:dnat_client).
+            and_return stubbed_dnat_client
         end
       end
 
