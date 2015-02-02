@@ -66,9 +66,6 @@ module Atmosphere
           .select_tmpl_and_flavor(tmpls, params)
       end
 
-      # Update with hourly_cost column to maintain backward compatibility with GUI
-      flavor.hourly_cost = flavor.get_hourly_cost_for(at.os_family)
-
       flavor
     end
   end

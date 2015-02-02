@@ -87,6 +87,11 @@ module Atmosphere
       end
     end
 
+    # Provides backward compatibility with old versions of the GUI
+    def hourly_cost
+      virtual_machine_flavor_os_families.max_by(&:hourly_cost).hourly_cost
+    end
+
     def usable?
       active && compute_site && compute_site.active
     end
