@@ -140,6 +140,15 @@ module Atmosphere
       result
     end
 
+    # This method provided for backward compatibility
+    def billing_state
+      if deployments.any?{|d| d.billing_state == 'prepaid'}
+        'prepaid'
+      else
+        'expired'
+      end
+    end
+
     private
 
     def assign_default_fund
