@@ -67,6 +67,8 @@ module Atmosphere
     Struct.new(:load, :vm, :vmt, :flavor).
       new(5.minutes, 30.seconds, 1.minute, 120.minutes))
 
+  mattr_reader :cep
+
   mattr_accessor :childhood_age #seconds
   @@childhood_age = 2
 
@@ -153,6 +155,10 @@ module Atmosphere
 
   def self.clear_cache!
     @clients_cache = nil
+  end
+
+  def self.cep_client
+    Atmosphere::Cep::Esper.new(@@cep)
   end
 
   private
