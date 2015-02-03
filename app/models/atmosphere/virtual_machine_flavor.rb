@@ -89,7 +89,11 @@ module Atmosphere
 
     # Provides backward compatibility with old versions of the GUI
     def hourly_cost
-      virtual_machine_flavor_os_families.max_by(&:hourly_cost).hourly_cost
+      if virtual_machine_flavor_os_families.blank?
+        nil
+      else
+        virtual_machine_flavor_os_families.max_by(&:hourly_cost).hourly_cost
+      end
     end
 
     # Returns a full cost map for this flavor (depending on os_family)
