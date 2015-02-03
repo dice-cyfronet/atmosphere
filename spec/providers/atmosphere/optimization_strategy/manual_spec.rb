@@ -46,9 +46,9 @@ describe Atmosphere::OptimizationStrategy::Manual do
 
     expect(tmpls_and_flavors.size).to eq 2
     expect(tmpls_and_flavors[0][:template]).to eq tmpl
-    expect(tmpls_and_flavors[0][:flavor].reload).to eq fl1
+    expect(tmpls_and_flavors[0][:flavor]).to eq fl1
     expect(tmpls_and_flavors[1][:template]).to eq tmpl
-    expect(tmpls_and_flavors[1][:flavor].reload).to eq fl2
+    expect(tmpls_and_flavors[1][:flavor]).to eq fl2
   end
 
   context '#vms_to_start' do
