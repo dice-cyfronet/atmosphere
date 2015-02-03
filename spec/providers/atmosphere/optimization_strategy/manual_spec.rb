@@ -22,6 +22,9 @@ describe Atmosphere::OptimizationStrategy::Manual do
     fl1.set_hourly_cost_for(Atmosphere::OSFamily.first, 5)
     fl2.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
 
+    fl1.reload
+    fl2.reload
+
     vms = [
            { 'cpu' => 1, 'mem' => 512, 'compute_site_ids' => [cs.id] },
            { 'cpu' => 2, 'mem' => 1024, 'compute_site_ids' => [cs.id] }
@@ -43,9 +46,9 @@ describe Atmosphere::OptimizationStrategy::Manual do
 
     expect(tmpls_and_flavors.size).to eq 2
     expect(tmpls_and_flavors[0][:template]).to eq tmpl
-    expect(tmpls_and_flavors[0][:flavor]).to eq fl1
+    expect(tmpls_and_flavors[0][:flavor].reload).to eq fl1
     expect(tmpls_and_flavors[1][:template]).to eq tmpl
-    expect(tmpls_and_flavors[1][:flavor]).to eq fl2
+    expect(tmpls_and_flavors[1][:flavor].reload).to eq fl2
   end
 
   context '#vms_to_start' do
