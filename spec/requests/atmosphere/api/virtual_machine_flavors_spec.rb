@@ -33,6 +33,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
       it 'returns 200' do
         get api('/virtual_machine_flavors', user)
         expect(response.status).to eq 200
+
       end
 
       it 'returns all flavors when no filters are specified' do

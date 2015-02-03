@@ -12,6 +12,8 @@ FactoryGirl.define do
     after(:create) do |vmf|
       vmf_osf = Atmosphere::VirtualMachineFlavorOSFamily.new
       vmf_osf.virtual_machine_flavor = vmf
+      os_family = Atmosphere::OSFamily.first
+      os_family = create(os_family) if os_family.blank?
       vmf_osf.os_family = Atmosphere::OSFamily.first
       vmf_osf.hourly_cost = rand(max=100) + 1
       vmf_osf.save
