@@ -26,7 +26,9 @@ describe Atmosphere::ApplianceVmsManager do
         virtual_machines: app_vms,
         :state= => true,
         :billing_state= => true,
-        :state_explanation= => true
+        :state_explanation= => true,
+        optimization_strategy:
+          Atmosphere::OptimizationStrategy::Default.new(nil),
       )
     end
     let(:tags_mng) { double('tags manager', execute: true) }
@@ -92,6 +94,9 @@ describe Atmosphere::ApplianceVmsManager do
 
         user_data: 'user data',
         user_key: 'user key',
+
+        optimization_strategy:
+          Atmosphere::OptimizationStrategy::Default.new(nil),
 
         name: 'name',
         id: 1,

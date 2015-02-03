@@ -120,6 +120,14 @@ module Atmosphere
       appliance.state = :satisfied
       updater.update(new_vm: vm)
       @tags_manager_class.new(vm).execute
+      register_in_cep_engine(vm)
+    end
+
+    def register_in_cep_engine(vm)
+      if (ev_definitions = appliance.optimization_strategy.event_definitions)
+        Atmosphere.cep_client.add_event_type(ev_definitions[:simple_event])
+        Atmosphere.cep_client.subscribe(ev_definitions[:complex_event])
+      end
     end
 
     def bill
