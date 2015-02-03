@@ -72,6 +72,11 @@ module Atmosphere
 
         def select
           opt_flavors_and_tmpls_map = tmpls.inject({}) do |hsh, tmpl|
+
+            puts "My compute site: #{tmpl.compute_site.inspect}"
+            puts "My compute site flavors: #{tmpl.compute_site.virtual_machine_flavors.inspect}"
+            puts "Flavor price matrix: #{tmpl.compute_site.virtual_machine_flavors.collect{|f|f.virtual_machine_flavor_os_families}.inspect}"
+
             opt_fl = (
               min_elements_by(
                 tmpl.compute_site.virtual_machine_flavors.active.select do |f|
@@ -80,7 +85,7 @@ module Atmosphere
                   f.cpu >= min_cpu &&
                   f.hdd >= min_hdd
                 end
-              ) {|f| f.reload; f.get_hourly_cost_for(tmpl.appliance_type.os_family)}
+              ) {|f| f.get_hourly_cost_for(tmpl.appliance_type.os_family)}
             ).sort!{ |x,y| y.memory <=> x.memory }.last
             hsh[opt_fl] = tmpl if opt_fl
             hsh
