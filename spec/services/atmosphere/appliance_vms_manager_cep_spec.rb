@@ -3,9 +3,8 @@ require 'rails_helper'
 describe Atmosphere::ApplianceVmsManager do
 
   before(:suite) do
-   Fog.mock!
-   
- end
+   Fog.mock!  
+  end
 
   let(:server_id) { 'SERVER_ID' }
   let(:cep) { double('cep') }
