@@ -333,7 +333,7 @@ describe Atmosphere::VirtualMachine do
     end
   end
 
-  context '::monitorable', focus: true do
+  context '::monitorable' do
     let!(:vm) { create(:virtual_machine, ip: priv_ip) }
     let!(:managable_vm) {
       create(:virtual_machine, managed_by_atmosphere: true, ip: priv_ip_2)
