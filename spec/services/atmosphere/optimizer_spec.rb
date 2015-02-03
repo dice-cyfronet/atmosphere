@@ -409,10 +409,13 @@ describe Atmosphere::Optimizer do
 
         it 'selects cheapest flavour that satisfies requirements' do
           selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+          flavor.reload
+
           expect(flavor.memory).to be >= 1024
           expect(flavor.cpu).to be >= 2
           all_discarded_flavors = amazon.virtual_machine_flavors + openstack.virtual_machine_flavors - [flavor]
           all_discarded_flavors.each {|f|
+            f.reload
             if(f.memory >= appl_type.preference_memory and f.cpu >= appl_type.preference_cpu)
               expect(f.get_hourly_cost_for(Atmosphere::OSFamily.first) >= flavor.get_hourly_cost_for(Atmosphere::OSFamily.first)).to be true
             end
@@ -422,7 +425,10 @@ describe Atmosphere::Optimizer do
         it 'selects flavor with more ram if prices are equal' do
           biggest_os_flavor = openstack.virtual_machine_flavors.max_by {|f| f.memory}
           optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, compute_site: amazon)
+          biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
+          biggest_os_flavor.reload
           optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, biggest_os_flavor.get_hourly_cost_for(Atmosphere::OSFamily.first))
+          optimal_flavor.reload
 
           amazon.reload
           appl_type.preference_memory = biggest_os_flavor.memory

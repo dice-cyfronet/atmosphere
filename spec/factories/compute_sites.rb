@@ -35,7 +35,7 @@ FactoryGirl.define do
       site_type 'public'
       technology 'aws'
       #config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
-      after(:build) do |cs|
+      after(:create) do |cs|
         cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 60)
         cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 70)
         cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 80)
@@ -51,7 +51,7 @@ FactoryGirl.define do
     end
 
     factory :openstack_with_flavors, traits: [:openstack_flavors] do
-      after(:build) do |cs|
+      after(:create) do |cs|
         cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
         cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
         cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 30)

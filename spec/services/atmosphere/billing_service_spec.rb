@@ -55,6 +55,10 @@ describe Atmosphere::BillingService do
     it 'creates new funded non-shareable appliance as default' do
       appl = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
 
+      vmf = appl.virtual_machines.first.virtual_machine_flavor
+      vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+      vmf.reload
+
       expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
 
       Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
@@ -70,6 +74,10 @@ describe Atmosphere::BillingService do
       expect(appl.deployments.first.billing_state).to eq("expired")
 
       expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq false
+
+      vmf = appl.virtual_machines.first.virtual_machine_flavor
+      vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+      vmf.reload
 
       Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
 
@@ -92,6 +100,10 @@ describe Atmosphere::BillingService do
       original_balance = cs_fund.balance
 
       appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
+
+      vmf = appl1.virtual_machines.first.virtual_machine_flavor
+      vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+      vmf.reload
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
       appl1.reload
@@ -162,6 +174,7 @@ describe Atmosphere::BillingService do
       expensive_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: expensive_flavor)
       cheap_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cheap_flavor)
       free_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: free_flavor)
+      shareable_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_shareable_at, virtual_machine_flavor: free_flavor)
 
       free_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 0)
       cheap_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 10)
@@ -240,6 +253,10 @@ describe Atmosphere::BillingService do
       # An appliance with a nearly-expired fund
       expiring_appl = create(:appliance, fund: empty_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst3, virtual_machines: [not_shareable_vm3])
 
+      vmf = appl1.virtual_machines.first.virtual_machine_flavor
+      vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+      vmf.reload
+
       cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
       Atmosphere::BillingService.bill_all_appliances
@@ -313,12 +330,17 @@ describe Atmosphere::BillingService do
       # Standard non-shared appliance
       appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst1, virtual_machines: [not_shareable_vm1])
 
+      vmf = appl1.virtual_machines.first.virtual_machine_flavor
+      vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+      vmf.reload
+
       cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
 
       cs_fund.reload
       expect(cs_fund.balance).to eq original_balance - cost_unit
+
 
       # Advance the clock by 1.5 hours and destroy appl1
       appl1.deployments.first.prepaid_until = Time.now - 30.minutes

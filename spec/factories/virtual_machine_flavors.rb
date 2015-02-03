@@ -6,8 +6,10 @@ FactoryGirl.define do
     memory { rand(max=16384) + 512 }
     hdd { rand(max=1000) + 1 }
 
-    # Create a new incarnation record for this flavor (bind to os_family and rewrite price
-    after(:build) do |vmf|
+    #os_families { [Atmosphere::OSFamily.first] }
+
+    #Create a new incarnation record for this flavor (bind to os_family and rewrite price
+    after(:create) do |vmf|
       vmf_osf = Atmosphere::VirtualMachineFlavorOSFamily.new
       vmf_osf.virtual_machine_flavor = vmf
       vmf_osf.os_family = Atmosphere::OSFamily.first
