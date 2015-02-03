@@ -130,9 +130,9 @@ module Atmosphere
     def prepaid_until
       # Helper method which determines how long this appliance will remain prepaid
       if deployments.blank?
-        # Invoking this method on an appliance which has no deployments is a "nasal demons"
-        # scenario (the question doesn't make sense and neither will the answer).
-        # Returning fixed time is least likely to break anything on the requestor side.
+        # Invoking this method on an appl whith 0 deployments is a nasal demons
+        # scenario: the question doesn't make sense and neither will the answer.
+        # Returning fixed time is least likely to break the client.
         result = Time.parse('2000-01-01 12:00')
       else
         result = deployments.max_by { |dep| dep.prepaid_until }.prepaid_until
