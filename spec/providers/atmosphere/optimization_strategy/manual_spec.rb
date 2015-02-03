@@ -19,8 +19,8 @@ describe Atmosphere::OptimizationStrategy::Manual do
 
   it 'return templates and flavors for each defined vm in opt policy params' do
 
-    fl1.set_hourly_cost_for(Atmosphere::OSFamily.first, 5)
-    fl2.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+    fl1.set_hourly_cost_for(at.os_family, 5)
+    fl2.set_hourly_cost_for(at.os_family, 10)
 
     fl1.reload
     fl2.reload
