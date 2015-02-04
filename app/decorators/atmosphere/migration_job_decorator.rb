@@ -2,50 +2,32 @@ class Atmosphere::MigrationJobDecorator < Draper::Decorator
   delegate_all
 
   def appliance_type_name
-    if object.appliance_type
-      object.appliance_type.name
-    else
-      'unknown'
-    end
+    at = object.appliance_type
+    at ? at.name : 'unknown'
   end
 
   def virtual_machine_template_name
-    if object.virtual_machine_template
-      object.virtual_machine_template.name
-    else
-      'unknown'
-    end
+    vmt = object.virtual_machine_template
+    vmt ? vmt.name : 'unknown'
   end
 
   def virtual_machine_template_id_at_site
-    if object.virtual_machine_template
-      object.virtual_machine_template.id_at_site
-    else
-      'unknown'
-    end
+    vmt = object.virtual_machine_template
+    vmt ? vmt.id_at_site : 'unknown'
   end
 
   def compute_site_source_name
-    if object.compute_site_source
-      object.compute_site_source.name
-    else
-      'unknown'
-    end
+    css = object.compute_site_source
+    css ? css.name : 'unknown'
   end
 
   def compute_site_destination_name
-    if object.compute_site_destination
-      object.compute_site_destination.name
-    else
-      'unknown'
-    end
+    csd = object.compute_site_destination
+    csd ? csd.name : 'unknown'
   end
 
   def status_last_line
-    if object.status
-      object.status.lines.last
-    else
-      'unknown'
-    end
+    s = object.status
+    s ? s.lines.last : 'unknown'
   end
 end
