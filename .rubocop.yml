@@ -1,0 +1,11 @@
+AllCops:
+  RunRailsCops: true
+  Exclude:
+    - db/schema.rb
+    - spec/dummy/db/schema.rb
+    - Gemfile
+    - Rakefile
+
+StringLiterals:
+  EnforcedStyle: single_quotes
+  Enabled: true
