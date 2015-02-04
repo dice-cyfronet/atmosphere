@@ -10,7 +10,7 @@ module Atmosphere
       @destination_compute_site = destination_compute_site
     end
 
-    def select_migrator
+    def select_migrator_class
       case @destination_compute_site.technology
       when 'aws'
         Migratio::Worker::OpenstackAmazonMigrator
@@ -29,9 +29,9 @@ module Atmosphere
 
     def execute
       if @source_compute_site.technology == 'openstack'
-        migrator_class = select_migrator
+        migrator_class = select_migrator_class
 
-        if !migrator_class.nil?
+        if migrator_class
           enqueue_job migrator_class
         end
       end
