@@ -3,7 +3,7 @@ module Atmosphere
     belongs_to :appliance,
                class_name: 'Atmosphere::Appliance'
 
-    has_many :action_logs,
+    has_many :action_logs, :order => 'id DESC'
              dependent: :destroy,
              class_name: 'Atmosphere::ActionLog'
 

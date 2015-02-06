@@ -8,7 +8,7 @@ module Atmosphere
         respond_to :json
 
         def index
-          respond_with @actions.where(filter).order(:id).uniq
+          respond_with @actions.where(filter).eager_load(:action_logs).order(:id)
         end
 
         def show
