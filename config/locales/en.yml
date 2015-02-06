@@ -45,8 +45,11 @@ en:
   show: Show
   hide: Hide
   save: Save
+  share: Share
   create: Create
   delete: Delete
+  export: Export
+  migrate: Migrate
   new: New
   uuid: UUID
   background_jobs: Background Jobs
@@ -141,9 +144,21 @@ en:
     state: State
     show: Show this Virtual Machine Template
     edit: Edit this Virtual Machine Template
+    migrate: Migrate this Virtual Machine Template to other Compute Site
     remove: Remove this Virtual Machine Template
     version: Version
     managed_by_atmosphere: Managed
+  migration_jobs:
+    title: Migration
+    long_title: Migration Jobs
+    long_title_single: Migration Jobs
+    appliance_type: Appliance Type
+    virtual_machine_template: Virtual Machine Template
+    virtual_machine_template_uuid: UUID
+    compute_site_source: Source
+    compute_site_destination: Destination
+    status: Status
+    last_update: Last update
   user_keys:
     title: User keys
     long_title: User keys

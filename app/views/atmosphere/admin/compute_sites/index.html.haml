@@ -9,28 +9,23 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th
-        = t('compute_sites.site')
-      %th
-        = t('compute_sites.name')
-      %th
-        = t('compute_sites.location')
-      %th
-        = t('compute_sites.site_type')
-      %th
-        = t('compute_sites.technology')
-      %th{ style: "text-align: right; min-width: 8rem;" }
+      %th= t('compute_sites.site')
+      %th= t('compute_sites.name')
+      %th= t('compute_sites.location')
+      %th= t('compute_sites.site_type')
+      %th= t('compute_sites.technology')
+      %th.actions
         = t('actions')
 
     - @compute_sites.each do |compute_site|
       %tr
-        %td{ style: "font-family: monospace;" }
+        %td.monospace
           = compute_site.site_id
         %td= compute_site.name
         %td= compute_site.location
         %td= compute_site.site_type
         %td= compute_site.technology
-        %td{ style: "text-align: right" }
+        %td.actions
           .btn-group
             = link_to admin_compute_site_path(compute_site),
               class: 'btn btn-success btn-xs', title: t('compute_sites.show') do

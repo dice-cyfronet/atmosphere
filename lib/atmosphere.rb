@@ -35,6 +35,7 @@ module Atmosphere
         Atmosphere::ComputeSite,
         Atmosphere::VirtualMachine,
         Atmosphere::VirtualMachineTemplate,
+        Atmosphere::MigrationJob,
         Atmosphere::UserKey,
         Atmosphere::Fund
       ]

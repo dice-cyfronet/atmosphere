@@ -46,12 +46,18 @@ Atmosphere::Engine.routes.draw do
         post :reboot
       end
     end
-    resources :virtual_machine_templates, except: [:new, :create]
+    resources :virtual_machine_templates, except: [:new, :create] do
+      member do
+        get :select_destination
+        post :migrate
+      end
+    end
     resources :user_keys, except: [:edit, :update]
     resources :funds
     resources :compute_site_funds, only: [:create, :destroy]
     resources :user_funds, only: [:create, :destroy, :update]
     resources :billing_logs, only: [:index]
+    resources :migration_jobs, only: [:index]
   end
 
   namespace :api, defaults: { format: :json } do

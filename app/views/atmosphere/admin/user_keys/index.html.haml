@@ -9,22 +9,19 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th
-        = t('user_keys.name')
-      %th
-        = t('user_keys.fingerprint')
-      %th
-        = t('user_keys.owner')
-      %th{ style: "text-align: right; min-width: 8rem;" }
+      %th= t('user_keys.name')
+      %th= t('user_keys.fingerprint')
+      %th= t('user_keys.owner')
+      %th.actions
         = t('actions')
 
     - @user_keys.each do |user_key|
       %tr
         %td= user_key.name
-        %td{ style: "font-family: monospace;" }
+        %td.monospace
           = user_key.fingerprint
         %td= user_key.user.login
-        %td{ style: "text-align: right" }
+        %td.actions
           .btn-group
             = link_to admin_user_key_path(user_key),
               class: 'btn btn-success btn-xs', title: t('user_keys.show') do

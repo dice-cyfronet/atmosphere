@@ -26,6 +26,8 @@ require 'highcharts-rails'
 require 'github-markup'
 require 'redcarpet'
 
+require 'draper'
+
 module Atmosphere
   class Engine < ::Rails::Engine
     isolate_namespace Atmosphere
