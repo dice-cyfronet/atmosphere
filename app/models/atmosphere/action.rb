@@ -9,7 +9,7 @@ module Atmosphere
              class_name: 'Atmosphere::ActionLog'
 
     def log(message, level = :info)
-      ActionLog.create(action: self, log_level: level)
+      action_logs.create(message: message, log_level: level)
     end
 
     def warn(message)
