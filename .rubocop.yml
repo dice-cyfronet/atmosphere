@@ -1,7 +1,6 @@
 AllCops:
   RunRailsCops: true
   Exclude:
-    - db/schema.rb
     - spec/dummy/db/schema.rb
     - Gemfile
     - Rakefile
