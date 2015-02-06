@@ -574,7 +574,7 @@ describe Atmosphere::Optimizer do
     let(:strategy) { double() }
     let(:appliance) { create(:appliance) }
 
-    let(:appl_vm_manager) { double('appliance_vms_manager'  ) }
+    let(:appl_vm_manager) { double('appliance_vms_manager') }
 
     before do
 

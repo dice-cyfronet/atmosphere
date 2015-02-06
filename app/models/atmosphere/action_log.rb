@@ -6,6 +6,5 @@ module Atmosphere
                class_name: 'Atmosphere::Action'
 
     enumerize :log_level, in: [:info, :warn, :error], default: :info
-
   end
 end
