@@ -20,7 +20,6 @@ module Atmosphere
         def model_class
           Atmosphere::Action
         end
-
       end
     end
   end

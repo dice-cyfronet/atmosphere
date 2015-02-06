@@ -1,6 +1,5 @@
 module Atmosphere
   class Action < ActiveRecord::Base
-
     belongs_to :appliance,
                class_name: 'Atmosphere::Appliance'
 
@@ -19,6 +18,5 @@ module Atmosphere
     def error(message)
       log(message, :error)
     end
-
   end
 end
