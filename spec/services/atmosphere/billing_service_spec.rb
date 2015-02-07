@@ -219,7 +219,6 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, windows_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, linux_flavor)).to eq true
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, windows_flavor)).to eq false
-      expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, linux_flavor)).to eq false
     end
   end
 
