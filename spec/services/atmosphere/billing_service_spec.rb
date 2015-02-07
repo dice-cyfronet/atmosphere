@@ -193,8 +193,8 @@ describe Atmosphere::BillingService do
   end
 
   context 'os_families' do
-    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs, os_families: [windows_osfamily])}
-    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs, os_families: [linux_osfamily])}
+    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
+    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
 
     let(:poor_fund) { create(:fund, balance: 75, overdraft_limit: 0, compute_sites: [cs] )}
 
