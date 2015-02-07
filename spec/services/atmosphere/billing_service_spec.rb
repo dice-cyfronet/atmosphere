@@ -221,7 +221,6 @@ describe Atmosphere::BillingService do
       linux_flavor.reload
       windows_flavor.reload
 
-
       expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, windows_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, linux_flavor)).to eq true
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, windows_flavor)).to eq false

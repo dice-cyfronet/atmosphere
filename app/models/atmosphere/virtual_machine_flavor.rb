@@ -83,6 +83,7 @@ module Atmosphere
       end
       incarnation.hourly_cost = cost
       incarnation.save
+      puts incarnation.errors.inspect
     end
 
     # Provides backward compatibility with old versions of the GUI
