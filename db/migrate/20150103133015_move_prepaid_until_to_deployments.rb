@@ -11,7 +11,7 @@ class MovePrepaidUntilToDeployments < ActiveRecord::Migration
     execute "ALTER TABLE atmosphere_deployments ADD COLUMN prepaid_until TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
 
     # Now we need to iterate over existing Appliances and rewrite the relevant data in order to maintain appliance info
-    Atmosphere::Appliance.find_each do |a|
+    Atmosphere::Appliance.includes(:deployments).find_each do |a|
       a.deployments.each do |dep|
         dep.billing_state = a.billing_state
         dep.prepaid_until = a.prepaid_until
@@ -29,7 +29,7 @@ class MovePrepaidUntilToDeployments < ActiveRecord::Migration
     add_column :atmosphere_appliances, :billing_state, :string, null:false, default:"prepaid"
     execute "ALTER TABLE atmosphere_appliances ADD COLUMN prepaid_until TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"
 
-    Atmosphere::Appliance.find_each do |a|
+    Atmosphere::Appliance.includes(:deployments).find_each do |a|
       dep = a.deployments.first
       unless dep.blank?
         a.billing_state = dep.billing_state

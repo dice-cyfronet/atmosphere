@@ -32,7 +32,9 @@ module Atmosphere
       class_name: 'Atmosphere::OSFamily'
 
     has_many :virtual_machine_flavor_os_families,
-      class_name: 'Atmosphere::VirtualMachineFlavorOSFamily'
+      inverse_of: :virtual_machine_flavor,
+      class_name: 'Atmosphere::VirtualMachineFlavorOSFamily',
+      autosave: true
 
     validates :flavor_name,
               presence: true
@@ -66,44 +68,28 @@ module Atmosphere
 
     # Assumes only 1 vmf_osf for a specific os_family
     def get_hourly_cost_for(os_family)
-      incarnation = virtual_machine_flavor_os_families.select{|vmf_osf| vmf_osf.os_family == os_family}.first
-      if incarnation.is_a?(Atmosphere::VirtualMachineFlavorOSFamily)
-        incarnation.hourly_cost
-      else
-        nil #GIGO
-      end
+      incarnation = virtual_machine_flavor_os_families.find_by(os_family: os_family)
+      incarnation && incarnation.hourly_cost # nil if incarnation.blank?
     end
 
     # Upserts a binding between this VMF and an OS family, setting hourly cost
     def set_hourly_cost_for(os_family, cost)
-      incarnation = virtual_machine_flavor_os_families.select{|vmf_osf| vmf_osf.os_family == os_family}.first
-      if incarnation.is_a?(Atmosphere::VirtualMachineFlavorOSFamily)
-        incarnation.hourly_cost = cost
-        incarnation.save
-      else
-        incarnation = Atmosphere::VirtualMachineFlavorOSFamily.new(virtual_machine_flavor: self, os_family: os_family,
-          hourly_cost: cost)
-        incarnation.save
-      end
+      incarnation = virtual_machine_flavor_os_families.find_or_initialize_by(os_family: os_family)
+      incarnation.hourly_cost = cost
+      incarnation.save
     end
 
     # Provides backward compatibility with old versions of the GUI
     def hourly_cost
-      if virtual_machine_flavor_os_families.blank?
-        nil
-      else
-        virtual_machine_flavor_os_families.max_by(&:hourly_cost).hourly_cost
-      end
+      virtual_machine_flavor_os_families &&
+        virtual_machine_flavor_os_families.maximum(:hourly_cost)
     end
 
     # Returns a full cost map for this flavor (depending on os_family)
     def cost_map
-      result = {}
-
-      virtual_machine_flavor_os_families.each do |f|
-        result[f.os_family.os_family_name] = f.hourly_cost
+      virtual_machine_flavor_os_families.each_with_object({}) do |f, hash|
+        hash[f.os_family.os_family_name] = f.hourly_cost
       end
-      result
     end
 
     def usable?

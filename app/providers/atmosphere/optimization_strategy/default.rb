@@ -80,7 +80,7 @@ module Atmosphere
                   f.cpu >= min_cpu &&
                   f.hdd >= min_hdd
                 end
-              ) {|f| f.get_hourly_cost_for(tmpl.appliance_type.os_family)}
+              ) {|f| tmpl.get_hourly_cost_for(f)}
             ).sort!{ |x,y| y.memory <=> x.memory }.last
             hsh[opt_fl] = tmpl if opt_fl
             hsh
@@ -89,7 +89,7 @@ module Atmosphere
           globally_opt_flavor = (
             min_elements_by(
               opt_flavors_and_tmpls_map.keys
-            ) { |f| f.get_hourly_cost_for(tmpls.first.appliance_type.os_family)}
+            ) { |f| tmpls.first.get_hourly_cost_for(f)}
           ).sort { |x,y| x.memory <=> y.memory }.last
 
           [

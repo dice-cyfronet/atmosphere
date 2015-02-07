@@ -57,7 +57,6 @@ describe Atmosphere::BillingService do
 
       vmf = appl.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      vmf.reload
 
       expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
 
@@ -77,7 +76,6 @@ describe Atmosphere::BillingService do
 
       vmf = appl.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      vmf.reload
 
       Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
 
@@ -86,10 +84,12 @@ describe Atmosphere::BillingService do
       # Add funds to empty_fund and retry
       empty_fund.balance = 10000
       empty_fund.save
+      appl.reload
 
       expect(Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)).to eq true
 
       Atmosphere::BillingService.bill_appliance(appl, Time.now.utc, "mockup billing", true)
+
 
       appl.reload
       expect(appl.deployments.first.billing_state).to eq("prepaid")
@@ -103,7 +103,6 @@ describe Atmosphere::BillingService do
 
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      vmf.reload
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
       appl1.reload
@@ -194,8 +193,8 @@ describe Atmosphere::BillingService do
   end
 
   context 'os_families' do
-    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
-    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
+    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs, os_families: [windows_osfamily])}
+    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs, os_families: [linux_osfamily])}
 
     let(:poor_fund) { create(:fund, balance: 75, overdraft_limit: 0, compute_sites: [cs] )}
 
@@ -214,10 +213,6 @@ describe Atmosphere::BillingService do
 
     it 'can or cannot afford flavors depending on os_family' do
 
-      windows_flavor.os_families = [windows_osfamily]
-      linux_flavor.os_families = [linux_osfamily]
-      windows_flavor.save
-      linux_flavor.save
       windows_flavor.set_hourly_cost_for(windows_osfamily, 100)
       linux_flavor.set_hourly_cost_for(linux_osfamily, 50)
 
@@ -255,7 +250,6 @@ describe Atmosphere::BillingService do
 
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      vmf.reload
 
       cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
@@ -332,7 +326,6 @@ describe Atmosphere::BillingService do
 
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-      vmf.reload
 
       cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
@@ -346,11 +339,7 @@ describe Atmosphere::BillingService do
       appl1.deployments.first.prepaid_until = Time.now - 30.minutes
       appl1.save
 
-      begin
-        appl1.destroy
-      rescue Excon::Errors::Conflict => e
-        # Squelch exception involving destruction of VM in cloud
-      end
+      appl1.destroy
 
       expect(Atmosphere::BillingLog.all.count).to eq 2
 

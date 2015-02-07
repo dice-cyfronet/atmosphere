@@ -33,7 +33,6 @@ describe Atmosphere::Api::V1::ClewController do
       let!(:httpm)        { create(:http_mapping, appliance: appl, port_mapping_template: pmt) }
       let!(:pm)           { create(:port_mapping, port_mapping_template: pmt, virtual_machine: vm1) }
 
-
       it 'returns 200' do
         get api("/clew/appliance_instances", user)
         expect(response.status).to eq 200

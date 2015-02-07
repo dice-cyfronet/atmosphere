@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe Atmosphere::VirtualMachineFlavorSerializer do
 
-  context 'basic tests' do
-    it 'sets active flag to true for flavor on active compute site' do
+  context 'activity flag tests' do
+    it 'is active on active compute site' do
       flavor = flavor_on_cs(cs_active: true, active: true)
 
       result = serialize(flavor)
@@ -11,7 +11,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
       expect(result['virtual_machine_flavor']['active']).to be_truthy
     end
 
-    it 'sets active flag to true for flavor on inactive compute site' do
+    it 'is inactive on inactive compute site' do
       flavor = flavor_on_cs(cs_active: false, active: true)
 
       result = serialize(flavor)
@@ -19,7 +19,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
       expect(result['virtual_machine_flavor']['active']).to be_falsy
     end
 
-    it 'sets active falg to false for flavor without compute site' do
+    it 'is inactive when not bound to compute site' do
       flavor = create(:flavor, compute_site: nil, active: true)
 
       result = serialize(flavor)
@@ -27,7 +27,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
       expect(result['virtual_machine_flavor']['active']).to be_falsy
     end
 
-    it 'sets active flag to false when vm flavor is non active' do
+    it 'sets active flag to false when flavor is inactive' do
       flavor = flavor_on_cs(cs_active: true, active: false)
 
       result = serialize(flavor)

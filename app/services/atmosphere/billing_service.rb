@@ -37,7 +37,10 @@ module Atmosphere
         # This should not happen - it means that we do not know when this deployment will run out of funds.
         # Therefore we cannot meaningfully bill it again and must return an error.
         Rails.logger.error("Unable to determine current payment validity date for deployment #{dep.id} belonging to appliance #{appl.id}. Skipping.")
-        BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Unable to determine current payment validity date for deployment.", actor: "bill_appliance", amount_billed: 0).save
+        BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user,
+          appliance: "#{appl.id.to_s}---#{appl.name.blank? ? 'unnamed_appliance' : appl.name}",
+          fund: appl.fund.name, message: "Unable to determine current payment validity date for deployment.",
+          actor: "bill_appliance", amount_billed: 0).save
         dep.billing_state = "error"
         dep.save
         raise Atmosphere::BillingException.new(message: "Unable to determine current payment validity date for deployment #{dep.id} belonging to appliance #{appl.id}")
@@ -49,7 +52,7 @@ module Atmosphere
           Rails.logger.debug("Deployment #{dep.id} belonging to appliance #{appl.id} is prepaid until #{dep.prepaid_until}. Nothing to be done.")
         else
           # Bill the hell out of this deployment! :)
-          Rails.logger.debug("Billing deployment #{dep.id} belonging to appliance #{appl.id} for #{(billing_interval/3600)} hours of use.")
+          Rails.logger.debug("Billing deployment #{dep.id} belonging to appliance #{appl.id} for #{billing_interval/3600} hours of use.")
           # Open a transaction to avoid race conditions etc.
           ActiveRecord::Base.transaction do
             amount_due = calculate_charge_for_deployment(dep, billing_time, apply_prepayment)
@@ -58,7 +61,9 @@ module Atmosphere
               # We've run out of funds. This deployment cannot be paid for. Flagging it as expired.
               Rails.logger.warn("The balance of fund #{appl.fund.id} is insufficient to cover continued operation of deployment #{dep.id} belonging to appliance #{appl.id} (current balance: #{appl.fund.balance}; overdraft limit: #{appl.fund.overdraft_limit}; calculated charge: #{amount_due}). Flagging deployment as expired.")
               BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Funding expired for deployment #{dep.id}.", actor: "bill_appliance", amount_billed: 0).save
-              dep.billing_state = "expired" # A separate method will be used to clean up all expired deployments according to their funds' termination policies
+              # A separate method will be used to clean up all expired
+              # deployments according to their funds' termination policies
+              dep.billing_state = "expired"
               dep.save
             else
               Rails.logger.debug("Applying charge of #{amount_due} to deployment #{dep.id} belonging to appliance #{appl.id} and deducting it from balance of fund #{appl.fund.id}.")
@@ -68,9 +73,12 @@ module Atmosphere
               appl.last_billing = billing_time
               dep.prepaid_until = billing_time+(apply_prepayment ? @appliance_prepayment_interval : 0)
               dep.billing_state = "prepaid"
-              appl.save
-              dep.save
-              if dep.errors.blank?
+              # These should be saved together or not at all
+              ActiveRecord::Base.transaction do
+                appl.save
+                dep.save
+              end
+              if dep.errors.blank? and appl.errors.blank?
                 # Write success to log.
                 BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: message, actor: "bill_appliance", amount_billed: amount_due).save
               else
@@ -95,19 +103,20 @@ module Atmosphere
 
       vm = dep.virtual_machine # Shorthand
       # Find out how many appliances are using this VM and split costs equally
-      os_family = dep.appliance.appliance_type.os_family
-      hourly_charge = (vm.virtual_machine_flavor.get_hourly_cost_for(os_family)/vm.appliances.count).round #TODO: figure out if we should limit this to appliances with billing_state == :prepaid
+      os_family = dep.os_family
+      #TODO: figure out if we should limit this to appliances with billing_state == :prepaid
+      hourly_charge = (vm.virtual_machine_flavor.get_hourly_cost_for(os_family)/vm.appliances.count).round
       Rails.logger.debug("Calculated hourly charge for using VM #{vm.id} is #{hourly_charge}. This VM currently has #{vm.appliances.count} appliances using it.")
-      charge = (hourly_charge*billable_time).round
 
       # Return anticipated charge
-      charge
+      (hourly_charge*billable_time).round
     end
 
     # This scans for :expired deployments and figures out what to do with the underlying VMs, following fund policies
     def self.apply_funding_policy
-      VirtualMachine.where(managed_by_atmosphere: true).all.each do |vm|
-        # If this VM has at least one prepaid deployment, it must not be touched. For safety's sake, we will also not touch deployments whose billing state is flagged as erroneous
+      VirtualMachine.manageable.each do |vm|
+        # If this VM has at least one prepaid deployment, it must not be touched.
+        # For safety's sake, we will also not touch deployments whose billing state is flagged as erroneous
         if vm.deployments.select {|dep| ['prepaid', 'error'].include? dep.billing_state}.count > 0
           # Do nothing
           Rails.logger.debug("Leaving VM #{vm.id} unchanged because it is used by a prepaid deployment.")
@@ -143,7 +152,7 @@ module Atmosphere
 
       # Check whether the target VM is already assigned to the appliance via deployments
       # If so, respect the prepayment period which *may* be present for this deployment
-      deployments = appliance.deployments.select {|dep| dep.virtual_machine == vm}
+      deployments = appliance.deployments.where(virtual_machine_id: vm.id)
       if deployments.count > 0
         billable_time = self.calculate_billable_time(deployments.first, Time.now.utc, true)
       else
@@ -155,11 +164,8 @@ module Atmosphere
         return false
       end
       amt_due = ((billable_time*hourly_cost)/(vm.appliances.count+1)).round
-      if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and appliance.fund.compute_sites.include? vm.compute_site
-        return true
-      else
-        return false
-      end
+      # Return boolean based on 2 conditions
+      amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) && (appliance.fund.compute_sites.include? vm.compute_site)
     end
 
     # Determines whether this appliance can afford to fully use a VM of a given flavor (which may not be spawned yet)
@@ -174,7 +180,8 @@ module Atmosphere
         return false
       end
       amt_due = (billable_time*(hourly_cost)).round
-      if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and appliance.fund.compute_sites.include? flavor.compute_site
+      if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and
+        appliance.fund.compute_sites.include? flavor.compute_site
         return true
       else
         return false

@@ -3,13 +3,11 @@
 module Atmosphere
   class VirtualMachineFlavorOSFamily < ActiveRecord::Base
     belongs_to :virtual_machine_flavor,
+      inverse_of: :virtual_machine_flavor_os_families,
       class_name: 'Atmosphere::VirtualMachineFlavor'
 
     belongs_to :os_family,
       class_name: 'Atmosphere::OSFamily'
-
-    #validates :hourly_cost,
-    #  numericality: { greater_than_or_equal_to: 0 }
 
   end
 end

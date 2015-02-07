@@ -426,9 +426,7 @@ describe Atmosphere::Optimizer do
           biggest_os_flavor = openstack.virtual_machine_flavors.max_by {|f| f.memory}
           optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, compute_site: amazon)
           biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
-          biggest_os_flavor.reload
-          optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, biggest_os_flavor.get_hourly_cost_for(Atmosphere::OSFamily.first))
-          optimal_flavor.reload
+          optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
 
           amazon.reload
           appl_type.preference_memory = biggest_os_flavor.memory
@@ -562,7 +560,6 @@ describe Atmosphere::Optimizer do
             expect(flavor.cpu).to eq 4
           end
           @appl.dev_mode_property_set.preference_cpu = 4
-
 
           @appl.save!
         end
