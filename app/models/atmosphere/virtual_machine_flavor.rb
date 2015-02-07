@@ -69,6 +69,7 @@ module Atmosphere
     # Assumes only 1 vmf_osf for a specific os_family
     def get_hourly_cost_for(os_family)
       incarnation = virtual_machine_flavor_os_families.find_by(os_family: os_family)
+      puts "In get_hourly_cost: located the following incarnation: #{incarnation.inspect}"
       incarnation && incarnation.hourly_cost # nil if incarnation.blank?
     end
 

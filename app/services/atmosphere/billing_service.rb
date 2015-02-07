@@ -178,6 +178,12 @@ module Atmosphere
 
       puts "Getting hourly cost for appliance with fund balance #{appliance.fund.balance.to_s} and os_family #{appliance.appliance_type.os_family.inspect}"
 
+      puts "Flavor has the following OSFamily records pre-reload: #{flavor.virtual_machine_flavor_os_families.inspect}"
+      puts "!!RELOAD!!"
+      flavor.reload
+      puts "Flavor has the following OSFamily records post-reload: #{flavor.virtual_machine_flavor_os_families.inspect}"
+
+
       hourly_cost = flavor.get_hourly_cost_for(appliance.appliance_type.os_family)
 
       puts "Calculated hourly cost is #{hourly_cost.to_s}"
