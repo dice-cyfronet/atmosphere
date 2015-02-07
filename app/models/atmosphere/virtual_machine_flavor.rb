@@ -74,7 +74,13 @@ module Atmosphere
 
     # Upserts a binding between this VMF and an OS family, setting hourly cost
     def set_hourly_cost_for(os_family, cost)
-      incarnation = virtual_machine_flavor_os_families.find_or_initialize_by(os_family: os_family, virtual_machine_flavor: self)
+      incarnation = virtual_machine_flavor_os_families.find_by(os_family: os_family)
+      if incarnation.blank?
+        puts "New record!"
+        incarnation = VirtualMachineFlavorOSFamily.new
+        incarnation.os_family = os_family
+        incarnation.virtual_machine_flavor = self
+      end
       incarnation.hourly_cost = cost
       incarnation.save
     end
