@@ -216,6 +216,7 @@ describe Atmosphere::BillingService do
       windows_flavor.set_hourly_cost_for(windows_osfamily, 100)
       linux_flavor.set_hourly_cost_for(linux_osfamily, 50)
 
+
       expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, windows_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, linux_flavor)).to eq true
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, windows_flavor)).to eq false
