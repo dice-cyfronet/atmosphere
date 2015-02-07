@@ -214,15 +214,7 @@ describe Atmosphere::BillingService do
     it 'can or cannot afford flavors depending on os_family' do
 
       linux_flavor.set_hourly_cost_for(linux_osfamily, 50)
-      puts "---> Setting cost for windows osfamily <---"
       windows_flavor.set_hourly_cost_for(windows_osfamily, 100)
-      puts "---> done <---"
-
-      windows_appliance.reload
-      linux_appliance.reload
-
-      linux_flavor.reload
-      windows_flavor.reload
 
       expect(Atmosphere::BillingService.can_afford_flavor?(windows_appliance, windows_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(linux_appliance, linux_flavor)).to eq true
