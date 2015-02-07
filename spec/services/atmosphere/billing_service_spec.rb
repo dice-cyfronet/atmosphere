@@ -218,6 +218,9 @@ describe Atmosphere::BillingService do
       windows_flavor.set_hourly_cost_for(windows_osfamily, 100)
       puts "---> done <---"
 
+      windows_appliance.reload
+      linux_appliance.reload
+
       linux_flavor.reload
       windows_flavor.reload
 
