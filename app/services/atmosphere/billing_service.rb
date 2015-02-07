@@ -175,11 +175,20 @@ module Atmosphere
         raise Atmosphere::BillingException.new(message: "can_afford_flavor? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
       end
       billable_time = @appliance_prepayment_interval/3600 # Time in hours
+
+      puts "Getting hourly cost for appliance with fund balance #{appliance.fund.balance.to_s} and os_family #{appliance.appliance_type.os_family.inspect}"
+
       hourly_cost = flavor.get_hourly_cost_for(appliance.appliance_type.os_family)
+
+      puts "Calculated hourly cost is #{hourly_cost.to_s}"
+
       if hourly_cost.blank? # Will happen when there is a mismatch between AT ostype and flavor ostype
         return false
       end
       amt_due = (billable_time*(hourly_cost)).round
+
+      puts "Calculated amt due is #{amt_due.to_s}"
+
       if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and
         appliance.fund.compute_sites.include? flavor.compute_site
         return true
