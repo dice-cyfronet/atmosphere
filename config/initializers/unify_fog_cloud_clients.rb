@@ -111,6 +111,23 @@ class Fog::Compute::Azure::Server
   def flavor
     {'id' => flavor_id}
   end
+
+  def image_id
+    attributes[:image]
+  end
+
+  def created
+    vm = Atmosphere::VirtualMachine.find_by(id_at_site: id)
+    vm ? vm.created_at : (Atmosphere.childhood_age - 1).seconds.ago
+  end
+
+  def task_state
+    nil
+  end
+
+  def flavor_id
+    attributes[:vm_size]
+  end
 end
 
 class Fog::Compute::Azure::Servers
