@@ -20,6 +20,7 @@ module Atmosphere
           server_params[:password] = "TomekiPiotrek2015" # TODO: Replace with key injection
           server_params[:image] = tmpl_id
           server_params[:location] = "North Central US"
+          server_params[:vm_size] = flavor_id
         else #TODO: Untangle AWS and OpenStack
           server_params[:flavor_ref] = flavor_id
           server_params[:flavor_id] = flavor_id

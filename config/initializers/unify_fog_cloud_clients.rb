@@ -107,6 +107,10 @@ class Fog::Compute::Azure::Server
   def id
     identity
   end
+
+  def flavor
+    {'id' => flavor_id}
+  end
 end
 
 class Fog::Compute::Azure::Servers
