@@ -10,6 +10,7 @@ require 'fog/azure/models/compute/images'
 require 'fog/aws/models/compute/images'
 require 'fog/openstack/models/compute/images'
 require 'fog/azure/models/compute/server'
+require 'fog/azure/models/compute/servers'
 
 # open stack client does not provide import_key_pair method
 # while aws does
@@ -105,6 +106,13 @@ end
 class Fog::Compute::Azure::Server
   def id
     identity
+  end
+end
+
+class Fog::Compute::Azure::Servers
+  def destroy(id_at_site)
+    server = get(id_at_site)
+    server ? server.destroy : false
   end
 end
 
