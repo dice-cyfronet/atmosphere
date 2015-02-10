@@ -95,11 +95,11 @@ class Fog::Compute::AWS::Server
   end
 
   def pause
-    raise Air::UnsuportedException, 'Amazon des not support pause action'
+    raise Atmosphere::UnsupportedException, 'Amazon des not support pause action'
   end
 
   def suspend
-    raise Air::UnsuportedException, 'Amazon des not support suspend action'
+    raise Atmosphere::UnsupportedException, 'Amazon des not support suspend action'
   end
 end
 
