@@ -133,7 +133,14 @@ module Atmosphere
         end
 
         def appliance_type_params
-          params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :appliance_id)
+          allowed_params = [
+            :name, :description, :shared, :scalable,
+            :visible_to, :author_id, :preference_cpu,
+            :preference_memory, :preference_disk,
+            :appliance_id
+          ] + update_params_ext
+
+          params.require(:appliance_type).permit(allowed_params)
         end
 
         def pdp
@@ -143,6 +150,8 @@ module Atmosphere
         def model_class
           Atmosphere::ApplianceType
         end
+
+        include Atmosphere::Api::V1::ApplianceTypesControllerExt
       end
     end
   end
