@@ -10,8 +10,8 @@ describe Atmosphere::BillingService do
 
   let!(:wf) { create(:workflow_appliance_set) }
 
-  let!(:windows_osfamily) { create(:os_family, os_family_name: 'Windows') }
-  let!(:linux_osfamily) { create(:os_family, os_family_name: 'Linux') }
+  let!(:windows_osfamily) { create(:os_family, name: 'Windows') }
+  let!(:linux_osfamily) { create(:os_family, name: 'Linux') }
 
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
@@ -43,15 +43,6 @@ describe Atmosphere::BillingService do
 
     let(:config_inst) { create(:appliance_configuration_instance) }
 
-    it 'throws exception for malformed appliance' do
-      appl = create(:appliance, fund: nil, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
-
-      appl.update_columns(fund_id: nil)
-
-      expect{Atmosphere::BillingService.can_afford_vm?(appl, not_shareable_vm1)}.to raise_exception(Atmosphere::BillingException)
-      expect{Atmosphere::BillingService.can_afford_flavor?(appl, not_shareable_vm1.virtual_machine_flavor)}.to raise_exception(Atmosphere::BillingException)
-    end
-
     it 'creates new funded non-shareable appliance as default' do
       appl = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
 
@@ -64,7 +55,7 @@ describe Atmosphere::BillingService do
 
       appl.reload
       expect(appl.deployments.first.billing_state).to eq("prepaid")
-      expect(appl.amount_billed).to eq appl.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost
+      expect(appl.amount_billed).to eq appl.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost
       expect(Atmosphere::BillingLog.all.count).to eq 1
     end
 
@@ -109,17 +100,17 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingLog.all.count).to eq 1
 
       cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost))
+      expect(cs_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost))
 
       appl2 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
       Atmosphere::BillingService.bill_appliance(appl2, Time.now.utc, "mock billing", true)
       appl2.reload
-      expect(appl1.amount_billed).to eq appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost
-      expect(appl2.amount_billed).to eq (appl2.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost*0.5).round
+      expect(appl1.amount_billed).to eq appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost
+      expect(appl2.amount_billed).to eq (appl2.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost*0.5).round
 
       cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - (appl2.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost*1.5).round
+      expect(cs_fund.balance).to eq original_balance - (appl2.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost*1.5).round
 
     end
   end
@@ -147,9 +138,9 @@ describe Atmosphere::BillingService do
     let!(:alien_appl) { create(:appliance, fund: alien_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines:[])}
 
     it 'can or cannot afford flavors' do
-      free_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 0)
-      cheap_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 10)
-      expensive_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 100)
+      free_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 0)
+      cheap_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 10)
+      expensive_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 100)
 
       rich_appl = create(:appliance, fund: switzerland, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
       middle_class_appl = create(:appliance, fund: middle_class, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm2])
@@ -175,9 +166,9 @@ describe Atmosphere::BillingService do
       free_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: free_flavor)
       shareable_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_shareable_at, virtual_machine_flavor: free_flavor)
 
-      free_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 0)
-      cheap_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 10)
-      expensive_flavor.virtual_machine_flavor_os_families.first.update_attribute(:hourly_cost, 100)
+      free_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 0)
+      cheap_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 10)
+      expensive_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 100)
 
       expect(Atmosphere::BillingService.can_afford_vm?(rich_appl, expensive_vm)).to eq true
       expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, shareable_vm)).to eq true
@@ -250,7 +241,7 @@ describe Atmosphere::BillingService do
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
 
-      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
+      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
       Atmosphere::BillingService.bill_all_appliances
 
@@ -326,7 +317,7 @@ describe Atmosphere::BillingService do
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
 
-      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.virtual_machine_flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
+      cost_unit = appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost # Cost per 1h of use for a single (full) VM
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
 

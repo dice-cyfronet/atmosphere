@@ -9,15 +9,7 @@ module Atmosphere
 
     private
 
-    # Deprecated: returns max hourly cost
-    def hourly_cost
-      object.virtual_machine_flavor_os_families.max_by(&:hourly_cost).hourly_cost
-    end
-
     # Returns a full cost map for this flavor (depending on os_family)
-    def cost_map
-      object.cost_map
-    end
 
     def active
       object.usable?

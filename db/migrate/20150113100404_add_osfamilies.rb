@@ -5,10 +5,10 @@
 class AddOsfamilies < ActiveRecord::Migration
   def up
     create_table :atmosphere_os_families do |t|
-      t.string :os_family_name, null:false, default: "Windows"
+      t.string :name, null:false, default: "Windows"
     end
 
-    create_table :atmosphere_virtual_machine_flavor_os_families do |t|
+    create_table :atmosphere_flavor_os_families do |t|
 
       t.integer :hourly_cost
 
@@ -19,8 +19,8 @@ class AddOsfamilies < ActiveRecord::Migration
     add_reference :atmosphere_appliance_types, :atmosphere_os_families, index: true
 
     # Spawn two records and rewrite existing ATypes to bind to a specific os_family
-    os_windows = Atmosphere::OSFamily.create(os_family_name: 'Windows')
-    os_linux = Atmosphere::OSFamily.create(os_family_name: 'Linux')
+    os_windows = Atmosphere::OSFamily.create(name: 'Windows')
+    os_linux = Atmosphere::OSFamily.create(name: 'Linux')
 
     # Rewrite all existing ATs to use the 'windows' OS (correct later as necessary)
 
@@ -31,7 +31,7 @@ class AddOsfamilies < ActiveRecord::Migration
 
     # Assign an os_family to each existing flavor and rewrite cost
     Atmosphere::VirtualMachineFlavor.find_each do |flavor|
-      vmf_osf = Atmosphere::VirtualMachineFlavorOSFamily.create(virtual_machine_flavor: flavor,
+      vmf_osf = Atmosphere::FlavorOSFamily.create(virtual_machine_flavor: flavor,
         os_family: Atmosphere::OSFamily.first,
         hourly_cost: flavor.hourly_cost)
     end
@@ -44,7 +44,7 @@ class AddOsfamilies < ActiveRecord::Migration
     add_column :atmosphere_virtual_machine_flavors, :hourly_cost, :integer, default: 0
 
     Atmosphere::VirtualMachineFlavor.find_each do |f|
-      f_osfamily = f.virtual_machine_flavor_os_families.first
+      f_osfamily = f.flavor_os_families.first
       unless f_osfamily.blank?
         f.hourly_cost = f_osfamily.hourly_cost
         f.save
@@ -53,7 +53,7 @@ class AddOsfamilies < ActiveRecord::Migration
 
     remove_column :atmosphere_appliance_types, :atmosphere_os_families_id
 
-    drop_table :atmosphere_virtual_machine_flavor_os_families
+    drop_table :atmosphere_flavor_os_families
     drop_table :atmosphere_os_families
   end
 end

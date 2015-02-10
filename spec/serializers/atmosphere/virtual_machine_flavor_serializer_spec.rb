@@ -38,8 +38,8 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
 
   context 'hourly cost tests' do
 
-    let(:os_family1) { create(:os_family, os_family_name: 'foo') }
-    let(:os_family2) { create(:os_family, os_family_name: 'bar') }
+    let(:os_family1) { create(:os_family, name: 'foo') }
+    let(:os_family2) { create(:os_family, name: 'bar') }
 
     let(:vmf1) { create(:flavor) }
 

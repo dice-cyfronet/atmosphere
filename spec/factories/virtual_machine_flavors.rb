@@ -10,7 +10,7 @@ FactoryGirl.define do
 
     #Create a new incarnation record for this flavor (bind to os_family and rewrite price
     after(:create) do |vmf|
-      vmf_osf = Atmosphere::VirtualMachineFlavorOSFamily.new
+      vmf_osf = Atmosphere::FlavorOSFamily.new
       vmf_osf.virtual_machine_flavor = vmf
       os_family = Atmosphere::OSFamily.first
       os_family = create(:os_family) if os_family.blank?

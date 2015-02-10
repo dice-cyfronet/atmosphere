@@ -36,7 +36,7 @@ module Atmosphere
       if dep.prepaid_until.blank?
         # This should not happen - it means that we do not know when this deployment will run out of funds.
         # Therefore we cannot meaningfully bill it again and must return an error.
-        Rails.logger.error("Unable to determine current payment validity date for deployment #{dep.id} belonging to appliance #{appl.id}. Skipping.")
+        Rails.logger.error { "Unable to determine current payment validity date for deployment #{dep.id} belonging to appliance #{appl.id}. Skipping." }
         BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user,
           appliance: "#{appl.id.to_s}---#{appl.name.blank? ? 'unnamed_appliance' : appl.name}",
           fund: appl.fund.name, message: "Unable to determine current payment validity date for deployment.",
@@ -49,32 +49,32 @@ module Atmosphere
         billing_interval = (billing_time - dep.prepaid_until) # This will return time in seconds
         if billing_interval < 0
           # The appliance is still prepaid - nothing to be done.
-          Rails.logger.debug("Deployment #{dep.id} belonging to appliance #{appl.id} is prepaid until #{dep.prepaid_until}. Nothing to be done.")
+          Rails.logger.debug { "Deployment #{dep.id} belonging to appliance #{appl.id} is prepaid until #{dep.prepaid_until}. Nothing to be done." }
         else
           # Bill the hell out of this deployment! :)
-          Rails.logger.debug("Billing deployment #{dep.id} belonging to appliance #{appl.id} for #{billing_interval/3600} hours of use.")
+          Rails.logger.debug { "Billing deployment #{dep.id} belonging to appliance #{appl.id} for #{billing_interval/3600} hours of use." }
           # Open a transaction to avoid race conditions etc.
           ActiveRecord::Base.transaction do
             amount_due = calculate_charge_for_deployment(dep, billing_time, apply_prepayment)
             # Check if there are sufficient funds
             if (amount_due > appl.fund.balance-appl.fund.overdraft_limit)
               # We've run out of funds. This deployment cannot be paid for. Flagging it as expired.
-              Rails.logger.warn("The balance of fund #{appl.fund.id} is insufficient to cover continued operation of deployment #{dep.id} belonging to appliance #{appl.id} (current balance: #{appl.fund.balance}; overdraft limit: #{appl.fund.overdraft_limit}; calculated charge: #{amount_due}). Flagging deployment as expired.")
+              Rails.logger.warn { "The balance of fund #{appl.fund.id} is insufficient to cover continued operation of deployment #{dep.id} belonging to appliance #{appl.id} (current balance: #{appl.fund.balance}; overdraft limit: #{appl.fund.overdraft_limit}; calculated charge: #{amount_due}). Flagging deployment as expired." }
               BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Funding expired for deployment #{dep.id}.", actor: "bill_appliance", amount_billed: 0).save
               # A separate method will be used to clean up all expired
               # deployments according to their funds' termination policies
               dep.billing_state = "expired"
               dep.save
             else
-              Rails.logger.debug("Applying charge of #{amount_due} to deployment #{dep.id} belonging to appliance #{appl.id} and deducting it from balance of fund #{appl.fund.id}.")
+              Rails.logger.debug { "Applying charge of #{amount_due} to deployment #{dep.id} belonging to appliance #{appl.id} and deducting it from balance of fund #{appl.fund.id}." }
               appl.fund.balance -= amount_due
-              appl.fund.save
               appl.amount_billed += amount_due
               appl.last_billing = billing_time
               dep.prepaid_until = billing_time+(apply_prepayment ? @appliance_prepayment_interval : 0)
               dep.billing_state = "prepaid"
               # These should be saved together or not at all
               ActiveRecord::Base.transaction do
+                appl.fund.save
                 appl.save
                 dep.save
               end
@@ -82,7 +82,7 @@ module Atmosphere
                 # Write success to log.
                 BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: message, actor: "bill_appliance", amount_billed: amount_due).save
               else
-                Rails.logger.error("ERROR: Unable to update appliance #{appl.id} with billing data.")
+                Rails.logger.error { "ERROR: Unable to update appliance #{appl.id} with billing data." }
                 BillingLog.new(timestamp: Time.now.utc, user: appl.appliance_set.user, appliance: appl.id.to_s+'---'+(appl.name.blank? ? 'unnamed_appliance' : appl.name), fund: appl.fund.name, message: "Error saving appliance following update of billing information.", actor: "bill_appliance", amount_billed: 0).save
                 raise Atmosphere::BillingException.new(message: "Unable to update appliance #{appl.id} with billing data.")
               end
@@ -106,7 +106,7 @@ module Atmosphere
       os_family = dep.os_family
       #TODO: figure out if we should limit this to appliances with billing_state == :prepaid
       hourly_charge = (vm.virtual_machine_flavor.get_hourly_cost_for(os_family)/vm.appliances.count).round
-      Rails.logger.debug("Calculated hourly charge for using VM #{vm.id} is #{hourly_charge}. This VM currently has #{vm.appliances.count} appliances using it.")
+      Rails.logger.debug { "Calculated hourly charge for using VM #{vm.id} is #{hourly_charge}. This VM currently has #{vm.appliances.count} appliances using it." }
 
       # Return anticipated charge
       (hourly_charge*billable_time).round
@@ -119,21 +119,21 @@ module Atmosphere
         # For safety's sake, we will also not touch deployments whose billing state is flagged as erroneous
         if vm.deployments.select {|dep| ['prepaid', 'error'].include? dep.billing_state}.count > 0
           # Do nothing
-          Rails.logger.debug("Leaving VM #{vm.id} unchanged because it is used by a prepaid deployment.")
+          Rails.logger.debug { "Leaving VM #{vm.id} unchanged because it is used by a prepaid deployment." }
         # If this VM has at least one deployment whose funding policy states 'no action' then do nothing.
         elsif vm.deployments.select {|dep| dep.appliance.fund.termination_policy == 'no_action'}.count > 0
           # Do nothing
-          Rails.logger.debug("Leaving VM #{vm.id} unchanged -- there are no prepaid deployments using it but the corresponding fund termination policy is 'no_action'.")
+          Rails.logger.debug { "Leaving VM #{vm.id} unchanged -- there are no prepaid deployments using it but the corresponding fund termination policy is 'no_action'." }
         # If this VM has at least one deployment whose funding policy states 'suspend' then shut down the VM without deleting it
         elsif vm.deployments.select {|dep| dep.appliance.fund.termination_policy == 'suspend'}.count > 0
           # TODO: Ask TB how to suspend this VM
-          Rails.logger.debug("Suspending VM #{vm.id} -- there are no prepaid deployments using it and the corresponding fund termination policy is 'suspend'.")
+          Rails.logger.debug { "Suspending VM #{vm.id} -- there are no prepaid deployments using it and the corresponding fund termination policy is 'suspend'." }
         # Else check again that all of this vm's deployments' funding policies state 'delete' and if so, delete the VM
         elsif vm.deployments.select {|dep| dep.appliance.fund.termination_policy == 'delete'}.count == vm.deployments.count
           # TODO: Ask TB how to delete this VM
-          Rails.logger.debug("Deleting VM #{vm.id} -- there are no prepaid deployments using it and the corresponding fund termination policy is 'delete'.")
+          Rails.logger.debug { "Deleting VM #{vm.id} -- there are no prepaid deployments using it and the corresponding fund termination policy is 'delete'." }
         else
-          Rails.logger.error("Unable to figure out what to do with vm #{vm.id}. This probably indicates an error in BillingCharger::apply_funding_policy. Please report this to PN.")
+          Rails.logger.error { "Unable to figure out what to do with vm #{vm.id}. This probably indicates an error in BillingCharger::apply_funding_policy. Please report this to PN." }
           # Leave this VM as is, for safety's sake.
         end
       end

@@ -28,12 +28,12 @@ module Atmosphere
       class_name: 'Atmosphere::VirtualMachine'
 
     has_many :os_families,
-      through: :virtual_machine_flavor_os_families,
+      through: :flavor_os_families,
       class_name: 'Atmosphere::OSFamily'
 
-    has_many :virtual_machine_flavor_os_families,
+    has_many :flavor_os_families,
       inverse_of: :virtual_machine_flavor,
-      class_name: 'Atmosphere::VirtualMachineFlavorOSFamily',
+      class_name: 'Atmosphere::FlavorOSFamily',
       autosave: true
 
     validates :flavor_name,
@@ -68,32 +68,28 @@ module Atmosphere
 
     # Assumes only 1 vmf_osf for a specific os_family
     def get_hourly_cost_for(os_family)
-      incarnation = virtual_machine_flavor_os_families.find_by(os_family: os_family)
+      incarnation = flavor_os_families.find_by(os_family: os_family)
       incarnation && incarnation.hourly_cost # nil if incarnation.blank?
     end
 
     # Upserts a binding between this VMF and an OS family, setting hourly cost
     def set_hourly_cost_for(os_family, cost)
-      incarnation = virtual_machine_flavor_os_families.find_by(os_family: os_family)
-      if incarnation.blank?
-        incarnation = VirtualMachineFlavorOSFamily.new
-        incarnation.os_family = os_family
-        incarnation.virtual_machine_flavor = self
-      end
+      incarnation = flavor_os_families.
+          find_or_initialize_by(os_family: os_family)
       incarnation.hourly_cost = cost
       incarnation.save
     end
 
     # Provides backward compatibility with old versions of the GUI
     def hourly_cost
-      virtual_machine_flavor_os_families &&
-        virtual_machine_flavor_os_families.maximum(:hourly_cost)
+      flavor_os_families &&
+        flavor_os_families.maximum(:hourly_cost)
     end
 
     # Returns a full cost map for this flavor (depending on os_family)
     def cost_map
-      virtual_machine_flavor_os_families.each_with_object({}) do |f, hash|
-        hash[f.os_family.os_family_name] = f.hourly_cost
+      flavor_os_families.each_with_object({}) do |f, hash|
+        hash[f.os_family.name] = f.hourly_cost
       end
     end
 

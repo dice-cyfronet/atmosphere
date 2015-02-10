@@ -5,13 +5,13 @@ module Atmosphere
       class_name: 'Atmosphere::ApplianceType'
 
     has_many :virtual_machine_flavors,
-      through: :virtual_machine_flavor_os_families,
+      through: :flavor_os_families,
       class_name: 'Atmosphere::VirtualMachineFlavor'
 
-    has_many :virtual_machine_flavor_os_families,
-      class_name: 'Atmosphere::VirtualMachineFlavorOSFamily'
+    has_many :flavor_os_families,
+      class_name: 'Atmosphere::FlavorOSFamily'
 
-    validates :os_family_name,
+    validates :name,
       presence: true
 
   end

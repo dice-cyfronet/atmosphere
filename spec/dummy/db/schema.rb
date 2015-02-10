@@ -154,6 +154,12 @@ ActiveRecord::Schema.define(version: 20150113100404) do
     t.boolean  "secured",                  default: false, null: false
   end
 
+  create_table "atmosphere_flavor_os_families", force: true do |t|
+    t.integer "hourly_cost"
+    t.integer "virtual_machine_flavor_id"
+    t.integer "os_family_id"
+  end
+
   create_table "atmosphere_funds", force: true do |t|
     t.string  "name",               default: "unnamed fund", null: false
     t.integer "balance",            default: 0,              null: false
@@ -176,7 +182,7 @@ ActiveRecord::Schema.define(version: 20150113100404) do
   end
 
   create_table "atmosphere_os_families", force: true do |t|
-    t.string "os_family_name", default: "Windows", null: false
+    t.string "name", default: "Windows", null: false
   end
 
   create_table "atmosphere_port_mapping_properties", force: true do |t|
@@ -247,12 +253,6 @@ ActiveRecord::Schema.define(version: 20150113100404) do
   add_index "atmosphere_users", ["authentication_token"], name: "index_atmosphere_users_on_authentication_token", unique: true, using: :btree
   add_index "atmosphere_users", ["email"], name: "index_atmosphere_users_on_email", unique: true, using: :btree
   add_index "atmosphere_users", ["login"], name: "index_atmosphere_users_on_login", unique: true, using: :btree
-
-  create_table "atmosphere_virtual_machine_flavor_os_families", force: true do |t|
-    t.integer "hourly_cost"
-    t.integer "virtual_machine_flavor_id"
-    t.integer "os_family_id"
-  end
 
   create_table "atmosphere_virtual_machine_flavors", force: true do |t|
     t.string  "flavor_name",                                null: false
