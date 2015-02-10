@@ -34,7 +34,6 @@ describe Atmosphere::BillingService do
   context 'new user obtains default fund' do
     it 'creates new user' do
       u = create(:user, funds: [] )
-
       expect(u.default_fund).to be_a Atmosphere::Fund
     end
   end
