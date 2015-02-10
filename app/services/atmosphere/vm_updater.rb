@@ -93,7 +93,9 @@ module Atmosphere
         suspended: :suspended,
         unknown: :unknown,
         verify_resize: :verify_resize,
-        paused: :paused
+        paused: :paused,
+        # Azure specific below
+        starting: :build # such a state is in Web console
       }[key] || :unknown
     end
 
