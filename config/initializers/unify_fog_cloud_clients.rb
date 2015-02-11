@@ -104,6 +104,15 @@ class Fog::Compute::AWS::Server
 end
 
 class Fog::Compute::Azure::Server
+  def stop
+    raise Atmosphere::UnsupportedException, 'Azure des not support stop action'
+  end
+  def suspend
+    shutdown
+  end
+  def pause
+    raise Atmosphere::UnsupportedException, 'Azure des not support pause action'
+  end
   def id
     identity
   end
