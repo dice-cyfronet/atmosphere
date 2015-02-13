@@ -244,9 +244,6 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    guard-spring (0.0.4)
-      guard
-      spring
     haml (4.0.6)
       tilt
     haml-rails (0.7.0)
@@ -467,7 +464,6 @@ DEPENDENCIES
   foreman
   generator_spec
   guard-rspec
-  guard-spring
   highcharts-rails
   letter_opener
   pry-rails
