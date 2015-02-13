@@ -62,7 +62,7 @@ module Atmosphere
 
     enumerize :state, in: ALLOWED_STATES
 
-    before_save :set_version, if: :appliance_type_id_changed?
+    before_save :set_version, if: :update_version?
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
@@ -191,12 +191,12 @@ module Atmosphere
       compute_site.cloud_client
     end
 
+    def update_version?
+      !version_changed? && appliance_type_id_changed?
+    end
+
     def set_version
-      if new_record?
-        self.version ||= appliance_type.version + 1 if appliance_type
-      else
-        self.version = appliance_type.version + 1 if appliance_type
-      end
+      self.version = appliance_type.version + 1 if appliance_type
     end
   end
 end
