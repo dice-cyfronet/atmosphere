@@ -23,7 +23,7 @@ module Atmosphere
       vmt.state = image.status.downcase.to_sym
       if young?
         vmt.appliance_type ||= appliance_type
-        vmt.version ||= version
+        vmt.version = version if version
         unless vmt.managed_by_atmosphere
           vmt.managed_by_atmosphere = vmt.appliance_type != nil
         end
