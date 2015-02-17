@@ -19,8 +19,8 @@ module Atmosphere
       }
       server_params[:user_data] = user_data if user_data
       server_params[:key_name] = key_name if key_name
-      unless nic.blank?
-        Rails.logger.warn "Spawning server with forced NIC: #{nic}"
+      unless @nic.blank?
+        Rails.logger.warn "Spawning server with forced NIC: #{@nic}"
         server_params[:nics] = [{ net_id: @nic }]
       end
 
