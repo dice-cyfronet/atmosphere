@@ -1,18 +1,13 @@
-require 'atmosphere/wrangler'
-
 module Atmosphere
   class DnatWrangler
-    include Wrangler
+
+    MIN_PORT_NO = 0
+    MAX_PORT_NO = 65535
 
     def initialize(wrangler_url, wrangler_username, wrangler_password)
       @wrangler_url = wrangler_url
       @wrangler_username = wrangler_username
       @wrangler_password = wrangler_password
-    end
-
-    def remove_dnat_for_vm(vm)
-      return true unless vm.ip and @wrangler_url and not vm.port_mappings.blank?
-      remove(vm.ip)
     end
 
     def remove_port_mapping(pm)
@@ -51,10 +46,10 @@ module Atmosphere
     end
 
     def remove(ip, port = nil, protocol = nil)
-      return true unless use_wrangler?
+      return true unless use_wrangler? && ip
       path = build_path_for_params(ip, port, protocol)
       resp = dnat_client.delete(path)
-      if not resp.status == 204
+      unless [200, 204].include?(resp.status)
         Rails.logger.error "Wrangler returned #{resp.status} when trying to remove redirections for #{build_req_params_msg(ip, port, protocol)}."
         return false
       end
@@ -73,7 +68,7 @@ module Atmosphere
     end
 
     def dnat_client
-      conn = Faraday.new(url: @wrangler_url) do |faraday|
+      Faraday.new(url: @wrangler_url) do |faraday|
         faraday.request :url_encoded
         faraday.response :logger
         faraday.adapter Faraday.default_adapter

@@ -21,9 +21,12 @@ require 'nprogress-rails'
 require 'jquery-rails'
 require 'turbolinks'
 require 'jquery-turbolinks'
+require 'highcharts-rails'
 
 require 'github-markup'
 require 'redcarpet'
+
+require 'draper'
 
 module Atmosphere
   class Engine < ::Rails::Engine
@@ -34,6 +37,16 @@ module Atmosphere
       g.fixture_replacement :factory_girl, dir: 'spec/factories'
       g.assets false
       g.helper false
+    end
+
+    if Rails.env.test?
+      initializer 'model_core.factories',
+                  after: 'factory_girl.set_factory_paths' do
+        if defined?(FactoryGirl)
+          FactoryGirl.definition_file_paths <<
+            File.expand_path('../../../spec/factories', __FILE__)
+        end
+      end
     end
   end
 end

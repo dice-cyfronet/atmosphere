@@ -23,20 +23,26 @@ Gem::Specification.new do |s|
                     'ymnowako@cyf-kr.edu.pl',
                     'pawel@suder.info'
                   ]
-  s.homepage    = 'https://gitlab.dev.cyfronet.pl/atmosphere/air/'
+  s.homepage    = 'https://github.com/dice-cyfronet/atmosphere/'
   s.summary     = 'Atmosphere cloud platform'
   s.description = 'Atmosphere cloud platform'
   s.license     = 'MIT'
 
-  s.files = Dir['{app,config,db,lib,doc}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+  s.files = Dir[
+                 '{app,config,db,lib,doc}/**/*',
+                 'spec/factories/**/*',
+                 'MIT-LICENSE',
+                 'Rakefile',
+                 'README.md'
+  ]
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.1.6'
+  s.add_dependency 'rails', '~> 4.1.8'
   s.add_dependency 'pg'
   s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'
-  s.add_dependency 'sass-rails', '~> 4.0.3'
-  s.add_dependency 'coffee-rails', '~> 4.0.0'
+  s.add_dependency 'sass-rails'
+  s.add_dependency 'coffee-rails', '~> 4.1.0'
   s.add_dependency 'jquery-rails'
   s.add_dependency 'turbolinks'
   s.add_dependency 'jquery-turbolinks'
@@ -68,6 +74,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'influxdb'
   s.add_dependency 'sentry-raven'
   s.add_dependency 'will_paginate', '~> 3.0.5'
+  s.add_dependency 'highcharts-rails', '~>4.0.4'
+  s.add_dependency 'migratio'
+  s.add_dependency 'draper', '~> 1.3'
 
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'factory_girl_rails'

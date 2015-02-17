@@ -5,6 +5,8 @@ module Atmosphere
         load_and_authorize_resource :dev_mode_property_set,
           class: 'Atmosphere::DevModePropertySet'
 
+        include Atmosphere::Api::Auditable
+
         respond_to :json
 
         def index
@@ -16,11 +18,11 @@ module Atmosphere
         end
 
         def update
-          log_user_action "update dev mode property set #{@dev_mode_property_set.id} with following params #{dev_mode_property_set_params}"
+          @dev_mode_property_set.
+            update_attributes!(dev_mode_property_set_params)
 
-          @dev_mode_property_set.update_attributes!(dev_mode_property_set_params)
-          render json: @dev_mode_property_set, serializer:DevModePropertySetSerializer
-          log_user_action "dev mode property set #{@dev_mode_property_set.id} updated #{@dev_mode_property_set.to_json}"
+          render json: @dev_mode_property_set,
+                 serializer: DevModePropertySetSerializer
         end
 
         private

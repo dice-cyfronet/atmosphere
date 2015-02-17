@@ -1,0 +1,16 @@
+#!/bin/bash
+
+export __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pushd $(dirname $(dirname $(dirname ${__dir})))
+    bundle install
+    bundle exec rake db:create
+    bundle exec rake db:migrate
+popd
+
+pushd $(dirname ${__dir})
+    bundle exec rake db:seed
+    bundle exec rake billing:bootstrap
+popd
+
+echo "Default credentials 'admin:s3cr3t!!!'."

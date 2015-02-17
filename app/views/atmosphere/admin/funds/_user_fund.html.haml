@@ -1,0 +1,36 @@
+.btn-group
+  - user = user_fund.user
+
+  %span.btn.btn-default.btn-xs.disabled.non-opaque
+    = user.full_name
+    = surround '(', ')' do
+      = user.login
+
+  - if user_fund.default
+    %span{ class: 'btn btn-xs btn-primary has_bottom_tooltip',
+    title: t('funds.set_default.to_false',
+             user: user_fund.user.full_name) }
+      D
+  - else
+    .btn-group
+      = form_for [:admin, user_fund] do |f|
+        = f.hidden_field :default, value: true
+        %button.btn.btn-xs.btn-default.has_bottom_tooltip{ type: 'submit',
+        title: t('funds.set_default.to_true',
+                 fund: user_fund.fund.name,
+                 user: user_fund.user.full_name) }
+          D
+
+  = link_to admin_billing_logs_path(user_id: user.id),
+    remote: true,
+    data: { billing: 'on' },
+    title: t('billing.load_for_user', user: user.full_name),
+    class: 'btn btn-default btn-xs has_bottom_tooltip' do
+    = icon 'bar-chart'
+
+  = link_to admin_user_fund_path(user_fund),
+    method: :delete,
+    data: { confirm: t('are_you_sure') },
+    class: 'btn btn-default btn-xs has_bottom_tooltip',
+    title: t('funds.remove_user.help', user: user_fund.user) do
+    = icon 'times'

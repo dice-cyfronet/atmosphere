@@ -1,0 +1,12 @@
+%h1
+  = t 'editing'
+  = t 'funds.long_title_single'
+
+= render 'form'
+
+%p
+  .btn-group
+    = link_to admin_funds_path,
+      class: 'btn btn-default', title: t('back') do
+      =icon 'reply'
+      = t 'back'

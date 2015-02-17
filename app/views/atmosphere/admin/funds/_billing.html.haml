@@ -1,0 +1,30 @@
+#billing
+
+  %h3
+    - mode_name = @user ? @user.full_name : 'all users'
+    = t 'billing.consumption_title', user: mode_name
+    .btn-group
+      - if @user
+        = link_to admin_billing_logs_path, remote: true,
+          data: { billing: 'on' },
+          class: 'btn btn-primary btn-sm has_bottom_tooltip' do
+          = icon 'bar-chart'
+          = t 'billing.load_for_all.label'
+      %button#hide-billing.btn.btn-sm.btn-default
+        = icon 'minus'
+        = t 'hide'
+
+  #billing-chart
+
+  :javascript
+    $(function () {
+      $('#hide-billing').on('click', function() {
+        $('#billing').empty();
+      });
+
+      new window.Billing(
+        '#{mode_name}',
+        #{last_months_names},
+        #{@data_series}
+      );
+    });

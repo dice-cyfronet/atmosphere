@@ -1,0 +1,30 @@
+.show-table {
+  @extend .table;
+  @extend .table-hover;
+  @extend .table-condensed;
+
+  tr {
+    td:nth-child(1) {
+      font-weight: bold;
+    }
+
+    td:nth-child(2) {
+      font-family: monospace;
+    }
+  }
+}
+
+.action-table {
+  @extend .table;
+  @extend .table-hover;
+  @extend .table-condensed;
+
+  th:last-child {
+    text-align: right;
+    min-width: 10rem;
+  }
+
+  td:last-child {
+    text-align: right;
+  }
+}

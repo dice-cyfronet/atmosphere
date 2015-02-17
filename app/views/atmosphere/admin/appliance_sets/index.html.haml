@@ -4,20 +4,13 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th
-        = t('appliance_sets.user')
-      %th
-        = t('appliance_sets.type')
-      %th
-        = t('appliance_sets.appliance_type')
-      %th
-        = t('appliance_sets.virtual_machines')
-      %th
-        = t('appliance_sets.site')
-      %th
-        = t('appliance_sets.flavor')
-      %th{ style: "text-align: right; min-width: 8rem;" }
-        = t('actions')
+      %th= t('appliance_sets.user')
+      %th= t('appliance_sets.type')
+      %th= t('appliance_sets.appliance_type')
+      %th= t('appliance_sets.virtual_machines')
+      %th= t('appliance_sets.site')
+      %th= t('appliance_sets.flavor')
+      %th.actions= t('actions')
 
     - @appliance_sets.each do |user, sets|
       - sets.each_with_index do |appliance_set, i|
@@ -35,7 +28,7 @@
                     = appliance.fund ? appliance.fund.name : t('appliance_sets.no_fund_assigned')
                 = t('appliance_sets.amount_billed')
                 %strong
-                  = number_to_currency(appliance.amount_billed/10000.0, unit: '')
+                  = fund_balance_full_precision appliance.amount_billed
                   = appliance.fund ? appliance.fund.currency_label : '?'
                 %br
                 - appliance.virtual_machines.each do |virtual_machine|
@@ -72,7 +65,7 @@
             %td(colspan='4')
               = t('appliance_sets.no_appliances')
 
-          %td{ style: "text-align: right" }
+          %td.actions
             .btn-group
               = link_to [:admin, appliance_set],
                 class: 'btn btn-success btn-xs', title: t('appliance_sets.show') do

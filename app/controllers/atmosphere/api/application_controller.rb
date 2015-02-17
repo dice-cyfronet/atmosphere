@@ -37,7 +37,6 @@ module Atmosphere
       protected
 
       def render_error(model_obj)
-        log_user_action("record invalid #{model_obj.errors.to_json}")
         render_json_error('Object is invalid',
           status: :unprocessable_entity,
           type: :record_invalid,

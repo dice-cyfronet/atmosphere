@@ -7,3 +7,31 @@
 .form-actions {
   margin-top: 30px;
 }
+
+.tiny-select {
+  height: 22px;
+  line-height: 22px;
+  padding: 0 5px;
+  font-size: 12px;
+}
+
+.tiny-select-wrapper {
+  margin-bottom: 0;
+}
+
+.non-opaque {
+  opacity: 1 !important;
+}
+
+.inline-spinner {
+  display:inline-block;
+  width: 20px;
+  height: 20px;
+  border: solid 2px transparent;
+  border-top-color: #29d;
+  border-left-color: #29d;
+  border-radius: 50%;
+  -webkit-animation: nprogress-spinner 400ms linear infinite;
+  animation: nprogress-spinner 400ms linear infinite;
+  vertical-align: middle;
+}

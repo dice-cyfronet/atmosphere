@@ -1,37 +1,23 @@
-%p#notice= notice
-
 %p
-  %table.table.table-hover.table-condensed
+  %table.show-table
     %tr
-      %td
-        %b
-          = t('virtual_machine_templates.site')
-      %td
-        = @virtual_machine_template.compute_site
+      %td= t('virtual_machine_templates.site')
+      %td= @virtual_machine_template.compute_site
     %tr
-      %td
-        %b
-          = t('uuid')
-      %td{ style: "font-family: monospace;" }
-        = @virtual_machine_template.id_at_site
+      %td= t('uuid')
+      %td.monospace= @virtual_machine_template.id_at_site
     %tr
-      %td
-        %b
-          = t('virtual_machine_templates.name')
-      %td
-        = @virtual_machine_template.name
+      %td= t('virtual_machine_templates.name')
+      %td= @virtual_machine_template.name
     %tr
-      %td
-        %b
-          = t('virtual_machine_templates.state')
-      %td
-        = @virtual_machine_template.state
+      %td= t('virtual_machine_templates.state')
+      %td= @virtual_machine_template.state
     %tr
-      %td
-        %b
-          = t('virtual_machine_templates.managed_by_atmosphere')
-      %td
-        = @virtual_machine_template.managed_by_atmosphere
+      %td= t('virtual_machine_templates.managed_by_atmosphere')
+      %td= @virtual_machine_template.managed_by_atmosphere
+    %tr
+      %td= t('virtual_machine_templates.version')
+      %td= @virtual_machine_template.version
 
 %p
   .btn-group
@@ -39,6 +25,10 @@
       class: 'btn btn-warning', title: t('edit') do
       =icon 'bars'
       = t('edit')
+    = link_to share_admin_virtual_machine_template_path(@virtual_machine_template),
+      class: 'btn btn-warning', title: t('share') do
+      =icon 'copy'
+      = t('share')
     = link_to admin_virtual_machine_templates_path,
       class: 'btn btn-default', title: t('back') do
       =icon 'reply'

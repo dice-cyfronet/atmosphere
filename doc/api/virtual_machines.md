@@ -1,6 +1,6 @@
 ## List user virtual machines
 
-Get a list of virtual machines used by appliances added to user appliance sets. Normal user is able to list only virtual machines belonging to his/hers appliances. Admin is able to browse all users virtual machines by adding 'all' flag with value set to 'true' into query param.
+Get a list of virtual machines used by appliances added to user appliance sets. Normal user is able to list only virtual machines belonging to his/hers appliances. An admin is able to browse all users' virtual machines by adding the 'all' flag with value set to 'true' to query param.
 
 ```
 GET /virtual_machines
@@ -24,7 +24,7 @@ GET /virtual_machines
 }
 ```
 
-To browse only virtual machines assigned into an appliance add `appliance_id` query param with appliance `id` (e.g. `/virtual_machines?appliance_id=1`).
+To browse only virtual machines assigned to a specific appliance add `appliance_id` query param with appliance `id` (e.g. `/virtual_machines?appliance_id=1`).
 
 ## Details of a virtual machine
 

@@ -59,7 +59,7 @@ module Atmosphere
       dependent: :nullify,
       class_name: 'Atmosphere::BillingLog'
 
-    before_save :check_fund_assignment
+    after_create :check_fund_assignment
 
     scope :with_vm, ->(vm) do
       joins(appliance_sets: { appliances: :virtual_machines })
@@ -87,6 +87,10 @@ module Atmosphere
       "#{login} <#{email}>"
     end
 
+    def descriptive_name
+      "#{full_name} (#{login}) <#{email}>"
+    end
+
     def admin?
       has_role? :admin
     end
@@ -102,7 +106,7 @@ module Atmosphere
     # This method is provided to ensure compatibility with old versions of Atmosphere which do not supply fund information when creating users.
     # Once the platform APIs are updated, this method will be deprecated and should be removed.
     def check_fund_assignment
-      if funds.blank? and Atmosphere::Fund.all.count > 0
+      if Atmosphere::UserFund.where(user: self).blank? and Atmosphere::Fund.all.count > 0
         user_funds << Atmosphere::UserFund.new(user: self, fund: Atmosphere::Fund.first, default: true)
       end
     end

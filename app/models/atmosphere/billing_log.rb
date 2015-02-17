@@ -27,5 +27,26 @@ module Atmosphere
     validates :fund, presence: true
     validates :actor, presence: true
     validates :amount_billed, numericality: true
+
+    # This gets less then exactly last year: it gets all logs up to the first
+    # day of the month that was 11 months before
+    scope :last_year, -> {
+      where(timestamp: (Time.now - 11.months).beginning_of_month..Time.now)
+    }
+
+    # Turns logs into data series by month
+    # Ensures 0 sum for month with no data
+    def self.month_data_series(logs)
+      (1..12).map do |month|
+        month_sum = logs.detect { |l| l[0][1].month == month }
+        month_sum ? month_sum[1] : 0
+      end
+    end
+
+    scope :sum_currency_by_month, -> {
+      group(["currency", "DATE_TRUNC('month', timestamp)"]).
+      sum(:amount_billed)
+    }
+
   end
 end

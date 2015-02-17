@@ -10,10 +10,14 @@ module Atmosphere
           only: :create,
           class: 'Atmosphere::ApplianceType'
 
+        include Atmosphere::Api::Auditable
+
         respond_to :json
 
         def index
           process_active_query
+          process_saving_query
+
           ats = @appliance_types.where(filter).order(:id)
           respond_with pdp.filter(ats, params[:mode])
         end
@@ -23,7 +27,6 @@ module Atmosphere
         end
 
         def create
-          log_user_action "create new appliance type with following params #{params}"
           appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
           tmpl = nil
           vm = nil
@@ -57,26 +60,24 @@ module Atmosphere
           end
 
           render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
-          log_user_action "appliance type created: #{@appliance_type.to_json}"
         end
 
         def update
-          log_user_action "update appliance type #{@appliance_type.id} with following params #{params}"
           update_params = appliance_type_params
-          update_params.delete 'appliance_id'
+          appliance_id = update_params.delete 'appliance_id'
           author_id = update_params.delete(:author_id)
           update_params[:author] = Atmosphere::User.find(author_id) if author_id
 
-          @appliance_type.update_attributes!(update_params)
+          Atmosphere::ApplianceType.transaction do
+            @appliance_type.update_attributes!(update_params)
+            perform_save(appliance_id) if appliance_id
+          end
           render json: @appliance_type, serializer: ApplianceTypeSerializer
-          log_user_action "appliance type updated: #{@appliance_type.to_json}"
         end
 
         def destroy
-          log_user_action "destroy appliance type #{@appliance_type.id}"
           if @appliance_type.destroy
             render json: {}
-            log_user_action "appliance type #{@appliance_type.id} destroyed"
           else
             render_error @appliance_type
           end
@@ -92,10 +93,35 @@ module Atmosphere
 
         private
 
+        def perform_save(appliance_id)
+          appl = Atmosphere::Appliance.find(appliance_id)
+          authorize!(:save_vm_as_tmpl, appl)
+
+          Atmosphere::Cloud::SaveWorker.
+            perform_async(appliance_id, @appliance_type.id)
+        end
+
         def process_active_query
           active = params[:active]
           unless active.blank?
-            @appliance_types = to_boolean(active) ? @appliance_types.active : @appliance_types.inactive
+            @appliance_types =
+              if to_boolean(active)
+                @appliance_types.active
+              else
+                @appliance_types.inactive
+              end
+          end
+        end
+
+        def process_saving_query
+          saving = params[:saving]
+          unless saving.blank?
+            @appliance_types =
+              if to_boolean(saving)
+                @appliance_types.saving
+              else
+                @appliance_types.not_saving
+              end
           end
         end
 
@@ -103,12 +129,18 @@ module Atmosphere
           filter = super
           author_id = params[:author_id]
           filter[:user_id] = author_id unless author_id.blank?
-
           filter
         end
 
         def appliance_type_params
-          params.require(:appliance_type).permit(:name, :description, :shared, :scalable, :visible_to, :author_id, :preference_cpu, :preference_memory, :preference_disk, :appliance_id)
+          allowed_params = [
+            :name, :description, :shared, :scalable,
+            :visible_to, :author_id, :preference_cpu,
+            :preference_memory, :preference_disk,
+            :appliance_id
+          ] + update_params_ext
+
+          params.require(:appliance_type).permit(allowed_params)
         end
 
         def pdp
@@ -118,6 +150,8 @@ module Atmosphere
         def model_class
           Atmosphere::ApplianceType
         end
+
+        include Atmosphere::Api::V1::ApplianceTypesControllerExt
       end
     end
   end

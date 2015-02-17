@@ -40,11 +40,8 @@ describe Atmosphere::VirtualMachine do
   it { should validate_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
 
   context 'destruction' do
-    let(:cc_mock) { double('cloud client mock') }
     let(:servers_mock) { double('servers') }
-    before do
-      allow(cc_mock).to receive(:servers).and_return(servers_mock)
-    end
+    let(:cc_mock) { double('cloud client mock', servers: servers_mock) }
 
     it 'is not performed if it is being saved as template' do
       create(:virtual_machine_template, source_vm: vm, state: :saving)
@@ -95,6 +92,28 @@ describe Atmosphere::VirtualMachine do
       )
       allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
+    end
+
+    it 'ignores when VM does not exist on OpenStack' do
+      delete_with_success_when_exception(Fog::Compute::OpenStack::NotFound)
+    end
+
+    it 'ignores when VM does not exist on Amazon' do
+      delete_with_success_when_exception(Fog::Compute::AWS::NotFound)
+    end
+
+    def delete_with_success_when_exception(e)
+      allow(vm.compute_site).
+        to receive(:cloud_client).
+        and_return(cc_mock)
+
+      allow(servers_mock).
+        to receive(:destroy).
+        with(vm.id_at_site).
+        and_raise(e)
+
+      expect { vm.destroy }.
+        to change { Atmosphere::VirtualMachine.count }.by(-1)
     end
   end
 
@@ -206,7 +225,7 @@ describe Atmosphere::VirtualMachine do
       context 'is performed' do
         context 'wrangler service is called' do
           before do
-            expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+            expect(wrg).to receive(:remove).with(priv_ip)
           end
 
           it 'after VM is destroyed if IP was not blank' do
@@ -217,10 +236,16 @@ describe Atmosphere::VirtualMachine do
             vm.ip = nil
             vm.save
           end
+
+          it 'if VM ip was updated from non-blank value to non-blank' do
+            allow(wrg).to receive(:add_dnat_for_vm).and_return([])
+            vm.ip = priv_ip_2
+            vm.save
+          end
         end
         context 'removes port mappings from DB' do
           before do
-            allow(wrg).to receive(:remove_dnat_for_vm).with(vm).and_return(true)
+            allow(wrg).to receive(:remove).and_return(true)
           end
 
           it 'after VM is destroyed if IP was not blank' do
@@ -249,15 +274,17 @@ describe Atmosphere::VirtualMachine do
     context 'regeneration' do
 
       it 'deletes dnat if ip is changed to blank' do
-          expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
-          vm.ip = nil
-          vm.save
+        old_ip = vm.ip
+        expect(wrg).to receive(:remove).with(old_ip)
+        vm.ip = nil
+        vm.save
       end
 
       it 'adds dnat if blank IP was changed to not blank' do
-          expect(wrg).to receive(:add_dnat_for_vm).with(vm_ipless, [pmt_1]).and_return([])
-          vm_ipless.ip = '8.8.8.8'
-          vm_ipless.save
+        expect(wrg).to receive(:add_dnat_for_vm).
+          with(vm_ipless, [pmt_1]).and_return([])
+        vm_ipless.ip = '8.8.8.8'
+        vm_ipless.save
       end
 
       context 'is not performed' do
@@ -271,7 +298,8 @@ describe Atmosphere::VirtualMachine do
 
       context 'is performed' do
         it 'after not blank IP was changed' do
-          expect(wrg).to receive(:remove_dnat_for_vm).with(vm)
+          old_ip = vm.ip
+          expect(wrg).to receive(:remove).with(old_ip)
           expect(wrg).to receive(:add_dnat_for_vm).with(vm, [pmt_1]).and_return([])
           vm.ip = '8.8.8.8'
           vm.save
@@ -355,6 +383,36 @@ describe Atmosphere::VirtualMachine do
       vm.reload
 
       expect(vm.state).to eq new_state
+    end
+  end
+
+  context '#unused' do
+    it 'returns VMs not assigned to appliance' do
+      vm = create(:virtual_machine,
+                  managed_by_atmosphere: true)
+      appl = create(:appliance)
+      create(:virtual_machine,
+             appliances: [appl],
+             managed_by_atmosphere: true)
+
+      unused_vms = Atmosphere::VirtualMachine.unused
+
+      expect(unused_vms.count).to eq 1
+      expect(unused_vms.first.id).to eq vm.id
+    end
+
+    it 'returns VMs not used to save VMT' do
+      vm = create(:virtual_machine,
+                  managed_by_atmosphere: true)
+      vmt = create(:virtual_machine_template)
+      create(:virtual_machine,
+             saved_templates: [vmt],
+             managed_by_atmosphere: true)
+
+      unused_vms = Atmosphere::VirtualMachine.unused
+
+      expect(unused_vms.count).to eq 1
+      expect(unused_vms.first.id).to eq vm.id
     end
   end
 end

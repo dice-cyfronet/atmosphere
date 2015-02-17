@@ -22,6 +22,6 @@ class Atmosphere::ApplicationController < ApplicationController
   end
   protected
   def set_compute_sites
-    @compute_sites = ComputeSite.all
+    @compute_sites = Atmosphere::ComputeSite.all
   end
 end

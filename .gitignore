@@ -13,6 +13,7 @@
 /.devise_secret
 /config/air.yml
 /spec/dummy/config/air.yml
+/spec/tmp
 
 # Ignore database config.
 /config/database.yml

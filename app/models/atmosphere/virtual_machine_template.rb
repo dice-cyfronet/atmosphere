@@ -33,6 +33,10 @@ module Atmosphere
       dependent: :nullify,
       class_name: 'Atmosphere::VirtualMachine'
 
+    has_many :migration_job,
+      dependent: :destroy,
+      class_name: 'Atmosphere::MigrationJob'
+
     belongs_to :compute_site,
       class_name: 'Atmosphere::ComputeSite'
 
@@ -58,6 +62,7 @@ module Atmosphere
 
     enumerize :state, in: ALLOWED_STATES
 
+    before_save :set_version, if: :update_version?
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
@@ -70,12 +75,17 @@ module Atmosphere
     scope :active, -> { where(state: 'active') }
 
     scope :on_active_cs, -> do
-      joins(:compute_site)
-        .where(atmosphere_compute_sites: { active: true })
+      joins(:compute_site).
+        where(atmosphere_compute_sites: { active: true })
     end
 
     scope :on_cs, ->(cs) { where(compute_site_id: cs) }
 
+    scope :on_cs_with_src, ->(cs_id, source_id) do
+      joins(:compute_site).
+        where(atmosphere_compute_sites: { site_id: cs_id },
+              id_at_site: source_id)
+    end
 
     def uuid
       "#{compute_site.site_id}-tmpl-#{id_at_site}"
@@ -132,9 +142,19 @@ module Atmosphere
 
     def perform_delete_in_cloud
       logger.info "Deleting template #{uuid}"
-      cloud_client = self.compute_site.cloud_client
-      cloud_client.images.destroy self.id_at_site
+      cloud_client.images.destroy id_at_site
       logger.info "Destroyed template #{uuid}"
+    rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
+      logger.warn("VMT with #{id_at_site} does not exist - continuing")
+    end
+
+    def export(compute_site_id)
+      destination_compute_site = ComputeSite.find(compute_site_id)
+      if destination_compute_site != compute_site
+        vmt_migrator = VmtMigrator.new(self, compute_site,
+                                       destination_compute_site)
+        vmt_migrator.execute
+      end
     end
 
     private
@@ -163,20 +183,20 @@ module Atmosphere
       state == 'saving' || state == :saving
     end
 
-    def save_template_in_cloud
-      logger.info "Saving template"
-      cs = source_vm.compute_site
-      cloud_client = cs.cloud_client
-      id_at_site = cloud_client.save_template(source_vm.id_at_site, name)
-      logger.info "Created template #{id_at_site}"
-      self.id_at_site = id_at_site
-      self.compute_site = cs
-      self.state = :saving
-      #self.appliance_type = vm.appliance_type
-    end
-
     def cant_destroy_non_managed_vmt
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    end
+
+    def cloud_client
+      compute_site.cloud_client
+    end
+
+    def update_version?
+      !version_changed? && appliance_type_id_changed?
+    end
+
+    def set_version
+      self.version = appliance_type.version + 1 if appliance_type
     end
   end
 end

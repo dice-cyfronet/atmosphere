@@ -29,8 +29,25 @@ module Atmosphere
       end
     end
 
+    def start_vms!(vms_descs)
+      if BillingService.can_afford_flavors?(appliance, vms_descs.map{ |desc| desc[:flavor]})
+        vms_descs.each { |desc| instantiate_vm(desc[:template], desc[:flavor], desc[:name]) }
+      else
+        unsatisfied('Not enough funds to scale')
+      end
+    end
+
+    def stop_vms!(vms_to_stop)
+      vms_to_stop.each { |vm| Cloud::VmDestroyWorker.perform_async(vm.id) }
+    end
+
     def save
       appliance.save.tap { |saved| bill if saved }
+    end
+
+    def unsatisfied(msg)
+      appliance.state = :unsatisfied
+      appliance.state_explanation = msg
     end
 
     private
@@ -42,25 +59,20 @@ module Atmosphere
       appliance.billing_state = 'expired'
     end
 
-    def unsatisfied(msg)
-      appliance.state = :unsatisfied
-      appliance.state_explanation = msg
-    end
-
     def instantiate_vm(tmpl, flavor, name)
       server_id = start_vm_on_cloud(tmpl, flavor, name)
-      if defined? Air.config.ostnic
-        nic = Air.config.ostnic.nic
-      else
-        nic = ''
-      end
-      vm = appliance.virtual_machines.create(
-          name: name, source_template: tmpl,
-          state: :build, virtual_machine_flavor: flavor,
-          managed_by_atmosphere: true, id_at_site: server_id,
-          compute_site: tmpl.compute_site,
-          nic: nic
+      vm = VirtualMachine.find_or_initialize_by(
+          id_at_site: server_id,
+          compute_site: tmpl.compute_site
         )
+      vm.name = name
+      vm.source_template = tmpl
+      vm.state = :build
+      vm.virtual_machine_flavor = flavor
+      vm.managed_by_atmosphere = true
+      appliance.virtual_machines << vm
+
+      vm.save
 
       if vm.valid?
         appliance_satisfied(vm)
@@ -79,8 +91,6 @@ module Atmosphere
     end
 
     def start_vm_on_cloud(tmpl, flavor, name)
-
-
       @vm_creator_class.new(
           tmpl,
           flavor: flavor, name: name,

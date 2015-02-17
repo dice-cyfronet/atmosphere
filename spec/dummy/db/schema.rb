@@ -11,10 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141013064633) do
+ActiveRecord::Schema.define(version: 20150121162000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "atmosphere_action_logs", force: true do |t|
+    t.string   "message"
+    t.string   "log_level"
+    t.integer  "action_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "atmosphere_action_logs", ["action_id"], name: "index_atmosphere_action_logs_on_action_id", using: :btree
+
+  create_table "atmosphere_actions", force: true do |t|
+    t.string   "action_type"
+    t.integer  "appliance_id"
+    t.datetime "created_at"
+  end
+
+  add_index "atmosphere_actions", ["appliance_id"], name: "index_atmosphere_actions_on_appliance_id", using: :btree
 
   create_table "atmosphere_appliance_compute_sites", force: true do |t|
     t.integer "appliance_id"
@@ -173,6 +191,18 @@ ActiveRecord::Schema.define(version: 20141013064633) do
     t.string   "base_url",                                     null: false
   end
 
+  create_table "atmosphere_migration_jobs", force: true do |t|
+    t.integer  "appliance_type_id"
+    t.integer  "virtual_machine_template_id"
+    t.integer  "compute_site_source_id"
+    t.integer  "compute_site_destination_id"
+    t.text     "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
+
   create_table "atmosphere_port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
     t.string   "value",                    null: false
@@ -265,6 +295,7 @@ ActiveRecord::Schema.define(version: 20141013064633) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "architecture",          default: "x86_64"
+    t.integer  "version"
   end
 
   add_index "atmosphere_virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "atmo_vm_tmpls_on_cs_id_and_id_at_site_ix", unique: true, using: :btree
@@ -287,6 +318,7 @@ ActiveRecord::Schema.define(version: 20141013064633) do
   add_index "atmosphere_virtual_machines", ["compute_site_id", "id_at_site"], name: "atmo_vm_cs_id_id_at_site_ix", unique: true, using: :btree
   add_index "atmosphere_virtual_machines", ["virtual_machine_template_id"], name: "atmo_vm_vmt_ix", using: :btree
 
+  Foreigner.load
   add_foreign_key "atmosphere_appliance_configuration_instances", "atmosphere_appliance_configuration_templates", name: "ac_instances_ac_template_id_fk", column: "appliance_configuration_template_id"
 
   add_foreign_key "atmosphere_appliance_configuration_templates", "atmosphere_appliance_types", name: "atmo_config_templates_at_id_fk", column: "appliance_type_id"
@@ -307,6 +339,11 @@ ActiveRecord::Schema.define(version: 20141013064633) do
   add_foreign_key "atmosphere_http_mappings", "atmosphere_appliances", name: "atmosphere_http_mappings_appliance_id_fk", column: "appliance_id"
   add_foreign_key "atmosphere_http_mappings", "atmosphere_compute_sites", name: "atmosphere_http_mappings_compute_site_id_fk", column: "compute_site_id"
   add_foreign_key "atmosphere_http_mappings", "atmosphere_port_mapping_templates", name: "atmosphere_http_mappings_port_mapping_template_id_fk", column: "port_mapping_template_id"
+
+  add_foreign_key "atmosphere_migration_jobs", "atmosphere_appliance_types", name: "atmo_mj_at_fk", column: "appliance_type_id"
+  add_foreign_key "atmosphere_migration_jobs", "atmosphere_compute_sites", name: "atmo_mj_csd_fk", column: "compute_site_destination_id"
+  add_foreign_key "atmosphere_migration_jobs", "atmosphere_compute_sites", name: "atmo_mj_css_fk", column: "compute_site_source_id"
+  add_foreign_key "atmosphere_migration_jobs", "atmosphere_virtual_machine_templates", name: "atmo_mj_vmt_fk", column: "virtual_machine_template_id"
 
   add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_compute_sites", name: "atmosphere_port_mapping_properties_compute_site_id_fk", column: "compute_site_id"
   add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_port_mapping_templates", name: "atmosphere_port_mapping_properties_port_mapping_template_id_fk", column: "port_mapping_template_id"

@@ -84,6 +84,14 @@ module Atmosphere
       )
     end
 
+    scope :unused, -> do
+      manageable.where(%{id NOT IN (SELECT DISTINCT(virtual_machine_id)
+                            FROM atmosphere_deployments)
+                        AND id NOT IN (SELECT DISTINCT(virtual_machine_id)
+                            FROM atmosphere_virtual_machine_templates WHERE
+                              virtual_machine_id IS NOT NULL)})
+    end
+
     def uuid
       "#{compute_site.site_id}-vm-#{id_at_site}"
     end
@@ -122,7 +130,7 @@ module Atmosphere
     # Deletes all dnat redirections and then adds. Use it when IP of the vm has changed and existing redirection would not work any way.
     def regenerate_dnat
       if ip_was
-        if delete_dnat
+        if delete_dnat(ip_was)
           port_mappings.delete_all
         end
       end
@@ -143,8 +151,8 @@ module Atmosphere
       compute_site.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
     end
 
-    def delete_dnat
-      compute_site.dnat_client.remove_dnat_for_vm(self)
+    def delete_dnat(ip = self.ip)
+      compute_site.dnat_client.remove(ip)
     end
 
     def update_in_monitoring
@@ -219,6 +227,8 @@ module Atmosphere
           }
         )
       end
+    rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
+      logger.warn("VM with #{id_at_site} does not exist - continuing")
     end
 
     def cant_destroy_non_managed_vm

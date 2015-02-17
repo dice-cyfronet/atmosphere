@@ -1,6 +1,6 @@
 ## List appliances
 
-List all appliances belonging to the user. Appliances can belong to different user. Normal user is able to list only owned appliances, admin is able to set flag `all` into `true` (e.g. by adding `?all=true` to the request path) and thus receive information about all appliances.
+List all appliances belonging to the user. Appliances can belong to different user. Normal user is able to list only owned appliances, admin is able to set the `all` flag to `true` (e.g. by adding `?all=true` to the request path) and thus receive information about all appliances.
 
 ```
 GET /appliances
@@ -90,14 +90,14 @@ Parameters:
 + `appliance_set_id` (required) - The ID of appliance set into which appliance will be added
 + `name` (optional) - Appliance name (if empty than source Appliance Type name is used)
 + `description` (optional) - Appliance description (if empty than source Appliance Type description is used)
-+ `user_key_id` (optional) - User key id. User key will be rejested for appliances started in production mode
++ `user_key_id` (optional) - User key id. User key will be rejected for appliances started in production mode
 + `configuration_template_id` (required) - The ID of appliance configuration id used to instantiate appliance
 + `params` (optional) - if configuration template has dynamic content than params are used to inject concrete values into configuration placeholders.
 + `dev_mode_property_set` (optional, allowed only in development mode) - list of preferences for new started machine. Allowed preferences: `preference_memory` (in MB), `preference_cpu`, `preference_disk` (in GB).
 
 ---
 
-Not all appliance types can be added into all appliance sets. For details please take a look at [Appliance Type `visible_to` parameter description](appliance_types#visible_to). E.g. user is able to start Appliance Type with `visible_to` param set to `owner` only when he/she is  an owner of this Appliance Type, otherwise `403` (Forbidden) will be returned and no Appliance will be added into Appliance Set.
+Not all appliance types can be added into all appliance sets. For details please take a look at [Appliance Type `visible_to` parameter description](appliance_types#visible_to). E.g. user is able to start Appliance Type with `visible_to` param set to `owner` only when he/she is  an owner of this Appliance Type, otherwise `403` (Forbidden) will be returned and no Appliance will be added to the Appliance Set.
 
 ---
 
@@ -126,7 +126,7 @@ As a response full information about appliance is returned.
 
 ## Delete appliance
 
-Delete user appliance. You need to be an appliance owner (or admin) do delete it.
+Delete user appliance. You need to be an appliance owner (or admin) to perform this action.
 
 ```
 DELETE /appliances/:id
@@ -139,13 +139,13 @@ Parameters:
 ## Appliance actions
 
 All actions which can be performed on appliance level have the same format.
-Post message need to be sent to:
+Post messages need to be sent to:
 
 ```
 POST /appliances/:id/action
 ```
 
-with following body:
+with the following body:
 
 ```json
 {
@@ -153,14 +153,14 @@ with following body:
 }
 ```
 
-Bellow you can find list of all actions which can be performed on appliance. If
-in requrest JSON contains invalid action name than `400` (Bad Request) status
+Bellow you can find a list of all actions which can be performed on an appliance. If
+the request JSON contains an invalid action name than `400` (Bad Request) status
 code is returned.
 
 ### Restart appliance
 
-Owned appliance started in `development` mode can be rebooted. Administrator
-is able to reboot not owned appliance started in all modes.
+For a regular user, their owned appliances started in `development` mode can be rebooted. Administrator
+is able to reboot any appliance, started in any mode.
 
 Request body:
 
@@ -172,7 +172,7 @@ Request body:
 
 ## Get appliance endpoints
 
-Get information about all endpoints registered into appliance. Http mappings generation is done in asynchronous way (once per 5s), thus information about endpoints will appear after http redirections into started virtual machine(s) are established.
+Get information about all endpoints registered for an appliance. HTTP mapping is performed asynchronously (once per 5s), thus information about endpoints will appear after HTTP redirections into running virtual machine(s) are established.
 
 ```
 GET /appliances/:id/endpoints

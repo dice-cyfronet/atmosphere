@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export __dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pushd $(dirname $(dirname $(dirname ${__dir})))
+    bundle exec rake db:drop
+popd

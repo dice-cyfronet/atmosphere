@@ -95,7 +95,7 @@ describe Atmosphere::ApplianceVmsManager do
         name: 'name',
         id: 1,
 
-        virtual_machines: double(create: vm)
+        virtual_machines: double(create: vm, :<< => true)
       )
     end
     let(:tags_mng) { double('tags manager') }
@@ -118,6 +118,17 @@ describe Atmosphere::ApplianceVmsManager do
         {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
           .and_return(vm_creator)
       allow(tags_mng).to receive(:create_tags_for_vm)
+
+      allow(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
+        and_return(vm)
+
+      allow(vm).to receive(:name=)
+      allow(vm).to receive(:source_template=)
+      allow(vm).to receive(:state=)
+      allow(vm).to receive(:virtual_machine_flavor=)
+      allow(vm).to receive(:managed_by_atmosphere=)
+      allow(vm).to receive(:save)
+      allow(vm).to receive(:valid?).and_return(true)
     end
 
     context 'when user can afford to spawn VM with selected flavor' do
@@ -128,14 +139,20 @@ describe Atmosphere::ApplianceVmsManager do
 
       it 'creates new VM' do
         allow(vm).to receive(:valid?).and_return(true)
-        expect(appl.virtual_machines).to receive(:create) do |params|
-          expect(params[:name]).to eq name
-          expect(params[:source_template]).to eq tmpl
-          expect(params[:virtual_machine_flavor]).to eq flavor
-          expect(params[:managed_by_atmosphere]).to be_truthy
-          expect(params[:id_at_site]).to eq 'server_id'
-          expect(params[:compute_site]).to eq tmpl.compute_site
-        end.and_return(vm)
+
+        expect(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
+          with(id_at_site: 'server_id', compute_site: tmpl.compute_site).
+          and_return(vm)
+
+        expect(vm).to receive(:name=).with(name)
+        expect(vm).to receive(:source_template=).with(tmpl)
+        expect(vm).to receive(:state=).with(:build)
+        expect(vm).to receive(:virtual_machine_flavor=).with(flavor)
+        expect(vm).to receive(:managed_by_atmosphere=).with(true)
+
+        expect(vm).to receive(:save)
+        expect(vm).to receive(:valid?).and_return(true)
+        expect(appl.virtual_machines).to receive(:<<).with(vm)
 
         subject.spawn_vm!(tmpl, flavor, name)
       end
@@ -184,4 +201,59 @@ describe Atmosphere::ApplianceVmsManager do
     end
   end
 
+  context 'scaling'  do
+    let(:appl) { build(:appliance) }
+    let(:vm_creator_class) { double('vm creator class') }
+
+    subject do
+      Atmosphere::ApplianceVmsManager.
+        new(appl,
+            double(new: double(update: true)),
+            vm_creator_class,
+            double(new: double(create_tags_for_vm: true)))
+    end
+
+    context 'when user can afford new vm and scale up' do
+      it 'start 2 new instances' do
+        first = vmt_desc('first')
+        second = vmt_desc('second')
+
+        expect_vm_started(first, 'first_id')
+        expect_vm_started(second, 'second_id')
+
+        subject.start_vms!([first, second])
+      end
+
+      def expect_vm_started(desc, vm_id_at_site)
+        first_creator = instance_double('Cloud::VmCreator')
+        allow(vm_creator_class).
+          to receive(:new).
+          with(desc[:template],
+               hash_including(flavor: desc[:flavor], name: desc[:name])).
+          and_return(first_creator)
+
+        expect(first_creator).to receive(:spawn_vm!).and_return(vm_id_at_site)
+      end
+
+      def vmt_desc(name)
+        {
+          template: create(:virtual_machine_template),
+          flavor: create(:virtual_machine_flavor),
+          name: name
+        }
+      end
+    end
+
+    it 'stops 2 vms' do
+      vm1 = double(id: 1)
+      vm2 = double(id: 2)
+
+      expect(Atmosphere::Cloud::VmDestroyWorker).
+        to receive(:perform_async).with(1).and_return(true)
+      expect(Atmosphere::Cloud::VmDestroyWorker).
+        to receive(:perform_async).with(2).and_return(true)
+
+      subject.stop_vms!([vm1, vm2])
+    end
+  end
 end

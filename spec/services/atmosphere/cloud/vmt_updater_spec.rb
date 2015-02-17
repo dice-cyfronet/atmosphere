@@ -38,6 +38,42 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(target_vmt.managed_by_atmosphere).to be_truthy
   end
 
+  it 'new VMT with version when it is migrated from other compute site' do
+    _, source_vmt, source_cs = at_with_vmt_on_cs
+    target_cs = create(:compute_site)
+    image = open_stack_image('target_vmt_id',
+                             source_cs.site_id,
+                             source_vmt.id_at_site)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    source_vmt.version = 13
+    source_vmt.save
+
+    updater.update
+    target_vmt = Atmosphere::VirtualMachineTemplate.
+                  find_by(id_at_site: 'target_vmt_id')
+
+    expect(target_vmt.version).to eq 13
+  end
+
+  it 'updates old VMT version and relation to AT when metadata appears' do
+    _, source_vmt, source_cs = at_with_vmt_on_cs
+    target_cs = create(:compute_site)
+    image = open_stack_image('target_vmt_id',
+                             source_cs.site_id,
+                             source_vmt.id_at_site)
+    target_vmt = create(:virtual_machine_template,
+                        compute_site: target_cs,
+                        id_at_site: 'target_vmt_id')
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    updater.update
+    target_vmt.reload
+
+    expect(target_vmt.version).to eq source_vmt.version
+    expect(target_vmt.appliance_type).to eq source_vmt.appliance_type
+  end
+
   it 'does not update VMT--AT relation when VMT is old' do
     at, source_vmt, source_cs = at_with_vmt_on_cs
     target_cs = create(:compute_site)
@@ -78,6 +114,44 @@ describe Atmosphere::Cloud::VmtUpdater do
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
+  end
+
+  it 'triggers removing old VMT after state changed into active' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('id', nil, nil)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
+      to receive(:perform_async)
+
+    updater.update
+  end
+
+  it 'does not remove old VMT when old state is ACTIVE' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('id', nil, nil)
+    create(:virtual_machine_template,
+           id_at_site: 'id',
+           state: :active,
+           compute_site: target_cs)
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
+      to_not receive(:perform_async)
+
+    updater.update
+  end
+
+  it 'does not remove old VMT when new status is different than ACTIVE' do
+    target_cs = create(:compute_site)
+    image = open_stack_image('id', nil, nil)
+    image.status = 'BUILD'
+    updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
+
+    expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
+      to_not receive(:perform_async)
+
+    updater.update
   end
 
   def open_stack_image(image_id, source_cs, source_uuid)

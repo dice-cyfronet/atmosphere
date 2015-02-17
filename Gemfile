@@ -31,16 +31,19 @@ group :development, :test do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'guard-rspec', require: false
-  gem 'guard-spring'
 end
 
 group :test do
   # gem 'rspec-rails'
-  # gem 'rspec-sidekiq'
-  gem 'rspec-sidekiq', github: 'yelled3/rspec-sidekiq', branch: 'rspec3-beta'
+  gem 'rspec-sidekiq'
   # gem 'shoulda-matchers'
+  gem "generator_spec"
 
   # gem 'factory_girl'
   gem 'ffaker'
   gem 'database_cleaner'
+
+  gem "codeclimate-test-reporter", require: nil
+
+  gem 'highcharts-rails'
 end

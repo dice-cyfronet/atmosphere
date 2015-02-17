@@ -60,6 +60,16 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::ApplianceComputeSite'
 
+    has_many :migration_job_cs_source,
+      dependent: :destroy,
+      class_name: 'Atmosphere::MigrationJob',
+      foreign_key: 'compute_site_source_id'
+
+    has_many :migration_job_cs_desination,
+      dependent: :destroy,
+      class_name: 'Atmosphere::MigrationJob',
+      foreign_key: 'compute_site_destination_id'
+
     validates :site_id, presence: true
 
     validates :site_type,

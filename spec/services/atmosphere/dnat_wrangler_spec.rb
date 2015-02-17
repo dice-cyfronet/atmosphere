@@ -56,12 +56,12 @@ describe Atmosphere::DnatWrangler do
 
       it 'logs error if wrangler returns non 204 status when deleting DNAT for vm' do
         expect(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}.")
-        subject.remove_dnat_for_vm(vm)
+        subject.remove(vm.ip)
       end
 
       it 'returns false if wrangler returns non 204 status when deleting DNAT for vm' do
         allow(logger_mock).to receive(:error).with("Wrangler returned #{http_int_err_code.to_s} when trying to remove redirections for IP #{priv_ip}.")
-        expect(subject.remove_dnat_for_vm(vm)).to be_falsy
+        expect(subject.remove(vm.ip)).to be_falsy
       end
 
       it 'logs error if wrangler returns non 204 status when deleting DNAT for mapping' do
@@ -79,26 +79,39 @@ describe Atmosphere::DnatWrangler do
     context 'when removing DNAT' do
 
       context 'using wrangler client' do
+        it 'removes existing redirection' do
+          stub_dnat_with_response_status(200)
 
-        stubs = nil
-        before do
+          expect(subject.remove(vm.ip)).to be_truthy
+          expect(subject.remove_port_mapping(pm)).to be_truthy
+          expect(subject.remove_port_mapping(pm2)).to be_truthy
+        end
+
+        it 'removes non existing redirection' do
+          stub_dnat_with_response_status(204)
+
+          expect(subject.remove(vm.ip)).to be_truthy
+          expect(subject.remove_port_mapping(pm)).to be_truthy
+          expect(subject.remove_port_mapping(pm2)).to be_truthy
+        end
+
+        def stub_dnat_with_response_status(status)
           stubs = Faraday::Adapter::Test::Stubs.new do |stub|
-            stub.delete("/dnat/#{priv_ip}") {[204, {}, nil]}
-            stub.delete("/dnat/#{priv_ip}/#{priv_port.to_s}/#{protocol}") {[204, {}, nil]}
-            stub.delete("/dnat/#{priv_ip}/#{priv_port_2.to_s}/#{protocol}") {[204, {}, nil]}
+            stub.delete("/dnat/#{priv_ip}") { [status, {}, nil] }
+
+            stub.delete("/dnat/#{priv_ip}/#{priv_port}/#{protocol}") do
+              [status, {}, nil]
+            end
+            stub.delete("/dnat/#{priv_ip}/#{priv_port_2}/#{protocol}") do
+              [status, {}, nil]
+            end
           end
           stubbed_dnat_client = Faraday.new do |builder|
             builder.adapter :test, stubs
           end
-          allow(subject).to receive(:dnat_client)
-            .and_return stubbed_dnat_client
-        end
 
-        it 'calls remote wrangler service for vm' do
-          subject.remove_dnat_for_vm(vm)
-          subject.remove_port_mapping(pm)
-          subject.remove_port_mapping(pm2)
-          stubs.verify_stubbed_calls
+          allow(subject).to receive(:dnat_client).
+            and_return stubbed_dnat_client
         end
       end
 
@@ -114,11 +127,7 @@ describe Atmosphere::DnatWrangler do
         end
 
         it 'if vm does not have an IP' do
-          subject.remove_dnat_for_vm(vm_ipless)
-        end
-
-        it 'if vm does not have port mappings'  do
-          subject.remove_dnat_for_vm(vm_mappingless)
+          subject.remove(vm_ipless.ip)
         end
 
       end
@@ -164,11 +173,11 @@ describe Atmosphere::DnatWrangler do
 
     context 'when deleting DNAT' do
       it 'returns true for ipless vm' do
-        expect(subject.remove_dnat_for_vm(vm_ipless)).to be true
+        expect(subject.remove(vm_ipless.ip)).to be true
       end
 
       it 'returns true for a vm with an ip' do
-        expect(subject.remove_dnat_for_vm(vm)).to be true
+        expect(subject.remove(vm.ip)).to be true
       end
     end
 

@@ -1,0 +1,15 @@
+===============================================================================
+
+Some setup you must do manually if you haven't yet:
+
+  1. Ensure you have added Atmosphere csses into
+     app/assets/stylesheets/application.css
+
+     *= require atmosphere/application
+
+  2. Ensure you have added Atmosphere java script into
+     app/assets/javascripts/application.js
+
+     #=require atmosphere/application
+
+===============================================================================

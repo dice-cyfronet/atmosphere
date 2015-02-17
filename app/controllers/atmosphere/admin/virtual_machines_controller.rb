@@ -22,11 +22,6 @@ class Atmosphere::Admin::VirtualMachinesController < Atmosphere::Admin::Applicat
     redirect_to admin_virtual_machines_url
   end
 
-  def destroy
-    @virtual_machine.destroy
-    redirect_to admin_virtual_machines_url, notice: 'Virtual machine was successfully destroyed.'
-  end
-
   private
     def virtual_machine_params
       params.require(:virtual_machine).permit(:virtual_machine_template_id, :name, {appliance_ids: []})

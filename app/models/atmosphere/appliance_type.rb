@@ -41,6 +41,10 @@ module Atmosphere
     has_many :virtual_machine_templates,
       class_name: 'Atmosphere::VirtualMachineTemplate'
 
+    has_many :migration_job,
+      dependent: :nullify,
+      class_name: 'Atmosphere::MigrationJob'
+
     # Required for API (returning all compute sites on which a given
     # AT can be deployed). By allowed compute site we understan active compute site
     # with VMT installed.
@@ -87,14 +91,28 @@ module Atmosphere
     enumerize :visible_to, in: [:owner, :developer, :all]
 
     scope :def_order, -> { order(:name) }
-    scope :active, -> do
-      joins(:virtual_machine_templates)
-        .where(
-          atmosphere_virtual_machine_templates: { state: :active }
-        ).uniq
+
+    scope :active, -> { with_vmt_state(:active) }
+    scope :inactive, -> { without_vmt_state(:active) }
+
+    scope :saving, -> { with_vmt_state(:saving) }
+    scope :not_saving, -> { without_vmt_state(:saving) }
+
+    scope :with_vmt_state, ->(state) do
+      joins(:virtual_machine_templates).
+        where(atmosphere_virtual_machine_templates: { state: state }).uniq
     end
 
-    scope :inactive, -> { where("id NOT IN (SELECT appliance_type_id FROM atmosphere_virtual_machine_templates WHERE state = 'active')") }
+    scope :without_vmt_state, ->(state) do
+      query = <<-SQL
+        id NOT IN (
+          SELECT appliance_type_id
+            FROM atmosphere_virtual_machine_templates
+            WHERE state = ?)
+      SQL
+
+      where(query, state)
+    end
 
     scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
       joins(virtual_machine_templates: :compute_site).
@@ -145,6 +163,18 @@ module Atmosphere
 
     def development?
       visible_to.developer?
+    end
+
+    def appropriate_for?(appliance_set)
+      case visible_to.to_sym
+      when :owner then appliance_set.user == author
+      when :developer then appliance_set.appliance_set_type.development?
+      else true
+      end
+    end
+
+    def version
+      virtual_machine_templates.maximum(:version) || 0
     end
 
     private

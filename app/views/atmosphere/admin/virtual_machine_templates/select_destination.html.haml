@@ -1,0 +1,15 @@
+%h1
+  = t('migrate')
+  = t('virtual_machine_templates.long_title_single')
+
+= simple_form_for [:admin, @virtual_machine_template], url: migrate_admin_virtual_machine_template_path, method: :post do |f|
+  = f.error_notification
+
+  .inputs
+    = f.input :compute_site_id, collection: @compute_sites
+
+  .actions
+    %button.btn.btn-success{id: "action-button", type: "submit"}
+      =icon 'copy'
+      = t('export')
+    = link_to t('back'), admin_virtual_machine_templates_path, class: 'btn btn-default'

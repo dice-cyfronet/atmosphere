@@ -24,4 +24,12 @@ FactoryGirl.define do
     factory :developer, traits: [:developer]
     factory :admin, traits: [:admin]
   end
+
+  # Test user with no (explicitly appointed) funds
+  factory :poor_chap, class: 'Atmosphere::User' do
+    email { Faker::Internet.email }
+    login { SecureRandom.hex(8) }
+    password '12345678'
+    password_confirmation { password }
+  end
 end

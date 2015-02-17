@@ -1,31 +1,17 @@
-%p#notice= notice
-
 %p
-  %table.table.table-hover.table-condensed
+  %table.show-table
     %tr
-      %td
-        %b
-          = t('uuid')
-      %td{ style: "font-family: monospace;" }
-        = @virtual_machine.id_at_site
+      %td= t('uuid')
+      %td.monospace= @virtual_machine.id_at_site
     %tr
-      %td
-        %b
-          = t('virtual_machines.name')
-      %td
-        = @virtual_machine.name
+      %td= t('virtual_machines.name')
+      %td= @virtual_machine.name
     %tr
-      %td
-        %b
-          = t('virtual_machines.state')
-      %td
-        = @virtual_machine.state
+      %td= t('virtual_machines.state')
+      %td= @virtual_machine.state
     %tr
-      %td
-        %b
-          = t('virtual_machines.ip_address')
-      %td{ style: "font-family: monospace;" }
-        = @virtual_machine.ip
+      %td= t('virtual_machines.ip_address')
+      %td.monospace= @virtual_machine.ip
 
 %p
   .btn-group

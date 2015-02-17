@@ -30,7 +30,8 @@ describe Atmosphere::OptimizationStrategy::Manual do
         }
       )
     creator = Atmosphere::ApplianceCreator.new(created_appl_params, 'dummy-token')
-    appl = creator.create!
+    appl = creator.build
+    appl.save!
 
     manual_policy = Atmosphere::OptimizationStrategy::Manual.new(appl)
 
@@ -43,4 +44,15 @@ describe Atmosphere::OptimizationStrategy::Manual do
     expect(tmpls_and_flavors[1][:flavor]).to eq fl2
   end
 
+  context '#vms_to_start' do
+    it 'returns n vms to start' do
+      vm = create(:virtual_machine, state: :active, ip: '10.10.10.10')
+      appl = create(:appliance, virtual_machines: [vm])
+      strategy = described_class.new(appl)
+
+      vms_to_start = strategy.vms_to_start(2)
+
+      expect(vms_to_start.size).to eq 2
+    end
+  end
 end

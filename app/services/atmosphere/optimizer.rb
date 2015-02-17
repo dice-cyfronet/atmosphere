@@ -9,10 +9,15 @@ module Atmosphere
     def run(hint)
       satisfy_appliance(hint[:created_appliance]) if hint[:created_appliance]
       terminate_unused_vms if hint[:destroyed_appliance]
+      scale(hint[:scaling]) if hint[:scaling]
     end
 
     #private
     def satisfy_appliance(appliance)
+      action = Action.create(appliance: appliance,
+                             action_type: :satisfy_appliance)
+      action.log('Satisfying appliance started')
+
       logger.info { "Satisfying appliance with #{appliance.id} id started" }
       appl_manager = ApplianceVmsManager.new(appliance)
       optimization_strategy = appliance.optimization_strategy
@@ -55,12 +60,13 @@ module Atmosphere
         end
       end
 
+      action.log('Satisfying appliance finished')
       logger.info { "Satisfying appliance with #{appliance.id} id ended" }
     end
 
     def terminate_unused_vms
       logger.info { "Terminating unused VMs started" }
-      unused_vms.each do |vm|
+      VirtualMachine.unused.each do |vm|
         logger.info { " - Destroying #{vm.id_at_site} VM scheduled" }
         Cloud::VmDestroyWorker.perform_async(vm.id)
       end
@@ -76,12 +82,37 @@ module Atmosphere
       OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
     end
 
-    private
+    def scale(hint)
+      appliance = hint[:appliance]
+      quantity = hint[:quantity]
 
-    def unused_vms
-      # TODO ask PN for better query
-      VirtualMachine.manageable.where('id NOT IN (SELECT DISTINCT(virtual_machine_id) FROM atmosphere_deployments)')
+      action = Action.create(appliance: appliance, action_type: :scale)
+
+      optimization_strategy = appliance.optimization_strategy
+      appl_manager = ApplianceVmsManager.new(appliance)
+      if optimization_strategy.can_scale_manually?
+        action.log('Scaling started')
+        if quantity > 0
+          vms = optimization_strategy.vms_to_start(quantity)
+          appl_manager.start_vms!(vms)
+        else
+          if appliance.virtual_machines.count > quantity.abs
+            vms = optimization_strategy.vms_to_stop(-quantity)
+            appl_manager.stop_vms!(vms)
+          else
+            appl_manager.unsatisfied("Not enough vms to scale down")
+          end
+        end
+        action.log('Scaling finished')
+      else
+        action.log('Scaling not allowed')
+        #TODO - verify if the state unsatisfied is any meaningful in this case
+        appl_manager.unsatisfied("Chosen optimization strategy does not allow for manual scaling")
+      end
+      appl_manager.save
     end
+
+    private
 
     def logger
       Atmosphere.optimizer_logger

@@ -201,4 +201,69 @@ describe Atmosphere::ApplianceType do
 
     expect(at.compute_sites).to eq [active_cs]
   end
+
+  context '#appropriate_for?' do
+    it 'does not allow to use dev appliance in prod appliance set' do
+      at, as = at_and_as(:developer, :portal)
+      dev_as = build(:appliance_set, appliance_set_type: :development)
+
+      expect(at.appropriate_for?(as)).to be_falsy
+      expect(at.appropriate_for?(dev_as)).to be_truthy
+    end
+
+    it 'owner at appropriate only for owner' do
+      at, as = at_and_as(:owner, :portal)
+      user = build(:user)
+      at.author = user
+      as.user = user
+      other_user_as = create(:appliance_set)
+
+      expect(at.appropriate_for?(as)).to be_truthy
+      expect(at.appropriate_for?(other_user_as)).to be_falsy
+    end
+
+    def at_and_as(at_type, as_type)
+      at = build(:appliance_type, visible_to: at_type)
+      as = build(:appliance_set, appliance_set_type: as_type)
+
+      [at, as]
+    end
+  end
+
+  context '::version' do
+    it 'returns 0 when no VMT assigned' do
+      at = create(:appliance_type)
+
+      expect(at.version).to eq 0
+    end
+
+    it 'calculates higher version' do
+      at = create(:appliance_type)
+      create(:virtual_machine_template, appliance_type: at)
+      create(:virtual_machine_template, appliance_type: at)
+
+      expect(at.version).to eq 2
+    end
+  end
+
+  context '#without_vmt_state' do
+    it 'return AT without VM in concrete state' do
+      active1 = create(:virtual_machine_template, state: :active)
+      active2 = create(:virtual_machine_template, state: :active)
+      saving1 = create(:virtual_machine_template, state: :saving)
+      saving2 = create(:virtual_machine_template, state: :saving)
+
+      create(:appliance_type,
+             virtual_machine_templates: [active1])
+      create(:appliance_type,
+             virtual_machine_templates: [active2, saving1])
+      saving = create(:appliance_type,
+                      virtual_machine_templates: [saving2])
+
+      without_active = Atmosphere::ApplianceType.without_vmt_state(:active)
+
+      expect(without_active.count).to eq 1
+      expect(without_active).to include saving
+    end
+  end
 end

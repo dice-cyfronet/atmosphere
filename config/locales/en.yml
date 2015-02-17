@@ -37,14 +37,19 @@ en:
   keep_it_secret: Keep it secret, keep it safe!
   reset: Reset
   are_you_sure: Are you sure?
+  are_you_sure_cs: Warning! This will irrevocably destroy all Virtual Machine Templates and Virtual Machines running on this CS which have been created by Atmosphere. Are you sure?
   actions: Actions
   add_new: Add new
   editing: Editing
   edit: Edit
   show: Show
+  hide: Hide
   save: Save
+  share: Share
   create: Create
   delete: Delete
+  export: Export
+  migrate: Migrate
   new: New
   uuid: UUID
   background_jobs: Background Jobs
@@ -128,6 +133,7 @@ en:
     reboot: Reboot this Virtual Machine
     save: Save this Virtual Machine as Template
     destroy: Destroy this Virtual Machine
+    managed_by_atmosphere: Managed
   virtual_machine_templates:
     title: Templates
     long_title: Virtual Machine Templates
@@ -138,7 +144,21 @@ en:
     state: State
     show: Show this Virtual Machine Template
     edit: Edit this Virtual Machine Template
+    migrate: Migrate this Virtual Machine Template to other Compute Site
     remove: Remove this Virtual Machine Template
+    version: Version
+    managed_by_atmosphere: Managed
+  migration_jobs:
+    title: Migration
+    long_title: Migration Jobs
+    long_title_single: Migration Jobs
+    appliance_type: Appliance Type
+    virtual_machine_template: Virtual Machine Template
+    virtual_machine_template_uuid: UUID
+    compute_site_source: Source
+    compute_site_destination: Destination
+    status: Status
+    last_update: Last update
   user_keys:
     title: User keys
     long_title: User keys
@@ -171,6 +191,74 @@ en:
     new: New Security Policy
     edit: Edit this Security Policy
     remove: Remove this Security Policy
+  funds:
+    title: Funds
+    long_title: Funds
+    long_title_single: Fund
+    name: Name
+    balance: Balance
+    currency_label: Currency
+    overdraft_limit: Overdraft limit
+    termination_policy: Termination policy
+    unique_compute_site: No need to duplicate a Compute Site assignment to the same Fund.
+    unique_user: No need to duplicate a User assignment to the same Fund.
+    new:
+      help: Create a new fund - the fund will be created with no Compute Sites and no Users assigned.
+      success: A new fund was successfully created.
+      balance_help: |
+        Both balance and the overdraft limit are given as integers, with 0.0001 precision.
+        That is, if you type in 245500 and set the currency to EUR, the fund users will have
+        24 Euro and 55 cents at their disposal.
+      termination_policy_help: 'Particular policies work as follows:'
+    update:
+      help: Change field values of this fund.
+      success: Fund was successfuly updated.
+    destroy:
+      help: Remove this fund (may cause users to lose their default and only fund!).
+      success: Fund was removed, along with its associations to Compute Sites and Users.
+    remove_site:
+      help: This will remove %{cs} from the list of Compute Sites where users are able to use that Fund.
+      success: Compute Site %{cs} was removed from the list of supported sites for Fund %{fund}.
+    add_site:
+      prompt: Add compute site...
+      help: Append a Compute Site to the list of sites supported by this Fund.
+      all_assigned: all compute sites assigned
+      success: Compute Site %{cs} was added to the list of sites supported by Fund %{fund}.
+    remove_user:
+      help: This will remove %{user} from this Fund, preventing this person from drawing upon this Fund's resources.
+      success: User %{user} was removed from the list of users assigned to Fund %{fund}.
+    add_user:
+      prompt: Add user...
+      help: Add a User to the list of people who can use resources from this Fund.
+      all_assigned: all users assigned
+      success: User %{user} was added to the list of people who are allowed to use Fund %{fund}.
+    termination_policies:
+      delete:
+        label: delete
+        help: The instance will be deleted when funding expires. Deleted instances cannot be recovered.
+      suspend:
+        label: suspend
+        help: |
+          The instance will be suspended when funding expires. Suspended instances cannot be accessed by users but can
+          still be reinitialized if additional funding becomes available.
+      no_action:
+        label: no action
+        help: |
+          The billing system will permit the instance to continue running when funding expires. The balance of the
+          corresponding fund may become negative as a result of further charges.
+    no_sites: no compute sites assigned
+    no_users: no users allowed to use this fund
+    set_default:
+      to_true: Set %{fund} to be the default fund for %{user}.
+      to_false: This is the default fund for %{user}.
+  billing:
+    consumption_title: Billing data for %{user}
+    load_for_all:
+      label: Show for all users
+    load_for_user: Show funds consumption data for %{user}
+    loading: Loading billing data
+  users:
+    title: Users
 
   profiles:
     title: Profile

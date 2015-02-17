@@ -1,8 +1,10 @@
 class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
-  before_filter :init_appliance, only: :create
+  before_filter :build_appliance, only: :create
 
   load_and_authorize_resource :appliance,
-    class: 'Atmosphere::Appliance'
+                              class: 'Atmosphere::Appliance'
+
+  include Atmosphere::Api::Auditable
 
   before_filter :init_vm_search, only: :index
 
@@ -17,39 +19,33 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def create
-    log_user_action "create new appliance with following params #{params}"
-    appliance = @creator.create!
-    render json: appliance, status: :created
-    log_user_action "appliance created: #{@appliance.to_json}"
+    @appliance.save!
+    render json: @appliance, status: :created
   end
 
   def update
-    log_user_action "update appliance #{@appliance.id} with following params #{params}"
     @appliance.update_attributes!(update_params)
     render json: @appliance
-    log_user_action "appliance name updated: #{@appliance_type.to_json}"
   end
 
   def destroy
-    log_user_action "destroy appliance #{@appliance.id}"
     if @appliance.destroy
       render json: {}
-      log_user_action "appliance #{@appliance.id} destroyed"
     else
       render_error @appliance
     end
   end
 
   def endpoints
-    endpoints = Atmosphere::Endpoint
-      .appl_endpoints(@appliance)
-      .order(:id).collect do |endpoint|
+    endpoints = Atmosphere::Endpoint.
+      appl_endpoints(@appliance).
+      order(:id).map do |endpoint|
         {
           id: endpoint.id,
           type: endpoint.endpoint_type,
-          urls: @appliance.http_mappings.where(port_mapping_template_id: endpoint.port_mapping_template_id).collect do |mapping|
-            "#{mapping.url}/#{endpoint.invocation_path}"
-          end
+          urls: @appliance.http_mappings.
+            where(port_mapping_template_id: endpoint.port_mapping_template_id).
+            map { |mapping| "#{mapping.url}/#{endpoint.invocation_path}" }
         }
       end
 
@@ -58,7 +54,8 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def action
     return reboot if reboot_action?
-    # place for other actions...
+    return scale if scale_action?
+    # place for other optimizer...
 
     render_json_error('Action not found', status: :bad_request)
   end
@@ -72,8 +69,18 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     render json: {}, status: 200
   end
 
+  def scale
+    authorize!(:scale, @appliance)
+    optimizer.run(scaling: { appliance: @appliance, quantity: params[:scale].to_i })
+    render json: {}, status: 200
+  end
+
   def reboot_action?
-    params.has_key? :reboot
+    params.key? :reboot
+  end
+
+  def scale_action?
+    params.has_key? :scale
   end
 
   def filter
@@ -82,7 +89,6 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
       vm_ids = to_array(params[:virtual_machine_ids])
       filter[:atmosphere_deployments] = { virtual_machine_id: vm_ids}
     end
-
     filter
   end
 
@@ -98,9 +104,9 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     params.require(:appliance).permit(:name, :description)
   end
 
-  def init_appliance
-    @creator = Atmosphere::ApplianceCreator.new(params.require(:appliance), delegate_auth)
-    @appliance = @creator.appliance
+  def build_appliance
+    @appliance = Atmosphere::ApplianceCreator.
+                  new(params.require(:appliance), delegate_auth).build
   end
 
   def load_admin_abilities?
@@ -113,5 +119,9 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def model_class
     Atmosphere::Appliance
+  end
+
+  def optimizer
+    Atmosphere::Optimizer.instance
   end
 end

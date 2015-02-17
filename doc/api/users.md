@@ -1,6 +1,6 @@
 ## List registered users
 
-Get a list of registered users. For normal `user` basic information is returned (login and full name), for `admin` full users details are returned if flag `all` is set to `true`.
+Get a list of registered users. For normal users only basic information is returned (login and full name), while admins can obtain full user details if the `all` flag is set to `true`.
 
 ```
 GET /users
@@ -13,14 +13,18 @@ GET /users
       "id": 1,
       "login": "foo",
       "full_name": "Foo Bar",
-      "email": "foobar@email.pl", #visible on for admin
-      "roles": ["admin", "developer"], #visible only for admin
+      "email": "foobar@email.pl",
+      "roles": ["admin", "developer"]
     }, {
       ...
     }
   ]
 }
 ```
+
+*Note:* `email` and `roles` fields are added only in two cases:
+  * request is made by the admin, then all users details are returned
+  * details are returned only for record representing user who pefromed request
 
 ## Details of a user
 
@@ -40,8 +44,8 @@ Parameters:
     "id": 1,
     "login": "foo",
     "full_name": "Foo Bar",
-    "email": "foobar@email.pl", #visible on for admin
-    "roles": ["admin", "developer"], #visible only for admin
+    "email": "foobar@email.pl",
+    "roles": ["admin", "developer"]
   }
 }
 ```

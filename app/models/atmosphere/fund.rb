@@ -19,6 +19,8 @@
 # Funds are also linked to ComputeSites and may only be used to pay for VMs which belong to their respective ComputeSites.
 module Atmosphere
   class Fund < ActiveRecord::Base
+    extend Enumerize
+
     has_many :appliances,
         class_name: 'Atmosphere::Appliance'
 
@@ -27,8 +29,9 @@ module Atmosphere
         class_name: 'Atmosphere::User'
 
     has_many :user_funds,
-        dependent: :destroy,
-        class_name: 'Atmosphere::UserFund'
+             -> { includes(:user).order('atmosphere_users.full_name') },
+             dependent: :destroy,
+             class_name: 'Atmosphere::UserFund'
 
     has_many :compute_sites,
         through: :compute_site_funds,
@@ -48,6 +51,17 @@ module Atmosphere
               numericality: { less_than_or_equal_to: 0 }
 
     validates :termination_policy,
-              inclusion: {in: ["delete", "suspend", "no_action"]}
+              inclusion: { in: ["delete", "suspend", "no_action"] }
+    enumerize :termination_policy,
+              in: [:delete, :suspend, :no_action],
+              predicates: true
+
+    def unsupported_compute_sites
+      ComputeSite.where.not(id: compute_sites)
+    end
+
+    def unassigned_users
+      User.where.not(id: users).order(:full_name)
+    end
   end
 end

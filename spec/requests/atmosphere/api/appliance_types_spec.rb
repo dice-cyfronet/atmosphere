@@ -126,9 +126,47 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
             create(:virtual_machine_template, state: :active, appliance_type: at1)
             create(:virtual_machine_template, state: :active, appliance_type: at1)
 
-            get api("/appliance_types?active=true", user)
+            get api('/appliance_types?active=true', user)
 
             expect(ats_response.size).to eq 1
+          end
+        end
+
+        context 'using saving flag' do
+          it 'returns only saving types' do
+            user = create(:user)
+            at1 = create(:filled_appliance_type, author: user)
+            at2 = create(:appliance_type, visible_to: :all)
+            create(:appliance_type, visible_to: :all)
+            create(:virtual_machine_template,
+                   state: :active,
+                   appliance_type: at1)
+            create(:virtual_machine_template,
+                   state: :saving,
+                   appliance_type: at2)
+
+            get api('/appliance_types?saving=true', user)
+
+            expect(ats_response.size).to eq 1
+            expect(ats_response[0]).to appliance_type_eq at2
+          end
+
+          it 'returns only not_saving types' do
+            user = create(:user)
+            at1 = create(:appliance_type, visible_to: :all)
+            at2 = create(:appliance_type, visible_to: :all)
+            at3 = create(:appliance_type, visible_to: :all)
+            create(:virtual_machine_template,
+                   state: :active,
+                   appliance_type: at1)
+            create(:virtual_machine_template,
+                   state: :saving,
+                   appliance_type: at3)
+
+            get api('/appliance_types?saving=false', user)
+            expect(ats_response.size).to eq 2
+            expect(ats_response[0]).to appliance_type_eq at1
+            expect(ats_response[1]).to appliance_type_eq at2
           end
         end
       end
@@ -324,6 +362,39 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         put api("/appliance_types/non_existing", user), update_msg
 
         expect(response.status).to eq 404
+      end
+
+      it 'save new VMT from devel appliance when owner of AT and appliance' do
+        user = create(:developer)
+        at = create(:appliance_type, author: user)
+        appl = user_appliance(user, :development)
+
+        update_body = { appliance_type: { appliance_id: appl.id } }
+        put api("/appliance_types/#{at.id}", user), update_body
+
+        expect(Atmosphere::Cloud::SaveWorker).
+          to have_enqueued_job(appl.id.to_s, at.id)
+      end
+
+      it 'allow to save only devel appliance' do
+        user = create(:developer)
+        at = create(:appliance_type, author: user)
+        appl = user_appliance(user, :workflow)
+
+        update_body = { appliance_type: { appliance_id: appl.id } }
+        put api("/appliance_types/#{at.id}", user), update_body
+
+        expect(Atmosphere::Cloud::SaveWorker).
+          to_not have_enqueued_job(appl.id.to_s, at.id)
+        expect(response.status).to eq 403
+      end
+
+      def user_appliance(user, as_type)
+        as = create(:appliance_set,
+                    appliance_set_type: as_type,
+                    user: user)
+
+        create(:appliance, appliance_set: as)
       end
     end
 

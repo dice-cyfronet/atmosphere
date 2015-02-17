@@ -170,11 +170,40 @@ describe Atmosphere::VirtualMachineTemplate do
 
     context 'when template is managed by atmosphere' do
       let(:cs) { build(:compute_site) }
-      let(:tmp) { build(:virtual_machine_template, managed_by_atmosphere: true, compute_site: cs) }
+      let(:tmp) do
+        build(:virtual_machine_template,
+              managed_by_atmosphere: true,
+              compute_site: cs)
+      end
 
       it 'removes template from compute site' do
         expect(images).to receive(:destroy).with(tmp.id_at_site)
         tmp.destroy
+      end
+
+      it 'ignores when VM does not exist on OpenStack' do
+        delete_with_success_when_exception(Fog::Compute::OpenStack::NotFound)
+      end
+
+      it 'ignores when VM does not exist on Amazon' do
+        delete_with_success_when_exception(Fog::Compute::AWS::NotFound)
+      end
+
+      def delete_with_success_when_exception(e)
+        tmpl = create(:virtual_machine_template,
+                      managed_by_atmosphere: true)
+
+        allow(tmpl).
+          to receive(:cloud_client).
+          and_return(cloud_client)
+
+        allow(images).
+          to receive(:destroy).
+          with(tmpl.id_at_site).
+          and_raise(e)
+
+        expect { tmpl.destroy }.
+          to change { Atmosphere::VirtualMachineTemplate.count }.by(-1)
       end
     end
 
@@ -250,4 +279,51 @@ describe Atmosphere::VirtualMachineTemplate do
   end
 
   it_behaves_like 'childhoodable'
+
+  describe '::version' do
+    it 'set version to 1 for first appliance type VMT' do
+      at = create(:appliance_type)
+      vmt = create(:virtual_machine_template, appliance_type: at)
+
+      expect(vmt.version).to eq 1
+    end
+
+    it 'increment version for new added VMT' do
+      at = create(:appliance_type)
+      create(:virtual_machine_template, appliance_type: at)
+      vmt = create(:virtual_machine_template, appliance_type: at)
+
+      expect(vmt.version).to eq 2
+    end
+
+    it 'does not set version when it is already set' do
+      at = create(:appliance_type)
+      vmt = create(:virtual_machine_template,
+                   appliance_type: at,
+                   version: 15)
+
+      expect(vmt.version).to eq 15
+    end
+
+    it 'set version when assigment to AT changes' do
+      vmt = create(:virtual_machine_template, version: 15)
+      at = create(:appliance_type)
+
+      vmt.appliance_type = at
+      vmt.save
+
+      expect(vmt.version).to eq 1
+    end
+
+    it 'setting version has precedence over assigning to AT' do
+      vmt = create(:virtual_machine_template, version: 15)
+      at = create(:appliance_type)
+
+      vmt.appliance_type = at
+      vmt.version = 3
+      vmt.save
+
+      expect(vmt.version).to eq 3
+    end
+  end
 end

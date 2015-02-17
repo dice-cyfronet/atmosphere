@@ -6,14 +6,23 @@ module Atmosphere
     sidekiq_options retry: 4
 
     sidekiq_retries_exhausted do |msg|
-      capture_message(
-        "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}. Manual intervention required!",
-        level: :error
+      Raven.capture_message(
+        "Failed #{msg['class']} with #{msg['args']}: #{msg['error_message']}."\
+        ' Manual intervention required!',
+        level: :error,
+        tags: { type: 'vm_tagging' }
       )
     end
 
     def perform(vm_id, tags_map)
-      vm = VirtualMachine.find(vm_id)
+      vm = VirtualMachine.find_by(id: vm_id)
+
+      tag(vm, tags_map) if vm
+    end
+
+    private
+
+    def tag(vm, tags_map)
       cs = vm.compute_site
       if cs.technology == 'openstack'
         tag_vm_on_openstack(vm, cs.cloud_client, tags_map)
@@ -22,17 +31,6 @@ module Atmosphere
       end
     end
 
-    def capture_message(msg, options = {})
-      Raven.capture_message(
-        msg,
-        level: options[:level] || :warning,
-        tags: {
-          type: 'vm_tagging'
-        }
-      )
-    end
-
-    private
     def tag_vm_on_openstack(vm, cloud_client, tags_map)
       if vm.state == 'active'
         tag_vm(vm.id_at_site, cloud_client, tags_map)
@@ -50,7 +48,12 @@ module Atmosphere
       begin
         cloud_client.create_tags_for_vm(server_id, tags_map)
       rescue Fog::Compute::AWS::NotFound, Fog::Compute::OpenStack::NotFound => e
-        capture_message("Failed to annotate #{server_id} because of #{e.message}- will try to retry")
+        Raven.capture_message(
+          "Failed to annotate #{server_id} because of #{e.message}"\
+          ' - will try to retry',
+          level: :warning,
+          tags: { type: 'vm_tagging' }
+        )
         raise e
       end
       Rails.logger.debug { "Successfuly created tags for server #{server_id}" }
