@@ -45,6 +45,10 @@ module Atmosphere
     has_many :virtual_machine_templates,
       class_name: 'Atmosphere::VirtualMachineTemplate'
 
+    has_many :migration_job,
+      dependent: :nullify,
+      class_name: 'Atmosphere::MigrationJob'
+
     # Required for API (returning all compute sites on which a given
     # AT can be deployed). By allowed compute site we understan active compute site
     # with VMT installed.

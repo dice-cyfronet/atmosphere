@@ -314,5 +314,16 @@ describe Atmosphere::VirtualMachineTemplate do
 
       expect(vmt.version).to eq 1
     end
+
+    it 'setting version has precedence over assigning to AT' do
+      vmt = create(:virtual_machine_template, version: 15)
+      at = create(:appliance_type)
+
+      vmt.appliance_type = at
+      vmt.version = 3
+      vmt.save
+
+      expect(vmt.version).to eq 3
+    end
   end
 end

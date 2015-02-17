@@ -1,0 +1,24 @@
+%h1
+  = t('migration_jobs.long_title')
+
+%p
+  %table.table.table-hover.table-condensed
+    %tr
+      %th= t('migration_jobs.appliance_type')
+      %th= t('migration_jobs.virtual_machine_template')
+      %th.uuid
+        = t('migration_jobs.virtual_machine_template_uuid')
+      %th= t('migration_jobs.compute_site_source')
+      %th= t('migration_jobs.compute_site_destination')
+      %th= t('migration_jobs.status')
+      %th= t('migration_jobs.last_update')
+
+    - @migration_jobs.each do |migration_job|
+      %tr
+        %td= migration_job.appliance_type_name
+        %td= migration_job.virtual_machine_template_name
+        %td.monospace= migration_job.virtual_machine_template_id_at_site
+        %td= migration_job.compute_site_source_name
+        %td= migration_job.compute_site_destination_name
+        %td= migration_job.status_last_line
+        %td= migration_job.updated_at
