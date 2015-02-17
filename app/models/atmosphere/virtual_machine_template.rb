@@ -33,6 +33,10 @@ module Atmosphere
       dependent: :nullify,
       class_name: 'Atmosphere::VirtualMachine'
 
+    has_many :migration_job,
+      dependent: :destroy,
+      class_name: 'Atmosphere::MigrationJob'
+
     belongs_to :compute_site,
       class_name: 'Atmosphere::ComputeSite'
 
@@ -142,6 +146,15 @@ module Atmosphere
       logger.info "Destroyed template #{uuid}"
     rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
       logger.warn("VMT with #{id_at_site} does not exist - continuing")
+    end
+
+    def export(compute_site_id)
+      destination_compute_site = ComputeSite.find(compute_site_id)
+      if destination_compute_site != compute_site
+        vmt_migrator = VmtMigrator.new(self, compute_site,
+                                       destination_compute_site)
+        vmt_migrator.execute
+      end
     end
 
     private

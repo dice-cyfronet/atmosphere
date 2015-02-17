@@ -28,7 +28,13 @@ Gem::Specification.new do |s|
   s.description = 'Atmosphere cloud platform'
   s.license     = 'MIT'
 
-  s.files = Dir['{app,config,db,lib,doc}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
+  s.files = Dir[
+                 '{app,config,db,lib,doc}/**/*',
+                 'spec/factories/**/*',
+                 'MIT-LICENSE',
+                 'Rakefile',
+                 'README.md'
+  ]
   s.test_files = Dir['spec/**/*']
 
   s.add_dependency 'rails', '~> 4.1.8'
@@ -69,6 +75,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'sentry-raven'
   s.add_dependency 'will_paginate', '~> 3.0.5'
   s.add_dependency 'highcharts-rails', '~>4.0.4'
+  s.add_dependency 'migratio'
+  s.add_dependency 'draper', '~> 1.3'
 
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'factory_girl_rails'

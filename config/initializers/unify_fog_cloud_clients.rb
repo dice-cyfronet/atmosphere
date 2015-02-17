@@ -7,6 +7,7 @@ require 'fog/aws/models/compute/image'
 require 'fog/openstack/models/compute/image'
 require 'fog/aws/models/compute/server'
 require 'fog/azure/models/compute/images'
+require 'fog/azure/compute'
 require 'fog/aws/models/compute/images'
 require 'fog/openstack/models/compute/images'
 require 'fog/azure/models/compute/server'
@@ -95,31 +96,13 @@ class Fog::Compute::AWS::Server
   end
 
   def pause
-    raise Air::UnsuportedException, 'Amazon des not support pause action'
+    raise Atmosphere::UnsupportedException, 'Amazon des not support pause action'
   end
 
   def suspend
-    raise Air::UnsuportedException, 'Amazon des not support suspend action'
+    raise Atmosphere::UnsupportedException, 'Amazon des not support suspend action'
   end
 end
-
-class Fog::Compute::Azure::Server
-  def id
-    identity
-  end
-
-  def flavor
-    {'id' => flavor_id}
-  end
-end
-
-class Fog::Compute::Azure::Servers
-  def destroy(id_at_site)
-    server = get(id_at_site)
-    server ? server.destroy : false
-  end
-end
-
 
 class Fog::Compute::OpenStack::Image
   def architecture
@@ -193,47 +176,6 @@ class Fog::Compute::AWS::Flavor
     "r3.8xlarge" => 32
   }
 
-  # ============ AZURE ===============
-
-  class Fog::Compute::OpenStack::Images
-    def all_generic(filters)
-      all(filters)
-    end
-  end
-  class Fog::Compute::AWS::Images
-    def all_generic(filters)
-      all(filters)
-    end
-  end
-  class Fog::Compute::Azure::Images
-    def all_generic(filters)
-      # TODO: implement filters
-      # Remove before flight!
-      all.select{|tmpl|
-        tmpl.name == 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20150123-en-us-30GB'}
-    end
-  end
-
-  class Fog::Compute::Azure::Image
-    def id
-      identity
-    end
-
-    def architecture
-      'x86_64'
-    end
-
-    def status
-      'active'
-    end
-
-    def tags
-      {}
-    end
-  end
-
-  # ============= END AZURE ==========
-
   def vcpus
     FLAVOR_VCPU_MAP[id] || cores
   end
@@ -248,3 +190,95 @@ class Fog::Compute::AWS::Flavor
     end
   end
 end
+
+class Fog::Compute::OpenStack::Images
+  def all_generic(filters)
+    all(filters)
+  end
+end
+
+class Fog::Compute::AWS::Images
+  def all_generic(filters)
+    all(filters)
+  end
+end
+
+# ============ AZURE ===============
+
+class Fog::Compute::Azure::Server
+  def stop
+    raise Atmosphere::UnsupportedException, 'Azure des not support stop action'
+  end
+  def suspend
+    shutdown
+  end
+  def pause
+    raise Atmosphere::UnsupportedException, 'Azure des not support pause action'
+  end
+  def id
+    identity
+  end
+
+  def flavor
+    {'id' => flavor_id}
+  end
+
+  def image_id
+    attributes[:image]
+  end
+
+  def created
+    vm = Atmosphere::VirtualMachine.find_by(id_at_site: id)
+    vm ? vm.created_at : (Atmosphere.childhood_age - 1).seconds.ago
+  end
+
+  def task_state
+    nil
+  end
+
+  def flavor_id
+    attributes[:vm_size]
+  end
+end
+
+class Fog::Compute::Azure::Servers
+  def destroy(id_at_site)
+    server = get(id_at_site)
+    server ? server.destroy : false
+  end
+end
+
+class Fog::Compute::Azure::Images
+  def all_generic(filters)
+    # TODO: implement filters
+    # Remove before flight!
+    all.select{|tmpl|
+      tmpl.name == 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20150123-en-us-30GB'}
+  end
+end
+
+class Fog::Compute::Azure::Image
+  def id
+    identity
+  end
+
+  def architecture
+    'x86_64'
+  end
+
+  def status
+    'active'
+  end
+
+  def tags
+    {}
+  end
+end
+
+class Fog::Compute::OpenStack::Real
+  def create_tags_for_vm(server_id, tags_map)
+    # do nothing since Azure does not support tagging
+  end
+end
+
+# ============= END AZURE ==========

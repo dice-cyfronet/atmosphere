@@ -26,6 +26,8 @@ require 'highcharts-rails'
 require 'github-markup'
 require 'redcarpet'
 
+require 'draper'
+
 module Atmosphere
   class Engine < ::Rails::Engine
     isolate_namespace Atmosphere
@@ -35,6 +37,14 @@ module Atmosphere
       g.fixture_replacement :factory_girl, dir: 'spec/factories'
       g.assets false
       g.helper false
+    end
+
+    initializer 'model_core.factories',
+                after: 'factory_girl.set_factory_paths' do
+      if defined?(FactoryGirl)
+        FactoryGirl.definition_file_paths <<
+          File.expand_path('../../../spec/factories', __FILE__)
+      end
     end
   end
 end
