@@ -97,7 +97,7 @@ module Atmosphere
     @@ability_class.constantize
   end
 
-  matr_accessor :nics
+  mattr_accessor :nics
   mattr_reader :nics
     @@nics = {}
 
