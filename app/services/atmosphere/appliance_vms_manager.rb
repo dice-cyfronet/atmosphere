@@ -93,7 +93,9 @@ module Atmosphere
     def start_vm_on_cloud(tmpl, flavor, name)
       if defined? Air.config.ostnic
         nic = Air.config.ostnic.nic
+        Rails.logger.info("Using custom NIC: #{nic}")
       else
+        Rails.logger.info("Using default NIC.")
         nic = nil
       end
 
