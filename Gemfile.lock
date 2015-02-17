@@ -40,7 +40,7 @@ PATH
       zabbixapi
 
 PATH
-  remote: /home/tomek/work/atmosphere/src/fog
+  remote: /home/ctt/RubymineProjects/fog-azure
   specs:
     fog (1.24.0)
       fog-brightbox (~> 0.4)
@@ -150,7 +150,7 @@ GEM
     enumerize (0.9.0)
       activesupport (>= 3.2)
     erubis (2.7.0)
-    excon (0.44.1)
+    excon (0.44.2)
     execjs (2.3.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -185,7 +185,7 @@ GEM
     fog-sakuracloud (1.0.0)
       fog-core
       fog-json
-    fog-softlayer (0.4.0)
+    fog-softlayer (0.4.1)
       fog-core
       fog-json
     fog-xml (0.1.1)
