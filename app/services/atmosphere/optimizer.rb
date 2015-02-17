@@ -14,6 +14,10 @@ module Atmosphere
 
     #private
     def satisfy_appliance(appliance)
+      action = Action.create(appliance: appliance,
+                             action_type: :satisfy_appliance)
+      action.log('Satisfying appliance started')
+
       logger.info { "Satisfying appliance with #{appliance.id} id started" }
       appl_manager = ApplianceVmsManager.new(appliance)
       optimization_strategy = appliance.optimization_strategy
@@ -56,6 +60,7 @@ module Atmosphere
         end
       end
 
+      action.log('Satisfying appliance finished')
       logger.info { "Satisfying appliance with #{appliance.id} id ended" }
     end
 
@@ -80,9 +85,13 @@ module Atmosphere
     def scale(hint)
       appliance = hint[:appliance]
       quantity = hint[:quantity]
+
+      action = Action.create(appliance: appliance, action_type: :scale)
+
       optimization_strategy = appliance.optimization_strategy
       appl_manager = ApplianceVmsManager.new(appliance)
       if optimization_strategy.can_scale_manually?
+        action.log('Scaling started')
         if quantity > 0
           vms = optimization_strategy.vms_to_start(quantity)
           appl_manager.start_vms!(vms)
@@ -94,7 +103,9 @@ module Atmosphere
             appl_manager.unsatisfied("Not enough vms to scale down")
           end
         end
+        action.log('Scaling finished')
       else
+        action.log('Scaling not allowed')
         #TODO - verify if the state unsatisfied is any meaningful in this case
         appl_manager.unsatisfied("Chosen optimization strategy does not allow for manual scaling")
       end

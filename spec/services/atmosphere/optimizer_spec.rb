@@ -572,14 +572,15 @@ describe Atmosphere::Optimizer do
 
   context 'scaling' do
     let(:strategy) { double() }
-    let(:appliance) { double(optimization_strategy: strategy) }
+    let(:appliance) { create(:appliance) }
 
     let(:appl_vm_manager) { double('appliance_vms_manager') }
 
     before do
 
       allow(Atmosphere::ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
-
+      expect(appl_vm_manager).to receive(:save)
+      allow(appliance).to receive(:optimization_strategy) { strategy }
 
     end
 
