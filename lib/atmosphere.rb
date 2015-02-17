@@ -99,7 +99,7 @@ module Atmosphere
 
   mattr_accessor :nics
   mattr_reader :nics
-    @@nics = {}
+  @@nics = {}
 
   ## LOGGERS ##
 
