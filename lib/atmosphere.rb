@@ -98,6 +98,9 @@ module Atmosphere
   end
 
   matr_accessor :nics
+  def self.nics
+    @@nics || {}
+  end
 
   ## LOGGERS ##
 
