@@ -6,6 +6,7 @@ module Atmosphere
       @name = options[:name] || tmpl.name
       @user_data = options[:user_data]
       @user_key = options[:user_key]
+      @nic = options[:nic]
     end
 
     def spawn_vm!
@@ -18,8 +19,9 @@ module Atmosphere
       }
       server_params[:user_data] = user_data if user_data
       server_params[:key_name] = key_name if key_name
-      if defined? Air.config.ostnic
-        server_params[:nics] = [{ net_id: Air.config.ostnic.nic }]
+      unless nic.blank?
+        Rails.logger.warn "Spawning server with forced NIC: #{nic}"
+        server_params[:nics] = [{ net_id: @nic }]
       end
 
       set_security_groups!(server_params)
