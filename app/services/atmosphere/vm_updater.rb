@@ -102,7 +102,13 @@ module Atmosphere
     end
 
     def vm_flavor
-      VirtualMachineFlavor.where(compute_site: vm.compute_site, id_at_site: server.flavor['id']).first
+      VirtualMachineFlavor.
+        where(compute_site: vm.compute_site,
+              id_at_site: flavor_id).first
+    end
+
+    def flavor_id
+      server.respond_to?(:flavor_id) ? server.flavor_id : server.flavor['id']
     end
 
     def error
