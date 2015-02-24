@@ -186,6 +186,7 @@ module Atmosphere
     def self.appliance_type_attributes(appliance, overwrite)
       if appliance and appliance.dev_mode_property_set
         params = appliance.dev_mode_property_set.attributes
+        params['atmosphere_os_families_id'] = params.delete 'os_family_id'
         %w(id created_at updated_at appliance_id).each { |el| params.delete(el) }
       end
       params ||= {}

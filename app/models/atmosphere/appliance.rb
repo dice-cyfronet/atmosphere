@@ -103,6 +103,8 @@ module Atmosphere
         set.preference_memory = options[:preference_memory] if options[:preference_memory]
         set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
         set.preference_disk = options[:preference_disk] if options[:preference_disk]
+        set.os_family = appliance_type.os_family
+        Rails.logger.info("Created DMPS with OS family #{set.os_family}")
         self.dev_mode_property_set = set
         set.appliance = self
       end

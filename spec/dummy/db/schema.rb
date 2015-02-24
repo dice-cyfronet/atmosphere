@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150121162000) do
+ActiveRecord::Schema.define(version: 20150224171920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 20150121162000) do
     t.integer  "appliance_id",                      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "os_family_id"
   end
 
   create_table "atmosphere_endpoints", force: true do |t|
