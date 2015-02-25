@@ -92,11 +92,10 @@ module Atmosphere
 
     def start_vm_on_cloud(tmpl, flavor, name)
       nic = Atmosphere.nics[tmpl.compute_site.site_id]
-      if !(nic.blank?)
+      if nic.present?
         Rails.logger.info("Using custom NIC: #{nic}")
       else
         Rails.logger.info('Using default NIC.')
-        nic = nil
       end
 
       @vm_creator_class.new(
