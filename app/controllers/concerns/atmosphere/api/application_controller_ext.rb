@@ -5,6 +5,10 @@ module Atmosphere
 
       def delegate_auth
       end
+
+      def token_request?
+        false
+      end
     end
   end
 end
