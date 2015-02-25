@@ -97,6 +97,9 @@ module Atmosphere
     @@ability_class.constantize
   end
 
+  mattr_reader :nics
+  @@nics = {}
+
   ## LOGGERS ##
 
   def self.action_logger
