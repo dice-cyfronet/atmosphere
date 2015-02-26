@@ -3,6 +3,8 @@
 #
 module Atmosphere
   class ApplianceAbilityBuilder < AbilityBuilder
+    include Atmosphere::ApplianceAbilityBuilderExt
+
     def add_user_abilities!
       can [:read, :update, :destroy, :endpoints, :action],
           Appliance, appliance_set: { user_id: user.id }
@@ -10,7 +12,8 @@ module Atmosphere
       can :create, Appliance do |appl|
         appl.owned_by?(user) &&
           appl.appliance_type.appropriate_for?(appl.appliance_set) &&
-            can_start?(appl)
+            can_start?(appl) &&
+              can_start_ext?(appl)
       end
 
       can :reboot, Appliance, appliance_set: {

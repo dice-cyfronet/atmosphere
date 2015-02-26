@@ -3,6 +3,7 @@
 #
 module Atmosphere
   class ApplianceSerializer < ActiveModel::Serializer
+    include Atmosphere::ApplianceSerializerExt
     embed :ids
 
     attributes :id, :name, :description, :state, :state_explanation, :amount_billed, :prepaid_until
