@@ -12,6 +12,7 @@
 #
 module Atmosphere
   class ApplianceSet < ActiveRecord::Base
+    include Atmosphere::ApplianceSetExt
     extend Enumerize
 
     belongs_to :user,
