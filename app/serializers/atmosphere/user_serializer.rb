@@ -5,6 +5,7 @@
 #
 module Atmosphere
   class UserSerializer < ActiveModel::Serializer
+    include Atmosphere::UserSerializerExt
     attributes :id, :login, :full_name
 
     def attributes
@@ -12,6 +13,7 @@ module Atmosphere
       if show_details?
         hash['email'] = object.email
         hash['roles'] = object.roles.to_a
+        additional_user_details(hash)
       end
       hash
     end
