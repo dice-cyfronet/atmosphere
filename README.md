@@ -64,7 +64,7 @@ need to be monitored. On a heavily loaded server the Sidekiq process may allocat
 Atmosphere works with Rails 4.1 onwards. You can add it to your Gemfile with:
 
 ```
-gem 'devise', github: 'dice-cyfronet/atmosphere', branch: 'master'
+gem 'atmosphere', github: 'dice-cyfronet/atmosphere', branch: 'master'
 ```
 
 Run the bundle command to install it.
