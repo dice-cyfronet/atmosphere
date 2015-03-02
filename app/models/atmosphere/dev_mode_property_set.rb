@@ -22,6 +22,9 @@ module Atmosphere
     belongs_to :appliance,
       class_name: 'Atmosphere::Appliance'
 
+    belongs_to :os_family,
+      class_name: 'Atmosphere::OSFamily'
+
       has_many :port_mapping_templates,
         dependent: :destroy,
         autosave: true,
@@ -73,6 +76,8 @@ module Atmosphere
         PmtCopier.copy(appliance_type).each  do |pmt|
           pmt.dev_mode_property_set = dev_mode_property_set
         end
+
+      dev_mode_property_set.os_family = appliance_type.os_family
 
       dev_mode_property_set
     end
