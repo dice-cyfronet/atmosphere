@@ -35,18 +35,22 @@ module Atmosphere
     def prod_params
       opt_policy_params = {}
       opt_policy_params[:vms] = params[:vms]
-      prod_params = params.permit(:appliance_set_id,
-                                  :name, :description,
-                                  :compute_site_ids)
+
+      allowed_params = [:appliance_set_id,
+                        :name, :description,
+                        :compute_site_ids] + allowed_params_ext
+      prod_params = params.permit(allowed_params)
       prod_params[:optimization_policy_params] = opt_policy_params
       prod_params
     end
 
     def dev_params
-      params.permit(:appliance_set_id,
-                    :user_key_id,
-                    :name, :description,
-                    :compute_site_ids)
+      allowed_params = [:appliance_set_id,
+                        :user_key_id,
+                        :name, :description,
+                        :compute_site_ids] + allowed_params_ext
+
+      params.permit(allowed_params)
     end
 
     def allowed_compute_sites
@@ -105,5 +109,7 @@ module Atmosphere
 
       c_params
     end
+
+    include Atmosphere::ApplianceCreatorExt
   end
 end
