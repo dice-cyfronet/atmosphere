@@ -1,12 +1,7 @@
-module Atmosphere
+module Atmosphere::NicProviderExt
+  extend ActiveSupport::Concern
 
-  module NicProviderExt
-    extend ActiveSupport::Concern
-
-    def nics
-      {}
-    end
-
+  def nics
+    {}
   end
-
 end
