@@ -28,7 +28,7 @@ module Atmosphere
 
     belongs_to :os_family,
       class_name: 'Atmosphere::OSFamily',
-      foreign_key: 'atmosphere_os_families_id'
+      foreign_key: 'os_family_id'
 
     has_many :appliances,
       dependent: :destroy,
@@ -186,7 +186,6 @@ module Atmosphere
     def self.appliance_type_attributes(appliance, overwrite)
       if appliance and appliance.dev_mode_property_set
         params = appliance.dev_mode_property_set.attributes
-        params['atmosphere_os_families_id'] = params.delete 'os_family_id'
         %w(id created_at updated_at appliance_id).each { |el| params.delete(el) }
       end
       params ||= {}
