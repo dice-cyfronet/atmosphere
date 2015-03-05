@@ -28,7 +28,6 @@ module Atmosphere
 
     belongs_to :os_family,
       class_name: 'Atmosphere::OSFamily',
-      foreign_key: 'os_family_id'
 
     has_many :appliances,
       dependent: :destroy,
