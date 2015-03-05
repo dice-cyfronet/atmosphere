@@ -27,7 +27,7 @@ module Atmosphere
       foreign_key: 'user_id'
 
     belongs_to :os_family,
-      class_name: 'Atmosphere::OSFamily',
+      class_name: 'Atmosphere::OSFamily'
 
     has_many :appliances,
       dependent: :destroy,
