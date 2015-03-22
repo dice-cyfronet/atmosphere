@@ -27,6 +27,15 @@ module Atmosphere
     has_many :virtual_machines,
       class_name: 'Atmosphere::VirtualMachine'
 
+    has_many :os_families,
+      through: :flavor_os_families,
+      class_name: 'Atmosphere::OSFamily'
+
+    has_many :flavor_os_families,
+      inverse_of: :virtual_machine_flavor,
+      class_name: 'Atmosphere::FlavorOSFamily',
+      autosave: true
+
     validates :flavor_name,
               presence: true
 
@@ -37,9 +46,6 @@ module Atmosphere
               numericality: { greater_than_or_equal_to: 0 }
 
     validates :hdd,
-              numericality: { greater_than_or_equal_to: 0 }
-
-    validates :hourly_cost,
               numericality: { greater_than_or_equal_to: 0 }
 
     validates :supported_architectures,
@@ -59,6 +65,33 @@ module Atmosphere
     end
 
     scope :active, -> { where(active: true) }
+
+    # Assumes only 1 vmf_osf for a specific os_family
+    def get_hourly_cost_for(os_family)
+      incarnation = flavor_os_families.find_by(os_family: os_family)
+      incarnation && incarnation.hourly_cost # nil if incarnation.blank?
+    end
+
+    # Upserts a binding between this VMF and an OS family, setting hourly cost
+    def set_hourly_cost_for(os_family, cost)
+      incarnation = flavor_os_families.
+          find_or_initialize_by(os_family: os_family)
+      incarnation.hourly_cost = cost
+      incarnation.save
+    end
+
+    # Provides backward compatibility with old versions of the GUI
+    def hourly_cost
+      flavor_os_families &&
+        flavor_os_families.maximum(:hourly_cost)
+    end
+
+    # Returns a full cost map for this flavor (depending on os_family)
+    def cost_map
+      flavor_os_families.each_with_object({}) do |f, hash|
+        hash[f.os_family.name] = f.hourly_cost
+      end
+    end
 
     def usable?
       active && compute_site && compute_site.active

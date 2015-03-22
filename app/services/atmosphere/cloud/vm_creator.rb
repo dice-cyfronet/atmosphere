@@ -6,12 +6,19 @@ module Atmosphere
       @name = options[:name] || tmpl.name
       @user_data = options[:user_data]
       @user_key = options[:user_key]
+      @nic = options[:nic]
     end
 
     def spawn_vm!
       register_user_key!
-
+      
       server_params = {}
+      server_params[:user_data] = user_data if user_data
+      server_params[:key_name] = key_name if key_name
+      unless @nic.blank?
+        Rails.logger.info "Spawning server with forced NIC: #{@nic}"
+        server_params[:nics] = [{ net_id: @nic }]
+      end
 
       case(@tmpl.compute_site.technology)
         when 'azure'

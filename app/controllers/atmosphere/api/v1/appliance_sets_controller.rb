@@ -54,8 +54,15 @@ module Atmosphere
             @appliances_params = params[:appliance_set][:appliances]
           end
 
+          allowed_params = [
+            :appliance_set_type,
+            :name,
+            :priority,
+            :optimization_policy
+          ] + create_params_ext
+
           params.require(:appliance_set).
-            permit(:appliance_set_type, :name, :priority, :optimization_policy)
+            permit(allowed_params)
         end
 
         def appliance_set_update_params
@@ -96,6 +103,8 @@ module Atmosphere
         def model_class
           Atmosphere::ApplianceSet
         end
+
+        include Atmosphere::Api::V1::ApplianceSetsControllerExt
       end
     end
   end

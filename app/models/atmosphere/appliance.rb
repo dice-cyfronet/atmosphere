@@ -22,6 +22,7 @@
 
 module Atmosphere
   class Appliance < ActiveRecord::Base
+    include Atmosphere::ApplianceExt
     extend Enumerize
     serialize :optimization_policy_params
 
@@ -66,15 +67,17 @@ module Atmosphere
       autosave: true,
       class_name: 'Atmosphere::DevModePropertySet'
 
+    has_many :actions,
+             dependent: :destroy,
+             class_name: 'Atmosphere::Action'
+
     validates :appliance_set, presence: true
     validates :appliance_type, presence: true
     validates :appliance_configuration_instance, presence: true
     validates :state, presence: true
-    validates :billing_state, presence: true
     validates :amount_billed, numericality: true
 
     enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
-    enumerize :billing_state, in: ["initial", "prepaid", "expired", "error"], predicates: true
 
     attr_readonly :dev_mode_property_set
 
@@ -83,7 +86,7 @@ module Atmosphere
     before_destroy :final_billing, prepend: true
     after_destroy :remove_appliance_configuration_instance_if_needed
     after_destroy :optimize_destroyed_appliance
-    after_create :initial_billing, :optimize_saved_appliance
+    after_create :optimize_saved_appliance
 
     scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(atmosphere_virtual_machines: {compute_site: compute_site}) }
 
@@ -101,6 +104,8 @@ module Atmosphere
         set.preference_memory = options[:preference_memory] if options[:preference_memory]
         set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
         set.preference_disk = options[:preference_disk] if options[:preference_disk]
+        set.os_family = appliance_type.os_family
+        Rails.logger.info("Created DMPS with OS family #{set.os_family}")
         self.dev_mode_property_set = set
         set.appliance = self
       end
@@ -129,15 +134,43 @@ module Atmosphere
       appliance_set.user_id == user.id
     end
 
+    def prepaid_until
+      # Helper method which determines how long this appliance
+      # will remain prepaid
+      if deployments.blank?
+        # Invoking this method on an appl whith 0 deployments is a nasal demons
+        # scenario: the question doesn't make sense and neither will the answer.
+        # Returning fixed time is least likely to break the client.
+        Time.parse('2000-01-01 12:00')
+      else
+        deployments.max_by { |dep| dep.prepaid_until }.prepaid_until
+      end
+    end
+
+    # This method provided for backward compatibility
+    def billing_state
+      if deployments.any? { |d| d.billing_state == 'prepaid' }
+        'prepaid'
+      else
+        'expired'
+      end
+    end
+
     private
 
     def assign_default_fund
-      # This is a "goalkeeper" method which will assign this appliance to its owner's default fund, if no fund has been specified yet.
-      # It is provided to ensure compatibility with old APIs of Atmosphere which do not request funds to be specified when instantiating appliances
-      # Once the APIs have been updated, this method will be deprecated and should be removed.
-      if self.fund.blank?
+      # This is a "goalkeeper" method which will assign this appliance
+      # to its owner's default fund, if no fund has been specified yet.
+      # It is provided to ensure compatibility with old APIs of Atmosphere
+      # which do not request funds to be specified when instantiating
+      # appliances.
+      # Once the APIs have been updated, this method will be deprecated
+      # and should be removed.
+      if fund.blank?
         self.fund = self.appliance_set.user.default_fund
-        # Note that id the user does not have a default fund assigned, this method will be unable to figure out any useful fund for this appliance.
+        # Note that id the user does not have a default fund assigned,
+        # this method will be unable to figure out any useful fund
+        # for this appliance.
       end
     end
 
@@ -154,12 +187,6 @@ module Atmosphere
 
     def optimize_saved_appliance
       optimizer.run(created_appliance: self)
-    end
-
-    def initial_billing
-      # This method sets billing details for a newly created appliance
-      self.prepaid_until = Time.now.utc
-      self.billing_state = "expired"
     end
 
     def optimize_destroyed_appliance

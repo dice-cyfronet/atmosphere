@@ -39,11 +39,13 @@ module Atmosphere
       g.helper false
     end
 
-    initializer 'model_core.factories',
-                after: 'factory_girl.set_factory_paths' do
-      if defined?(FactoryGirl)
-        FactoryGirl.definition_file_paths <<
-          File.expand_path('../../../spec/factories', __FILE__)
+    if Rails.env.test?
+      initializer 'model_core.factories',
+                  after: 'factory_girl.set_factory_paths' do
+        if defined?(FactoryGirl)
+          FactoryGirl.definition_file_paths <<
+            File.expand_path('../../../spec/factories', __FILE__)
+        end
       end
     end
   end

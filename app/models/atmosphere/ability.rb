@@ -20,7 +20,8 @@ module Atmosphere
         ::Atmosphere::PortMappingAbilityBuilder,
         ::Atmosphere::UserKeyAbilityBuilder,
         ::Atmosphere::VirtualMachineFlavorAbilityBuilder,
-        ::Atmosphere::ClewAbilityBuilder
+        ::Atmosphere::ClewAbilityBuilder,
+        ::Atmosphere::ActionAbilityBuilder
       ]
 
     def initialize(user, load_admin_abilities = true)

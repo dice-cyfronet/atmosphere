@@ -186,9 +186,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
             flavors = fls_response
             expect(flavors.size).to eq 0
           end
-
         end
-
       end
 
       context 'filter for appliance configuration instance specified' do
@@ -236,9 +234,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(first['compute_site_id']).to eq active_cs.id
         end
       end
-
     end
-
   end
 
   def fls_response

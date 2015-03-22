@@ -11,7 +11,6 @@ module Atmosphere
     def build
       apply_preferences
       init_appliance_configuration
-      init_billing
 
       appliance
     end
@@ -36,18 +35,22 @@ module Atmosphere
     def prod_params
       opt_policy_params = {}
       opt_policy_params[:vms] = params[:vms]
-      prod_params = params.permit(:appliance_set_id,
-                                  :name, :description,
-                                  :compute_site_ids)
+
+      allowed_params = [:appliance_set_id,
+                        :name, :description,
+                        :compute_site_ids] + allowed_params_ext
+      prod_params = params.permit(allowed_params)
       prod_params[:optimization_policy_params] = opt_policy_params
       prod_params
     end
 
     def dev_params
-      params.permit(:appliance_set_id,
-                    :user_key_id,
-                    :name, :description,
-                    :compute_site_ids)
+      allowed_params = [:appliance_set_id,
+                        :user_key_id,
+                        :name, :description,
+                        :compute_site_ids] + allowed_params_ext
+
+      params.permit(allowed_params)
     end
 
     def allowed_compute_sites
@@ -70,14 +73,6 @@ module Atmosphere
                   :preference_disk
                 ])
       prefs[:dev_mode_property_set] || {}
-    end
-
-    def init_billing
-      # Add Time.now.utc() as prepaid_until - this effectively means
-      # that the appliance is unpaid.
-      # The requestor must bill this new appliance prior to exposing
-      # it to the end user.
-      appliance.prepaid_until = Time.now.utc
     end
 
     def init_appliance_configuration
@@ -114,5 +109,7 @@ module Atmosphere
 
       c_params
     end
+
+    include Atmosphere::ApplianceCreatorExt
   end
 end

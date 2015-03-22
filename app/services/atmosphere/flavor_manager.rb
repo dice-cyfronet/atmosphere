@@ -39,7 +39,6 @@ module Atmosphere
       vm_flavor.memory = flavor.ram
       vm_flavor.hdd = flavor.disk
       vm_flavor.supported_architectures = flavor.supported_architectures
-      vm_flavor.hourly_cost = 0 if vm_flavor.new_record?
 
       unless vm_flavor.save
         Rails.logger.error("Unable to save vm flavor with name #{vm_flavor.name}: nested exception is #{vm_flavor.errors}")

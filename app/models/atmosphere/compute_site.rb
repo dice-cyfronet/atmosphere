@@ -78,11 +78,13 @@ module Atmosphere
 
     validates :technology,
               presence: true,
-              inclusion: %w(openstack aws azure)
+              inclusion: %w(openstack aws azure rackspace)
 
     enumerize :site_type, in: [:public, :private], predicates: true
-    enumerize :technology, in: [:openstack, :aws, :azure], predicates: true
-
+    enumerize :technology,
+              in: [:openstack, :aws, :azure, :rackspace],
+              predicates: true
+    
     scope :with_appliance_type, ->(appliance_type) do
       joins(virtual_machines: {appliances: :appliance_set})
         .where(

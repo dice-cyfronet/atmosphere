@@ -62,7 +62,7 @@ module Atmosphere
 
     enumerize :state, in: ALLOWED_STATES
 
-    before_save :set_version, if: :appliance_type_id_changed?
+    before_save :set_version, if: :update_version?
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
@@ -148,6 +148,12 @@ module Atmosphere
       logger.warn("VMT with #{id_at_site} does not exist - continuing")
     end
 
+    # Returns the hourly cost for this template assuming a given VM flavor
+    def get_hourly_cost_for(flavor)
+      incarnation = flavor.flavor_os_families.find_by(os_family: appliance_type.os_family)
+      incarnation && incarnation.hourly_cost
+    end
+
     def export(compute_site_id)
       destination_compute_site = ComputeSite.find(compute_site_id)
       if destination_compute_site != compute_site
@@ -191,12 +197,12 @@ module Atmosphere
       compute_site.cloud_client
     end
 
+    def update_version?
+      !version_changed? && appliance_type_id_changed?
+    end
+
     def set_version
-      if new_record?
-        self.version ||= appliance_type.version + 1 if appliance_type
-      else
-        self.version = appliance_type.version + 1 if appliance_type
-      end
+      self.version = appliance_type.version + 1 if appliance_type
     end
   end
 end

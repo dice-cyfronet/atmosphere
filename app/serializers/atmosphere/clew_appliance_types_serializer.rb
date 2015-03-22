@@ -18,7 +18,7 @@ module Atmosphere
         preference_cpu: at.preference_cpu,
         preference_memory: at.preference_memory,
         preference_disk: at.preference_disk,
-        matched_flavor: flavor,
+        matched_flavor: map_flavor(flavor),
         compute_site_ids: at.compute_site_ids,
         appliance_configuration_templates: at.appliance_configuration_templates
       }
@@ -32,6 +32,22 @@ module Atmosphere
         end
       end
       compute_sites.values.map { |cs| map_cs(cs) }
+    end
+
+    def map_flavor(flavor)
+      {
+        id: flavor.id,
+        flavor_name: flavor.flavor_name,
+        cpu: flavor.cpu,
+        memory: flavor.memory,
+        hdd: flavor.hdd,
+        compute_site_id: flavor.compute_site_id,
+        id_at_site: flavor.id_at_site,
+        supported_architectures: flavor.supported_architectures,
+        active: flavor.active,
+        hourly_cost: flavor.hourly_cost,
+        cost_map: flavor.cost_map
+      }
     end
 
     def map_cs(cs)

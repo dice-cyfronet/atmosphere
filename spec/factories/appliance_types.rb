@@ -23,6 +23,13 @@ FactoryGirl.define do
       virtual_machine_templates { [ build(:virtual_machine_template)] }
     end
 
+    # If no os_family has been specified by the requestor, bind this appliance to the first available os_family
+    after(:build) do |atype|
+      if atype.os_family.blank?
+        atype.os_family = Atmosphere::OSFamily.first
+      end
+    end
+
     factory :filled_appliance_type, traits: [:all_attributes_not_empty]
     factory :shareable_appliance_type, traits: [:shareable]
     factory :not_shareable_appliance_type, traits: [:not_shareable]

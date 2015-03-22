@@ -12,7 +12,6 @@ describe Atmosphere::ApplianceVmsManager do
     it 'sets state to unsatisfied with explanation message and billing state' do
       expect(appl).to have_received(:state=).with(:unsatisfied)
       expect(appl).to have_received(:state_explanation=)
-      expect(appl).to have_received(:billing_state=).with('expired')
     end
 
     it 'does not update appliance services' do
@@ -106,16 +105,16 @@ describe Atmosphere::ApplianceVmsManager do
     let(:vm_creator) { double('vm creator', :spawn_vm! => 'server_id') }
     let(:vm_creator_class) { double('vm creator class') }
 
-    let(:tmpl)   { double('tmpl', compute_site: 'cs') }
+    let(:tmpl) { create(:virtual_machine_template) }
     let(:flavor) { 'flavor' }
-    let(:name)   { 'name' }
-    let(:vm)     { double('vm', errors: { to_json: {} }) }
+    let(:name) { 'name' }
+    let(:vm) { double('vm', errors: { to_json: {} }) }
 
     subject { Atmosphere::ApplianceVmsManager.new(appl, updater_class, vm_creator_class, tags_manager_class) }
 
     before do
-      allow(vm_creator_class).to receive(:new).with(tmpl,
-        {flavor: flavor, name: name, user_data: 'user data', user_key: 'user key'})
+      allow(vm_creator_class).
+          to receive(:new).with(tmpl, flavor: flavor, name: name, user_data: 'user data', user_key: 'user key', nic: nil)
           .and_return(vm_creator)
       allow(tags_mng).to receive(:create_tags_for_vm)
 

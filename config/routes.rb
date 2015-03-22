@@ -85,6 +85,7 @@ Atmosphere::Engine.routes.draw do
       resources :appliance_configuration_instances, only: [:index, :show]
       resources :http_mappings, only: [:index, :show, :update]
       resources :port_mappings, only: [:index, :show]
+      resources :actions, only: [:index, :show]
       json_resources :appliance_sets
 
       resources :appliances do

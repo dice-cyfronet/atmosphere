@@ -11,10 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150121162000) do
+ActiveRecord::Schema.define(version: 20150224171920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "atmosphere_action_logs", force: true do |t|
+    t.string   "message"
+    t.string   "log_level"
+    t.integer  "action_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "atmosphere_action_logs", ["action_id"], name: "index_atmosphere_action_logs_on_action_id", using: :btree
+
+  create_table "atmosphere_actions", force: true do |t|
+    t.string   "action_type"
+    t.integer  "appliance_id"
+    t.datetime "created_at"
+  end
+
+  add_index "atmosphere_actions", ["appliance_id"], name: "index_atmosphere_actions_on_appliance_id", using: :btree
 
   create_table "atmosphere_appliance_compute_sites", force: true do |t|
     t.integer "appliance_id"
@@ -64,25 +82,25 @@ ActiveRecord::Schema.define(version: 20150121162000) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "os_family_id"
   end
 
   add_index "atmosphere_appliance_types", ["name"], name: "index_atmosphere_appliance_types_on_name", unique: true, using: :btree
+  add_index "atmosphere_appliance_types", ["os_family_id"], name: "index_atmosphere_appliance_types_on_os_family_id", using: :btree
 
   create_table "atmosphere_appliances", force: true do |t|
-    t.integer  "appliance_set_id",                                        null: false
-    t.integer  "appliance_type_id",                                       null: false
+    t.integer  "appliance_set_id",                                    null: false
+    t.integer  "appliance_type_id",                                   null: false
     t.integer  "user_key_id"
-    t.integer  "appliance_configuration_instance_id",                     null: false
-    t.string   "state",                               default: "new",     null: false
+    t.integer  "appliance_configuration_instance_id",                 null: false
+    t.string   "state",                               default: "new", null: false
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "fund_id"
     t.datetime "last_billing"
     t.string   "state_explanation"
-    t.integer  "amount_billed",                       default: 0,         null: false
-    t.string   "billing_state",                       default: "prepaid", null: false
-    t.datetime "prepaid_until",                       default: "now()",   null: false
+    t.integer  "amount_billed",                       default: 0,     null: false
     t.text     "description"
     t.string   "optimization_policy"
     t.text     "optimization_policy_params"
@@ -123,8 +141,10 @@ ActiveRecord::Schema.define(version: 20150121162000) do
   end
 
   create_table "atmosphere_deployments", force: true do |t|
-    t.integer "virtual_machine_id"
-    t.integer "appliance_id"
+    t.integer  "virtual_machine_id"
+    t.integer  "appliance_id"
+    t.string   "billing_state",      default: "prepaid", null: false
+    t.datetime "prepaid_until",      default: "now()",   null: false
   end
 
   create_table "atmosphere_dev_mode_property_sets", force: true do |t|
@@ -138,6 +158,7 @@ ActiveRecord::Schema.define(version: 20150121162000) do
     t.integer  "appliance_id",                      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "os_family_id"
   end
 
   create_table "atmosphere_endpoints", force: true do |t|
@@ -150,6 +171,12 @@ ActiveRecord::Schema.define(version: 20150121162000) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "secured",                  default: false, null: false
+  end
+
+  create_table "atmosphere_flavor_os_families", force: true do |t|
+    t.integer "hourly_cost"
+    t.integer "virtual_machine_flavor_id"
+    t.integer "os_family_id"
   end
 
   create_table "atmosphere_funds", force: true do |t|
@@ -184,6 +211,10 @@ ActiveRecord::Schema.define(version: 20150121162000) do
   end
 
   add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
+
+  create_table "atmosphere_os_families", force: true do |t|
+    t.string "name", default: "Windows", null: false
+  end
 
   create_table "atmosphere_port_mapping_properties", force: true do |t|
     t.string   "key",                      null: false
@@ -259,7 +290,6 @@ ActiveRecord::Schema.define(version: 20150121162000) do
     t.float   "cpu"
     t.float   "memory"
     t.float   "hdd"
-    t.integer "hourly_cost",                                null: false
     t.integer "compute_site_id"
     t.string  "id_at_site"
     t.string  "supported_architectures", default: "x86_64"

@@ -24,7 +24,7 @@ module Atmosphere
 
     def tag(vm, tags_map)
       cs = vm.compute_site
-      if cs.technology == 'openstack'
+      if ['openstack', 'rackspace'].include?(cs.technology)
         tag_vm_on_openstack(vm, cs.cloud_client, tags_map)
       else
         tag_vm_on_amazon(vm, cs.cloud_client, tags_map)
