@@ -239,8 +239,8 @@ module Atmosphere
       Atmosphere.monitoring_client
     end
 
-    def cloud_action(aciton_name, sucess_state)
-      action_status = cloud_server.send(aciton_name)
+    def cloud_action(action_name, sucess_state)
+      action_status = cloud_server.send(action_name)
       change_state_on_success(action_status, sucess_state)
     end
 
