@@ -98,6 +98,8 @@ module Atmosphere
 
     def reboot
       cloud_action(:reboot, :reboot)
+    rescue Excon::Errors::Conflict
+      # ok reboot already in progress
     end
 
     def stop
@@ -235,21 +237,9 @@ module Atmosphere
       errors.add :base, 'Virtual Machine is not managed by atmosphere' unless managed_by_atmosphere
     end
 
-    def monitoring_client
-      Atmosphere.monitoring_client
-    end
-
-    def cloud_action(action_name, sucess_state)
-      action_status = cloud_server.send(action_name)
+    def cloud_action(aciton_name, sucess_state)
+      action_status = cloud_server.send(aciton_name)
       change_state_on_success(action_status, sucess_state)
-    end
-
-    def cloud_server
-      cloud_client.servers.get(id_at_site)
-    end
-
-    def cloud_client
-      @cloud_client ||= compute_site.cloud_client
     end
 
     def change_state_on_success(success, new_state)
@@ -259,6 +249,18 @@ module Atmosphere
       else
         false
       end
+    end
+
+    def monitoring_client
+      Atmosphere.monitoring_client
+    end
+
+    def cloud_server
+      cloud_client.servers.get(id_at_site)
+    end
+
+    def cloud_client
+      @cloud_client ||= compute_site.cloud_client
     end
   end
 end
