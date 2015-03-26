@@ -107,6 +107,11 @@ Atmosphere.setup do |config|
   #
   # config.metrics_store = Atmosphere::Monitoring::NullMetricsStore.new
 
+  # Defines the client that provides information about the network id
+  # for instantiated vm.
+  # Possible values:
+  #   - Atmosphere::NicProvider::NullNicProvider.new
+
   # Application version shown on Atmosphere administration pages.
   #
   # config.app_version = 'my_version'

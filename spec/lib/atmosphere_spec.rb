@@ -58,4 +58,20 @@ describe Atmosphere do
       expect(Atmosphere.metrics_store).to eq 'other_client'
     end
   end
+
+  context 'nic provider' do
+    it 'returns null nic provider client when no configuration' do
+      Atmosphere.nic_provider = nil
+
+      expect(Atmosphere.nic_provider.class)
+        .to eq Atmosphere::NicProvider::NullNicProvider
+    end
+
+    it 'returns comfigured client when config available' do
+      CONFIGURED_CLIENT = 'NIC PROVIDER'
+      Atmosphere.nic_provider = CONFIGURED_CLIENT
+
+      expect(Atmosphere.nic_provider).to eq CONFIGURED_CLIENT
+    end
+  end
 end

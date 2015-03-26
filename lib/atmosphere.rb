@@ -97,8 +97,15 @@ module Atmosphere
     @@ability_class.constantize
   end
 
-  mattr_reader :nics
-  @@nics = {}
+  mattr_accessor :nic_provider_class_name
+  def self.nic_provider_class
+    @@nic_provider_class_name ? @@nic_provider_class_name.constantize : Atmosphere::NicProvider::NullNicProvider
+  end
+
+  mattr_accessor :nic_provider
+  def self.nic_provider
+    nic_provider_class.new
+  end
 
   ## LOGGERS ##
 
