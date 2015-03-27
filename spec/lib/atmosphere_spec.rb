@@ -71,6 +71,9 @@ describe Atmosphere do
       Atmosphere.nic_provider_class_name = 'String'
 
       expect(Atmosphere.nic_provider_class).to eq String
+
+      # clean up
+      Atmosphere.nic_provider_class_name = nil
     end
 
 
@@ -85,6 +88,9 @@ describe Atmosphere do
       Atmosphere.nic_provider_class_name = 'String'
 
       expect(Atmosphere.nic_provider.class).to eq String
+
+      # clean up
+      Atmosphere.nic_provider_class_name = nil
     end
   end
 end
