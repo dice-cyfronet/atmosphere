@@ -99,10 +99,14 @@ module Atmosphere
 
   mattr_accessor :nic_provider_class_name
   def self.nic_provider_class
-    @@nic_provider_class_name ? @@nic_provider_class_name.constantize : Atmosphere::NicProvider::NullNicProvider
+    if @@nic_provider_class_name
+      @@nic_provider_class_name.constantize
+    else
+      Atmosphere::NicProvider::NullNicProvider
+    end
   end
 
-  mattr_accessor :nic_provider
+  mattr_reader :nic_provider
   def self.nic_provider
     nic_provider_class.new
   end
