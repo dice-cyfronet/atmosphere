@@ -60,18 +60,31 @@ describe Atmosphere do
   end
 
   context 'nic provider' do
+    it 'returns NullNicProvider class when no configuration' do
+      Atmosphere.nic_provider_class_name = nil
+
+      expect(Atmosphere.nic_provider_class)
+        .to eq Atmosphere::NicProvider::NullNicProvider
+    end
+
+    it 'returns configured class when config available' do
+      Atmosphere.nic_provider_class_name = 'String'
+
+      expect(Atmosphere.nic_provider_class).to eq String
+    end
+
+
     it 'returns null nic provider client when no configuration' do
-      Atmosphere.nic_provider = nil
+      Atmosphere.nic_provider_class_name = nil
 
       expect(Atmosphere.nic_provider.class)
         .to eq Atmosphere::NicProvider::NullNicProvider
     end
 
     it 'returns comfigured client when config available' do
-      CONFIGURED_CLIENT = 'NIC PROVIDER'
-      Atmosphere.nic_provider = CONFIGURED_CLIENT
+      Atmosphere.nic_provider_class_name = 'String'
 
-      expect(Atmosphere.nic_provider).to eq CONFIGURED_CLIENT
+      expect(Atmosphere.nic_provider.class).to eq String
     end
   end
 end
