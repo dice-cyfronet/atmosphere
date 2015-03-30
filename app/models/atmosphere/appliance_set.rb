@@ -46,22 +46,21 @@ module Atmosphere
     attr_readonly :appliance_set_type
 
     scope :with_vm, ->(virtual_machine) do
-      joins(appliances: :virtual_machines)
-        .where(atmosphere_virtual_machines: {id: virtual_machine.id})
+      joins(appliances: :virtual_machines).
+        where(atmosphere_virtual_machines: { id: virtual_machine.id })
     end
 
-    scope :clew_appliances, -> (appliance_set_type) { where(atmosphere_appliance_sets: { appliance_set_type: appliance_set_type }).
-        includes(:appliances).references(:appliances).
-        includes(appliances: :deployments).references(appliances: :deployments).
-        includes(appliances: :appliance_type).references(appliances: :appliance_type).
-        includes(appliances: :http_mappings).references(appliances: :http_mappings).
-        includes(appliances: { appliance_type: :port_mapping_templates } ).references(appliances: { appliance_type: :port_mapping_templates } ).
-        includes(appliances: { http_mappings: :port_mapping_template } ).references(appliances: { http_mappings: :port_mapping_template } ).
-        includes(appliances: { deployments: :virtual_machine }).references(appliances: { deployments: :virtual_machine }).
-        includes(appliances: { appliance_type: { port_mapping_templates: :endpoints } } ).references(appliances: { appliance_type: { port_mapping_templates: :endpoints } }).
-        includes(appliances: { deployments: { virtual_machine: :port_mappings } } ).references(appliances: { deployments: { virtual_machine: :port_mappings } }).
-        includes(appliances: { deployments: { virtual_machine: :compute_site } } ).references(appliances: { deployments: { virtual_machine: :compute_site } }).
-        includes(appliances: { deployments: { virtual_machine: :virtual_machine_flavor } }).references(appliances: { deployments: { virtual_machine: :virtual_machine_flavor } })}
+    scope :clew_appliances, -> (appliance_set_type) do
+      deps = if appliance_set_type.to_s == 'development'
+               devel_clew_includes
+             else
+               prod_clew_includes
+             end
+
+      where(atmosphere_appliance_sets: {
+              appliance_set_type: appliance_set_type
+            }).includes(deps).references(deps)
+    end
 
     def production?
       !appliance_set_type.development?
@@ -69,6 +68,33 @@ module Atmosphere
 
     def development?
       appliance_set_type.development?
+    end
+
+    def self.devel_clew_includes
+      basic_clew_includes.tap do |hsh|
+        hsh[:appliances][:dev_mode_property_set] =
+          { port_mapping_templates: :endpoints }
+      end
+    end
+
+    def self.prod_clew_includes
+      basic_clew_includes.tap do |hsh|
+        hsh[:appliances][:appliance_type] =
+          { port_mapping_templates: :endpoints }
+      end
+    end
+
+    def self.basic_clew_includes
+      {
+        appliances: {
+          deployments: {
+            virtual_machine: [
+              :port_mappings, :compute_site, :virtual_machine_flavor
+            ]
+          },
+          http_mappings: :port_mapping_template
+        }
+      }
     end
   end
 end
