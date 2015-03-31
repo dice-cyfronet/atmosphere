@@ -5,21 +5,18 @@
     = @appliance_type.author_name
 
   .pull-right
-    = link_to edit_admin_appliance_type_path(@appliance_type), class: 'btn btn-success btn-xs', title: t('edit') do
-      = icon 'edit'
-      = t('edit')
-    %span.btn.btn-danger.btn-xs.appliance-type-delete(title='Delete')
-      = icon 'trash-o'
-      = t('delete')
-
-    .btn-group.hidden.appliance-type-delete-section
-
-      = link_to admin_appliance_type_path(@appliance_type), method: :delete, class: 'btn btn-danger btn-xs', title: 'Yes, delete it.' do
+    .btn-group(role="at-actions")
+      = link_to edit_admin_appliance_type_path(@appliance_type),
+                class: 'btn btn-success btn-xs', title: t('edit') do
+        = icon 'edit'
+        = t('edit')
+      = link_to admin_appliance_type_path(@appliance_type),
+                method: :delete,
+                class: 'btn btn-danger btn-xs',
+                title: t('yes_delete'),
+                data: { confirm: t('are_you_sure_at') } do
         = icon 'trash-o'
         = t('yes')
-
-      %span.btn.btn-default.btn-xs.appliance-type-delete-no(title='No, better not.')
-        = ('no')
 
   %h5
     - if @appliance_type.visible_to == 'owner'
@@ -55,14 +52,3 @@
 %hr
 .description
   = markdown @appliance_type.description
-
-:javascript
-  $('.appliance-type-delete').on('click', function() {
-    $(this).addClass('hidden');
-    $(this).siblings('.appliance-type-delete-section').removeClass('hidden');
-  });
-  $('.appliance-type-delete-no').on('click', function() {
-    var section = $(this).parent('.appliance-type-delete-section');
-    section.siblings('.appliance-type-delete').removeClass('hidden');
-    section.addClass('hidden');
-  });
