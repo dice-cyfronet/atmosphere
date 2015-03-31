@@ -237,8 +237,8 @@ module Atmosphere
       errors.add :base, 'Virtual Machine is not managed by atmosphere' unless managed_by_atmosphere
     end
 
-    def cloud_action(aciton_name, sucess_state)
-      action_status = cloud_server.send(aciton_name)
+    def cloud_action(action_name, sucess_state)
+      action_status = cloud_server.send(action_name)
       change_state_on_success(action_status, sucess_state)
     end
 
