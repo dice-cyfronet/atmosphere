@@ -143,6 +143,26 @@ module Fog
           name
         end
 
+        def stop
+          raise Atmosphere::UnsupportedException,
+                'Fog des not support google compute stop action'
+        end
+
+        def pause
+          raise Atmosphere::UnsupportedException,
+                'Google compute des not support pause action'
+        end
+
+        def suspend
+          raise Atmosphere::UnsupportedException,
+                'Google compute des not support suspend action'
+        end
+
+        def start
+          raise Atmosphere::UnsupportedException,
+                'Fog des not support google compute start action'
+        end
+
         private
 
         def bootable_disk
