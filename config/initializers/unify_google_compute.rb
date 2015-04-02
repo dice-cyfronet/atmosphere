@@ -70,8 +70,8 @@ module Fog
           params[:username] = 'atmosphere'
 
           disk = create_disk(params)
-          params[:disk] = disk.
-            get_object(true, true, 'created_by_atmosphere', true)
+          params[:disk] = disk.get_object(true, true,
+                                          'created_by_atmosphere', true)
 
           server = nil
           if params[:atmo_user_key]
@@ -133,11 +133,6 @@ module Fog
 
         def flavor_id
           machine_type.split('/').last
-        end
-
-        def public_ip_address
-          # kind a hacky but good enough for POC
-          network_interfaces.first['accessConfigs'].first['natIP']
         end
 
         def created
