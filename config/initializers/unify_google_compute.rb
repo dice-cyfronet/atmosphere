@@ -155,6 +155,18 @@ module Fog
           source_image.split('/').last
         end
       end
+
+      class Real
+        def create_tags_for_vm(server_id, tags_map)
+          server = servers.get(server_id)
+          existing_tags = server.tags['items'] || []
+
+          clean = lambda { |s| s.downcase.gsub(/[^a-z0-9]/, '-') }
+          tags = tags_map.map { |k, v| "#{clean.call(k)}-#{clean.call(v)}" }
+
+          server.set_tags(existing_tags + tags)
+        end
+      end
     end
   end
 end
