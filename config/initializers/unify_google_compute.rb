@@ -55,11 +55,13 @@ module Fog
       end
 
       class Servers
+        ZONE = 'us-central1-a'
+
         alias_method :create_orig, :create
         def create(params)
           # Cyrrently hardcoded, in the feature it can be moved somewhere,
           # for example into compute site configuration?
-          params[:zone] = 'us-central1-a'
+          params[:zone] = ZONE
 
           # Such user account with root privilage will be created on
           # spawned machine. In the feature we can use user account here,
@@ -67,7 +69,9 @@ module Fog
           # machine can be shared amoud the users.
           params[:username] = 'atmosphere'
 
-          params[:disk] = create_disk(params)
+          disk = create_disk(params)
+          params[:disk] = disk.
+            get_object(true, true, 'created_by_atmosphere', true)
 
           server = nil
           if params[:atmo_user_key]
@@ -79,6 +83,10 @@ module Fog
           end
 
           server
+        end
+
+        def destroy(id_at_site)
+          service.delete_server(id_at_site, ZONE)
         end
 
         private
@@ -134,6 +142,10 @@ module Fog
 
         def created
           Time.parse(creation_timestamp)
+        end
+
+        def id
+          name
         end
 
         private
