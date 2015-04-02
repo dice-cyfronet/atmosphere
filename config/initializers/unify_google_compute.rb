@@ -75,9 +75,11 @@ module Fog
 
           server = nil
           if params[:atmo_user_key]
-            Tempfile.open('userkey') do |f|
-              server = start_server(params.merge(key_path: f.path))
+            key_file = Tempfile.open('userkey') do |f|
+              f.write(params[:atmo_user_key].public_key)
+              f
             end
+            server = start_server(params.merge(key_path: key_file.path))
           else
             server = start_server(params)
           end
@@ -185,6 +187,14 @@ module Fog
           tags = tags_map.map { |k, v| "#{clean.call(k)}-#{clean.call(v)}" }
 
           server.set_tags(existing_tags + tags)
+        end
+
+        def import_key_pair(_id_at_site, _public_key)
+          # DO NOTHING since key is injected while starting VM
+        end
+
+        def delete_key_pair(_id_at_site)
+          # DO NOTHING since key is injected while starting VM
         end
       end
     end
