@@ -15,7 +15,10 @@ module Atmosphere
       server_params = {
         flavor_ref: flavor_id, flavor_id: flavor_id,
         name: @name,
-        image_ref: tmpl_id, image_id: tmpl_id
+        image_ref: tmpl_id, image_id: tmpl_id,
+
+        # pass atmosphere specific object into create method
+        atmo_user_key: @user_key
       }
       server_params[:user_data] = user_data if user_data
       server_params[:key_name] = key_name if key_name
