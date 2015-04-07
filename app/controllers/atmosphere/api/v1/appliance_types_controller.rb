@@ -36,7 +36,7 @@ module Atmosphere
           else
             unless current_user.admin?
               raise ActionController::ParameterMissing,
-                    'appliance_id parameter is missing'
+                    I18n.t('appliance_types.appl_id_missing')
             end
           end
 
@@ -82,7 +82,7 @@ module Atmosphere
           vm = appl.virtual_machines.first
           if vm && vm.state.saving?
             raise Atmosphere::Conflict,
-                  'It is not allowed to save application twice'
+                  I18n.t('appliance_types.conflict')
           end
         end
 

@@ -81,6 +81,8 @@ en:
     cpu: CPU
     memory: Memory
     data: Data
+    conflict: This service is already being saved. Please wait for this operation to conclude before attempting to save the service again.
+    appl_id_missing: appliance_id parameter is missing
   appliance_sets:
     title: Sets
     long_title: Appliance Sets
