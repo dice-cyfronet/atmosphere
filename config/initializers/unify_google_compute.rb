@@ -117,7 +117,8 @@ module Fog
             zone_name: params[:zone],
             username: params[:username],
             public_key_path: params[:key_path],
-            disks: [params[:disk]]
+            disks: [params[:disk]],
+            network: params[:network]
           }
 
           create_orig(server_params)

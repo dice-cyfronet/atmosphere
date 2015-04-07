@@ -61,6 +61,7 @@ module Atmosphere
 
     def set_security_groups!(params)
       params[:groups] = ['mniec_permit_all'] if amazon?
+      params[:network] = 'permitall' if google?
     end
 
     def register_user_key!
@@ -69,6 +70,10 @@ module Atmosphere
 
     def amazon?
       @tmpl.compute_site.technology == 'aws'
+    end
+
+    def google?
+      @tmpl.compute_site.technology == 'google_compute'
     end
   end
 end
