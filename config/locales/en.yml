@@ -21,6 +21,7 @@
 
 en:
   yes: Yes
+  yes_delete: Yes, delete it.
   no: No
   index: Index
   admin: Admin
@@ -38,6 +39,7 @@ en:
   reset: Reset
   are_you_sure: Are you sure?
   are_you_sure_cs: Warning! This will irrevocably destroy all Virtual Machine Templates and Virtual Machines running on this CS which have been created by Atmosphere. Are you sure?
+  are_you_sure_at: Warning! This will irrevocably destroy all Virtual Machine Templates marked as managed by atmosphere connected with this Appliance Type. Are you sure?
   actions: Actions
   add_new: Add new
   editing: Editing

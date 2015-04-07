@@ -370,6 +370,14 @@ describe Atmosphere::VirtualMachine do
       change_state_after_action(:start, 'active')
     end
 
+    it 'skip second vm restart', focus: true do
+      expect(server).
+        to receive(:reboot).
+        and_raise(Excon::Errors::Conflict.new('conflict'))
+
+      vm.send(:reboot)
+    end
+
     def invoke_cloud_action(action_name)
       expect(server).to receive(action_name)
 
