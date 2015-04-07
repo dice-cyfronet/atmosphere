@@ -84,6 +84,10 @@ module Fog
             server = start_server(params)
           end
 
+          if params[:user_data]
+            server.set_metadata(user_data: params[:user_data])
+          end
+
           server
         end
 
