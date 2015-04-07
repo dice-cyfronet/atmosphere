@@ -370,7 +370,7 @@ describe Atmosphere::VirtualMachine do
       change_state_after_action(:start, 'active')
     end
 
-    it 'skip second vm restart', focus: true do
+    it 'skip second vm restart' do
       expect(server).
         to receive(:reboot).
         and_raise(Excon::Errors::Conflict.new('conflict'))
