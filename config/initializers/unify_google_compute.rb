@@ -37,12 +37,7 @@ module Fog
         alias_method :status_orig, :status
         def status
           s = status_orig
-
-          if s == 'READY'
-            'active'
-          else
-            s
-          end
+          s == 'READY' ? 'active' : s
         end
 
         def tags
@@ -102,7 +97,7 @@ module Fog
             name: params[:name],
             # think about taking it from flavor or user requirement.
             # Flavor disk is currently set to 0 so this also need to be
-            # rethinked.
+            # rethought.
             size_gb: 10,
             zone_name: params[:zone],
             source_image: params[:image_id],
@@ -152,22 +147,22 @@ module Fog
 
         def stop
           raise Atmosphere::UnsupportedException,
-                'Fog des not support google compute stop action'
+                'Fog does not support google compute stop action'
         end
 
         def pause
           raise Atmosphere::UnsupportedException,
-                'Google compute des not support pause action'
+                'Google compute does not support pause action'
         end
 
         def suspend
           raise Atmosphere::UnsupportedException,
-                'Google compute des not support suspend action'
+                'Google compute does not support suspend action'
         end
 
         def start
           raise Atmosphere::UnsupportedException,
-                'Fog des not support google compute start action'
+                'Fog does not support google compute start action'
         end
 
         private
