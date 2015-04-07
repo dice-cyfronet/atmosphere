@@ -78,12 +78,12 @@ module Atmosphere
 
     validates :technology,
               presence: true,
-              inclusion: %w(openstack aws rackspace)
+              inclusion: %w(openstack aws rackspace google_compute)
 
     enumerize :site_type, in: [:public, :private], predicates: true
 
     enumerize :technology,
-              in: [:openstack, :aws, :rackspace],
+              in: [:openstack, :aws, :rackspace, :google_compute],
               predicates: true
 
     scope :with_appliance_type, ->(appliance_type) do

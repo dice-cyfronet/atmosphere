@@ -41,7 +41,7 @@ module Atmosphere
       vm_flavor.supported_architectures = flavor.supported_architectures
 
       unless vm_flavor.save
-        Rails.logger.error("Unable to save vm flavor with name #{vm_flavor.name}: nested exception is #{vm_flavor.errors}")
+        Rails.logger.error("Unable to save vm flavor with name #{vm_flavor.flavor_name}: nested exception is #{vm_flavor.errors}")
       end
     end
 

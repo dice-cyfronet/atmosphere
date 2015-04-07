@@ -15,7 +15,10 @@ module Atmosphere
       server_params = {
         flavor_ref: flavor_id, flavor_id: flavor_id,
         name: @name,
-        image_ref: tmpl_id, image_id: tmpl_id
+        image_ref: tmpl_id, image_id: tmpl_id,
+
+        # pass atmosphere specific object into create method
+        atmo_user_key: @user_key
       }
       server_params[:user_data] = user_data if user_data
       server_params[:key_name] = key_name if key_name
@@ -58,6 +61,7 @@ module Atmosphere
 
     def set_security_groups!(params)
       params[:groups] = ['mniec_permit_all'] if amazon?
+      params[:network] = 'permitall' if google?
     end
 
     def register_user_key!
@@ -66,6 +70,10 @@ module Atmosphere
 
     def amazon?
       @tmpl.compute_site.technology == 'aws'
+    end
+
+    def google?
+      @tmpl.compute_site.technology == 'google_compute'
     end
   end
 end
