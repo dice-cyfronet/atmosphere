@@ -1,8 +1,10 @@
 require 'fog/google/models/compute/flavor'
 require 'fog/google/models/compute/image'
+require 'fog/google/models/compute/images'
 require 'fog/google/models/compute/servers'
 require 'fog/google/models/compute/server'
 require 'fog/google/models/compute/disk'
+require 'fog/google/models/compute/snapshot'
 
 module Fog
   module Compute
@@ -45,7 +47,55 @@ module Fog
         end
 
         def id
-          name
+          "image:#{name}"
+        end
+      end
+
+      class Images
+        alias_method :all_orig, :all
+        def all(_params = nil)
+          all_orig + service.snapshots.all
+        end
+
+        alias_method :destroy_orig, :destroy
+        def destroy(id_at_site)
+          id = real_id(id_at_site)
+          if snapshot?(id_at_site)
+            service.snapshots.destroy(id)
+          else
+            destroy_orig(id)
+          end
+        end
+
+        private
+
+        def snapshot?(id_at_site)
+          id_at_site.start_with?('snapshot:')
+        end
+
+        def real_id(id_at_site)
+          match = id_at_site.match(/\A.*:(.*)\z/)
+          match ? match[1] : id_at_site
+        end
+      end
+
+      class Snapshot
+        def id
+          "snapshot:#{name}"
+        end
+
+        def architecture
+          'x86_64'
+        end
+
+        alias_method :status_orig, :status
+        def status
+          s = status_orig
+          s == 'READY' ? 'active' : s
+        end
+
+        def tags
+          {}
         end
       end
 
@@ -100,13 +150,29 @@ module Fog
             # rethought.
             size_gb: 10,
             zone_name: params[:zone],
-            source_image: params[:image_id],
             autoDelete: true
           }
+
+          id = real_id(params[:image_id])
+          if snapshot?(params[:image_id])
+            disk_params[:sourceSnapshot] = id
+          else
+            disk_params[:source_image] = id
+          end
+
           disk = service.disks.create(disk_params)
           disk.wait_for { disk.ready? }
 
           disk
+        end
+
+        def snapshot?(id_at_site)
+          id_at_site.start_with?('snapshot:')
+        end
+
+        def real_id(id_at_site)
+          match = id_at_site.match(/\A.*:(.*)\z/)
+          match ? match[1] : id_at_site
         end
 
         def start_server(params)
