@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :port_mapping_property, class: 'Atmosphere::PortMappingProperty' do |f|
-    value { Faker::Lorem.words(10).join(' ') }
+    value { FFaker::Lorem.words(10).join(' ') }
     key { SecureRandom.hex(4) }
     compute_site
 

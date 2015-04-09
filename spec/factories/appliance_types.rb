@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :appliance_type, class: 'Atmosphere::ApplianceType' do
-    name { Faker::Lorem.words(10).join(' ') }
+    name { FFaker::Lorem.words(10).join(' ') }
 
     trait :all_attributes_not_empty do
-      description { Faker::Lorem.words(10).join(' ') }
+      description { FFaker::Lorem.words(10).join(' ') }
       shared true
       scalable true
       preference_cpu 2
