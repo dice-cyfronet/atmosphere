@@ -22,9 +22,10 @@ module Atmosphere
 
       case(@tmpl.compute_site.technology)
         when 'azure'
-          server_params[:vm_name] = @name
+          server_params[:vm_name] = SecureRandom.uuid
           server_params[:vm_user] = "atmosphere"
           server_params[:password] = "TomekiPiotrek2015" # TODO: Replace with key injection
+          server_params[:public_key_path] = '/home/tomek/.ssh/tomek.pub'
           server_params[:image] = tmpl_id
           server_params[:location] = "North Central US"
           server_params[:vm_size] = flavor_id
