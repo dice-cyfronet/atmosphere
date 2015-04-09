@@ -6,8 +6,8 @@ require 'fog/openstack/models/compute/flavor'
 require 'fog/aws/models/compute/image'
 require 'fog/openstack/models/compute/image'
 require 'fog/aws/models/compute/server'
-require 'fog/azure/models/compute/images'
 require 'fog/azure/compute'
+require 'fog/azure/models/compute/images'
 require 'fog/aws/models/compute/images'
 require 'fog/openstack/models/compute/images'
 require 'fog/azure/models/compute/server'
@@ -197,6 +197,12 @@ class Fog::Compute::OpenStack::Images
   end
 end
 
+class Fog::Compute::OpenStack::Real
+  def create_tags_for_vm(server_id, tags_map)
+    # do nothing since Azure does not support tagging
+  end
+end
+
 class Fog::Compute::AWS::Images
   def all_generic(filters)
     all(filters)
@@ -243,7 +249,9 @@ end
 
 class Fog::Compute::Azure::Servers
   def destroy(id_at_site)
-    server = get(id_at_site)
+    # get requires both identity and cloud service name params
+    # in our case id == cloud service name
+    server = get(id_at_site, id_at_site)
     server ? server.destroy : false
   end
 end
@@ -272,12 +280,6 @@ class Fog::Compute::Azure::Image
 
   def tags
     {}
-  end
-end
-
-class Fog::Compute::OpenStack::Real
-  def create_tags_for_vm(server_id, tags_map)
-    # do nothing since Azure does not support tagging
   end
 end
 
