@@ -10,8 +10,8 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
-gem 'fog', path: '/home/tomek/work/atmosphere/src/fog'
-gem 'azure', '0.6.4'
+#gem 'fog', path: '/home/tomek/work/atmosphere/src/fog'
+#gem 'azure', '0.6.4'
 
 group :development do
   gem 'annotate'
