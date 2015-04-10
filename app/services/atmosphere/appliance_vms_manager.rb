@@ -90,7 +90,7 @@ module Atmosphere
     end
 
     def start_vm_on_cloud(tmpl, flavor, name)
-      nic = Atmosphere.nic_provider.get(@appliance, tmpl)
+      nic = Atmosphere.nic_provider(tmpl.compute_site).get(@appliance, tmpl)
       if nic.present?
         Rails.logger.info("Using custom NIC: #{nic}")
       else
