@@ -99,7 +99,8 @@ module Atmosphere
 
   def self.nic_provider(compute_site)
     class_name = compute_site.nic_provider_class_name
-    nic_provider_class = class_name ? class_name.constantize : Atmosphere::NicProvider::NullNicProvider
+    nic_provider_class = class_name ? class_name.constantize :
+      Atmosphere::NicProvider::NullNicProvider
     nic_provider_class.new
   end
 
