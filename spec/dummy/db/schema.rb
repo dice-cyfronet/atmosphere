@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150409145404) do
+ActiveRecord::Schema.define(version: 20150410124111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,6 +139,7 @@ ActiveRecord::Schema.define(version: 20150409145404) do
     t.string   "wrangler_password"
     t.boolean  "active",                  default: true
     t.string   "nic_provider_class_name"
+    t.text     "nic_provider_config"
   end
 
   create_table "atmosphere_deployments", force: true do |t|
