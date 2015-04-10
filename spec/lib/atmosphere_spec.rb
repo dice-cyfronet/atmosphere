@@ -60,37 +60,22 @@ describe Atmosphere do
   end
 
   context 'nic provider' do
-    it 'returns NullNicProvider class when no configuration' do
-      Atmosphere.nic_provider_class_name = nil
 
-      expect(Atmosphere.nic_provider_class)
-        .to eq Atmosphere::NicProvider::NullNicProvider
+    context 'when compute site does not define provider class name' do
+      let(:cs) { create(:compute_site) }
+      it 'returns NullNicProvider' do
+        expect(Atmosphere.nic_provider(cs).class)
+          .to eq Atmosphere::NicProvider::NullNicProvider
+      end
+    end
+    
+    context 'when compute site defines provider class name' do
+      let(:c_name) { 'String' }
+      let(:cs) { create(:compute_site, nic_provider_class_name: c_name) }
+      it 'returns provider of appropriate class' do
+        expect(Atmosphere.nic_provider(cs).class).to eq String
+      end
     end
 
-    it 'returns configured class when config available' do
-      Atmosphere.nic_provider_class_name = 'String'
-
-      expect(Atmosphere.nic_provider_class).to eq String
-
-      # clean up
-      Atmosphere.nic_provider_class_name = nil
-    end
-
-
-    it 'returns null nic provider client when no configuration' do
-      Atmosphere.nic_provider_class_name = nil
-
-      expect(Atmosphere.nic_provider.class)
-        .to eq Atmosphere::NicProvider::NullNicProvider
-    end
-
-    it 'returns comfigured client when config available' do
-      Atmosphere.nic_provider_class_name = 'String'
-
-      expect(Atmosphere.nic_provider.class).to eq String
-
-      # clean up
-      Atmosphere.nic_provider_class_name = nil
-    end
   end
 end
