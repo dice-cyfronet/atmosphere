@@ -97,16 +97,6 @@ module Atmosphere
     @@ability_class.constantize
   end
 
-  mattr_accessor :nic_provider_class_name
-  def self.nic_provider_class
-    if @@nic_provider_class_name
-      @@nic_provider_class_name.constantize
-    else
-      Atmosphere::NicProvider::NullNicProvider
-    end
-  end
-
-  mattr_reader :nic_provider
   def self.nic_provider(compute_site)
     class_name = compute_site.nic_provider_class_name
     nic_provider_class = class_name ? class_name.constantize : Atmosphere::NicProvider::NullNicProvider
