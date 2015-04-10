@@ -60,6 +60,13 @@ describe Atmosphere do
   end
 
   context 'nic provider' do
+    class DummyNicProvider
+      def initialize(_config = nil)
+      end
+      def get(_appl, _tmpl)
+        nil
+      end
+    end
     context 'when compute site does not define provider class name' do
       let(:cs) { create(:compute_site) }
       it 'returns NullNicProvider' do
@@ -69,10 +76,17 @@ describe Atmosphere do
     end
 
     context 'when compute site defines provider class name' do
-      let(:c_name) { 'String' }
+      let(:c_name) { 'DummyNicProvider' }
       let(:cs) { create(:compute_site, nic_provider_class_name: c_name) }
       it 'returns provider of appropriate class' do
-        expect(Atmosphere.nic_provider(cs).class).to eq String
+        expect(Atmosphere.nic_provider(cs).class).to eq DummyNicProvider
+      end
+
+      it 'creates provider with compute site specific configuration' do
+        PROVIDER_CONF = 'Nic provider configuration'
+        cs.nic_provider_config = PROVIDER_CONF
+        expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
+        Atmosphere.nic_provider(cs)
       end
     end
   end

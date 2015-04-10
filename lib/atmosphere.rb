@@ -101,7 +101,7 @@ module Atmosphere
     class_name = compute_site.nic_provider_class_name
     nic_provider_class = class_name ? class_name.constantize :
       Atmosphere::NicProvider::NullNicProvider
-    nic_provider_class.new
+    nic_provider_class.new(compute_site.nic_provider_config)
   end
 
   ## LOGGERS ##
