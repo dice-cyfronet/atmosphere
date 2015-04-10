@@ -9,6 +9,17 @@ require 'fog/google/models/compute/snapshot'
 module Fog
   module Compute
     class Google
+      module Snapshotable
+        def snapshot?(id_at_site)
+          id_at_site.start_with?('snapshot:')
+        end
+
+        def real_id(id_at_site)
+          match = id_at_site.match(/\A.*:(.*)\z/)
+          match ? match[1] : id_at_site
+        end
+      end
+
       class Flavor
         def vcpus
           guest_cpus
@@ -52,6 +63,8 @@ module Fog
       end
 
       class Images
+        include Snapshotable
+
         alias_method :all_orig, :all
         def all(_params = nil)
           all_orig + service.snapshots.all
@@ -65,17 +78,6 @@ module Fog
           else
             destroy_orig(id)
           end
-        end
-
-        private
-
-        def snapshot?(id_at_site)
-          id_at_site.start_with?('snapshot:')
-        end
-
-        def real_id(id_at_site)
-          match = id_at_site.match(/\A.*:(.*)\z/)
-          match ? match[1] : id_at_site
         end
       end
 
@@ -100,6 +102,8 @@ module Fog
       end
 
       class Servers
+        include Snapshotable
+
         ZONE = 'us-central1-a'
 
         alias_method :create_orig, :create
@@ -164,15 +168,6 @@ module Fog
           disk.wait_for { disk.ready? }
 
           disk
-        end
-
-        def snapshot?(id_at_site)
-          id_at_site.start_with?('snapshot:')
-        end
-
-        def real_id(id_at_site)
-          match = id_at_site.match(/\A.*:(.*)\z/)
-          match ? match[1] : id_at_site
         end
 
         def start_server(params)
