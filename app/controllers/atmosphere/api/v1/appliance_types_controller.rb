@@ -27,37 +27,22 @@ module Atmosphere
         end
 
         def create
-          appl = Appliance.find appliance_type_params['appliance_id'] if appliance_type_params['appliance_id']
-          tmpl = nil
-          vm = nil
+          appl = appliance_type_params['appliance_id'] &&
+                 Appliance.find(appliance_type_params['appliance_id'])
+
           if appl
             authorize!(:save_vm_as_tmpl, appl)
-            vm = appl.virtual_machines.first
-            raise Atmosphere::Conflict.new("It is not allowed to save application twice") if vm && vm.state.saving?
+            check_for_conflict!(appl)
           else
             unless current_user.admin?
-              raise ActionController::ParameterMissing.new('appliance_id parameter is missing')
+              raise ActionController::ParameterMissing,
+                    I18n.t('appliance_types.appl_id_missing')
             end
           end
-          begin
-            Atmosphere::ApplianceType.transaction do
-              tmpl = Atmosphere::VirtualMachineTemplate.create_from_vm(vm, appliance_type_params[:name]) if vm
 
-              new_at_params = appliance_type_params.dup
-              new_at_params['user_id'] = new_at_params.delete('author_id')
-
-              @appliance_type = Atmosphere::ApplianceType.create_from(appl, new_at_params)
-              @appliance_type.virtual_machine_templates << tmpl if tmpl
-              @appliance_type.author = current_user if @appliance_type.author.blank?
-
-              @appliance_type.save!
-            end
-          rescue
-            if tmpl and tmpl.id_at_site
-              tmpl.perform_delete_in_cloud
-            end
-            raise $!
-          end
+          @appliance_type =
+            Atmosphere::SaveAsService.new(current_user, appl,
+                                          appliance_type_params).execute
 
           render json: @appliance_type, serializer: ApplianceTypeSerializer, status: :created
         end
@@ -92,6 +77,14 @@ module Atmosphere
         end
 
         private
+
+        def check_for_conflict!(appl)
+          vm = appl.virtual_machines.first
+          if vm && vm.state.saving?
+            raise Atmosphere::Conflict,
+                  I18n.t('appliance_types.conflict')
+          end
+        end
 
         def perform_save(appliance_id)
           appl = Atmosphere::Appliance.find(appliance_id)

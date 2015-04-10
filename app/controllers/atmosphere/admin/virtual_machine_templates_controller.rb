@@ -36,7 +36,7 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
   # PATCH/PUT /virtual_machine_templates/1
   def update
     if @virtual_machine_template.update(virtual_machine_template_params)
-      if Rails.application.routes.recognize_path(request.referrer)[:controller] == 'admin/appliance_types'
+      if Atmosphere::Engine.routes.recognize_path(request.referrer)[:controller] == 'atmosphere/admin/appliance_types'
         redirect_to request.referer
       else
         redirect_to admin_virtual_machine_template_url(@virtual_machine_template),

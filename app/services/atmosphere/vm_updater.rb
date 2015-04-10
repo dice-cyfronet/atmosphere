@@ -17,7 +17,7 @@ module Atmosphere
     attr_reader :site, :server
 
     def perform_update!
-      vm.source_template = source_template
+      vm.source_template ||= source_template
       vm.name = server.name || '[unnamed]'
       vm.state = map_saving_state(vm, server.task_state) ||
         map_state(server.state.downcase.to_sym)

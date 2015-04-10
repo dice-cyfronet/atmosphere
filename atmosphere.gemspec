@@ -67,6 +67,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'redcarpet'
   s.add_dependency 'github-markup'
   s.add_dependency 'fog'
+  s.add_dependency 'google-api-client'
   s.add_dependency 'unf'
   s.add_dependency 'sinatra'
   s.add_dependency 'sidekiq'
