@@ -152,7 +152,7 @@ module Atmosphere
         pmt.appliance_type = at
         at.port_mapping_templates << pmt
       end if appliance and appliance.dev_mode_property_set
-      ActCopier.copy(appliance.appliance_type).each do |act|
+      ActCopier.new(appliance.appliance_type).execute.each do |act|
         act.appliance_type = at
         at.appliance_configuration_templates << act
       end if appliance
