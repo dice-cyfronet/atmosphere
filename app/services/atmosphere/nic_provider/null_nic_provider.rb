@@ -3,7 +3,7 @@ module Atmosphere
     class NullNicProvider
       def initialize(_config = nil)
       end
-      def get(_appl, _tmpl)
+      def get(_appl)
         nil
       end
     end
