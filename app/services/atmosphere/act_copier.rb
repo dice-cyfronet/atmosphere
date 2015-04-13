@@ -11,7 +11,7 @@ module Atmosphere
     private
 
     def create_copy
-      @appliance_type.appliance_configuration_templates.collect do |act|
+      @appliance_type.appliance_configuration_templates.map do |act|
         copy = act.dup
         copy.appliance_type = nil
         copy
