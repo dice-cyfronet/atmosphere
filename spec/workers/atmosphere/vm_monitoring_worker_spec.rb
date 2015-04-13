@@ -35,9 +35,9 @@ describe Atmosphere::VmMonitoringWorker do
         allow(cloud_client).to receive(:servers).and_return(['1', '2'])
         allow(cs).to receive(:virtual_machines).and_return([])
 
-        expect(updater1).to receive(:update).and_return('1')
+        expect(updater1).to receive(:execute).and_return('1')
         expect(vm_updater_class).to receive(:new).with(cs, '1').and_return(updater1)
-        expect(updater2).to receive(:update).and_return('2')
+        expect(updater2).to receive(:execute).and_return('2')
         expect(vm_updater_class).to receive(:new).with(cs, '2').and_return(updater2)
 
         subject.perform(1)

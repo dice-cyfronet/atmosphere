@@ -6,7 +6,7 @@ module Atmosphere
       @updater_class = updater_class
     end
 
-    def update
+    def execute
       perform_update! if old_enough?
 
       vm
