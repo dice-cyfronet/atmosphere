@@ -28,6 +28,7 @@ describe Atmosphere::ApplianceType do
 
   it { should validate_presence_of :name }
   it { should validate_presence_of :visible_to }
+  it { should validate_presence_of :os_family }
 
   it { should validate_uniqueness_of :name }
 
