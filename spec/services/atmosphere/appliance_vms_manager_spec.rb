@@ -102,7 +102,10 @@ describe Atmosphere::ApplianceVmsManager do
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
 
-    let(:vm_creator) { double('vm creator', :spawn_vm! => 'server_id') }
+    let(:vm_creator) do
+      instance_double(Atmosphere::Cloud::VmCreator,
+                      execute: 'server_id')
+    end
     let(:vm_creator_class) { double('vm creator class') }
 
     let(:tmpl) { create(:virtual_machine_template) }
@@ -202,7 +205,7 @@ describe Atmosphere::ApplianceVmsManager do
 
   context 'scaling'  do
     let(:appl) { build(:appliance) }
-    let(:vm_creator_class) { double('vm creator class') }
+    let(:vm_creator_class) { instance_double('vm creator class') }
 
     subject do
       Atmosphere::ApplianceVmsManager.
@@ -224,14 +227,14 @@ describe Atmosphere::ApplianceVmsManager do
       end
 
       def expect_vm_started(desc, vm_id_at_site)
-        first_creator = instance_double('Cloud::VmCreator')
+        first_creator = instance_double(Atmosphere::Cloud::VmCreator)
         allow(vm_creator_class).
           to receive(:new).
           with(desc[:template],
                hash_including(flavor: desc[:flavor], name: desc[:name])).
           and_return(first_creator)
 
-        expect(first_creator).to receive(:spawn_vm!).and_return(vm_id_at_site)
+        expect(first_creator).to receive(:execute).and_return(vm_id_at_site)
       end
 
       def vmt_desc(name)

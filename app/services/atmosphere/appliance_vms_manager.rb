@@ -103,7 +103,7 @@ module Atmosphere
           user_data: appliance.user_data,
           user_key: appliance.user_key,
           nic: nic
-        ).spawn_vm!
+        ).execute
     end
 
     def add_vm(vm)
