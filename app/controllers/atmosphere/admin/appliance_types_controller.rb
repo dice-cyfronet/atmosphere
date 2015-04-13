@@ -71,7 +71,7 @@ class Atmosphere::Admin::ApplianceTypesController < Atmosphere::Admin::Applicati
     def appliance_type_params
       params.require(:appliance_type).permit(
         :name, :description, :visible_to, :shared, :scalable, :user_id,
-        :preference_memory, :preference_disk,  :preference_cpu, :os_family_id
+        :preference_memory, :preference_disk, :preference_cpu, :os_family_id
       )
     end
 end
