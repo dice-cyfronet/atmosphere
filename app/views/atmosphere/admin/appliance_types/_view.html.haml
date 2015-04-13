@@ -13,10 +13,10 @@
       = link_to admin_appliance_type_path(@appliance_type),
                 method: :delete,
                 class: 'btn btn-danger btn-xs',
-                title: t('yes_delete'),
+                title: t('delete'),
                 data: { confirm: t('are_you_sure_at') } do
         = icon 'trash-o'
-        = t('yes')
+        = t('delete')
 
   %h5
     - if @appliance_type.visible_to == 'owner'
