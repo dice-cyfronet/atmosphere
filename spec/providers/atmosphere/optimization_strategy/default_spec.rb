@@ -44,10 +44,6 @@ describe Atmosphere::OptimizationStrategy::Default do
     let(:shareable_appl_type) { create(:shareable_appliance_type) }
 
     before do
-      # os family reused by AT, Flavors - simply magic :(
-      # It should be refactored
-      create(:os_family)
-
       create(:virtual_machine_template,
              appliance_type: shareable_appl_type,
              compute_site: openstack)
