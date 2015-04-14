@@ -73,7 +73,7 @@ module Atmosphere
 
       dev_mode_property_set = DevModePropertySet.new(attrs)
       dev_mode_property_set.port_mapping_templates =
-        PmtCopier.new(appliance_type).execute.each  do |pmt|
+        PmtCopier.new(appliance_type).execute.each do |pmt|
           pmt.dev_mode_property_set = dev_mode_property_set
         end
 
