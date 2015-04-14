@@ -19,8 +19,8 @@ class AddOsfamilies < ActiveRecord::Migration
     add_reference :atmosphere_appliance_types, :os_family, index: true
 
     # Spawn two records and rewrite existing ATypes to bind to a specific os_family
-    os_windows = Atmosphere::OSFamily.create(name: 'Windows')
-    os_linux = Atmosphere::OSFamily.create(name: 'Linux')
+    os_windows = Atmosphere::OSFamily.find_or_create_by(name: 'Windows')
+    os_linux = Atmosphere::OSFamily.find_or_create_by(name: 'Linux')
 
     # for some reason we need to force ApplianceType model class
     # without it rake migrate:redo failed

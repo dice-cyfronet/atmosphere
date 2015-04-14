@@ -1,2 +1,2 @@
-Atmosphere::OSFamily.create(name: 'Windows')
-Atmosphere::OSFamily.create(name: 'Linux')
+Atmosphere::OSFamily.find_or_create_by(name: 'Windows')
+Atmosphere::OSFamily.find_or_create_by(name: 'Linux')
