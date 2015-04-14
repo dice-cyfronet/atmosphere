@@ -14,6 +14,5 @@ module Atmosphere
 
     validates :os_family,
               presence: true
-
   end
 end
