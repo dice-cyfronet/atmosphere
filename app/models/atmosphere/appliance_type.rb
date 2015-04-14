@@ -57,6 +57,7 @@ module Atmosphere
              class_name: 'Atmosphere::ComputeSite'
 
     validates :visible_to, presence: true
+    validates :os_family, presence: true
 
     validates :name,
               uniqueness: true,
