@@ -62,8 +62,8 @@ describe Atmosphere do
   context 'nic provider' do
 
     class DummyNicProvider
-      def initialize(_config = nil)
-      end
+      def initialize(_config = nil) ; end
+
       def get(_appl, _tmpl)
         nil
       end
