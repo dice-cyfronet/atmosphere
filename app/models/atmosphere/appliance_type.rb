@@ -148,7 +148,7 @@ module Atmosphere
 
     def self.create_from(appliance, overwrite = {})
       at = ApplianceType.new appliance_type_attributes(appliance, overwrite)
-      PmtCopier.copy(appliance.dev_mode_property_set).each do |pmt|
+      PmtCopier.new(appliance.dev_mode_property_set).execute.each do |pmt|
         pmt.appliance_type = at
         at.port_mapping_templates << pmt
       end if appliance and appliance.dev_mode_property_set
