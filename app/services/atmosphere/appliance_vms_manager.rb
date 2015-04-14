@@ -10,7 +10,7 @@ module Atmosphere
       @appliance = appliance
       @updater = updater_class.new(appliance)
       @vm_creator_class = vm_creator_class
-      @tags_manager = tags_manager_class.new
+      @tags_manager_class = tags_manager_class
     end
 
     def reuse_vm!(vm)
@@ -114,7 +114,7 @@ module Atmosphere
     def appliance_satisfied(vm)
       appliance.state = :satisfied
       updater.update(new_vm: vm)
-      @tags_manager.create_tags_for_vm(vm)
+      @tags_manager_class.new(vm).execute
     end
 
     def bill
