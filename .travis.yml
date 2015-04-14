@@ -7,6 +7,9 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - cp config/database.yml.travis spec/dummy/config/database.yml
 
+script:
+  - RAILS_ENV=test bundle exec rake db:seed
+
 addons:
   code_climate:
     repo_token:
