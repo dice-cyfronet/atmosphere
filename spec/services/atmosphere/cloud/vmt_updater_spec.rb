@@ -9,7 +9,7 @@ describe Atmosphere::Cloud::VmtUpdater do
       source_cs.site_id, source_vmt.id_at_site)
     updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
-    updater.update
+    updater.execute
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to eq at
@@ -31,7 +31,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     })
     updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
-    updater.update
+    updater.execute
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'ami-123')
 
     expect(target_vmt.appliance_type).to eq at
@@ -49,7 +49,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     source_vmt.version = 13
     source_vmt.save
 
-    updater.update
+    updater.execute
     target_vmt = Atmosphere::VirtualMachineTemplate.
                   find_by(id_at_site: 'target_vmt_id')
 
@@ -67,7 +67,7 @@ describe Atmosphere::Cloud::VmtUpdater do
                         id_at_site: 'target_vmt_id')
     updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
-    updater.update
+    updater.execute
     target_vmt.reload
 
     expect(target_vmt.version).to eq source_vmt.version
@@ -85,7 +85,7 @@ describe Atmosphere::Cloud::VmtUpdater do
       id_at_site: 'target_vmt_id',
       created_at: (Atmosphere.vmt_at_relation_update_period + 1).hours.ago)
 
-    updater.update
+    updater.execute
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
@@ -98,7 +98,7 @@ describe Atmosphere::Cloud::VmtUpdater do
       source_cs.site_id, 'does_not_exist')
     updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
-    updater.update
+    updater.execute
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
@@ -110,7 +110,7 @@ describe Atmosphere::Cloud::VmtUpdater do
       'does_not_exist', 'does_not_exist')
     updater = Atmosphere::Cloud::VmtUpdater.new(target_cs, image)
 
-    updater.update
+    updater.execute
     target_vmt = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'target_vmt_id')
 
     expect(target_vmt.appliance_type).to be_nil
@@ -124,7 +124,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
       to receive(:perform_async)
 
-    updater.update
+    updater.execute
   end
 
   it 'does not remove old VMT when old state is ACTIVE' do
@@ -139,7 +139,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
       to_not receive(:perform_async)
 
-    updater.update
+    updater.execute
   end
 
   it 'does not remove old VMT when new status is different than ACTIVE' do
@@ -151,7 +151,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
       to_not receive(:perform_async)
 
-    updater.update
+    updater.execute
   end
 
   def open_stack_image(image_id, source_cs, source_uuid)
