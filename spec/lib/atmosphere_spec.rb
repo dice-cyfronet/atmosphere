@@ -60,6 +60,7 @@ describe Atmosphere do
   end
 
   context 'nic provider' do
+
     class DummyNicProvider
       def initialize(_config = nil)
       end
@@ -67,6 +68,7 @@ describe Atmosphere do
         nil
       end
     end
+
     context 'when compute site does not define provider class name' do
       let(:cs) { create(:compute_site) }
       it 'returns NullNicProvider' do
