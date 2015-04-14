@@ -1,7 +1,6 @@
 FactoryGirl.define do
   factory :appliance_type, class: 'Atmosphere::ApplianceType' do
     name { Faker::Lorem.words(10).join(' ') }
-    os_family { Atmosphere::OSFamily.first || build(:os_family) }
 
     trait :all_attributes_not_empty do
       description { Faker::Lorem.words(10).join(' ') }
