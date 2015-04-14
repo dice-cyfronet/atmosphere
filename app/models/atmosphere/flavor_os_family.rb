@@ -8,11 +8,5 @@ module Atmosphere
 
     belongs_to :os_family,
       class_name: 'Atmosphere::OSFamily'
-
-    validates :virtual_machine_flavor,
-              presence: true
-
-    validates :os_family,
-              presence: true
   end
 end
