@@ -8,7 +8,11 @@ before_script:
   - cp config/database.yml.travis spec/dummy/config/database.yml
 
 script:
-  - RAILS_ENV=test bundle exec rake db:seed
+#  - RAILS_ENV=test bundle exec rake db:seed
+#  - RAILS_ENV=test bundle exec rake db:migrate --trace
+  - bundle exec rake db:test:prepare
+  - bundle exec rake db:seed
+  - bundle exec rspec spec/
 
 addons:
   code_climate:
