@@ -91,6 +91,8 @@ module Atmosphere
                 allow_nil: true
               }
 
+    validates :os_family, presence: true
+
     enumerize :visible_to, in: [:owner, :developer, :all]
 
     scope :def_order, -> { order(:name) }

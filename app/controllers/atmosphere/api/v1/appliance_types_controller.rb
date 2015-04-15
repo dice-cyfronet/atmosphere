@@ -34,10 +34,8 @@ module Atmosphere
             authorize!(:save_vm_as_tmpl, appl)
             check_for_conflict!(appl)
           else
-            unless current_user.admin?
-              raise ActionController::ParameterMissing,
-                    I18n.t('appliance_types.appl_id_missing')
-            end
+            raise ActionController::ParameterMissing,
+                  I18n.t('appliance_types.appl_id_missing')
           end
 
           @appliance_type =
