@@ -48,6 +48,8 @@
         = t('appliance_types.data')
         = @appliance_type.preference_disk
         = t('size.GB')
+    %span.label.label-warning.dynamic-label
+      = @appliance_type.os_family.name
 
 %hr
 .description

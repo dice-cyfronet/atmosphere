@@ -1,7 +1,3 @@
--# FIXME(any) use this or remove?
-
-=# simple_form_for([:admin, @appliance_type], remote: true, role: 'form', data: {target: '#appliance_type'}) do |f|
-
 = simple_form_for([:admin, @appliance_type], role: 'form') do |f|
   = f.error_notification
 
@@ -15,29 +11,27 @@
       .col-lg-4
         = f.association :author
       .col-lg-2
-        = f.input :shared
+        .text-center
+          = f.input :shared
       .col-lg-2
-        = f.input :scalable
+        .text-center
+          = f.input :scalable
 
     .row
-      .col-lg-4
+      .col-lg-3
         = f.label :preference_cpu
         .input-group
           = f.input_field :preference_cpu
           %span.input-group-addon cores
-      .col-lg-4
+      .col-lg-3
         = f.label :preference_memory
         .input-group
           = f.input_field :preference_memory
           %span.input-group-addon MB
-      .col-lg-4
+      .col-lg-3
         = f.label :preference_disk
         .input-group
           = f.input_field :preference_disk
           %span.input-group-addon GB
-
-  -# FIXME(any) use this or remove?
-
-  -#
-  -#.actions
-  -#  = f.button :submit
+      .col-lg-3
+        = f.association :os_family

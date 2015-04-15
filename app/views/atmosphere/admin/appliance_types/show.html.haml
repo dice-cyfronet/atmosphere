@@ -7,18 +7,6 @@
 
         = render 'atmosphere/admin/appliance_types/view'
 
-        -#= hb 'if isEditing' do
-        -#  .edit
-        -#    %h4
-        -#      Edit Appliance Type
-        -#      .pull-right
-        -#        %button.btn.btn-success.btn-xs{hb: 'action "doneEditing"'}
-        -#          %i.icon-save
-        -#          Save
-        -#        %button.btn.btn-default.btn-xs{hb: 'action "cancelEditing"'} Cancel
-        -#    %hr
-        -#    = hb "partial 'appliance_types/edit'"
-
         %ul.nav.nav-tabs#tabs
           - %w(port-mappings configurations templates appliances).each_with_index do |tab_name, i|
             %li{class: ('active' if i==0)}
