@@ -84,9 +84,26 @@ describe Atmosphere do
         expect(Atmosphere.nic_provider(cs).class).to eq DummyNicProvider
       end
 
+      it 'creates provider of appropriate class if config is empty' do
+        PROVIDER_CONF_STR = ''
+        PROVIDER_CONF = {}
+        cs.nic_provider_config = PROVIDER_CONF_STR
+        expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
+        Atmosphere.nic_provider(cs)
+      end
+
+      it 'creates provider of appropriate class if config is empty' do
+        PROVIDER_CONF_STR = nil
+        PROVIDER_CONF = {}
+        cs.nic_provider_config = PROVIDER_CONF_STR
+        expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
+        Atmosphere.nic_provider(cs)
+      end
+
       it 'creates provider with compute site specific configuration' do
-        PROVIDER_CONF = 'Nic provider configuration'
-        cs.nic_provider_config = PROVIDER_CONF
+        PROVIDER_CONF_STR = '{}'
+        PROVIDER_CONF = JSON.parse(PROVIDER_CONF_STR).symbolize_keys
+        cs.nic_provider_config = PROVIDER_CONF_STR
         expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
         Atmosphere.nic_provider(cs)
       end
