@@ -79,7 +79,7 @@ describe Atmosphere do
     context 'when compute site defines provider class name' do
       let(:c_name) { 'DummyNicProvider' }
       let(:cs) { create(:compute_site, nic_provider_class_name: c_name) }
-      
+
       it 'returns provider of appropriate class' do
         expect(Atmosphere.nic_provider(cs).class).to eq DummyNicProvider
       end
