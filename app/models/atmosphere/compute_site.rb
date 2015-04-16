@@ -80,7 +80,7 @@ module Atmosphere
               presence: true,
               inclusion: %w(openstack aws rackspace google_compute)
 
-    validate :nic_provider_class_defined, unless: "nic_provider_class_name.nil?"
+    validate :nic_provider_class_defined, unless: 'nic_provider_class_name.nil?'
 
     enumerize :site_type, in: [:public, :private], predicates: true
 
@@ -154,14 +154,17 @@ module Atmosphere
 
     def nic_provider_class_defined
       klass = Module.const_get(nic_provider_class_name)
-      
       unless klass.is_a?(Class)
-        errors.add(:nic_provider_class_name,
-          "#{nic_provider_class_name} is not a class")
+        errors.add(
+          :nic_provider_class_name,
+          "#{nic_provider_class_name} is not a class"
+        )
       end
       rescue NameError
-        errors.add(:nic_provider_class_name,
-          "#{nic_provider_class_name} class is undefined")
+        errors.add(
+          :nic_provider_class_name,
+          "#{nic_provider_class_name} class is undefined"
+        )
     end
 
     private

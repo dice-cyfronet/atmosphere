@@ -58,20 +58,20 @@ describe Atmosphere::ComputeSite do
   context 'nic provider class' do
     context 'is misconfigured' do
       it 'is invalid if class does not exist' do
-        misconfigured_cs = 
+        misconfigured_cs =
           build(:compute_site, nic_provider_class_name: 'NotExistingClass')
         expect(misconfigured_cs).to be_invalid
       end
       it 'is invalid if name does not point to a class' do
-        misconfigured_cs = 
+        misconfigured_cs =
           build(:compute_site, nic_provider_class_name: 'Atmosphere')
         expect(misconfigured_cs).to be_invalid
       end
     end
     context 'is configured fine' do
-      let(:configured_cs) {
+      let(:configured_cs) do
         build(:compute_site, nic_provider_class_name: 'String')
-      }
+      end
       it 'is valid' do
         expect(configured_cs).to be_valid
       end
