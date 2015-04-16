@@ -99,16 +99,18 @@ module Atmosphere
 
   def self.nic_provider(compute_site)
     class_name = compute_site.nic_provider_class_name
-    nic_provider_class = if class_name
-      class_name.constantize
-    else
-      Atmosphere::NicProvider::NullNicProvider
-    end
-    config = if compute_site.nic_provider_config.present?
-      JSON.parse(compute_site.nic_provider_config).symbolize_keys
-    else
-      {}
-    end
+    nic_provider_class =
+      if class_name
+        class_name.constantize
+      else
+        Atmosphere::NicProvider::NullNicProvider
+      end
+    config =
+      if compute_site.nic_provider_config.present?
+        JSON.parse(compute_site.nic_provider_config).symbolize_keys
+      else
+        {}
+      end
     nic_provider_class.new(config)
   end
 
