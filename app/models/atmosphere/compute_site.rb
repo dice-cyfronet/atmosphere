@@ -80,7 +80,7 @@ module Atmosphere
               presence: true,
               inclusion: %w(openstack aws rackspace google_compute)
 
-    validate :nic_provider_class_defined, unless: 'nic_provider_class_name.nil?'
+    validate :nic_provider_class_defined, if: :nic_provider_class_name?
 
     enumerize :site_type, in: [:public, :private], predicates: true
 

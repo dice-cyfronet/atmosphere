@@ -69,11 +69,17 @@ describe Atmosphere::ComputeSite do
       end
     end
     context 'is configured fine' do
-      let(:configured_cs) do
-        build(:compute_site, nic_provider_class_name: 'String')
+      it 'is valid if class exist' do
+        cs = build(:compute_site, nic_provider_class_name: 'String')
+        expect(cs).to be_valid
       end
-      it 'is valid' do
-        expect(configured_cs).to be_valid
+      it 'is valid if class name is nil' do
+        cs = build(:compute_site, nic_provider_class_name: nil)
+        expect(cs).to be_valid
+      end
+      it 'is valid if class name is empty string' do
+        cs = build(:compute_site, nic_provider_class_name: '')
+        expect(cs).to be_valid
       end
     end
   end
