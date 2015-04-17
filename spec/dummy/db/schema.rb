@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224171920) do
+ActiveRecord::Schema.define(version: 20150410124111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,10 +123,10 @@ ActiveRecord::Schema.define(version: 20150224171920) do
   end
 
   create_table "atmosphere_compute_sites", force: true do |t|
-    t.string   "site_id",                               null: false
+    t.string   "site_id",                                     null: false
     t.string   "name"
     t.string   "location"
-    t.string   "site_type",         default: "private"
+    t.string   "site_type",               default: "private"
     t.string   "technology"
     t.string   "http_proxy_url"
     t.string   "https_proxy_url"
@@ -137,7 +137,9 @@ ActiveRecord::Schema.define(version: 20150224171920) do
     t.string   "wrangler_url"
     t.string   "wrangler_username"
     t.string   "wrangler_password"
-    t.boolean  "active",            default: true
+    t.boolean  "active",                  default: true
+    t.string   "nic_provider_class_name"
+    t.text     "nic_provider_config"
   end
 
   create_table "atmosphere_deployments", force: true do |t|

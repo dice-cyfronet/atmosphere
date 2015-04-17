@@ -55,6 +55,35 @@ describe Atmosphere::ComputeSite do
     end
   end
 
+  context 'nic provider class' do
+    context 'is misconfigured' do
+      it 'is invalid if class does not exist' do
+        misconfigured_cs =
+          build(:compute_site, nic_provider_class_name: 'NotExistingClass')
+        expect(misconfigured_cs).to be_invalid
+      end
+      it 'is invalid if name does not point to a class' do
+        misconfigured_cs =
+          build(:compute_site, nic_provider_class_name: 'Atmosphere')
+        expect(misconfigured_cs).to be_invalid
+      end
+    end
+    context 'is configured fine' do
+      it 'is valid if class exist' do
+        cs = build(:compute_site, nic_provider_class_name: 'String')
+        expect(cs).to be_valid
+      end
+      it 'is valid if class name is nil' do
+        cs = build(:compute_site, nic_provider_class_name: nil)
+        expect(cs).to be_valid
+      end
+      it 'is valid if class name is empty string' do
+        cs = build(:compute_site, nic_provider_class_name: '')
+        expect(cs).to be_valid
+      end
+    end
+  end
+
   context 'if technology is present' do
     before { subject.technology = 'openstack' }
     it { should validate_inclusion_of(:technology).in_array(%w(openstack aws))}
