@@ -11,7 +11,6 @@
 require 'rails_helper'
 
 describe Atmosphere::UserFund do
-
   it { should validate_uniqueness_of(:user_id).
                   scoped_to(:fund_id).
                   with_message(I18n.t('funds.unique_user'))
@@ -25,17 +24,16 @@ describe Atmosphere::UserFund do
 
   it 'prevents duplication of user assignment to a fund' do
     uf = Atmosphere::UserFund.create(
-        user: user_fund.user,
-        fund: user_fund.fund
+      user: user_fund.user,
+      fund: user_fund.fund
     )
     expect(uf).not_to be_valid
     expect(uf.errors.full_messages.first).
-        to include(I18n.t('funds.unique_user'))
+      to include(I18n.t('funds.unique_user'))
   end
 
 
   describe '#ensure_single_default' do
-
     it 'makes first user_fund default' do
       expect(user_fund.default).to be_truthy
     end
@@ -74,7 +72,6 @@ describe Atmosphere::UserFund do
   end
 
   describe '#reallocate_default' do
-
     it 'does nothing when last fund is removed' do
       user_fund.destroy
       expect(Atmosphere::UserFund.count).to eq 0
@@ -87,7 +84,8 @@ describe Atmosphere::UserFund do
       expect(uf.reload.default).to be_falsey
       expect(uf2.reload.default).to be_falsey
       user_fund.destroy
-      expect([uf.reload.default, uf2.reload.default]).to contain_exactly true, false
+      expect([uf.reload.default, uf2.reload.default]).
+        to contain_exactly true, false
     end
 
     it 'does nothing when removing non-default fund' do
@@ -100,7 +98,5 @@ describe Atmosphere::UserFund do
       expect(user_fund.reload.default).to be_truthy
       expect(uf2.reload.default).to be_falsey
     end
-
   end
-
 end

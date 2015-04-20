@@ -24,7 +24,10 @@ module Atmosphere
               }
 
     around_save :ensure_single_default
-    after_destroy :reallocate_default if :default
+    after_destroy :reallocate_default,
+                  if: Proc.new { |user_fund|
+                    user_fund.default
+                  }
 
 
     private
