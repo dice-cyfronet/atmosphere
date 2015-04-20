@@ -191,21 +191,9 @@ class Fog::Compute::AWS::Flavor
   end
 end
 
-class Fog::Compute::OpenStack::Images
-  def all_generic(filters)
-    all(filters)
-  end
-end
-
 class Fog::Compute::OpenStack::Real
   def create_tags_for_vm(server_id, tags_map)
     # do nothing since Azure does not support tagging
-  end
-end
-
-class Fog::Compute::AWS::Images
-  def all_generic(filters)
-    all(filters)
   end
 end
 
@@ -257,10 +245,11 @@ class Fog::Compute::Azure::Servers
 end
 
 class Fog::Compute::Azure::Images
-  def all_generic(filters)
+  alias_method :all_orig, :all
+  def all(filters)
     # TODO: implement filters
     # Remove before flight!
-    all.select{|tmpl|
+    all_orig.select{|tmpl|
       tmpl.name == 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20150123-en-us-30GB'}
   end
 end
