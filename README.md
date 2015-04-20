@@ -99,8 +99,8 @@ To upgrade to latest master run following commands:
 # update atmosphere gem
 bundle update atmosphere
 
-# install new migrations
-rake atmosphere:install:migrations
+# apply new migrations
+rake db:migrate
 ```
 
 ## Contributing

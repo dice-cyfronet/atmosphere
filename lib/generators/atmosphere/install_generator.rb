@@ -20,10 +20,6 @@ module Atmosphere
         route 'mount Atmosphere::Engine => "/"'
       end
 
-      def copy_migrations
-        rake 'atmosphere:install:migrations'
-      end
-
       def show_readme
         readme 'README' if behavior == :invoke
       end
