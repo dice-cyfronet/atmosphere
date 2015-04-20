@@ -19,8 +19,8 @@ class AddOsfamilies < ActiveRecord::Migration
     add_reference :atmosphere_appliance_types, :os_family, index: true
 
     # Spawn two records and rewrite existing ATypes to bind to a specific os_family
-    os_windows = Atmosphere::OSFamily.create(name: 'Windows')
-    os_linux = Atmosphere::OSFamily.create(name: 'Linux')
+    os_windows = Atmosphere::OSFamily.find_or_create_by(name: 'Windows')
+    os_linux = Atmosphere::OSFamily.find_or_create_by(name: 'Linux')
 
     # for some reason we need to force ApplianceType model class
     # without it rake migrate:redo failed
@@ -37,7 +37,7 @@ class AddOsfamilies < ActiveRecord::Migration
     Atmosphere::VirtualMachineFlavor.find_each do |flavor|
       vmf_osf = Atmosphere::FlavorOSFamily.create(virtual_machine_flavor: flavor,
         os_family: Atmosphere::OSFamily.first,
-        hourly_cost: flavor.hourly_cost)
+        hourly_cost: flavor.read_attribute('hourly_cost'))
     end
 
     remove_column :atmosphere_virtual_machine_flavors, :hourly_cost

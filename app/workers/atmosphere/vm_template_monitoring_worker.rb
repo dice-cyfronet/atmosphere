@@ -9,9 +9,18 @@ module Atmosphere
       begin
         logger.debug { "#{jid}: Starting VMTs monitoring for site #{site_id}" }
         site = ComputeSite.find(site_id)
-        filters = site.template_filters ? JSON.parse(site.template_filters) : nil
+        filters = site.template_filters ? JSON.parse(site.template_filters) : {}
+
         logger.debug { "#{jid}: getting images state for site #{site_id} from compute site" }
-        update_images(site, site.cloud_client.images.all_generic(filters))
+
+        images = if filters.empty?
+                   site.cloud_client.images.all
+                 else
+                   site.cloud_client.images.all(filters)
+                 end
+
+        update_images(site, images)
+
         logger.debug { "#{jid}: updating VMTs finished for site #{site_id}" }
       rescue Excon::Errors::HTTPStatusError => e
         logger.error "#{jid}: Unable to perform VMTs monitoring job: #{e}"

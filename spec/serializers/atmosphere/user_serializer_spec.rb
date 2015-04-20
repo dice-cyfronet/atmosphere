@@ -31,8 +31,8 @@ describe Atmosphere::UserSerializer do
     end
   end
 
-  def serialized_for(user, current_user = current_user)
-    serializer = Atmosphere::UserSerializer.new(user, scope: current_user)
+  def serialized_for(user, current = current_user)
+    serializer = Atmosphere::UserSerializer.new(user, scope: current)
     JSON.parse(serializer.to_json)
   end
 end

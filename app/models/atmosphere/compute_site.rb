@@ -78,13 +78,15 @@ module Atmosphere
 
     validates :technology,
               presence: true,
-              inclusion: %w(openstack aws azure rackspace)
+              inclusion: %w(openstack aws azure rackspace google_compute)
+
+    validate :nic_provider_class_defined, if: :nic_provider_class_name?
 
     enumerize :site_type, in: [:public, :private], predicates: true
     enumerize :technology,
-              in: [:openstack, :aws, :azure, :rackspace],
+              in: [:openstack, :aws, :azure, :rackspace, google_compute],
               predicates: true
-    
+
     scope :with_appliance_type, ->(appliance_type) do
       joins(virtual_machines: {appliances: :appliance_set})
         .where(
@@ -147,6 +149,21 @@ module Atmosphere
 
     def default_flavor
       virtual_machine_flavors.first
+    end
+
+    def nic_provider_class_defined
+      klass = Module.const_get(nic_provider_class_name)
+      unless klass.is_a?(Class)
+        errors.add(
+          :nic_provider_class_name,
+          "#{nic_provider_class_name} is not a class"
+        )
+      end
+      rescue NameError
+        errors.add(
+          :nic_provider_class_name,
+          "#{nic_provider_class_name} class is undefined"
+        )
     end
 
     private

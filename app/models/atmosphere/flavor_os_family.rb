@@ -8,6 +8,5 @@ module Atmosphere
 
     belongs_to :os_family,
       class_name: 'Atmosphere::OSFamily'
-
   end
 end

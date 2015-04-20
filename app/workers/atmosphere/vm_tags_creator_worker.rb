@@ -27,7 +27,7 @@ module Atmosphere
       if ['openstack', 'rackspace'].include?(cs.technology)
         tag_vm_on_openstack(vm, cs.cloud_client, tags_map)
       else
-        tag_vm_on_amazon(vm, cs.cloud_client, tags_map)
+        tag_vm(vm.id_at_site, cs.cloud_client, tags_map)
       end
     end
 
@@ -37,10 +37,6 @@ module Atmosphere
       else
         VmTagsCreatorWorker.perform_in(2.minutes, vm.id, tags_map)
       end
-    end
-
-    def tag_vm_on_amazon(vm, cloud_client, tags_map)
-      tag_vm(vm.id_at_site, cloud_client, tags_map)
     end
 
     def tag_vm(server_id, cloud_client, tags_map)

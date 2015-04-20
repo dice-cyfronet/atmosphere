@@ -631,14 +631,13 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         expect(response.status).to eq 201
       end
 
-      it 'allows to create new appliance even if appliance id is not provided' do
+      it 'prohibits creating appliance type without appliance_id' do
         admin = create(:admin)
 
         post api('/appliance_types/', admin), create_msg
 
-        expect(response.status).to eq 201
+        expect(response.status).to eq 422
       end
-
     end
   end
 

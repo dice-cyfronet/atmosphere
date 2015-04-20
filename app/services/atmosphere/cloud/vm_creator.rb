@@ -11,11 +11,10 @@ module Atmosphere
 
     def spawn_vm!
       register_user_key!
-      
       server_params = {}
       server_params[:user_data] = user_data if user_data
       server_params[:key_name] = key_name if key_name
-      unless @nic.blank?
+      if @nic
         Rails.logger.info "Spawning server with forced NIC: #{@nic}"
         server_params[:nics] = [{ net_id: @nic }]
       end
@@ -30,6 +29,7 @@ module Atmosphere
           server_params[:location] = "North Central US"
           server_params[:vm_size] = flavor_id
         else #TODO: Untangle AWS and OpenStack
+          server_params[:atmo_user_key] = @user_key
           server_params[:flavor_ref] = flavor_id
           server_params[:flavor_id] = flavor_id
           server_params[:name] = @name
@@ -72,6 +72,7 @@ module Atmosphere
 
     def set_security_groups!(params)
       params[:groups] = ['mniec_permit_all'] if amazon?
+      params[:network] = 'permitall' if google?
     end
 
     def register_user_key!
@@ -80,6 +81,10 @@ module Atmosphere
 
     def amazon?
       @tmpl.compute_site.technology == 'aws'
+    end
+
+    def google?
+      @tmpl.compute_site.technology == 'google_compute'
     end
   end
 end

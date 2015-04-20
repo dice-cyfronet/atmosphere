@@ -58,4 +58,55 @@ describe Atmosphere do
       expect(Atmosphere.metrics_store).to eq 'other_client'
     end
   end
+
+  context 'nic provider' do
+    class DummyNicProvider
+      def initialize(_config = nil); end
+
+      def get(_appl, _tmpl)
+        nil
+      end
+    end
+
+    context 'when compute site does not define provider class name' do
+      let(:cs) { create(:compute_site) }
+      it 'returns NullNicProvider' do
+        expect(Atmosphere.nic_provider(cs).class).
+          to eq Atmosphere::NicProvider::NullNicProvider
+      end
+    end
+
+    context 'when compute site defines provider class name' do
+      let(:c_name) { 'DummyNicProvider' }
+      let(:cs) { create(:compute_site, nic_provider_class_name: c_name) }
+
+      it 'returns provider of appropriate class' do
+        expect(Atmosphere.nic_provider(cs).class).to eq DummyNicProvider
+      end
+
+      it 'creates provider of appropriate class if config is empty' do
+        PROVIDER_CONF_STR = ''
+        PROVIDER_CONF = {}
+        cs.nic_provider_config = PROVIDER_CONF_STR
+        expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
+        Atmosphere.nic_provider(cs)
+      end
+
+      it 'creates provider of appropriate class if config is empty' do
+        PROVIDER_CONF_STR = nil
+        PROVIDER_CONF = {}
+        cs.nic_provider_config = PROVIDER_CONF_STR
+        expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
+        Atmosphere.nic_provider(cs)
+      end
+
+      it 'creates provider with compute site specific configuration' do
+        PROVIDER_CONF_STR = '{}'
+        PROVIDER_CONF = JSON.parse(PROVIDER_CONF_STR).symbolize_keys
+        cs.nic_provider_config = PROVIDER_CONF_STR
+        expect(DummyNicProvider).to receive(:new).with PROVIDER_CONF
+        Atmosphere.nic_provider(cs)
+      end
+    end
+  end
 end

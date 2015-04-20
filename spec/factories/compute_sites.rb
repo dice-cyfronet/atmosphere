@@ -5,8 +5,8 @@ FactoryGirl.define do
     site_type 'private'
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
-    http_proxy_url { Faker::Internet.uri('http') }
-    https_proxy_url { Faker::Internet.uri('https') }
+    http_proxy_url { FFaker::Internet.uri('http') }
+    https_proxy_url { FFaker::Internet.uri('https') }
 
     # Create 4 VM flavors for this compute_site by default
     # virtual_machine_flavors { FactoryGirl.create_list(:virtual_machine_flavor, 4) }
