@@ -84,7 +84,7 @@ module Atmosphere
 
     enumerize :site_type, in: [:public, :private], predicates: true
     enumerize :technology,
-              in: [:openstack, :aws, :azure, :rackspace, google_compute],
+              in: [:openstack, :aws, :azure, :rackspace, :google_compute],
               predicates: true
 
     scope :with_appliance_type, ->(appliance_type) do
