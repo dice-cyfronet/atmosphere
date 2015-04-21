@@ -76,7 +76,7 @@ describe Atmosphere::Appliance do
     end
     let!(:appliance) { create(:appliance) }
 
-    it 'removes appliance configuration instance when last Appliance using it' do
+    it 'removes configuration instance with the last Appliance using it' do
       expect {
         appliance.destroy
       }.to change { Atmosphere::ApplianceConfigurationInstance.count }.by(-1)
@@ -148,10 +148,12 @@ describe Atmosphere::Appliance do
   context 'when instantiated' do
     let(:appliance_type) { create(:appliance_type) }
     let(:appliance_set) { create(:appliance_set) }
-    let(:appliance) { create(:appliance,
-                             appliance_set: appliance_set,
-                             appliance_type: appliance_type,
-                             fund: nil) }
+    let(:appliance) do
+      create(:appliance,
+              appliance_set: appliance_set,
+              appliance_type: appliance_type,
+              fund: nil)
+    end
 
     it 'does not change fund when externally assigned' do
       funded_appliance = create(:appliance)
@@ -182,8 +184,7 @@ describe Atmosphere::Appliance do
     end
 
     it 'chooses one of user funds that support relevant compute site' do
-      default_cs = create(:openstack_with_flavors,
-                          funds: [appliance_set.user.default_fund])
+      create(:openstack_with_flavors, funds: [appliance_set.user.default_fund])
       funded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
       appliance_set.user.funds << funded_cs.funds.first
       create(:virtual_machine_template,
@@ -220,7 +221,7 @@ describe Atmosphere::Appliance do
 
     it 'provides appliance user default fund' do
       expect(appliance.send(:default_fund)).
-          to eq appliance.appliance_set.user.default_fund
+        to eq appliance.appliance_set.user.default_fund
     end
 
     it 'does not crash when no data is present' do

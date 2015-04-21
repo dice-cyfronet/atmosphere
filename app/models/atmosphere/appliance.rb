@@ -159,22 +159,20 @@ module Atmosphere
     private
 
     def assign_fund
-      funds = appliance_type.virtual_machine_templates.collect do |vmt|
+      funds = appliance_type.virtual_machine_templates.map do |vmt|
         vmt.compute_site.funds
       end.flatten.uniq
 
       self.fund = if funds.include? default_fund
-        default_fund
-      else
-        funds.blank? ? default_fund : funds.first
-      end
+                    default_fund
+                  else
+                    funds.blank? ? default_fund : funds.first
+                  end
     end
 
     def default_fund
       if appliance_set && appliance_set.user
         appliance_set.user.default_fund
-      else
-        nil
       end
     end
 
