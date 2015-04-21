@@ -82,7 +82,7 @@ module Atmosphere
     attr_readonly :dev_mode_property_set
 
     before_create :create_dev_mode_property_set, if: :development?
-    before_save :assign_default_fund
+    before_save :assign_fund, if: 'fund.nil?'
     before_destroy :final_billing, prepend: true
     after_destroy :remove_appliance_configuration_instance_if_needed
     after_destroy :optimize_destroyed_appliance
@@ -158,19 +158,23 @@ module Atmosphere
 
     private
 
-    def assign_default_fund
-      # This is a "goalkeeper" method which will assign this appliance
-      # to its owner's default fund, if no fund has been specified yet.
-      # It is provided to ensure compatibility with old APIs of Atmosphere
-      # which do not request funds to be specified when instantiating
-      # appliances.
-      # Once the APIs have been updated, this method will be deprecated
-      # and should be removed.
-      if fund.blank?
-        self.fund = self.appliance_set.user.default_fund
-        # Note that id the user does not have a default fund assigned,
-        # this method will be unable to figure out any useful fund
-        # for this appliance.
+    def assign_fund
+      funds = appliance_type.virtual_machine_templates.collect do |vmt|
+        vmt.compute_site.funds
+      end.flatten.uniq
+
+      self.fund = if funds.include? default_fund
+        default_fund
+      else
+        funds.blank? ? default_fund : funds.first
+      end
+    end
+
+    def default_fund
+      if appliance_set && appliance_set.user
+        appliance_set.user.default_fund
+      else
+        nil
       end
     end
 

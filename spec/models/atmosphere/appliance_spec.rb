@@ -43,36 +43,30 @@ describe Atmosphere::Appliance do
   it { should have_readonly_attribute :dev_mode_property_set }
 
   context 'optimization strategy' do
-
     it 'returns default optimization strategy if optimization policy is not defined' do
       expect(Atmosphere::Appliance.new.optimization_strategy.class).to eq Atmosphere::OptimizationStrategy::Default
     end
 
     context 'optimization policy defined for appliance set' do
-
       context 'policy not defined for appliance' do
-
         it 'returns optimization strategy that is defined for appliance set' do
           as = Atmosphere::ApplianceSet.new(optimization_policy: :manual)
           appl = Atmosphere::Appliance.new(appliance_set: as)
           expect(appl.optimization_strategy.class).to eq Atmosphere::OptimizationStrategy::Manual
         end
-
       end
 
       context 'policy defined for appliance' do
-
         it 'returns optimization strategy that is defined for appliance set if strategy is not defined directly for appliance' do
-
+          pending 'someone left this spec empty - setting it as pending'
+          fail
         end
       end
-
     end
 
     context 'policy defined only for appliance' do
 
     end
-
   end
 
   context 'appliance configuration instances management' do
@@ -82,7 +76,7 @@ describe Atmosphere::Appliance do
     end
     let!(:appliance) { create(:appliance) }
 
-    it 'removes appliance configuratoin instance when last Appliance using it' do
+    it 'removes appliance configuration instance when last Appliance using it' do
       expect {
         appliance.destroy
       }.to change { Atmosphere::ApplianceConfigurationInstance.count }.by(-1)
@@ -151,6 +145,55 @@ describe Atmosphere::Appliance do
     end
   end
 
+  context 'when instantiated' do
+    let(:appliance_type) { create(:appliance_type) }
+    let(:appliance_set) { create(:appliance_set) }
+    let(:appliance) { create(:appliance,
+                             appliance_set: appliance_set,
+                             appliance_type: appliance_type,
+                             fund: nil) }
+
+    it 'does not change fund when externally assigned' do
+      funded_appliance = create(:appliance)
+      expect(funded_appliance.fund).not_to eq appliance.send(:default_fund)
+    end
+
+    it 'gets default fund from its user if no fund is set' do
+      expect(appliance.fund).to eq appliance.send(:default_fund)
+    end
+
+    it 'prefers default fund if it supports relevant compute site' do
+      default_cs = create(:openstack_with_flavors,
+                          funds: [appliance_set.user.default_fund])
+      funded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
+      appliance_set.user.funds << funded_cs.funds.first
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             compute_site: default_cs)
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             compute_site: funded_cs)
+      supported_appliance_types = Atmosphere::ComputeSite.all.map do |cs|
+        cs.virtual_machine_templates.map(&:appliance_type)
+      end
+      expect(supported_appliance_types).to all(include(appliance_type))
+      expect(appliance.fund).not_to eq funded_cs.funds.first
+      expect(appliance.fund).to eq appliance.send(:default_fund)
+    end
+
+    it 'chooses one of user funds that support relevant compute site' do
+      default_cs = create(:openstack_with_flavors,
+                          funds: [appliance_set.user.default_fund])
+      funded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
+      appliance_set.user.funds << funded_cs.funds.first
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             compute_site: funded_cs)
+      expect(appliance.fund).to eq funded_cs.funds.first
+      expect(appliance.fund).not_to eq appliance.send(:default_fund)
+    end
+  end
+
   context '#user_data' do
     let(:appl) do
       build(:appliance).tap do |appl|
@@ -164,11 +207,25 @@ describe Atmosphere::Appliance do
     end
   end
 
-  it 'owned by the user' do
+  it 'is owned by a user' do
     user = build(:user)
     as = build(:appliance_set, user: user)
     appl = create(:appliance, appliance_set: as)
 
     expect(appl.owned_by?(user)).to be_truthy
+  end
+
+  context '#default_fund' do
+    let(:appliance) { create(:appliance) }
+
+    it 'provides appliance user default fund' do
+      expect(appliance.send(:default_fund)).
+          to eq appliance.appliance_set.user.default_fund
+    end
+
+    it 'does not crash when no data is present' do
+      appliance.appliance_set.user = nil
+      expect(appliance.send(:default_fund)).to eq nil
+    end
   end
 end
