@@ -69,11 +69,13 @@ describe Atmosphere::Optimizer do
 
         it 'to appliance name if it is not blank' do
           name = 'name full appliance'
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, name|
-            expect(name).to eq name
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, n|
+            expect(n).to eq name
           end
 
-          create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, name: 'name full appliance', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          create(:appliance, appliance_set: dev_appliance_set,
+                 appliance_type: shareable_appl_type, name: name,
+                 fund: fund, compute_sites: Atmosphere::ComputeSite.all)
 
         end
 
