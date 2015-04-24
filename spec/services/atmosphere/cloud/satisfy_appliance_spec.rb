@@ -362,7 +362,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       described_class.new(appl).execute
       appl.reload
 
-      expect(appl.state_explanation).to eql "No matching template was found for appliance #{appl.name}"
+      expect(appl.state_explanation).to start_with "No matching template"
     end
 
     it 'only saving tmpl exists' do

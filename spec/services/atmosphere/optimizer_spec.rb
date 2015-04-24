@@ -144,7 +144,7 @@ describe Atmosphere::Optimizer do
           it 'sets state explanation' do
             [tmpl_at_amazon, tmpl_at_openstack]
             appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-            expect(appl.state_explanation).to eq "No matching flavor was found for appliance #{appl.name}"
+            expect(appl.state_explanation).to start_with "No matching flavor"
           end
 
           it 'sets appliance as unsatisfied' do
