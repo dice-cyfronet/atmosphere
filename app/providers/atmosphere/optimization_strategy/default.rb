@@ -36,7 +36,8 @@ module Atmosphere
         VirtualMachineTemplate.where(
           appliance_type: appliance.appliance_type,
           state: 'active',
-          compute_site_id: appliance.compute_sites.active
+          compute_site_id:
+            appliance.compute_sites.active.funded_by(appliance.fund)
         )
       end
 

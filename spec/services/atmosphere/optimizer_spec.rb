@@ -208,7 +208,7 @@ describe Atmosphere::Optimizer do
       let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
       let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
 
-      context 'and user has emough funds to start appliance' do
+      context 'and user has enough funds to start appliance' do
         before do
           allow(Atmosphere::BillingService).to receive(:can_afford_vm?).with(anything, appl1.virtual_machines.first).and_return(true)
 
@@ -227,7 +227,7 @@ describe Atmosphere::Optimizer do
         end
       end
 
-      context 'and user does not have emough funds to start appliance' do
+      context 'and user does not have enough funds to start appliance' do
         before do
           allow(Atmosphere::BillingService).to receive(:can_afford_flavor?).and_return(false)
 
@@ -251,7 +251,9 @@ describe Atmosphere::Optimizer do
 
       it 'chooses VMT from active compute site' do
         inactive_cs, inactive_vmt = vmt_on_site(cs_active: false)
+        inactive_cs.funds << fund
         active_cs, active_vmt = vmt_on_site(cs_active: true)
+        active_cs.funds << fund
         flavor = create(:virtual_machine_flavor,
           compute_site: active_cs, id_at_site: '123')
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
@@ -260,8 +262,10 @@ describe Atmosphere::Optimizer do
           virtual_machine_templates: [inactive_vmt, active_vmt])
 
         appl = create(:appliance,
-          appliance_set: wf, appliance_type: at,
-          compute_sites: [inactive_cs, active_cs])
+                      appliance_set: wf,
+                      appliance_type: at,
+                      compute_sites: [inactive_cs, active_cs],
+                      fund: fund)
 
         selected_vmt = appl.virtual_machines.first.source_template
 
@@ -274,10 +278,14 @@ describe Atmosphere::Optimizer do
       it 'failed when there is not active flavor' do
         cs, vmt = vmt_on_site(cs_active: true)
         inactive_flavor = create(:flavor, active: false, compute_site: cs)
+        cs.funds << fund
         at = create(:appliance_type, virtual_machine_templates: [vmt])
 
-        appl = create(:appliance, appliance_set: wf,
-          appliance_type: at, compute_sites: [cs])
+        appl = create(:appliance,
+                      appliance_set: wf,
+                      appliance_type: at,
+                      compute_sites: [cs],
+                      fund: fund)
 
         expect(appl.state).to eql 'unsatisfied'
         expect(appl.state_explanation).to start_with 'No matching flavor'
@@ -285,6 +293,7 @@ describe Atmosphere::Optimizer do
 
       it 'chooses VMT with active flavor' do
         cs, vmt = vmt_on_site(cs_active: true)
+        cs.funds << fund
         inactive_flavor = create(:flavor, active: false, compute_site: cs)
         active_flavor = create(:flavor,
             active: true,
@@ -295,8 +304,11 @@ describe Atmosphere::Optimizer do
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(anything, active_flavor).and_return(true)
 
-        appl = create(:appliance, appliance_set: wf,
-          appliance_type: at, compute_sites: [cs])
+        appl = create(:appliance,
+                      appliance_set: wf,
+                      appliance_type: at,
+                      compute_sites: [cs],
+                      fund: fund)
 
         expect(appl.state).to eql 'satisfied'
         expect(appl.virtual_machines

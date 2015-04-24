@@ -244,4 +244,25 @@ describe Atmosphere::ComputeSite do
       expect(cses).to include cs3
     end
   end
+
+  describe '#funded_by' do
+    before :each do
+      @cs = create(:compute_site)
+    end
+
+    it 'returns empty table when no funding found' do
+      expect(Atmosphere::ComputeSite.funded_by(create(:fund))).to eq []
+    end
+
+    it 'selects only funded subset of sites' do
+      @cs.funds << create(:fund)
+      expect(Atmosphere::ComputeSite.funded_by(create(:fund))).to eq []
+      create(:compute_site, funds: [create(:fund)])
+      cs2 = create(:compute_site, funds: [create(:fund), @cs.funds.first])
+      expect(Atmosphere::Fund.count).to eq 4
+      expect(Atmosphere::ComputeSite.count).to eq 3
+      expect(Atmosphere::ComputeSite.funded_by(@cs.funds.first)).
+        to match_array [@cs, cs2]
+    end
+  end
 end

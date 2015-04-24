@@ -16,6 +16,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
   let(:user) { create(:user) }
   let(:as) { create(:appliance_set, user: user)}
+  let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
 
   it 'return templates and flavors for each defined vm in opt policy params' do
 
@@ -38,6 +39,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
       )
     creator = Atmosphere::ApplianceCreator.new(created_appl_params, 'dummy-token')
     appl = creator.build
+    appl.fund = fund
     appl.save!
 
     manual_policy = Atmosphere::OptimizationStrategy::Manual.new(appl)
@@ -61,5 +63,28 @@ describe Atmosphere::OptimizationStrategy::Manual do
 
       expect(vms_to_start.size).to eq 2
     end
+  end
+
+
+  it 'scopes potential VMs to ones on compute sites funded by chosen fund' do
+    nonfunded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
+    a = create(:appliance,
+               appliance_type: not_shareable_appl_type,
+               fund: fund,
+               compute_sites: Atmosphere::ComputeSite.all)
+    create(:virtual_machine_template,
+           appliance_type: a.appliance_type,
+           compute_site: nonfunded_cs)
+    create(:virtual_machine_template,
+           appliance_type: a.appliance_type,
+           compute_site: cs)
+    supported_appliance_types = Atmosphere::ComputeSite.all.map do |cs|
+      cs.virtual_machine_templates.map(&:appliance_type)
+    end
+    expect(supported_appliance_types).to all(include(a.appliance_type))
+    manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(a)
+    vm_candidates = manual_strategy.send(:vmt_candidates_for, a)
+    expect(vm_candidates.count).to eq 1
+    expect(vm_candidates.first.compute_site).to eq cs
   end
 end
