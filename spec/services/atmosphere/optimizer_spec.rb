@@ -46,21 +46,9 @@ describe Atmosphere::Optimizer do
         save: true
       )
     end
-
     let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
-    it 'includes flavor in params of created vm' do
-      allow(Atmosphere::VirtualMachine).to receive(:create)
-      allow(Atmosphere::ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
-      selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_of_shareable_at]).last
-      expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
-        expect(flavor).to eq selected_flavor
-      end
-
-      create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-    end
 
     context 'is selected with appropriate architecture' do
-
       it 'if cheaper flavor does not support architecture' do
         cs = create(:compute_site)
         tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, compute_site: cs)
@@ -70,38 +58,35 @@ describe Atmosphere::Optimizer do
         fl_32b.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
         fl_64b.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
 
-        selected_tmpl, selected_flavor = subject.send(:select_tmpl_and_flavor, [tmpl_64b])
+        selected_tmpl, selected_flavor = subject.select_tmpl_and_flavor([tmpl_64b])
         expect(selected_tmpl).to eq tmpl_64b
         expect(selected_flavor).to eq fl_64b
       end
     end
 
     context 'is selected optimaly' do
-
       context 'appliance type preferences not specified' do
-
         it 'selects instance with at least 1.5GB RAM for public compute site' do
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
-          selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl])
+          selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl])
           expect(flavor.memory).to be >= 1536
         end
 
         it 'selects instance with 512MB RAM for private compute site' do
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
-          selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl])
+          selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl])
           expect(flavor.memory).to be >= 512
         end
       end
 
       context 'appliance type preferences specified' do
-
         let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
         let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
 
         it 'selects cheapest flavour that satisfies requirements' do
-          selected_tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+          selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl_at_amazon, tmpl_at_openstack])
           flavor.reload
 
           expect(flavor.memory).to be >= 1024
@@ -120,87 +105,25 @@ describe Atmosphere::Optimizer do
           optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, compute_site: amazon)
           biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
           optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
-
           amazon.reload
           appl_type.preference_memory = biggest_os_flavor.memory
           appl_type.save
-          tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+
+          tmpl, flavor = subject.select_tmpl_and_flavor([tmpl_at_amazon, tmpl_at_openstack])
+
           expect(flavor).to eq optimal_flavor
           expect(tmpl).to eq tmpl_at_amazon
         end
 
         context 'preferences exceeds resources of avaiable flavors' do
-
-          before do
+          it 'returns nil flavor' do
             appl_type.preference_cpu = 64
             appl_type.save
-          end
 
-          it 'returns nil flavor' do
-            tmpl, flavor = subject.send(:select_tmpl_and_flavor, [tmpl_at_amazon, tmpl_at_openstack])
+            tmpl, flavor = subject.select_tmpl_and_flavor([tmpl_at_amazon, tmpl_at_openstack])
+
             expect(flavor).to be_nil
           end
-
-          it 'sets state explanation' do
-            [tmpl_at_amazon, tmpl_at_openstack]
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-            expect(appl.state_explanation).to start_with "No matching flavor"
-          end
-
-          it 'sets appliance as unsatisfied' do
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-            expect(appl.state).to eq 'unsatisfied'
-          end
-        end
-      end
-
-      context 'optimizer respects appliance-compute site binding' do
-        let(:cs1) { create(:openstack_with_flavors, funds: [fund]) }
-        let(:cs2) { create(:openstack_with_flavors, funds: [fund]) }
-        let(:vmt1_1) { create(:virtual_machine_template, compute_site: cs1)}
-        let(:vmt2_1) { create(:virtual_machine_template, compute_site: cs1)}
-        let(:vmt2_2) { create(:virtual_machine_template, compute_site: cs2)}
-        let(:wf_set_2) { create(:appliance_set, appliance_set_type: "workflow")}
-        let(:at_with_site) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
-        let(:at_with_two_sites) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
-        let(:a1_unrestricted) { create(:appliance, appliance_type: at_with_site, compute_sites: [cs1, cs2])}
-        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_type: at_with_site, compute_sites: [cs2])}
-
-        let!(:vmt3) { create(:virtual_machine_template, compute_site: cs2, managed_by_atmosphere: true)}
-        let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
-        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow")}
-        let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, compute_site: cs2, managed_by_atmosphere: true)}
-        let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, compute_sites: [cs2], virtual_machines: [vm_shared])}
-
-        it 'spawns a vm for an unrestricted appliance' do
-          appl = create(:appliance, appliance_type: at_with_site, fund: fund, compute_sites: [cs1, cs2])
-          expect(appl.state).to eq "satisfied"
-          expect(appl.virtual_machines.count).to eq 1
-        end
-
-        it 'unable to spawn vm for a restricted appliance' do
-          appl = create(:appliance, appliance_type: at_with_site, fund: fund, compute_sites: [cs2])
-          expect(appl.state).to eq "unsatisfied"
-          expect(appl.virtual_machines.count).to eq 0
-        end
-
-        it 'spawns vm for a restricted appliance when there are matching templates' do
-          appl = create(:appliance, appliance_type: at_with_two_sites, fund: fund, compute_sites: [cs2])
-          expect(appl.state).to eq "satisfied"
-          expect(appl.virtual_machines.count).to eq 1
-        end
-
-        it 'reuses vm which satisfies appliance restrictions' do
-          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, compute_sites: [cs2], appliance_configuration_instance: a_shared.appliance_configuration_instance)
-          expect(appl.state).to eq "satisfied"
-          expect(appl.virtual_machines.count).to eq 1
-          expect(appl.virtual_machines.first).to eq vm_shared
-        end
-
-        it 'does not reuse vm which violates appliance restrictions' do
-          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, compute_sites: [cs1], appliance_configuration_instance: a_shared.appliance_configuration_instance)
-          expect(appl.state).to eq "unsatisfied"
-          expect(appl.virtual_machines.count).to eq 0
         end
       end
     end

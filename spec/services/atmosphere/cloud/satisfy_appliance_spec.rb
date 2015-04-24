@@ -6,9 +6,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   before do
     # Temporary solution allowing to not execute optimization process.
     # It is needed untill optimizer is not removed from the appliance callback.
-    allow(Atmosphere::Optimizer).
-      to receive(:instance).
-      and_return(instance_double(Atmosphere::Optimizer, run: true))
+    allow(Atmosphere::Optimizer.instance).to receive(:run)
   end
 
   let!(:wf) { create(:workflow_appliance_set) }
@@ -373,6 +371,195 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       appl.reload
 
       expect(appl.state).to eql 'unsatisfied'
+    end
+  end
+
+  context 'flavor' do
+    let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
+    let(:appl_vm_manager) do
+      double('appliance_vms_manager',
+        :can_reuse_vm? => false,
+        save: true
+      )
+    end
+    let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
+
+    it 'includes flavor in params of created vm' do
+      allow(Atmosphere::VirtualMachine).to receive(:create)
+      allow(Atmosphere::ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
+      selected_flavor = Atmosphere::Optimizer.
+                        instance.select_tmpl_and_flavor([tmpl_of_shareable_at]).
+                        last
+      appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+
+      expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+        expect(flavor).to eq selected_flavor
+      end
+
+      described_class.new(appl).execute
+    end
+
+    context 'is selected optimaly' do
+      context 'appliance type preferences specified' do
+
+        let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
+        let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
+
+        context 'preferences exceeds resources of avaiable flavors' do
+
+          before do
+            appl_type.preference_cpu = 64
+            appl_type.save
+          end
+
+          it 'sets state explanation' do
+            [tmpl_at_amazon, tmpl_at_openstack]
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+
+            described_class.new(appl).execute
+
+            expect(appl.state_explanation).to start_with "No matching flavor"
+          end
+
+          it 'sets appliance as unsatisfied' do
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+
+            described_class.new(appl).execute
+
+            expect(appl.state).to eq 'unsatisfied'
+          end
+        end
+      end
+
+      context 'optimizer respects appliance-compute site binding' do
+        let(:cs1) { create(:openstack_with_flavors, funds: [fund]) }
+        let(:cs2) { create(:openstack_with_flavors, funds: [fund]) }
+        let(:vmt1_1) { create(:virtual_machine_template, compute_site: cs1)}
+        let(:vmt2_1) { create(:virtual_machine_template, compute_site: cs1)}
+        let(:vmt2_2) { create(:virtual_machine_template, compute_site: cs2)}
+        let(:wf_set_2) { create(:appliance_set, appliance_set_type: "workflow")}
+        let(:at_with_site) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
+        let(:at_with_two_sites) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
+        let(:a1_unrestricted) { create(:appliance, appliance_type: at_with_site, compute_sites: [cs1, cs2])}
+        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_type: at_with_site, compute_sites: [cs2])}
+
+        let!(:vmt3) { create(:virtual_machine_template, compute_site: cs2, managed_by_atmosphere: true)}
+        let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
+        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow")}
+        let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, compute_site: cs2, managed_by_atmosphere: true)}
+        let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, compute_sites: [cs2], virtual_machines: [vm_shared])}
+
+        it 'spawns a vm for an unrestricted appliance' do
+          appl = create(:appliance, appliance_type: at_with_site, fund: fund, compute_sites: [cs1, cs2])
+
+          described_class.new(appl).execute
+
+          expect(appl.state).to eq "satisfied"
+          expect(appl.virtual_machines.count).to eq 1
+        end
+
+        it 'unable to spawn vm for a restricted appliance' do
+          appl = create(:appliance, appliance_type: at_with_site, fund: fund, compute_sites: [cs2])
+
+          described_class.new(appl).execute
+
+          expect(appl.state).to eq "unsatisfied"
+          expect(appl.virtual_machines.count).to eq 0
+        end
+
+        it 'spawns vm for a restricted appliance when there are matching templates' do
+          appl = create(:appliance, appliance_type: at_with_two_sites, fund: fund, compute_sites: [cs2])
+
+          described_class.new(appl).execute
+
+          expect(appl.state).to eq "satisfied"
+          expect(appl.virtual_machines.count).to eq 1
+        end
+
+        it 'reuses vm which satisfies appliance restrictions' do
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, compute_sites: [cs2], appliance_configuration_instance: a_shared.appliance_configuration_instance)
+
+          described_class.new(appl).execute
+
+          expect(appl.state).to eq "satisfied"
+          expect(appl.virtual_machines.count).to eq 1
+          expect(appl.virtual_machines.first).to eq vm_shared
+        end
+
+        it 'does not reuse vm which violates appliance restrictions' do
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, compute_sites: [cs1], appliance_configuration_instance: a_shared.appliance_configuration_instance)
+
+          described_class.new(appl).execute
+
+          expect(appl.state).to eq "unsatisfied"
+          expect(appl.virtual_machines.count).to eq 0
+        end
+      end
+    end
+
+    context 'dev mode properties' do
+      let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
+      let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
+      let(:as) { create(:appliance_set, appliance_set_type: :development) }
+
+      let(:appl_vm_manager) do
+        double('appliance_vms_manager',
+          :can_reuse_vm? => false,
+          save: true
+        )
+      end
+
+      before do
+        allow(Atmosphere::ApplianceVmsManager).to receive(:new)
+          .and_return(appl_vm_manager)
+      end
+
+      context 'when preferences are not set in appliance' do
+        it 'uses preferences from AT' do
+          appl = create(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.cpu).to eq 2
+          end
+
+          described_class.new(appl).execute
+        end
+      end
+
+      context 'when preferences set in appliance' do
+        before do
+          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
+          @appl.dev_mode_property_set.appliance = @appl
+        end
+
+        it 'takes dev mode preferences memory into account' do
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.memory).to eq 7680
+          end
+          @appl.dev_mode_property_set.preference_memory = 4000
+
+          described_class.new(@appl).execute
+        end
+
+        it 'takes dev mode preferences cpu into account' do
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.cpu).to eq 4
+          end
+          @appl.dev_mode_property_set.preference_cpu = 4
+
+          described_class.new(@appl).execute
+        end
+
+        it 'takes dev mode preferences disk into account' do
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+            expect(flavor.hdd).to eq 840
+          end
+          @appl.dev_mode_property_set.preference_disk = 600
+
+          described_class.new(@appl).execute
+        end
+      end
     end
   end
 end
