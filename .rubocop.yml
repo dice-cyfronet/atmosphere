@@ -4,6 +4,7 @@ AllCops:
     - spec/dummy/db/schema.rb
     - Gemfile
     - Rakefile
+    - 'public/clew/*'
 
 StringLiterals:
   EnforcedStyle: single_quotes
