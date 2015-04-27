@@ -23,7 +23,8 @@ module Atmosphere
           action.log(I18n.t('scale_appliance.end'))
         else
           action.log('Scaling not allowed')
-          #TODO - verify if the state unsatisfied is any meaningful in this case
+          # TODO - verify if the state unsatisfied is
+          #        any meaningful in this case
           appl_manager.
             unsatisfied(I18n.t('scale_appliance.not_allowed_description'))
         end
