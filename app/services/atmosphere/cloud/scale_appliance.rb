@@ -8,7 +8,7 @@ module Atmosphere
 
       def execute
         if optimization_strategy.can_scale_manually?
-          action.log('Scaling started')
+          action.log(I18n.t('scale_appliance.start'))
           if quantity > 0
             vms = optimization_strategy.vms_to_start(quantity)
             appl_manager.start_vms!(vms)
@@ -17,14 +17,15 @@ module Atmosphere
               vms = optimization_strategy.vms_to_stop(-quantity)
               appl_manager.stop_vms!(vms)
             else
-              appl_manager.unsatisfied("Not enough vms to scale down")
+              appl_manager.unsatisfied(I18n.t('scale_appliance.to_small_vms'))
             end
           end
-          action.log('Scaling finished')
+          action.log(I18n.t('scale_appliance.end'))
         else
           action.log('Scaling not allowed')
           #TODO - verify if the state unsatisfied is any meaningful in this case
-          appl_manager.unsatisfied("Chosen optimization strategy does not allow for manual scaling")
+          appl_manager.
+            unsatisfied(I18n.t('scale_appliance.not_allowed_description'))
         end
         appl_manager.save
       end
