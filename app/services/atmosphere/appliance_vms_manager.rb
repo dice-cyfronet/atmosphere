@@ -102,7 +102,8 @@ module Atmosphere
           flavor: flavor, name: name,
           user_data: appliance.user_data,
           user_key: appliance.user_key,
-          nic: nic
+          nic: nic,
+          appliance_type: appliance.appliance_type
         ).spawn_vm!
     end
 

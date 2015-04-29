@@ -246,11 +246,17 @@ end
 
 class Fog::Compute::Azure::Images
   alias_method :all_orig, :all
-  def all(filters)
+
+  IMG_IDS = [
+      'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20150123-en-us-30GB',
+      'b9013ee6-c719-4865-bfb8-ca1fd3029b39-20150421-947991'
+  ]
+
+  def all(_filters = nil)
     # TODO: implement filters
     # Remove before flight!
-    all_orig.select{|tmpl|
-      tmpl.name == 'b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04_1-LTS-amd64-server-20150123-en-us-30GB'}
+
+    all_orig.select{ |tmpl| IMG_IDS.include? tmpl.name }
   end
 end
 
