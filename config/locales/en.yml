@@ -228,7 +228,7 @@ en:
       all_assigned: all compute sites assigned
       success: Compute Site %{cs} was added to the list of sites supported by Fund %{fund}.
     remove_user:
-      help: This will remove %{user} from this Fund, preventing this person from drawing upon this Fund's resources.
+      help: "This will remove %{user} from this Fund, preventing this person from drawing upon this Fund's resources."
       success: User %{user} was removed from the list of users assigned to Fund %{fund}.
     add_user:
       prompt: Add user...
@@ -280,6 +280,11 @@ en:
     token_updated: Token was successfully updated
     token_empty: You don`t have one yet. Click generate to fix it.
     generate: Generate
+
+  destroy_vms:
+    start: Terminating unused VMs started
+    perform: " - Destroying %{name} VM scheduled"
+    end: Terminating unused VMs ended
 
   api:
     e403: "You are not allowed to %{action} this %{type}"

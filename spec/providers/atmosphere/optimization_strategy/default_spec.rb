@@ -42,6 +42,7 @@ describe Atmosphere::OptimizationStrategy::Default do
     let(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
     let(:fund) { create(:fund) }
     let(:shareable_appl_type) { create(:shareable_appliance_type) }
+    let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
 
     before do
       create(:virtual_machine_template,
@@ -66,6 +67,28 @@ describe Atmosphere::OptimizationStrategy::Default do
         subject = Atmosphere::OptimizationStrategy::Default.new(appl2)
         expect(subject.vm_to_reuse).to be nil
       end
+    end
+
+    it 'scopes potential VMs to ones on compute sites funded by chosen fund' do
+      nonfunded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
+      a = create(:appliance,
+                 appliance_type: not_shareable_appl_type,
+                 fund: fund,
+                 compute_sites: Atmosphere::ComputeSite.all)
+      create(:virtual_machine_template,
+             appliance_type: a.appliance_type,
+             compute_site: nonfunded_cs)
+      create(:virtual_machine_template,
+             appliance_type: a.appliance_type,
+             compute_site: openstack)
+      supported_appliance_types = Atmosphere::ComputeSite.all.map do |cs|
+        cs.virtual_machine_templates.map(&:appliance_type)
+      end
+      expect(supported_appliance_types).to all(include(a.appliance_type))
+      default_strategy = Atmosphere::OptimizationStrategy::Default.new(a)
+      vm_candidates = default_strategy.send(:vmt_candidates_for, a)
+      expect(vm_candidates.count).to eq 1
+      expect(vm_candidates.first.compute_site).to eq openstack
     end
   end
 end

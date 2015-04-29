@@ -124,6 +124,11 @@ module Atmosphere
 
     scope :active, -> { where(active: true) }
 
+    scope :funded_by, ->(fund) do
+      joins(:funds)
+        .where(atmosphere_funds: { id: fund.id })
+    end
+
     after_update :update_cloud_client, if: :config_changed?
     after_destroy :unregister_cloud_client
 

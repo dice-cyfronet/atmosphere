@@ -65,12 +65,7 @@ module Atmosphere
     end
 
     def terminate_unused_vms
-      logger.info { "Terminating unused VMs started" }
-      VirtualMachine.unused.each do |vm|
-        logger.info { " - Destroying #{vm.id_at_site} VM scheduled" }
-        Cloud::VmDestroyWorker.perform_async(vm.id)
-      end
-      logger.info { "Terminating unused VMs ended" }
+      Atmosphere::Cloud::DestroyUnusedVms.new.execute
     end
 
     def select_tmpl_and_flavor(tmpls, options={})
