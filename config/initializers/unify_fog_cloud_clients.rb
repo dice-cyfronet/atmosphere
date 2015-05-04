@@ -1,15 +1,21 @@
 require 'fog/openstack/compute'
 require 'fog/openstack/models/compute/server'
+require 'fog/openstack/models/compute/flavor'
+require 'fog/openstack/models/compute/image'
+require 'fog/openstack/models/compute/images'
+
 require 'fog/aws/compute'
 require 'fog/aws/models/compute/flavor'
-require 'fog/openstack/models/compute/flavor'
 require 'fog/aws/models/compute/image'
-require 'fog/openstack/models/compute/image'
 require 'fog/aws/models/compute/server'
+require 'fog/aws/models/compute/images'
+
+require 'azure/virtual_machine_image_management/serialization'
+require 'azure/virtual_machine_management/serialization'
+require 'azure/base_management/management_http_request'
+require 'azure/virtual_machine_image_management/virtual_machine_image_management_service'
 require 'fog/azure/compute'
 require 'fog/azure/models/compute/images'
-require 'fog/aws/models/compute/images'
-require 'fog/openstack/models/compute/images'
 require 'fog/azure/models/compute/server'
 require 'fog/azure/models/compute/servers'
 
@@ -199,6 +205,56 @@ end
 
 # ============ AZURE ===============
 
+module Azure::VirtualMachineManagement::Serialization
+  class << self
+    alias_method :deployment_to_xml_orig, :deployment_to_xml
+  end
+  def self.deployment_to_xml(params, options)
+    xml = self.deployment_to_xml_orig(params, options)
+    logger.info "===========XML=============="
+    logger.info xml
+    xml
+  end
+end
+
+module Azure
+  module VirtualMachineImageManagement
+    module Serialization
+      extend Azure::Core::Utility
+
+      def self.user_virtual_machine_images_from_xml(imageXML)
+        os_images = []
+        virtual_machine_images = imageXML.css('VMImages VMImage')
+        virtual_machine_images.each do |image_node|
+          image = ::Azure::VirtualMachineImageManagement::VirtualMachineImage.new
+          image.os_type = xml_content(image_node, 'OSDiskConfiguration OS')
+          image.name = xml_content(image_node, 'Name')
+          image.category = xml_content(image_node, 'Category')
+          image.locations = xml_content(image_node, 'Location')
+          os_images << image
+        end
+        os_images
+      end
+    end
+  end
+end
+
+
+class Azure::VirtualMachineImageManagement::VirtualMachineImageManagementService
+  alias_method :list_public_virtual_machine_images, :list_virtual_machine_images
+
+  def list_virtual_machine_images
+    list_public_virtual_machine_images + list_user_virtual_machine_images
+  end
+
+  def list_user_virtual_machine_images
+    request_path = '/services/vmimages'
+    request = ::Azure::BaseManagement::ManagementHttpRequest.new(:get, request_path, nil)
+    response = request.call
+    Serialization.user_virtual_machine_images_from_xml(response)
+  end
+end
+
 class Fog::Compute::Azure::Server
   def stop
     raise Atmosphere::UnsupportedException, 'Azure des not support stop action'
@@ -277,5 +333,7 @@ class Fog::Compute::Azure::Image
     {}
   end
 end
+
+# azure vm create -g atmosphere -p TomekiPiotrek2015! --json -e -z ExtraSmall tbcli-test Ubuntu_14.04.1_LTS_Apach2
 
 # ============= END AZURE ==========
