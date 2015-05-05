@@ -185,7 +185,10 @@ describe Atmosphere::VirtualMachine do
   end
 
   context 'DNAT' do
-    let(:vm) { create(:virtual_machine, ip: priv_ip, appliances: [appliance], managed_by_atmosphere: true) }
+    let(:vm) { create(:virtual_machine,
+                      ip: priv_ip,
+                      appliances: [appliance],
+                      managed_by_atmosphere: true) }
     let(:priv_port) { 8888 }
     let(:priv_port_2) { 7070 }
     let!(:pmt_1) { create(:port_mapping_template, target_port: priv_port, appliance_type: vm_ipless.appliance_type, application_protocol: :none) }
@@ -323,8 +326,10 @@ describe Atmosphere::VirtualMachine do
     end
 
     it 'allows destruction of managed machines only' do
-      expect{ @nonmanaged.destroy }.to change { Atmosphere::VirtualMachine.count }.by(0)
-      expect{ vm.destroy }.to change { Atmosphere::VirtualMachine.count }.by(-1)
+      expect { @nonmanaged.destroy }.
+        to change { Atmosphere::VirtualMachine.count }.by(0)
+      expect { vm.destroy }.
+        to change { Atmosphere::VirtualMachine.count }.by(-1)
     end
   end
 
