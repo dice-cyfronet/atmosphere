@@ -1,6 +1,6 @@
 module Atmosphere
   module VirtualMachineFlavorsHelper
-    def each_os_family(&block)
+    def each_os_family
       capture do
         Atmosphere::OSFamily.find_each do |os_family|
           yield os_family

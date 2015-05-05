@@ -86,7 +86,6 @@ module Atmosphere
       incarnation && incarnation.destroy # nil if incarnation.blank?
     end
 
-
     # Provides backward compatibility with old versions of the GUI
     def hourly_cost
       flavor_os_families &&

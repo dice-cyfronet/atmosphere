@@ -12,8 +12,8 @@ class Atmosphere::Admin::VirtualMachineFlavorsController < Atmosphere::Admin::Ap
     params[:virtual_machine_flavor][:hourly_cost].each do |os_family_id, cost|
       os_family = Atmosphere::OSFamily.find_by(id: os_family_id)
       if cost.strip.empty? &&
-          os_family &&
-          @virtual_machine_flavor.get_hourly_cost_for(os_family)
+         os_family &&
+         @virtual_machine_flavor.get_hourly_cost_for(os_family)
         unless @virtual_machine_flavor.remove_hourly_cost_for(os_family)
           alert = I18n.t('virtual_machine_flavor.cant_destroy',
                          os_family: os_family.name)

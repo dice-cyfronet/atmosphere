@@ -17,7 +17,8 @@ describe Atmosphere::FlavorOSFamily do
     expect{ fosf.destroy }.to change{ Atmosphere::FlavorOSFamily.count }.by(0)
     fosf.destroy
     expect(fosf.errors).not_to be_empty
-    expect(fosf.errors.full_messages.first).to eq I18n.t('flavor_os_family.running_vms')
+    expect(fosf.errors.full_messages.first).
+      to eq I18n.t('flavor_os_family.running_vms')
   end
 
   it 'ignores cost settings for unmanaged VMs' do
