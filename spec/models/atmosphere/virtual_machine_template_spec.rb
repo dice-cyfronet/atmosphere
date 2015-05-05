@@ -222,7 +222,7 @@ describe Atmosphere::VirtualMachineTemplate do
 
     context 'when tpl is in saving state' do
       let(:cs) { create(:compute_site) }
-      let(:vm) { create(:virtual_machine) }
+      let(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
       let!(:tpl_in_saving_state) { create(:virtual_machine_template, source_vm: vm, state: :saving, compute_site: cs) }
 
       context 'and source VM is assigned to appliance' do
