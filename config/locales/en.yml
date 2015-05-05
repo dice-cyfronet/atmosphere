@@ -105,7 +105,7 @@ en:
     remove: Remove this Appliance Set
   compute_sites:
     title: Sites
-    long_title: Compute Sites
+    long_title: Compute Sites and Pricing
     long_title_single: Compute Site
     site: Site
     name: Name
@@ -124,6 +124,22 @@ en:
     show: Show this Compute Site
     edit: Edit this Compute Site
     remove: Remove this Compute Site
+  virtual_machine_flavor:
+    flavor_name: Flavor name
+    cpu: CPU
+    memory: Memory
+    hdd: Disk
+    supported_architectures: Architecture
+    long_title_single: Pricing for Virtual Machine Flavor
+    form_hint: |
+      Supply only non-negative integers. Leave empty to disable for given OS
+      family.
+  flavor_os_family:
+    long_title: Virtual Machine Flavors and Pricing
+    hourly_cost: Hourly cost
+    update:
+      help: Set pricing for this flavor
+    running_vms: There are running Virtual Machines billed by this cost
   virtual_machines:
     title: VMs
     long_title: Virtual Machines
