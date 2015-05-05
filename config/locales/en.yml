@@ -134,6 +134,10 @@ en:
     form_hint: |
       Supply only non-negative integers. Leave empty to disable for given OS
       family.
+    cant_destroy: |
+      %{os_family} cost was not removed as there are running VMs that are
+      billed by this figure. If you want to set them as free of charge, please
+      set the fund value at 0.
   flavor_os_family:
     long_title: Virtual Machine Flavors and Pricing
     hourly_cost: Hourly cost
