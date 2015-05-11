@@ -1,0 +1,12 @@
+%h1
+  = t 'editing'
+  = t 'virtual_machine_flavor.long_title_single'
+
+= render 'form'
+
+%p
+  .btn-group
+    = link_to admin_compute_sites_path,
+      class: 'btn btn-default', title: t('back') do
+      = icon 'reply'
+      = t 'back'

@@ -1,0 +1,21 @@
+= simple_form_for([:admin, @virtual_machine_flavor]) do |f|
+  = f.error_notification
+
+  = f.hint t('virtual_machine_flavor.form_hint')
+
+  .inputs
+    .form-group
+      = f.label "#{t('virtual_machine_flavor.flavor_name')}:"
+      = @virtual_machine_flavor.flavor_name
+
+    = each_os_family do |os_family|
+      .form-group
+        = f.label "#{os_family.name} #{t('flavor_os_family.hourly_cost')}"
+
+        - current_cost = @virtual_machine_flavor.get_hourly_cost_for(os_family)
+        = f.input_field "hourly_cost[#{os_family.id}]",
+                        as: :integer,
+                        value: current_cost
+
+  .actions
+    = f.button :submit, class: 'btn btn-success'

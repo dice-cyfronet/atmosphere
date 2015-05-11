@@ -1,9 +1,9 @@
 %h1
-  = t('compute_sites.long_title')
+  = t('compute_sites.long_title_single')
   .pull-right
     = link_to new_admin_compute_site_path,
       class: 'btn btn-success', title: t('compute_sites.new') do
-      =icon 'plus'
+      = icon 'plus'
       = t('add_new')
 
 %p
@@ -36,3 +36,64 @@
             = link_to admin_compute_site_path(compute_site), method: :delete, data: { confirm: t('are_you_sure_cs') },
               class: 'btn btn-danger btn-xs', title: t('compute_sites.remove') do
               =icon 'trash-o'
+
+
+%h2
+  = t('flavor_os_family.long_title')
+
+%p
+  %table.table.table-hover.table-condensed
+    %tr
+      %th= t('compute_sites.site')
+      %th= t('virtual_machine_flavor.flavor_name')
+      %th
+        .pull-right= t('virtual_machine_flavor.cpu')
+      %th
+        .pull-right= t('virtual_machine_flavor.memory')
+      %th
+        .pull-right= t('virtual_machine_flavor.hdd')
+      %th
+        .pull-right= t('virtual_machine_flavor.supported_architectures')
+
+      = each_os_family do |os_family|
+        %th
+          .pull-right
+            = os_family.name
+            = t('flavor_os_family.hourly_cost')
+
+      %th.col-md-2
+        .pull-right= t 'actions'
+
+
+    - @compute_sites.each do |compute_site|
+      - compute_site.virtual_machine_flavors.each do |flavor|
+        %tr
+          %td.monospace= compute_site.site_id
+          %td
+            - if flavor.active
+              = flavor.flavor_name
+            - else
+              %i.text-muted
+                = flavor.flavor_name
+                = surround '(',')' do
+                  inactive
+          %td
+            .pull-right= flavor.cpu
+          %td
+            .pull-right= flavor.memory
+          %td
+            .pull-right= flavor.hdd
+          %td
+            .pull-right= flavor.supported_architectures
+
+          = each_os_family do |os_family|
+            %td
+              .pull-right
+                = flavor.get_hourly_cost_for(os_family)
+
+          %td
+            .btn-group.pull-right
+              = link_to edit_admin_virtual_machine_flavor_path(flavor),
+                class: 'btn btn-warning btn-xs has_bottom_tooltip',
+                title: t('flavor_os_family.update.help') do
+                = icon 'edit'

@@ -52,6 +52,7 @@ Atmosphere::Engine.routes.draw do
         post :migrate
       end
     end
+    resources :virtual_machine_flavors, only: [:edit, :update]
     resources :user_keys, except: [:edit, :update]
     resources :funds
     resources :compute_site_funds, only: [:create, :destroy]

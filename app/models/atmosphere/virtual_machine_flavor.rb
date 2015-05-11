@@ -80,6 +80,12 @@ module Atmosphere
       incarnation.save
     end
 
+    # Makes a flavor unavailable for a given OSFamily
+    def remove_hourly_cost_for(os_family)
+      incarnation = flavor_os_families.find_by(os_family: os_family)
+      incarnation && incarnation.destroy # nil if incarnation.blank?
+    end
+
     # Provides backward compatibility with old versions of the GUI
     def hourly_cost
       flavor_os_families &&
