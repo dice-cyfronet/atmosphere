@@ -234,7 +234,10 @@ module Atmosphere
     end
 
     def cant_destroy_non_managed_vm
-      errors.add :base, 'Virtual Machine is not managed by atmosphere' unless managed_by_atmosphere
+      unless managed_by_atmosphere
+        errors.add :base, 'Virtual Machine is not managed by atmosphere'
+        false
+      end
     end
 
     def cloud_action(action_name, success_state)
