@@ -47,6 +47,10 @@ module Atmosphere
       end
     end
 
+    initializer :static_assets do |app|
+      app.middleware.use(::ActionDispatch::Static, "#{root}/public")
+    end
+
     if Rails.env.test?
       initializer 'model_core.factories',
                   after: 'factory_girl.set_factory_paths' do
