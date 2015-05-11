@@ -1,5 +1,12 @@
 module Atmosphere
   module Cloud
+    # Scale appliance service. It will start new VM or shutdown existing one
+    # basing on `quantity` value.
+    #
+    # * [appliance] - Trigger scalling operation for this appliance
+    # * [quantity]  - How many VMs should be started/stopped. If it is
+    #                 greater than 0 new VMs will be started, when smaller
+    #                 than 0 existing VMs will be stopped.
     class ScaleAppliance
       def initialize(appliance, quantity)
         @appliance = appliance
