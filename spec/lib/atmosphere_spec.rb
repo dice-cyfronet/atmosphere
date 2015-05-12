@@ -41,6 +41,8 @@ describe Atmosphere do
       Atmosphere.monitoring_client = 'other_client'
 
       expect(Atmosphere.monitoring_client).to eq 'other_client'
+      # we need to clean up
+      Atmosphere.monitoring_client = nil
     end
   end
 
@@ -56,6 +58,8 @@ describe Atmosphere do
       Atmosphere.metrics_store = 'other_client'
 
       expect(Atmosphere.metrics_store).to eq 'other_client'
+      # we need to clean up
+      Atmosphere.metrics_store = nil
     end
   end
 
