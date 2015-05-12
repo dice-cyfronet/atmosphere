@@ -9,6 +9,7 @@ module Atmosphere
 
     def log(message, level = :info)
       action_logs.create(message: message, log_level: level)
+      logger.send(level, "#{prefix} #{message}")
     end
 
     def warn(message)
@@ -17,6 +18,20 @@ module Atmosphere
 
     def error(message)
       log(message, :error)
+    end
+
+    def logger=(logger)
+      @logger = logger
+    end
+
+    private
+
+    def logger
+      @logger || Rails.logger
+    end
+
+    def prefix
+      @prefix ||= "[appliance #{appliance.id}] "
     end
   end
 end
