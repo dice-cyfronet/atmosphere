@@ -6,7 +6,7 @@ module Atmosphere
       @all = options[:all]
     end
 
-    def update
+    def execute
       perform_update!
 
       vmt

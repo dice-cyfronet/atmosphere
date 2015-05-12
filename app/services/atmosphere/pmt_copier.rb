@@ -1,6 +1,10 @@
 module Atmosphere
   class PmtCopier
-    def self.copy(object_with_pmt)
+    def initialize(object_with_pmt)
+      @object_with_pmt = object_with_pmt
+    end
+
+    def execute
       object_with_pmt.port_mapping_templates.collect do |pmt|
         copy = pmt.dup
         copy.appliance_type = nil
@@ -11,5 +15,9 @@ module Atmosphere
         copy
       end if object_with_pmt
     end
+
+    private
+
+    attr_reader :object_with_pmt
   end
 end

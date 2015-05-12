@@ -9,7 +9,7 @@ module Atmosphere
       @nic = options[:nic]
     end
 
-    def spawn_vm!
+    def execute
       register_user_key!
 
       server_params = {
