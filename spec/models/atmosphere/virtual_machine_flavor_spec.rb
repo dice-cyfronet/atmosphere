@@ -163,5 +163,27 @@ describe Atmosphere::VirtualMachineFlavor do
           to change{ Atmosphere::FlavorOSFamily.count }.by(0)
       end
     end
+
+    describe 'destroy' do
+      let(:flavor) { create(:flavor) }
+      let(:os_family) { Atmosphere::OSFamily.first }
+
+      it 'removes all pricing information together with a flavor' do
+        flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
+        flavor.set_hourly_cost_for(Atmosphere::OSFamily.second, 500)
+        expect(Atmosphere::FlavorOSFamily.count).to eq 2
+        expect{ flavor.destroy }.
+          to change { Atmosphere::FlavorOSFamily.count }.by(-2)
+      end
+
+      it 'should never perish when serving a running vm' do
+        create(:virtual_machine,
+               managed_by_atmosphere: true,
+               virtual_machine_flavor: flavor)
+        expect(flavor.virtual_machines.count).to eq 1
+        expect{ flavor.destroy }.
+          to change { Atmosphere::VirtualMachineFlavor.count }.by(0)
+      end
+    end
   end
 end
