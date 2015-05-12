@@ -315,3 +315,11 @@ en:
         virtual_machine_template:
           attributes:
             name:
+
+  scale_appliance:
+    start: "Scaling started"
+    end: "Scaling finished"
+    to_small_vms: "Not enough vms to scale down"
+    not_allowed: "Scaling not allowed"
+    not_allowed_description: "Chosen optimization strategy does not allow for manual scaling"
+    manual_not_allowed: Manual scaling is not allowed for selected appliance scaling policy
