@@ -23,19 +23,23 @@ describe Atmosphere::VmUpdater do
   subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
 
   describe 'VM states' do
-    context "when task state equals to image_snapshot" do
-      let(:server) do
-        server_double(state: 'active',
-                      task_state: 'image_snapshot',
-                      flavor: {'id' => "1"})
-      end
+    it 'is saving when task state equals to image_snapshot' do
+      saving_when_task_state('image_snapshot')
+    end
 
-      subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
+    it 'is saving when task state equals to image_pending_upload' do
+      saving_when_task_state('image_pending_upload')
+    end
 
-      it 'sets "saving" state' do
-        vm = subject.execute
-        expect(vm.state).to eq 'saving'
-      end
+    def saving_when_task_state(state)
+      server = server_double(state: 'active',
+                             task_state: state,
+                             flavor: { 'id' => '1' })
+      updater = Atmosphere::VmUpdater.new(cs, server, updater_class)
+
+      vm = updater.execute
+
+      expect(vm.state).to eq 'saving'
     end
 
     context 'when relation to saved_templates is not empty' do
