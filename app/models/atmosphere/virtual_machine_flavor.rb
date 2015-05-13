@@ -25,7 +25,8 @@ module Atmosphere
       class_name: 'Atmosphere::ComputeSite'
 
     has_many :virtual_machines,
-      class_name: 'Atmosphere::VirtualMachine'
+      class_name: 'Atmosphere::VirtualMachine',
+      dependent: :restrict_with_error
 
     has_many :os_families,
       through: :flavor_os_families,
@@ -34,7 +35,8 @@ module Atmosphere
     has_many :flavor_os_families,
       inverse_of: :virtual_machine_flavor,
       class_name: 'Atmosphere::FlavorOSFamily',
-      autosave: true
+      autosave: true,
+      dependent: :destroy
 
     validates :flavor_name,
               presence: true
