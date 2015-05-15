@@ -627,16 +627,16 @@ describe Atmosphere::Api::V1::AppliancesController do
       appliance = appliance_for(user, mode: :development)
 
       expect_scale_action(appliance, 1)
-      post api("/appliances/#{appliance.id}/action", user), { scale: 1 }
+      post api("/appliances/#{appliance.id}/action", user), scale: 1
       expect(response.status).to eq 200
     end
 
     it 'scales down' do
       appliance = appliance_for(user, mode: :development)
-      vm = create(:virtual_machine, appliances: [appliance])
+      create(:virtual_machine, appliances: [appliance])
 
       expect_scale_action(appliance, -1)
-      post api("/appliances/#{appliance.id}/action", user), { scale: -1 }
+      post api("/appliances/#{appliance.id}/action", user), scale: -1
       expect(response.status).to eq 200
     end
 

@@ -19,7 +19,7 @@ describe Atmosphere::DestroyAppliance do
   it 'bills appliance' do
     expect(billing_service).
       to receive(:bill_appliance).
-      with(appliance, anything(), anything(), false)
+      with(appliance, anything, anything, false)
 
     subject.execute
   end

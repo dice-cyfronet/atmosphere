@@ -8,7 +8,7 @@ module Atmosphere
 
     def execute
       @billing_service.bill_appliance(@appliance, Time.now.utc,
-                                    I18n.t('billing.final'), false)
+                                      I18n.t('billing.final'), false)
 
       @appliance.destroy.tap do |success|
         @vm_cleaner.execute if success
