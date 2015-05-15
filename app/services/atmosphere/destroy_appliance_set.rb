@@ -8,7 +8,7 @@ module Atmosphere
       @appliance_set.appliances.each do |appliance|
         unless DestroyAppliance.new(appliance).execute
           @appliance_set.errors.
-            add(I18n.t('appliance_seta.cannot_remote_appliance',
+            add(I18n.t('appliance_sets.cannot_remove_appliance',
                        appliance: appliance))
         end
       end

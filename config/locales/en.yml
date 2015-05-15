@@ -103,7 +103,7 @@ en:
     show: Show this Appliance Set
     edit: Edit this Appliance Set
     remove: Remove this Appliance Set
-    cannot_remote_appliance: "Unable to remove %{appliance.name} (%{appliance.id})"
+    cannot_remove_appliance: "Unable to remove %{appliance.name} (%{appliance.id})"
   compute_sites:
     title: Sites
     long_title: Compute Sites and Pricing
