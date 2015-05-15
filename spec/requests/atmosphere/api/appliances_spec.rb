@@ -623,31 +623,29 @@ describe Atmosphere::Api::V1::AppliancesController do
   end
 
   context 'POST /appliances/:id/action scale' do
+    it 'scales up' do
+      appliance = appliance_for(user, mode: :development)
 
-    context 'when authenticated' do
+      expect_scale_action(appliance, 1)
+      post api("/appliances/#{appliance.id}/action", user), { scale: 1 }
+      expect(response.status).to eq 200
+    end
 
-      let(:scale_up_action_body) { { scale: 1 } }
-      let(:scale_down_action_body) { { scale: -1 } }
+    it 'scales down' do
+      appliance = appliance_for(user, mode: :development)
+      vm = create(:virtual_machine, appliances: [appliance])
 
-      let(:optimizer) { double('optimizer') }
+      expect_scale_action(appliance, -1)
+      post api("/appliances/#{appliance.id}/action", user), { scale: -1 }
+      expect(response.status).to eq 200
+    end
 
-      it 'scales up' do
-        appliance = appliance_for(user, mode: :development)
-        expect(Atmosphere::Optimizer).to receive(:instance) { optimizer }
-        expect(optimizer).to receive(:run).with(hash_including(scaling: {appliance: appliance, quantity: 1}))
-        post api("/appliances/#{appliance.id}/action", user), scale_up_action_body
-        expect(response.status).to eq 200
-      end
-
-      it 'scales down' do
-        appliance = appliance_for(user, mode: :development)
-        vm = create(:virtual_machine, appliances: [appliance])
-        expect(Atmosphere::Optimizer).to receive(:instance) { optimizer }
-        expect(optimizer).to receive(:run).with(hash_including(scaling: {appliance: appliance, quantity: -1}))
-        post api("/appliances/#{appliance.id}/action", user), scale_down_action_body
-        expect(response.status).to eq 200
-      end
-
+    def expect_scale_action(appliance, quantity)
+      scale_service = instance_double(Atmosphere::Cloud::ScaleAppliance)
+      expect(Atmosphere::Cloud::ScaleAppliance).
+        to receive(:new).with(appliance, quantity).
+        and_return(scale_service)
+      expect(scale_service).to receive(:execute)
     end
   end
 

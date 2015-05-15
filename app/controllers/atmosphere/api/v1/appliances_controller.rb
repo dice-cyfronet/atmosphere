@@ -71,7 +71,10 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def scale
     authorize!(:scale, @appliance)
-    optimizer.run(scaling: { appliance: @appliance, quantity: params[:scale].to_i })
+
+    Atmosphere::Cloud::ScaleAppliance.
+      new(@appliance, params[:scale].to_i).execute
+
     render json: {}, status: 200
   end
 

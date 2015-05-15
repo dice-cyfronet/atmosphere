@@ -9,7 +9,6 @@ module Atmosphere
     def run(hint)
       satisfy_appliance(hint[:created_appliance]) if hint[:created_appliance]
       terminate_unused_vms if hint[:destroyed_appliance]
-      scale(hint[:scaling]) if hint[:scaling]
     end
 
     #private
@@ -28,11 +27,6 @@ module Atmosphere
 
     def select_tmpls_and_flavors(tmpls, options={})
       OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
-    end
-
-    def scale(hint)
-      Atmosphere::Cloud::ScaleAppliance.
-        new(hint[:appliance], hint[:quantity]).execute
     end
 
     private
