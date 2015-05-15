@@ -40,7 +40,7 @@ module Atmosphere
         end
 
         def destroy
-          if @appliance_set.destroy
+          if Atmosphere::DestroyApplianceSet.new(@appliance_set).execute
             render json: {}
           else
             render_error @appliance_set
