@@ -20,24 +20,6 @@ describe Atmosphere::Optimizer do
      expect(subject).not_to be_nil
   end
 
-  context 'virtual machine is applianceless' do
-    let!(:external_vm) { create(:virtual_machine) }
-    let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
-
-    before do
-      servers_double = double
-      allow(vm.compute_site.cloud_client)
-        .to receive(:servers).and_return(servers_double)
-      allow(servers_double).to receive(:destroy)
-    end
-
-    it 'terminates unused manageable vm' do
-      subject.run(destroyed_appliance: true)
-
-      expect(Atmosphere::Cloud::VmDestroyWorker).to have_enqueued_job(vm.id)
-    end
-  end
-
   context 'flavor' do
     let(:appl_type) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
     let(:appl_vm_manager) do
