@@ -328,7 +328,7 @@ describe Atmosphere::BillingService do
       appl1.deployments.first.prepaid_until = Time.now - 30.minutes
       appl1.save
 
-      appl1.destroy
+      Atmosphere::DestroyAppliance.new(appl1).execute
 
       expect(Atmosphere::BillingLog.all.count).to eq 2
 

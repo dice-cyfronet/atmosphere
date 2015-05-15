@@ -83,9 +83,7 @@ module Atmosphere
 
     before_create :create_dev_mode_property_set, if: :development?
     before_save :assign_fund, if: 'fund.nil?'
-    before_destroy :final_billing, prepend: true
     after_destroy :remove_appliance_configuration_instance_if_needed
-    after_destroy :optimize_destroyed_appliance
     after_create :optimize_saved_appliance
 
     scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(atmosphere_virtual_machines: {compute_site: compute_site}) }
@@ -176,11 +174,6 @@ module Atmosphere
       end
     end
 
-    def final_billing
-      # Perform one final billing action for this appliance prior to its destruction.
-      BillingService::bill_appliance(self, Time.now.utc, "Final billing action prior to appliance destruction.", false)
-    end
-
     def remove_appliance_configuration_instance_if_needed
       if appliance_configuration_instance && appliance_configuration_instance.appliances.blank?
         appliance_configuration_instance.destroy
@@ -189,10 +182,6 @@ module Atmosphere
 
     def optimize_saved_appliance
       optimizer.run(created_appliance: self)
-    end
-
-    def optimize_destroyed_appliance
-      optimizer.run(destroyed_appliance: self)
     end
 
     def optimizer

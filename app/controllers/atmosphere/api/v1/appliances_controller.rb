@@ -29,7 +29,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def destroy
-    if @appliance.destroy
+    if Atmosphere::DestroyAppliance.new(@appliance).execute
       render json: {}
     else
       render_error @appliance
