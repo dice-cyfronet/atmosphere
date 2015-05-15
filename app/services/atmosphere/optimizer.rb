@@ -23,11 +23,5 @@ module Atmosphere
     def select_tmpls_and_flavors(tmpls, options={})
       OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
     end
-
-    private
-
-    def logger
-      Atmosphere.optimizer_logger
-    end
   end
 end
