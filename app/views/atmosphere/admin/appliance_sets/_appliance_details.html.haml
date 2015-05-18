@@ -1,0 +1,12 @@
+= t('appliance_sets.fund')
+%strong
+  = succeed '.' do
+    = appliance.fund ? appliance.fund.name : t('appliance_sets.no_fund_assigned')
+= t('appliance_sets.amount_billed')
+%strong
+  = fund_balance_full_precision appliance.amount_billed
+  = appliance.fund ? appliance.fund.currency_label : '?'
+%br
+- appliance.virtual_machines.each do |virtual_machine|
+  = virtual_machine.appliance_type.name
+  %br
