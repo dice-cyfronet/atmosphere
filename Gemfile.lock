@@ -511,7 +511,7 @@ DEPENDENCIES
   codeclimate-test-reporter
   database_cleaner
   factory_girl_rails
-  ffaker
+  ffaker (~> 2.0.0)
   foreman
   generator_spec
   guard-rspec

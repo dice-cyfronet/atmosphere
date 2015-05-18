@@ -40,7 +40,7 @@ group :test do
   gem "generator_spec"
 
   # gem 'factory_girl'
-  gem 'ffaker'
+  gem 'ffaker', '~>2.0.0'
   gem 'database_cleaner'
 
   gem "codeclimate-test-reporter", require: nil

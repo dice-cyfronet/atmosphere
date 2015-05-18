@@ -103,6 +103,14 @@ bundle update atmosphere
 rake db:migrate
 ```
 
+## Using atmosphere factories
+
+Atmosphere factories are exposed into dependent projects in `test` environment. To use them you need to define following dependency in your `Gemfile`:
+
+```ruby
+gem 'ffaker', '~>2.0.0'
+```
+
 ## Contributing
 
 1. Fork the project
