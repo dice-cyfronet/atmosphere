@@ -103,6 +103,7 @@ en:
     show: Show this Appliance Set
     edit: Edit this Appliance Set
     remove: Remove this Appliance Set
+    cannot_remove_appliance: "Unable to remove %{appliance.name} (%{appliance.id})"
   compute_sites:
     title: Sites
     long_title: Compute Sites and Pricing
@@ -323,3 +324,6 @@ en:
     not_allowed: "Scaling not allowed"
     not_allowed_description: "Chosen optimization strategy does not allow for manual scaling"
     manual_not_allowed: Manual scaling is not allowed for selected appliance scaling policy
+
+  billing:
+    final: Final billing action prior to appliance destruction.

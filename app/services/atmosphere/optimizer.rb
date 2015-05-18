@@ -8,17 +8,11 @@ module Atmosphere
     # :appliance_id DB id of the appliance that was created. Optimization only akes care of finding a vm or creating a new one for given appliance.
     def run(hint)
       satisfy_appliance(hint[:created_appliance]) if hint[:created_appliance]
-      terminate_unused_vms if hint[:destroyed_appliance]
-      scale(hint[:scaling]) if hint[:scaling]
     end
 
     #private
     def satisfy_appliance(appliance)
       Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
-    end
-
-    def terminate_unused_vms
-      Atmosphere::Cloud::DestroyUnusedVms.new.execute
     end
 
     def select_tmpl_and_flavor(tmpls, options={})
@@ -28,17 +22,6 @@ module Atmosphere
 
     def select_tmpls_and_flavors(tmpls, options={})
       OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
-    end
-
-    def scale(hint)
-      Atmosphere::Cloud::ScaleAppliance.
-        new(hint[:appliance], hint[:quantity]).execute
-    end
-
-    private
-
-    def logger
-      Atmosphere.optimizer_logger
     end
   end
 end
