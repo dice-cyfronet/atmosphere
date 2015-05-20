@@ -217,8 +217,8 @@ module Azure::VirtualMachineManagement::Serialization
   end
 
   def self.role_to_xml(params, options)
-    puts "params: #{params}"
-    puts "options: #{options}"
+    #puts "params: #{params}"
+    #puts "options: #{options}"
     img_is_user_created = user_image? params[:image]
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.PersistentVMRole(
@@ -226,11 +226,11 @@ module Azure::VirtualMachineManagement::Serialization
         'xmlns:i' => 'http://www.w3.org/2001/XMLSchema-instance'
       ) do
         xml.RoleName { xml.text params[:vm_name] }
-        xml.OsVersion('i:nil' => 'true')
+        xml.OsVersion('i:nil' => 'true') unless img_is_user_created
         xml.RoleType 'PersistentVMRole'
 
         xml.ConfigurationSets do
-          provisioning_configuration_to_xml(xml, params, options) unless img_is_user_created
+          provisioning_configuration_to_xml(xml, params, options)
           xml.ConfigurationSet('i:type' => 'NetworkConfigurationSet') do
             xml.ConfigurationSetType 'NetworkConfiguration'
             xml.InputEndpoints do
@@ -249,17 +249,25 @@ module Azure::VirtualMachineManagement::Serialization
             end
           end
         end
-        xml.AvailabilitySetName options[:availability_set_name]
+        xml.AvailabilitySetName options[:availability_set_name] unless img_is_user_created
         # Label does not seem to be required
         #xml.Label Base64.encode64(params[:vm_name]).strip
 
-        xml.VMImageName params[:image] if img_is_user_created
-
-        xml.OSVirtualHardDisk do
-          xml.MediaLink 'http://' + options[:storage_account_name] + '.blob.core.windows.net/vhds/' + (Time.now.strftime('disk_%Y_%m_%d_%H_%M_%S_%L')) + '.vhd'
-          xml.SourceImageName params[:image] unless img_is_user_created
+        if img_is_user_created
+          xml.VMImageName params[:image]
+          xml.ProvisionGuestAgent 'true'
+        else
+          xml.OSVirtualHardDisk do
+            if img_is_user_created
+              xml.MediaLink "https://portalvhdswkd6qtd0zqkw9.blob.core.windows.net/vhds/Ubuntu_14.04.1_LTS_Apach2-os-2015-04-21.vhd"
+              #'https://' + options[:storage_account_name] + '.blob.core.windows.net/' + (Time.now.strftime('disk_%Y_%m_%d_%H_%M_%S_%L')) + '.vhd'
+            else
+              xml.MediaLink 'http://' + options[:storage_account_name] + '.blob.core.windows.net/vhds/' + (Time.now.strftime('disk_%Y_%m_%d_%H_%M_%S_%L')) + '.vhd'
+            end
+            xml.SourceImageName params[:image] unless img_is_user_created
+          #xml.OS 'Linux'
+          end
         end
-
         xml.RoleSize options[:vm_size] || params[:vm_size]
       end
     end
