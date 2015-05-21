@@ -139,7 +139,7 @@ describe Atmosphere::Proxy::ApplianceProxyUpdater do
       it 'creates new proxy in redirus' do
         expect(Redirus::Worker::AddProxy).to have_enqueued_job(
           proxy_name(appl, https),
-          [worker(vm1, https), worker(vm2, https)],
+          include(worker(vm1, https), worker(vm2, https)),
           'https',
           []
         )
