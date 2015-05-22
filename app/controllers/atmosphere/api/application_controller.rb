@@ -7,7 +7,6 @@ module Atmosphere
       check_authorization
 
       include Atmosphere::Api::ApplicationControllerExt
-      include CancanStrongParams
       include Filterable
 
       rescue_from CanCan::AccessDenied do |exception|

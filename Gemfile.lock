@@ -4,7 +4,7 @@ PATH
     atmosphere (0.0.1)
       active_model_serializers (~> 0.8.0)
       bootstrap-sass (~> 3.2)
-      cancan
+      cancancan
       clockwork
       coffee-rails (~> 4.1.0)
       devise (~> 3.2)
@@ -105,7 +105,7 @@ GEM
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.2.19)
     builder (3.2.2)
-    cancan (1.6.10)
+    cancancan (1.10.1)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     clockwork (1.2.0)
