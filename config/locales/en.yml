@@ -281,6 +281,7 @@ en:
       label: Show for all users
     load_for_user: Show funds consumption data for %{user}
     loading: Loading billing data
+    final: Final billing action prior to appliance destruction.
   users:
     title: Users
 
@@ -324,6 +325,3 @@ en:
     not_allowed: "Scaling not allowed"
     not_allowed_description: "Chosen optimization strategy does not allow for manual scaling"
     manual_not_allowed: Manual scaling is not allowed for selected appliance scaling policy
-
-  billing:
-    final: Final billing action prior to appliance destruction.
