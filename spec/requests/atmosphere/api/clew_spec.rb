@@ -13,7 +13,6 @@ describe Atmosphere::Api::V1::ClewController do
     end
 
     context 'when authenticated' do
-
       let(:user)           { create(:developer) }
       let(:different_user) { create(:user) }
       let(:admin)          { create(:admin) }
@@ -112,7 +111,6 @@ describe Atmosphere::Api::V1::ClewController do
 
         expect(json_response).to eq expected_response
       end
-
     end
 
     def clew_ai_response
@@ -122,11 +120,9 @@ describe Atmosphere::Api::V1::ClewController do
     def cs
       vm1.compute_site
     end
-
   end
 
   describe 'GET /clew/appliance_types' do
-
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         get api("/clew/appliance_types")
@@ -135,7 +131,6 @@ describe Atmosphere::Api::V1::ClewController do
     end
 
     context 'when authenticated' do
-
       let!(:user) { create(:user) }
 
       let!(:at1)  { create(:filled_appliance_type, author: user) }
@@ -172,20 +167,29 @@ describe Atmosphere::Api::V1::ClewController do
         expect(clew_at_response['appliance_types'][1]['matched_flavor']).to clew_flavor_eq  flavor
 
         #TODO complete this test to check all the returned fields
-
       end
+    end
 
+    it 'does not return AT with visible_to owner when user is not owner' do
+      user = create(:user)
+      cs = create(:compute_site)
+      create(:flavor, compute_site: cs)
+
+      owned_at = create(:appliance_type, visible_to: :owner, author: user)
+      create(:virtual_machine_template,
+             compute_site: cs, appliance_type: owned_at)
+      not_owned_at = create(:appliance_type, visible_to: :owner)
+      create(:virtual_machine_template,
+             compute_site: cs, appliance_type: not_owned_at)
+
+      get api('/clew/appliance_types', user)
+
+      expect(clew_at_response['appliance_types'].size).to eq 1
+      expect(clew_at_response['appliance_types'][0]).to clew_at_eq owned_at
     end
 
     def clew_at_response
       json_response['clew_appliance_types']
     end
-
   end
-
-
 end
-
-
-
-
