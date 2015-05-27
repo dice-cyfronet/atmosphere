@@ -210,7 +210,7 @@ describe Atmosphere::Api::V1::EndpointsController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/endpoints")
+        post api("/endpoints"), new_request
         expect(response.status).to eq 401
       end
     end

@@ -62,18 +62,19 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
   end
 
   describe 'POST /appliances_sets' do
+    let(:new_appliance_set) do
+      { appliance_set: { name: 'my name', appliance_set_type: :workflow } }
+    end
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api('/appliance_sets')
+        post api('/appliance_sets'), new_appliance_set
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as user' do
       let(:non_developer) { create(:user) }
-      let(:new_appliance_set) do
-        { appliance_set: { name: 'my name', appliance_set_type: :workflow } }
-      end
 
       it 'returns 201 Created on success' do
         post api('/appliance_sets', user), new_appliance_set
