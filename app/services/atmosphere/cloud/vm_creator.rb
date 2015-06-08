@@ -56,7 +56,6 @@ module Atmosphere
       tcp_endpoints_str = ''
       udp_endpoints_str = ''
       @appliance_type.port_mapping_templates.
-        select {|pmt| pmt.application_protocol == :none}.
         each do |pmt|
           if pmt.transport_protocol == :tcp
             # 22 ssh is present by default on Azure for linux
