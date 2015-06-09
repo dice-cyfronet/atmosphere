@@ -42,6 +42,7 @@ module Atmosphere
       class_name: 'Atmosphere::ApplianceConfigurationTemplate'
 
     has_many :virtual_machine_templates,
+      dependent: :nullify,
       class_name: 'Atmosphere::VirtualMachineTemplate'
 
     has_many :migration_job,
@@ -127,7 +128,7 @@ module Atmosphere
       )
     end
 
-    around_destroy :delete_vmts
+    around_destroy :delete_vmts, prepend: true
 
 
     def destroy(force = false)
