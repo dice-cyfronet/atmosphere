@@ -1,13 +1,12 @@
 module Atmosphere
   module Api
     class ApplicationController < ::ApplicationController
-      include Atmosphere::Api::ApplicationControllerExt
       protect_from_forgery with: :null_session, if: :token_request?
       protect_from_forgery with: :exception, unless: :token_request?
 
       check_authorization
 
-      include CancanStrongParams
+      include Atmosphere::Api::ApplicationControllerExt
       include Filterable
 
       rescue_from CanCan::AccessDenied do |exception|

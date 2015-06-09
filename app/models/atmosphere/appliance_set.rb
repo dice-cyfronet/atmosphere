@@ -19,7 +19,6 @@ module Atmosphere
         class_name: 'Atmosphere::User'
 
     has_many :appliances,
-        dependent: :destroy,
         class_name: 'Atmosphere::Appliance'
 
     validates :user, presence: true

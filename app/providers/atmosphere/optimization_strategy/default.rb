@@ -81,7 +81,7 @@ module Atmosphere
                   f.cpu >= min_cpu &&
                   f.hdd >= min_hdd
                 end
-              ) {|f| tmpl.get_hourly_cost_for(f)}
+              ) {|f| tmpl.get_hourly_cost_for(f) || Float::INFINITY }
             ).sort!{ |x,y| y.memory <=> x.memory }.last
             hsh[opt_fl] = tmpl if opt_fl
             hsh

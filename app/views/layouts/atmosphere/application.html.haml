@@ -2,7 +2,7 @@
 %html{ lang: 'en'}
   = render 'layouts/atmosphere/head'
   %body
-    #wrap
+    #wrap{"data-no-turbolink" => controller.controller_name == 'home'}
       .proper-content
         = render 'layouts/atmosphere/flash'
         = render 'layouts/atmosphere/navbar'

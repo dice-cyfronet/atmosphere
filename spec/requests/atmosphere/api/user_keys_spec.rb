@@ -94,23 +94,23 @@ describe Atmosphere::Api::V1::UserKeysController do
   end
 
   describe 'POST /user_keys' do
+    let(:new_key_request) do
+      {
+        user_key: {
+          name: 'new_user_key',
+          public_key: user_key1.public_key
+        }
+      }
+    end
+
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/user_keys")
+        post api("/user_keys"), new_key_request
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as user' do
-      let(:new_key_request) do
-        {
-          user_key: {
-            name: 'new_user_key',
-            public_key: user_key1.public_key
-          }
-        }
-      end
-
       let(:new_upload_key_request) do
         {
           user_key: {
@@ -195,8 +195,7 @@ describe Atmosphere::Api::V1::UserKeysController do
       it 'returns 402 Unprocessable Entity status if the request is incorrect' do
         post api("/user_keys", user), incorrect_request
         expect(response.status).to eq 422
-        expect(response.body).to include '"name":["can\'t be blank"]'
-        expect(response.body).to include '"public_key":["can\'t be blank"]'
+        expect(response.body).to include 'empty: user_key'
       end
 
     end

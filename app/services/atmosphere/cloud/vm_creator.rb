@@ -10,7 +10,7 @@ module Atmosphere
       @appliance_type = options[:appliance_type]
     end
 
-    def spawn_vm!
+    def execute
       register_user_key!
       server_params = {}
       server_params[:user_data] = user_data if user_data

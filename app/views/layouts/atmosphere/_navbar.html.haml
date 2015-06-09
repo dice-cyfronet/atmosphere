@@ -1,6 +1,6 @@
 %header.navbar.navbar-fixed-top.navbar-default
   .container
-    = link_to t('code_name'), root_path, class: 'navbar-brand'
+    = link_to t('code_name'), root_path, class: 'navbar-brand', 'data-no-turbolink' => true
 
     %ul.nav.navbar-nav
       - if current_user.has_role? :admin

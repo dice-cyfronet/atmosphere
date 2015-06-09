@@ -40,7 +40,7 @@ module Atmosphere
         end
 
         def destroy
-          if @appliance_set.destroy
+          if Atmosphere::DestroyApplianceSet.new(@appliance_set).execute
             render json: {}
           else
             render_error @appliance_set
@@ -50,7 +50,7 @@ module Atmosphere
         private
 
         def appliance_set_params
-          if params[:appliance_set][:appliances]
+          if params[:appliance_set] && params[:appliance_set][:appliances]
             @appliances_params = params[:appliance_set][:appliances]
           end
 
@@ -70,7 +70,7 @@ module Atmosphere
         end
 
         def create_appliance_set
-          @appliance_set = ApplianceSet.new params[:appliance_set]
+          @appliance_set = ApplianceSet.new(appliance_set_params)
           @appliance_set.user = current_user
         end
 

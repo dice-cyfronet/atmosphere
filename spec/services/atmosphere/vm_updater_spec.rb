@@ -23,19 +23,23 @@ describe Atmosphere::VmUpdater do
   subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
 
   describe 'VM states' do
-    context "when task state equals to image_snapshot" do
-      let(:server) do
-        server_double(state: 'active',
-                      task_state: 'image_snapshot',
-                      flavor: {'id' => "1"})
-      end
+    it 'is saving when task state equals to image_snapshot' do
+      saving_when_task_state('image_snapshot')
+    end
 
-      subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
+    it 'is saving when task state equals to image_pending_upload' do
+      saving_when_task_state('image_pending_upload')
+    end
 
-      it 'sets "saving" state' do
-        vm = subject.update
-        expect(vm.state).to eq 'saving'
-      end
+    def saving_when_task_state(state)
+      server = server_double(state: 'active',
+                             task_state: state,
+                             flavor: { 'id' => '1' })
+      updater = Atmosphere::VmUpdater.new(cs, server, updater_class)
+
+      vm = updater.execute
+
+      expect(vm.state).to eq 'saving'
     end
 
     context 'when relation to saved_templates is not empty' do
@@ -57,7 +61,7 @@ describe Atmosphere::VmUpdater do
       subject { Atmosphere::VmUpdater.new(cs, server, updater_class) }
 
       it 'sets "saving" state' do
-        vm = subject.update
+        vm = subject.execute
         expect(vm.state).to eq 'saving'
       end
     end
@@ -83,7 +87,7 @@ describe Atmosphere::VmUpdater do
         expect(updater_class).to receive(:new).with(appl2).and_return(appl_updater)
         expect(appl_updater).to receive(:update).twice
 
-        subject.update
+        subject.execute
       end
 
       it 'does not invoke updater when ip not changed' do
@@ -94,7 +98,7 @@ describe Atmosphere::VmUpdater do
 
         expect(updater).to_not receive(:update)
 
-        subject.update
+        subject.execute
       end
 
       it 'does not invoke updater when no vm appliances' do
@@ -102,7 +106,7 @@ describe Atmosphere::VmUpdater do
 
         expect(updater).to_not receive(:update)
 
-        subject.update
+        subject.execute
       end
 
       it 'invokes updater when VM with IP changed state to active' do
@@ -116,7 +120,7 @@ describe Atmosphere::VmUpdater do
 
         expect(updater).to receive(:update)
 
-        subject.update
+        subject.execute
       end
 
       it 'does not invoke updter when VM without IP state changed to active' do
@@ -130,7 +134,7 @@ describe Atmosphere::VmUpdater do
 
         expect(updater).not_to receive(:update)
 
-        Atmosphere::VmUpdater.new(cs, server, updater_class).update
+        Atmosphere::VmUpdater.new(cs, server, updater_class).execute
       end
     end
 
@@ -159,7 +163,7 @@ describe Atmosphere::VmUpdater do
           to receive(:update).
           once
 
-        subject.update
+        subject.execute
       end
 
       it 'does not invoke update when state changed to !active' do
@@ -169,7 +173,7 @@ describe Atmosphere::VmUpdater do
 
         expect(updater).to_not receive(:update)
 
-        subject.update
+        subject.execute
       end
 
       it 'does not invoke updater even when ip changed' do
@@ -180,7 +184,7 @@ describe Atmosphere::VmUpdater do
 
         expect(updater).to_not receive(:update)
 
-        subject.update
+        subject.execute
       end
     end
   end
@@ -194,12 +198,12 @@ describe Atmosphere::VmUpdater do
     context 'and VM does not exist' do
       it 'creates missing VM' do
         expect {
-          subject.update
+          subject.execute
         }.to change { Atmosphere::VirtualMachine.count }.by(1)
       end
 
       it 'sets VMs details' do
-        subject.update
+        subject.execute
 
         expect(updated_vm).to vm_fog_data_equals(server, vmt)
       end
@@ -218,19 +222,19 @@ describe Atmosphere::VmUpdater do
 
       it 'reuses existing VM' do
         expect {
-          subject.update
+          subject.execute
         }.to change { Atmosphere::VirtualMachine.count }.by(0)
       end
 
       it 'updates VMs details' do
-        subject.update
+        subject.execute
 
         expect(updated_vm).to vm_fog_data_equals(server, vmt)
       end
     end
 
     it 'sets IP address' do
-      subject.update
+      subject.execute
 
       expect(updated_vm.ip).to eq '10.100.1.2'
     end
@@ -240,7 +244,7 @@ describe Atmosphere::VmUpdater do
     let(:server) { server_double_with_priv_ip }
 
     it 'sets private VM ip' do
-      subject.update
+      subject.execute
 
       expect(updated_vm.ip).to eq '10.100.2.3'
     end
@@ -254,7 +258,7 @@ describe Atmosphere::VmUpdater do
     end
 
     it 'sets default VM name' do
-      subject.update
+      subject.execute
 
       expect(updated_vm.name).to eq "[unnamed]"
     end
@@ -267,7 +271,7 @@ describe Atmosphere::VmUpdater do
     end
 
     it 'sets IP address' do
-      subject.update
+      subject.execute
 
       expect(updated_vm.ip).to eq '10.100.1.2'
     end
@@ -280,7 +284,7 @@ describe Atmosphere::VmUpdater do
     end
 
     it 'does not set IP address' do
-      subject.update
+      subject.execute
 
       expect(updated_vm.ip).to be_nil
     end
@@ -291,7 +295,7 @@ describe Atmosphere::VmUpdater do
 
     it 'does not update VM data' do
       expect {
-        subject.update
+        subject.execute
       }.to change { Atmosphere::VirtualMachine.count }.by(0)
     end
   end
@@ -315,7 +319,7 @@ describe Atmosphere::VmUpdater do
                   created_at: old_vm_creation_time)
       allow(server).to receive(:updated).and_return(vm_update_at)
 
-      Atmosphere::VmUpdater.new(cs, server, updater_class).update
+      Atmosphere::VmUpdater.new(cs, server, updater_class).execute
       vm.reload
 
       expect(vm.ip).to eq '1.2.3.4'
@@ -330,7 +334,7 @@ describe Atmosphere::VmUpdater do
                   created_at: old_vm_creation_time)
       allow(server).to receive(:updated).and_return(vm_update_at + 1)
 
-      Atmosphere::VmUpdater.new(cs, server, updater_class).update
+      Atmosphere::VmUpdater.new(cs, server, updater_class).execute
       vm.reload
 
       expect(vm.ip).to eq '1.2.3.4'
@@ -344,7 +348,7 @@ describe Atmosphere::VmUpdater do
                   compute_site: cs)
       allow(server).to receive(:updated).and_return(vm_update_at - 1)
 
-      Atmosphere::VmUpdater.new(cs, server, updater_class).update
+      Atmosphere::VmUpdater.new(cs, server, updater_class).execute
       vm.reload
 
       expect(vm.ip).to be_nil

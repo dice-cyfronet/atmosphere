@@ -103,9 +103,10 @@ en:
     show: Show this Appliance Set
     edit: Edit this Appliance Set
     remove: Remove this Appliance Set
+    cannot_remove_appliance: "Unable to remove %{appliance.name} (%{appliance.id})"
   compute_sites:
     title: Sites
-    long_title: Compute Sites
+    long_title: Compute Sites and Pricing
     long_title_single: Compute Site
     site: Site
     name: Name
@@ -124,6 +125,26 @@ en:
     show: Show this Compute Site
     edit: Edit this Compute Site
     remove: Remove this Compute Site
+  virtual_machine_flavor:
+    flavor_name: Flavor name
+    cpu: CPU
+    memory: Memory
+    hdd: Disk
+    supported_architectures: Architecture
+    long_title_single: Pricing for Virtual Machine Flavor
+    form_hint: |
+      Supply only non-negative integers. Leave empty to disable for given OS
+      family.
+    cant_destroy: |
+      %{os_family} cost was not removed as there are running VMs that are
+      billed by this figure. If you want to set them as free of charge, please
+      set the fund value at 0.
+  flavor_os_family:
+    long_title: Virtual Machine Flavors and Pricing
+    hourly_cost: Hourly cost
+    update:
+      help: Set pricing for this flavor
+    running_vms: There are running Virtual Machines billed by this cost
   virtual_machines:
     title: VMs
     long_title: Virtual Machines
@@ -260,6 +281,7 @@ en:
       label: Show for all users
     load_for_user: Show funds consumption data for %{user}
     loading: Loading billing data
+    final: Final billing action prior to appliance destruction.
   users:
     title: Users
 
@@ -295,3 +317,11 @@ en:
         virtual_machine_template:
           attributes:
             name:
+
+  scale_appliance:
+    start: "Scaling started"
+    end: "Scaling finished"
+    to_small_vms: "Not enough vms to scale down"
+    not_allowed: "Scaling not allowed"
+    not_allowed_description: "Chosen optimization strategy does not allow for manual scaling"
+    manual_not_allowed: Manual scaling is not allowed for selected appliance scaling policy

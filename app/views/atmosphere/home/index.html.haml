@@ -1,4 +1,13 @@
-%h1
-  = t('index')
+=content_for :head do
+  %script{src: 'clew/clew.nocache.js'}
 
-=link_to t('logout'), destroy_user_session_path, method: :delete
+:javascript
+  var ClewOverrides = {
+    cloudFacadeUrl: '/api/v1',
+    username: '#{current_user.login}',
+    roles: #{current_user.roles.map(&:to_s)},
+    csrf_header_name: 'X-CSRF-Token',
+    csrf_token: '#{form_authenticity_token}'
+  }
+
+#clewContainer

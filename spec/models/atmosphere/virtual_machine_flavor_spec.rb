@@ -130,4 +130,60 @@ describe Atmosphere::VirtualMachineFlavor do
       create(:flavor, options)
     end
   end
+
+  context 'cost settings' do
+    describe '#remove_hourly_cost_for' do
+      let(:flavor) { create(:flavor) }
+      let(:os_family) { Atmosphere::OSFamily.first }
+      let(:at) { create(:appliance_type, os_family: os_family) }
+      let(:vmt) { create(:virtual_machine_template, appliance_type: at) }
+
+      it 'ignores removing nonexistent cost setting' do
+        expect(Atmosphere::OSFamily.count).to eq 2
+        expect{ flavor.remove_hourly_cost_for(os_family) }.
+          not_to raise_error
+        expect(flavor.remove_hourly_cost_for(os_family)).to eq nil
+      end
+
+      it 'removes set cost by destroying relation object' do
+        flavor.set_hourly_cost_for(os_family, 100)
+        expect(Atmosphere::FlavorOSFamily.count).to eq 1
+        expect{ flavor.remove_hourly_cost_for(os_family) }.
+          to change{ Atmosphere::FlavorOSFamily.count }.by(-1)
+      end
+
+      it 'prevents removing set cost that affects running VMs' do
+        create(:virtual_machine,
+               managed_by_atmosphere: true,
+               virtual_machine_flavor: flavor,
+               source_template: vmt)
+        flavor.set_hourly_cost_for(os_family, 100)
+        expect(Atmosphere::FlavorOSFamily.count).to eq 1
+        expect{ flavor.remove_hourly_cost_for(os_family) }.
+          to change{ Atmosphere::FlavorOSFamily.count }.by(0)
+      end
+    end
+
+    describe 'destroy' do
+      let(:flavor) { create(:flavor) }
+      let(:os_family) { Atmosphere::OSFamily.first }
+
+      it 'removes all pricing information together with a flavor' do
+        flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
+        flavor.set_hourly_cost_for(Atmosphere::OSFamily.second, 500)
+        expect(Atmosphere::FlavorOSFamily.count).to eq 2
+        expect{ flavor.destroy }.
+          to change { Atmosphere::FlavorOSFamily.count }.by(-2)
+      end
+
+      it 'should never perish when serving a running vm' do
+        create(:virtual_machine,
+               managed_by_atmosphere: true,
+               virtual_machine_flavor: flavor)
+        expect(flavor.virtual_machines.count).to eq 1
+        expect{ flavor.destroy }.
+          to change { Atmosphere::VirtualMachineFlavor.count }.by(0)
+      end
+    end
+  end
 end

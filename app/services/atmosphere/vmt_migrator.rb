@@ -10,6 +10,18 @@ module Atmosphere
       @destination_compute_site = destination_compute_site
     end
 
+    def execute
+      if @source_compute_site.technology == 'openstack'
+        migrator_class = select_migrator_class
+
+        if migrator_class
+          enqueue_job migrator_class
+        end
+      end
+    end
+
+    private
+
     def select_migrator_class
       case @destination_compute_site.technology
       when 'aws'
@@ -25,16 +37,6 @@ module Atmosphere
       'class' => migrator_class,
       'args' => [@virtual_machine_template.id_at_site,
                  @destination_compute_site.site_id])
-    end
-
-    def execute
-      if @source_compute_site.technology == 'openstack'
-        migrator_class = select_migrator_class
-
-        if migrator_class
-          enqueue_job migrator_class
-        end
-      end
     end
   end
 end

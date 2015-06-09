@@ -72,7 +72,7 @@ describe Atmosphere::Appliance do
   context 'appliance configuration instances management' do
     before do
       allow(Atmosphere::Optimizer).to receive(:instance).and_return(optimizer)
-      expect(optimizer).to receive(:run).twice
+      allow(optimizer).to receive(:run)
     end
     let!(:appliance) { create(:appliance) }
 

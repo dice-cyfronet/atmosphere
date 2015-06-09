@@ -35,7 +35,7 @@ module Atmosphere
       logger.debug { "#{jid}: updating VMTs" }
       all_site_templates = site.virtual_machine_templates.to_a
       images.each do |image|
-        updated_vmt = Cloud::VmtUpdater.new(site, image).update
+        updated_vmt = Cloud::VmtUpdater.new(site, image).execute
 
         all_site_templates.delete(updated_vmt)
       end

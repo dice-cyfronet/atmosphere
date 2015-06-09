@@ -146,7 +146,7 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/port_mapping_properties")
+        post api("/port_mapping_properties"), new_request
         expect(response.status).to eq 401
       end
     end

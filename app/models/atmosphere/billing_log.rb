@@ -37,8 +37,11 @@ module Atmosphere
     # Turns logs into data series by month
     # Ensures 0 sum for month with no data
     def self.month_data_series(logs)
-      (1..12).map do |month|
-        month_sum = logs.detect { |l| l[0][1].month == month }
+      12.times.map do |i|
+        month_date = Date.today - 11.months + i.months
+        month_sum = logs.detect do |l|
+          l[0][1].month == month_date.month && l[0][1].year == month_date.year
+        end
         month_sum ? month_sum[1] : 0
       end
     end

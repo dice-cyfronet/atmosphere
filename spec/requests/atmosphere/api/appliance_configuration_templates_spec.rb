@@ -138,7 +138,8 @@ describe Atmosphere::Api::V1::ApplianceConfigurationTemplatesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/appliance_configuration_templates")
+        post api("/appliance_configuration_templates"),
+             new_config_template_request
         expect(response.status).to eq 401
       end
     end

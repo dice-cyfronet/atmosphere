@@ -29,8 +29,8 @@ describe Atmosphere::ApplianceVmsManager do
         :state_explanation= => true
       )
     end
-    let(:tags_mng) { double('tags manager') }
-    let(:tags_manager_class) { double('tags manager class', new: tags_mng) }
+    let(:tags_mng) { double('tags manager', execute: true) }
+    let(:tags_manager_class) { double('tags manager class') }
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
     let(:vm) { double('vm') }
@@ -39,7 +39,9 @@ describe Atmosphere::ApplianceVmsManager do
     context 'when user can afford vm' do
       before do
         allow(Atmosphere::BillingService).to receive(:can_afford_vm?).with(appl, vm).and_return(true)
-        allow(tags_mng).to receive(:create_tags_for_vm)
+        allow(tags_mng).to receive(:execute)
+        allow(tags_manager_class).to receive(:new).with(vm).and_return(tags_mng)
+
         subject.reuse_vm!(vm)
       end
 
@@ -56,7 +58,7 @@ describe Atmosphere::ApplianceVmsManager do
       end
 
       it 'calls method to tag vm' do
-        expect(tags_mng).to have_received(:create_tags_for_vm).with(vm)
+        expect(tags_mng).to have_received(:execute)
       end
 
     end
@@ -102,7 +104,10 @@ describe Atmosphere::ApplianceVmsManager do
     let(:updater) { double('updater', update: true) }
     let(:updater_class) { double('updater class', new: updater) }
 
-    let(:vm_creator) { double('vm creator', :spawn_vm! => 'server_id') }
+    let(:vm_creator) do
+      instance_double(Atmosphere::Cloud::VmCreator,
+                      execute: 'server_id')
+    end
     let(:vm_creator_class) { double('vm creator class') }
 
     let(:tmpl) { create(:virtual_machine_template) }
@@ -125,7 +130,7 @@ describe Atmosphere::ApplianceVmsManager do
             appliance_type: nil
           )
           .and_return(vm_creator)
-      allow(tags_mng).to receive(:create_tags_for_vm)
+      allow(tags_mng).to receive(:execute)
 
       allow(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
         and_return(vm)
@@ -176,7 +181,7 @@ describe Atmosphere::ApplianceVmsManager do
       it 'calls method to tag vm' do
         allow(vm).to receive(:valid?).and_return(true)
         subject.spawn_vm!(tmpl, flavor, name)
-        expect(tags_mng).to have_received(:create_tags_for_vm)
+        expect(tags_mng).to have_received(:execute)
       end
 
       it 'updates appliance services with new VM hint' do
@@ -212,14 +217,19 @@ describe Atmosphere::ApplianceVmsManager do
 
   context 'scaling'  do
     let(:appl) { build(:appliance) }
-    let(:vm_creator_class) { double('vm creator class') }
+    let(:vm_creator_class) { instance_double('vm creator class') }
+
+    let(:tags_mng_class) do
+      double('tags manager class', new: double(execute: true))
+    end
+
 
     subject do
       Atmosphere::ApplianceVmsManager.
         new(appl,
             double(new: double(update: true)),
             vm_creator_class,
-            double(new: double(create_tags_for_vm: true)))
+            tags_mng_class)
     end
 
     context 'when user can afford new vm and scale up' do
@@ -234,14 +244,14 @@ describe Atmosphere::ApplianceVmsManager do
       end
 
       def expect_vm_started(desc, vm_id_at_site)
-        first_creator = instance_double('Cloud::VmCreator')
+        first_creator = instance_double(Atmosphere::Cloud::VmCreator)
         allow(vm_creator_class).
           to receive(:new).
           with(desc[:template],
                hash_including(flavor: desc[:flavor], name: desc[:name])).
           and_return(first_creator)
 
-        expect(first_creator).to receive(:spawn_vm!).and_return(vm_id_at_site)
+        expect(first_creator).to receive(:execute).and_return(vm_id_at_site)
       end
 
       def vmt_desc(name)

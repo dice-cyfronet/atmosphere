@@ -26,7 +26,7 @@ class Atmosphere::Admin::ApplianceSetsController < Atmosphere::Admin::Applicatio
 
   # DELETE /admin/appliance_sets/1
   def destroy
-    @appliance_set.destroy
+    Atmosphere::DestroyApplianceSet.new(@appliance_set).execute
     redirect_to admin_appliance_sets_url, notice: 'ApplianceSet was successfully destroyed.'
   end
 

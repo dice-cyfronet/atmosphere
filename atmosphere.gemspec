@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   ]
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.1.10'
+  s.add_dependency 'rails', '~> 4.2.1'
   s.add_dependency 'pg'
   s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'
@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'devise', '~>3.2'
   s.add_dependency 'omniauth'
 
-  s.add_dependency 'cancan'
+  s.add_dependency 'cancancan'
   s.add_dependency 'role_model'
   s.add_dependency 'redirus', '~>0.1.1'
 

@@ -6,7 +6,7 @@ module Atmosphere
       @updater_class = updater_class
     end
 
-    def update
+    def execute
       perform_update! if old_enough?
 
       vm
@@ -100,8 +100,16 @@ module Atmosphere
     end
 
     def map_saving_state(vm, key)
-      (:saving if vm.saved_templates.count > 0) ||
-        ({image_snapshot: :saving}[key.to_sym] if key)
+      :saving if saving_state?(vm, key)
+    end
+
+    def saving_state?(vm, key)
+      vm.saved_templates.count > 0 ||
+        saving_task_states.include?(key && key.to_sym)
+    end
+
+    def saving_task_states
+      [:image_snapshot, :image_pending_upload]
     end
 
     def vm

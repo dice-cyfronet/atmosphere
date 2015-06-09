@@ -30,7 +30,7 @@ module Atmosphere
       logger.debug { "#{jid}: updating information about VMs" }
       all_site_vms = site.virtual_machines.to_a
       servers.each do |server|
-        updated_vm = vm_updater_class.new(site, server).update
+        updated_vm = vm_updater_class.new(site, server).execute
         all_site_vms.delete updated_vm
       end
 

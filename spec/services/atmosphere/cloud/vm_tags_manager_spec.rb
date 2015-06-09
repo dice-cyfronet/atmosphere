@@ -21,6 +21,6 @@ describe Atmosphere::Cloud::VmTagsManager do
         expect(hsh['Users'].split(', ')).to include 'user1', 'user2'
       end
 
-    subject.create_tags_for_vm(vm)
+    described_class.new(vm).execute
   end
 end
