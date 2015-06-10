@@ -7,18 +7,21 @@ class Fog::Compute::Azure::Server
   def stop
     raise Atmosphere::UnsupportedException, 'Azure des not support stop action'
   end
+
   def suspend
     shutdown
   end
+
   def pause
     raise Atmosphere::UnsupportedException, 'Azure des not support pause action'
   end
+
   def id
     identity
   end
 
   def flavor
-    {'id' => flavor_id}
+    { 'id' => flavor_id }
   end
 
   def image_id
@@ -43,7 +46,7 @@ class Fog::Compute::Azure::Servers
   def destroy(id_at_site)
     # get requires both identity and cloud service name params
     # in our case id == cloud service name
-    server = all.find{|s| s.name == id_at_site}
+    server = all.detect { |s| s.name == id_at_site }
     server ? server.destroy : false
   end
 end
@@ -52,7 +55,7 @@ class Fog::Compute::Azure::Images
   alias_method :all_orig, :all
 
   def all(_filters = nil)
-    all_orig.select{ |tmpl| tmpl.category == 'User' }
+    all_orig.select { |tmpl| tmpl.category == 'User' }
   end
 end
 
@@ -77,5 +80,9 @@ end
 class Fog::Compute::Azure::Real
   def save_template(_instance_id, _tmpl_name)
     raise Atmosphere::UnsupportedException, 'Azure des not support saving vms'
+  end
+
+  def create_tags_for_vm(_server_id, _tags_map)
+    # do nothing since Azure does not support tagging
   end
 end

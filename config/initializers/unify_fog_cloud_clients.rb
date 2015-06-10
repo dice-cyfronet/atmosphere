@@ -187,9 +187,3 @@ class Fog::Compute::AWS::Flavor
     end
   end
 end
-
-class Fog::Compute::OpenStack::Real
-  def create_tags_for_vm(server_id, tags_map)
-    # do nothing since Azure does not support tagging
-  end
-end

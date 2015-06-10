@@ -20,26 +20,26 @@ module Atmosphere
         server_params[:nics] = [{ net_id: @nic }]
       end
 
-      case(@tmpl.compute_site.technology)
-        when 'azure'
-          server_params[:vm_name] = SecureRandom.uuid
-          server_params[:vm_user] = 'atmosphere'
-          server_params[:password] = 'TomekiPiotrek2015' # TODO: Replace with key injection
-          server_params[:public_key_path] = '/home/tomek/.ssh/tomek.pub'
-          server_params[:image] = tmpl_id
-          server_params[:location] = "North Central US"
-          server_params[:vm_size] = flavor_id
-          set_azure_endpoints(server_params)
-        else #TODO: Untangle AWS and OpenStack
-          server_params[:atmo_user_key] = @user_key
-          server_params[:flavor_ref] = flavor_id
-          server_params[:flavor_id] = flavor_id
-          server_params[:name] = @name
-          server_params[:image_ref] = tmpl_id
-          server_params[:image_id] = tmpl_id
-          server_params[:user_data] = user_data if user_data
-          server_params[:key_name] = key_name if key_name
-          set_security_groups!(server_params)
+      case (@tmpl.compute_site.technology)
+      when 'azure'
+        server_params[:vm_name] = SecureRandom.uuid
+        server_params[:vm_user] = 'atmosphere'
+        server_params[:password] = 'TomekiPiotrek2015' # TODO: Replace with key injection
+        server_params[:public_key_path] = '/home/tomek/.ssh/tomek.pub'
+        server_params[:image] = tmpl_id
+        server_params[:location] = 'North Central US'
+        server_params[:vm_size] = flavor_id
+        set_azure_endpoints(server_params)
+      else # TODO: Untangle AWS and OpenStack
+        server_params[:atmo_user_key] = @user_key
+        server_params[:flavor_ref] = flavor_id
+        server_params[:flavor_id] = flavor_id
+        server_params[:name] = @name
+        server_params[:image_ref] = tmpl_id
+        server_params[:image_id] = tmpl_id
+        server_params[:user_data] = user_data if user_data
+        server_params[:key_name] = key_name if key_name
+        set_security_groups!(server_params)
       end
 
       Rails.logger.debug "Params of instantiating server #{server_params}"

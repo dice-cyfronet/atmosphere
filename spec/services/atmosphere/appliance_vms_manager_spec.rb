@@ -119,7 +119,7 @@ describe Atmosphere::ApplianceVmsManager do
 
     before do
       allow(vm_creator_class).
-          to receive(:new).
+        to receive(:new).
           with(
             tmpl,
             flavor: flavor,
@@ -127,8 +127,8 @@ describe Atmosphere::ApplianceVmsManager do
             user_data: 'user data',
             user_key: 'user key',
             nic: nil
-          )
-          .and_return(vm_creator)
+          ).
+            and_return(vm_creator)
       allow(tags_mng).to receive(:execute)
 
       allow(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
