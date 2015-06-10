@@ -79,6 +79,10 @@ module Atmosphere
   mattr_accessor :vmt_at_relation_update_period #hours
   @@vmt_at_relation_update_period = 2
 
+  mattr_accessor :azure_vm_password
+
+  mattr_accessor :azure_vm_user
+
   mattr_accessor :monitoring_client
   def self.monitoring_client
     @@monitoring_client || Atmosphere::Monitoring::NullClient.new

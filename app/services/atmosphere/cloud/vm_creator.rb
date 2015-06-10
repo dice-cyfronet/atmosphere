@@ -7,7 +7,7 @@ module Atmosphere
       @user_data = options[:user_data]
       @user_key = options[:user_key]
       @nic = options[:nic]
-      @appliance_type = options[:appliance_type]
+      @appliance_type = @tmpl.appliance_type
     end
 
     def execute
@@ -23,9 +23,8 @@ module Atmosphere
       case (@tmpl.compute_site.technology)
       when 'azure'
         server_params[:vm_name] = SecureRandom.uuid
-        server_params[:vm_user] = 'atmosphere'
-        server_params[:password] = 'TomekiPiotrek2015' # TODO: Replace with key injection
-        server_params[:public_key_path] = '/home/tomek/.ssh/tomek.pub'
+        server_params[:vm_user] = Atmosphere.azure_vm_user
+        server_params[:password] = Atmosphere.azure_vm_password
         server_params[:image] = tmpl_id
         server_params[:location] = 'North Central US'
         server_params[:vm_size] = flavor_id
