@@ -126,8 +126,7 @@ describe Atmosphere::ApplianceVmsManager do
             name: name,
             user_data: 'user data',
             user_key: 'user key',
-            nic: nil,
-            appliance_type: nil
+            nic: nil
           )
           .and_return(vm_creator)
       allow(tags_mng).to receive(:execute)
