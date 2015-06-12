@@ -39,7 +39,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rails', '~> 4.2.1'
   s.add_dependency 'pg'
-  s.add_dependency 'foreigner'
   s.add_dependency 'enumerize'
   s.add_dependency 'sass-rails'
   s.add_dependency 'coffee-rails', '~> 4.1.0'
@@ -51,7 +50,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'simple_form'
   s.add_dependency 'gravtastic'
 
-  s.add_dependency 'devise', '~>3.2'
+  s.add_dependency 'devise', '~>3.4'
   s.add_dependency 'omniauth'
 
   s.add_dependency 'cancancan'
