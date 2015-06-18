@@ -11,9 +11,10 @@ module Atmosphere
 
       rescue_from CanCan::AccessDenied do |exception|
         if current_user.nil?
-          render_json_error('401 Unauthorized', status: :unauthorized)
+          render_json_error(I18n.t('errors.unauthorized'),
+                            status: :unauthorized)
         else
-          render_json_error('You are not authorized to perform this action',
+          render_json_error(I18n.t('errors.forbidden'),
                             status: :forbidden)
         end
       end

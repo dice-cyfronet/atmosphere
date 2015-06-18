@@ -572,7 +572,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
           expect(response.status).to eq 403
           expect(json_response)
-            .to eq error_response('403 Forbidden', 'general')
+            .to eq error_response(I18n.t('errors.forbidden'), 'general')
         end
 
         it 'returns error if appliance is not on dev mode' do
@@ -585,7 +585,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
           expect(response.status).to eq 403
           expect(json_response)
-            .to eq error_response('403 Forbidden', 'general')
+            .to eq error_response(I18n.t('errors.forbidden'), 'general')
         end
 
         it 'saves developer\'s virtual machine as template when creating new appliance type' do

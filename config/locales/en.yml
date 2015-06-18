@@ -56,6 +56,10 @@ en:
   background_jobs: Background Jobs
   forgot_your_password: Forgot your password?
 
+  errors:
+    forbidden: "You are not authorized to perform this action"
+    unauthorized: "You are unauthorized, please provide valid credentials"
+
   help:
     title: Help
     content: Content
