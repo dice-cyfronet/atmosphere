@@ -13,7 +13,8 @@ module Atmosphere
         if current_user.nil?
           render_json_error('401 Unauthorized', status: :unauthorized)
         else
-          render_json_error('403 Forbidden', status: :forbidden)
+          render_json_error('You are not authorized to perform this action',
+                            status: :forbidden)
         end
       end
 
