@@ -99,6 +99,10 @@ module Atmosphere
       has_role? :developer
     end
 
+    def clew_roles
+      roles.map { |r| r == :admin ? 'cloudadmin' : r.to_s }
+    end
+
     private
 
     # Checks whether any fund has been assigned to this user.
