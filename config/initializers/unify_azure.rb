@@ -43,11 +43,19 @@ class Fog::Compute::Azure::Server
 end
 
 class Fog::Compute::Azure::Servers
+  alias_method :create_orig, :create
+
   def destroy(id_at_site)
     # get requires both identity and cloud service name params
     # in our case id == cloud service name
     server = all.detect { |s| s.name == id_at_site }
     server ? server.destroy : false
+  end
+
+  def create(params)
+    cs_id = params.delete :cs_id
+    Atmosphere::Cloud::AzureVmCreator.perform_async(cs_id, params)
+    params[:vm_name]
   end
 end
 
