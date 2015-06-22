@@ -55,6 +55,9 @@ class Fog::Compute::Azure::Servers
   def create(params)
     cs_id = params.delete :cs_id
     Atmosphere::Cloud::AzureVmCreator.perform_async(cs_id, params)
+    params[:vm_name].define_singleton_method(:id) do
+      params[:vm_name]
+    end
     params[:vm_name]
   end
 end
