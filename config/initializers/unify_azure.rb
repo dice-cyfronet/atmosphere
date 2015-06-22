@@ -90,7 +90,7 @@ end
 
 class Fog::Compute::Azure::Real
   def save_template(_instance_id, _tmpl_name)
-    raise Atmosphere::UnsupportedException, 'Azure des not support saving vms'
+    raise Atmosphere::UnsupportedException, 'Azure does not support saving vms'
   end
 
   def import_key_pair(_name, _public_key)
