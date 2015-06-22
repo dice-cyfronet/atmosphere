@@ -82,6 +82,10 @@ class Fog::Compute::Azure::Real
     raise Atmosphere::UnsupportedException, 'Azure des not support saving vms'
   end
 
+  def import_key_pair(_name, _public_key)
+    # do nothing since Azure does not support ssh keys
+  end
+
   def create_tags_for_vm(_server_id, _tags_map)
     # do nothing since Azure does not support tagging
   end
