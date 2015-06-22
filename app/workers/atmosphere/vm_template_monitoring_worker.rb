@@ -20,6 +20,7 @@ module Atmosphere
                  end
 
         update_images(site, images)
+
         logger.debug { "#{jid}: updating VMTs finished for site #{site_id}" }
       rescue Excon::Errors::HTTPStatusError => e
         logger.error "#{jid}: Unable to perform VMTs monitoring job: #{e}"

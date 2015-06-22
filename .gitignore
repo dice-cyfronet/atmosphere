@@ -32,3 +32,10 @@
 /.project
 nbproject/
 coverage
+
+# ignore Azure client certificate
+Azure-USFD.pem
+
+# ignore file with my notes about Azure
+fog_usages.txt
+

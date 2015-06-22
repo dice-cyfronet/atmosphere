@@ -7,19 +7,12 @@ module Atmosphere
       @user_data = options[:user_data]
       @user_key = options[:user_key]
       @nic = options[:nic]
+      @appliance_type = @tmpl.appliance_type
     end
 
     def execute
       register_user_key!
-
-      server_params = {
-        flavor_ref: flavor_id, flavor_id: flavor_id,
-        name: @name,
-        image_ref: tmpl_id, image_id: tmpl_id,
-
-        # pass atmosphere specific object into create method
-        atmo_user_key: @user_key
-      }
+      server_params = {}
       server_params[:user_data] = user_data if user_data
       server_params[:key_name] = key_name if key_name
       if @nic
@@ -27,7 +20,26 @@ module Atmosphere
         server_params[:nics] = [{ net_id: @nic }]
       end
 
-      set_security_groups!(server_params)
+      case (@tmpl.compute_site.technology)
+      when 'azure'
+        server_params[:vm_name] = SecureRandom.uuid
+        server_params[:vm_user] = Atmosphere.azure_vm_user
+        server_params[:password] = Atmosphere.azure_vm_password
+        server_params[:image] = tmpl_id
+        server_params[:location] = 'North Central US'
+        server_params[:vm_size] = flavor_id
+        set_azure_endpoints(server_params)
+      else # TODO: Untangle AWS and OpenStack
+        server_params[:atmo_user_key] = @user_key
+        server_params[:flavor_ref] = flavor_id
+        server_params[:flavor_id] = flavor_id
+        server_params[:name] = @name
+        server_params[:image_ref] = tmpl_id
+        server_params[:image_id] = tmpl_id
+        server_params[:user_data] = user_data if user_data
+        server_params[:key_name] = key_name if key_name
+        set_security_groups!(server_params)
+      end
 
       Rails.logger.debug "Params of instantiating server #{server_params}"
       server = servers_client.create(server_params)
@@ -38,6 +50,30 @@ module Atmosphere
     private
 
     attr_reader :user_data
+
+    def set_azure_endpoints(params)
+      tcp_endpoints_str = ''
+      udp_endpoints_str = ''
+      @appliance_type.port_mapping_templates.
+        each do |pmt|
+          if pmt.transport_protocol == :tcp
+            # 22 ssh is present by default on Azure for linux
+            # and if it is specified explicitly it causes error
+            # same for rdp 3389
+            unless pmt.target_port == 22 || pmt.target_port == 3389
+              tcp_endpoints_str << "#{pmt.target_port}:#{pmt.target_port},"
+            end
+          else
+            udp_endpoints_str << "#{pmt.target_port}:#{pmt.target_port},"
+          end
+        end
+      if tcp_endpoints_str.present?
+        params[:tcp_endpoints] = tcp_endpoints_str.chomp!(',')
+      end
+      if udp_endpoints_str.present?
+        params[:udp_endpoints] = udp_endpoints_str.chomp!(',')
+      end
+    end
 
     def flavor_id
       @flavor.id_at_site

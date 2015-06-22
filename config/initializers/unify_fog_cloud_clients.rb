@@ -1,12 +1,14 @@
 require 'fog/openstack/compute'
 require 'fog/openstack/models/compute/server'
+require 'fog/openstack/models/compute/flavor'
+require 'fog/openstack/models/compute/image'
+require 'fog/openstack/models/compute/images'
+
 require 'fog/aws/compute'
 require 'fog/aws/models/compute/flavor'
-require 'fog/openstack/models/compute/flavor'
 require 'fog/aws/models/compute/image'
-require 'fog/openstack/models/compute/image'
 require 'fog/aws/models/compute/server'
-
+require 'fog/aws/models/compute/images'
 
 # open stack client does not provide import_key_pair method
 # while aws does
@@ -98,8 +100,6 @@ class Fog::Compute::AWS::Server
     raise Atmosphere::UnsupportedException, 'Amazon des not support suspend action'
   end
 end
-
-
 
 class Fog::Compute::OpenStack::Image
   def architecture

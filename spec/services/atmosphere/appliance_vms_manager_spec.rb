@@ -119,8 +119,16 @@ describe Atmosphere::ApplianceVmsManager do
 
     before do
       allow(vm_creator_class).
-          to receive(:new).with(tmpl, flavor: flavor, name: name, user_data: 'user data', user_key: 'user key', nic: nil)
-          .and_return(vm_creator)
+        to receive(:new).
+        with(
+          tmpl,
+          flavor: flavor,
+          name: name,
+          user_data: 'user data',
+          user_key: 'user key',
+          nic: nil
+        ).
+        and_return(vm_creator)
       allow(tags_mng).to receive(:execute)
 
       allow(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
@@ -139,6 +147,7 @@ describe Atmosphere::ApplianceVmsManager do
       before do
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(appl, flavor).and_return(true)
+        allow(appl).to receive(:appliance_type)
       end
 
       it 'creates new VM' do

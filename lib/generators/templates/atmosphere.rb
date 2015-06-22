@@ -117,4 +117,14 @@ Atmosphere.setup do |config|
   # this new class name as `ability_class` parameter value.
   #
   # config.ability_class = 'Atmosphere::Ability'
+
+  # Password for vm instantiated at Azure (ssh keys are not suported)
+  # By default azure_vm_password should be defined
+  # in external configuration file such as air.yml.
+  # config.azure_vm_password = 'PASSWORD_FOR_AZURE_VMS'
+
+  # Sudoer user login at azure vms
+  # By default azure_vm_password should be defined
+  # in external configuration file, such as air.yml.
+  # config.azure_vm_user = 'USERNAME_FOR_AZURE_VMS'
 end
