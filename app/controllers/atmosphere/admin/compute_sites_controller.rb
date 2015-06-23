@@ -31,8 +31,8 @@ class Atmosphere::Admin::ComputeSitesController < Atmosphere::Admin::Application
   # PATCH/PUT /compute_sites/1
   def update
     if @compute_site.update(compute_site_params)
-      Proxy::ComputeSiteUrlUpdater.new(@compute_site).update if @compute_site.proxy_urls_changed?
-      Proxy::ComputeSiteAppliancesUpdater.new(@compute_site).update if @compute_site.site_id_previously_changed?
+      ::Proxy::ComputeSiteUrlUpdater.new(@compute_site).update if @compute_site.proxy_urls_changed?
+      ::Proxy::ComputeSiteAppliancesUpdater.new(@compute_site).update if @compute_site.site_id_previously_changed?
 
       redirect_to admin_compute_sites_url(@compute_site), notice: 'Compute site was successfully updated.'
     else
