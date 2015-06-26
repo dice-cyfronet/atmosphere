@@ -22,11 +22,11 @@ module Atmosphere
 
       case (@tmpl.compute_site.technology)
       when 'azure'
-        server_params[:vm_name] = SecureRandom.uuid
+        server_params[:vm_name] = SecureRandom.hex(5)
         server_params[:vm_user] = Atmosphere.azure_vm_user
         server_params[:password] = Atmosphere.azure_vm_password
         server_params[:image] = tmpl_id
-        server_params[:location] = 'North Central US'
+        server_params[:location] = 'West Europe'
         server_params[:cs_id] = @tmpl.compute_site.id
         server_params[:vm_size] = flavor_id
         set_azure_endpoints(server_params)
