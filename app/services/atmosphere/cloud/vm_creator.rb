@@ -60,8 +60,7 @@ module Atmosphere
           if pmt.transport_protocol == :tcp
             # 22 ssh is present by default on Azure for linux
             # and if it is specified explicitly it causes error
-            # same for rdp 3389
-            unless pmt.target_port == 22 || pmt.target_port == 3389
+            unless pmt.target_port == 22 
               tcp_endpoints_str << "#{pmt.target_port}:#{pmt.target_port},"
             end
           else
