@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Atmosphere::Cloud::SatisfyAppliance do
-  include VmtOnCsHelpers
+  include VmtOnTHelpers
 
   before do
     # Temporary solution allowing to not execute optimization process.
@@ -14,7 +14,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:fund) { create(:fund) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
-  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: openstack)}
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenant: openstack)}
 
   context 'new appliance created' do
     context 'development mode' do
@@ -22,8 +22,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not reuse available vm' do
         tmpl_of_shareable_at
-        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-        appl2 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
+        appl2 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
 
         described_class.new(appl1).execute
         described_class.new(appl2).execute
@@ -40,8 +40,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       it 'does not reuse available vm if it is in dev mode' do
         tmpl_of_shareable_at
-        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-        appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
+        appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
 
         described_class.new(appl1).execute
         described_class.new(appl2).execute
@@ -77,7 +77,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
           appl = create(:appliance, appliance_set: dev_appliance_set,
                         appliance_type: shareable_appl_type, name: name,
-                        fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+                        fund: fund, tenants: Atmosphere::Tenant.all)
 
           described_class.new(appl).execute
         end
@@ -89,7 +89,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
           appl = create(:appliance, name: nil, appliance_set: dev_appliance_set,
                         appliance_type: shareable_appl_type, fund: fund,
-                        compute_sites: Atmosphere::ComputeSite.all)
+                        tenants: Atmosphere::Tenant.all)
 
           described_class.new(appl).execute
         end
@@ -115,7 +115,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       context 'vm cannot be reused' do
 
         it 'instantiates a new vm if there are no vms at all' do
-          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, tenants: Atmosphere::Tenant.all)
 
           described_class.new(appl).execute
 
@@ -127,7 +127,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'sets appliance state to satisfied if vm was instantiated' do
-          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, tenants: Atmosphere::Tenant.all)
 
           described_class.new(appl).execute
 
@@ -138,8 +138,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         it 'does not reuse avaiable vm if appliances use config with equal payload and different ids' do
           tmpl_of_shareable_at
           config_inst = create(:appliance_configuration_instance)
-          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
+          appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: create(:appliance_configuration_instance, payload: config_inst.payload), fund: fund, tenants: Atmosphere::Tenant.all)
 
           described_class.new(appl1).execute
           described_class.new(appl2).execute
@@ -162,8 +162,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
           end
 
           it 'instantiates a new vm if already running vm cannot accept more load' do
-            appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-            appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+            appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
+            appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
 
             described_class.new(appl1).execute
             described_class.new(appl2).execute
@@ -183,8 +183,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       context 'vm can be reused' do
         let(:config_inst) { create(:appliance_configuration_instance) }
-        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
-        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
+        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
+        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
 
         before do
           described_class.new(appl1).execute
@@ -233,11 +233,11 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     context 'not shareable appliance type' do
       let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-      let(:cs) { create(:openstack_with_flavors, funds: [fund]) }
-      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, compute_site: cs)}
+      let(:t) { create(:openstack_with_flavors, funds: [fund]) }
+      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, Tenant: t)}
       let(:config_inst) { create(:appliance_configuration_instance) }
-      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
-      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all) }
+      let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
+      let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
 
       context 'and user has emough funds to start appliance' do
         before do
@@ -273,9 +273,9 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       end
     end
 
-    context 'when one of compute site with VMTs is turned off' do
-      it 'failed when all VMTs are on inactive compute site' do
-        _, inactive_vmt = vmt_on_site(cs_active: false)
+    context 'when one of tenant with VMTs is turned off' do
+      it 'failed when all VMTs are on inactive tenant' do
+        _, inactive_vmt = vmt_on_tenant(t_active: false)
         at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
         appl = create(:appliance, appliance_set: wf, appliance_type: at)
 
@@ -285,19 +285,19 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         expect(appl.state_explanation).to start_with 'No matching template'
       end
 
-      it 'chooses VMT from active compute site' do
-        inactive_cs, inactive_vmt = vmt_on_site(cs_active: false)
-        active_cs, active_vmt = vmt_on_site(cs_active: true)
-        fund = create(:fund, compute_sites: [inactive_cs, active_cs])
+      it 'chooses VMT from active tenant' do
+        inactive_t, inactive_vmt = vmt_on_tenant(t_active: false)
+        active_t, active_vmt = vmt_on_tenant(t_active: true)
+        fund = create(:fund, tenants: [inactive_t, active_t])
         flavor = create(:virtual_machine_flavor,
-          compute_site: active_cs, id_at_site: '123')
+          tenant: active_t, id_at_site: '123')
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(anything, flavor).and_return(true)
         at = create(:appliance_type,
           virtual_machine_templates: [inactive_vmt, active_vmt])
         appl = create(:appliance,
                       appliance_set: wf, appliance_type: at,
-                      compute_sites: [inactive_cs, active_cs], fund: fund)
+                      tenants: [inactive_t, active_t], fund: fund)
 
         described_class.new(appl).execute
         selected_vmt = appl.virtual_machines.first.source_template
@@ -309,12 +309,12 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     context 'when one of the flavor is turned off' do
       it 'failed when there is not active flavor' do
-        cs, vmt = vmt_on_site(cs_active: true)
-        fund = create(:fund, compute_sites: [cs])
-        create(:flavor, active: false, compute_site: cs)
+        t, vmt = vmt_on_tenant(t_active: true)
+        fund = create(:fund, tenants: [t])
+        create(:flavor, active: false, tenant: t)
         at = create(:appliance_type, virtual_machine_templates: [vmt])
         appl = create(:appliance, appliance_set: wf,
-                      appliance_type: at, compute_sites: [cs], fund: fund)
+                      appliance_type: at, tenants: [t], fund: fund)
 
         described_class.new(appl).execute
 
@@ -323,19 +323,19 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       end
 
       it 'chooses VMT with active flavor' do
-        cs, vmt = vmt_on_site(cs_active: true)
-        fund = create(:fund, compute_sites: [cs])
-        create(:flavor, active: false, compute_site: cs)
+        t, vmt = vmt_on_tenant(t_active: true)
+        fund = create(:fund, tenants: [t])
+        create(:flavor, active: false, tenant: t)
         active_flavor = create(:flavor,
             active: true,
-            compute_site: cs,
+            tenant: t,
             id_at_site: '123'
           )
         at = create(:appliance_type, virtual_machine_templates: [vmt])
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(anything, active_flavor).and_return(true)
         appl = create(:appliance, appliance_set: wf,
-                      appliance_type: at, compute_sites: [cs], fund: fund)
+                      appliance_type: at, tenants: [t], fund: fund)
 
         described_class.new(appl).execute
 
@@ -349,7 +349,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   context 'no template is available' do
     let(:at) { create(:appliance_type) }
     it 'sets appliance to unsatisfied state' do
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, tenants: Atmosphere::Tenant.all)
 
       described_class.new(appl).execute
       appl.reload
@@ -358,7 +358,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     end
 
     it 'sets state explanation' do
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, tenants: Atmosphere::Tenant.all)
 
       described_class.new(appl).execute
       appl.reload
@@ -368,7 +368,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     it 'only saving tmpl exists' do
       saving_tmpl = create(:virtual_machine_template, appliance_type: at, state: :saving)
-      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: at, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, tenants: Atmosphere::Tenant.all)
 
       described_class.new(appl).execute
       appl.reload
@@ -393,7 +393,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       selected_flavor = Atmosphere::Optimizer.
                         instance.select_tmpl_and_flavor([tmpl_of_shareable_at]).
                         last
-      appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+      appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, tenants: Atmosphere::Tenant.all)
 
       expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
         expect(flavor).to eq selected_flavor
@@ -405,8 +405,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     context 'is selected optimaly' do
       context 'appliance type preferences specified' do
 
-        let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
-        let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
+        let(:tmpl_at_amazon) { create(:virtual_machine_template, tenant: amazon, appliance_type: appl_type) }
+        let(:tmpl_at_openstack) { create(:virtual_machine_template, tenant: openstack, appliance_type: appl_type) }
 
         context 'preferences exceeds resources of avaiable flavors' do
 
@@ -417,7 +417,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
           it 'sets state explanation' do
             [tmpl_at_amazon, tmpl_at_openstack]
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), name: 'my service', fund: fund, tenants: Atmosphere::Tenant.all)
 
             described_class.new(appl).execute
 
@@ -425,7 +425,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
           end
 
           it 'sets appliance as unsatisfied' do
-            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+            appl = create(:appliance, appliance_set: wf, appliance_type: appl_type, appliance_configuration_instance: create(:appliance_configuration_instance), fund: fund, tenants: Atmosphere::Tenant.all)
 
             described_class.new(appl).execute
 
@@ -434,26 +434,26 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
       end
 
-      context 'optimizer respects appliance-compute site binding' do
-        let(:cs1) { create(:openstack_with_flavors, funds: [fund]) }
-        let(:cs2) { create(:openstack_with_flavors, funds: [fund]) }
-        let(:vmt1_1) { create(:virtual_machine_template, compute_site: cs1)}
-        let(:vmt2_1) { create(:virtual_machine_template, compute_site: cs1)}
-        let(:vmt2_2) { create(:virtual_machine_template, compute_site: cs2)}
+      context 'optimizer respects appliance-tenant binding' do
+        let(:t1) { create(:openstack_with_flavors, funds: [fund]) }
+        let(:t2) { create(:openstack_with_flavors, funds: [fund]) }
+        let(:vmt1_1) { create(:virtual_machine_template, tenant: t1)}
+        let(:vmt2_1) { create(:virtual_machine_template, tenant: t1)}
+        let(:vmt2_2) { create(:virtual_machine_template, tenant: t2)}
         let(:wf_set_2) { create(:appliance_set, appliance_set_type: "workflow")}
-        let(:at_with_site) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
-        let(:at_with_two_sites) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
-        let(:a1_unrestricted) { create(:appliance, appliance_type: at_with_site, compute_sites: [cs1, cs2])}
-        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_type: at_with_site, compute_sites: [cs2])}
+        let(:at_with_tenant) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
+        let(:at_with_two_tenants) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
+        let(:a1_unrestricted) { create(:appliance, appliance_type: at_with_tenant, tenants: [t1, t2])}
+        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_type: at_with_tenant, tenants: [t2])}
 
-        let!(:vmt3) { create(:virtual_machine_template, compute_site: cs2, managed_by_atmosphere: true)}
+        let!(:vmt3) { create(:virtual_machine_template, tenant: t2, managed_by_atmosphere: true)}
         let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
         let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow")}
-        let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, compute_site: cs2, managed_by_atmosphere: true)}
-        let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, compute_sites: [cs2], virtual_machines: [vm_shared])}
+        let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, tenant: t2, managed_by_atmosphere: true)}
+        let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, tenants: [t2], virtual_machines: [vm_shared])}
 
         it 'spawns a vm for an unrestricted appliance' do
-          appl = create(:appliance, appliance_type: at_with_site, fund: fund, compute_sites: [cs1, cs2])
+          appl = create(:appliance, appliance_type: at_with_tenant, fund: fund, tenants: [t1, t2])
 
           described_class.new(appl).execute
 
@@ -462,7 +462,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'unable to spawn vm for a restricted appliance' do
-          appl = create(:appliance, appliance_type: at_with_site, fund: fund, compute_sites: [cs2])
+          appl = create(:appliance, appliance_type: at_with_tenant, fund: fund, tenants: [t2])
 
           described_class.new(appl).execute
 
@@ -471,7 +471,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'spawns vm for a restricted appliance when there are matching templates' do
-          appl = create(:appliance, appliance_type: at_with_two_sites, fund: fund, compute_sites: [cs2])
+          appl = create(:appliance, appliance_type: at_with_two_tenants, fund: fund, tenants: [t2])
 
           described_class.new(appl).execute
 
@@ -480,7 +480,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'reuses vm which satisfies appliance restrictions' do
-          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, compute_sites: [cs2], appliance_configuration_instance: a_shared.appliance_configuration_instance)
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, tenants: [t2], appliance_configuration_instance: a_shared.appliance_configuration_instance)
 
           described_class.new(appl).execute
 
@@ -490,7 +490,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'does not reuse vm which violates appliance restrictions' do
-          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, compute_sites: [cs1], appliance_configuration_instance: a_shared.appliance_configuration_instance)
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: shareable_at, fund: fund, tenants: [t1], appliance_configuration_instance: a_shared.appliance_configuration_instance)
 
           described_class.new(appl).execute
 
@@ -502,7 +502,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     context 'dev mode properties' do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
-      let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
+      let!(:vmt) { create(:virtual_machine_template, tenant: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
       let(:appl_vm_manager) do
@@ -519,7 +519,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       context 'when preferences are not set in appliance' do
         it 'uses preferences from AT' do
-          appl = create(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          appl = create(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
 
           expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
             expect(flavor.cpu).to eq 2
@@ -531,7 +531,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       context 'when preferences set in appliance' do
         before do
-          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
           @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end

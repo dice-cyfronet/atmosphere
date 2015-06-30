@@ -49,13 +49,13 @@ module Atmosphere
       dependent: :nullify,
       class_name: 'Atmosphere::MigrationJob'
 
-    # Required for API (returning all compute sites on which a given
-    # AT can be deployed). By allowed compute site we understan active compute site
+    # Required for API (returning all tenants on which a given
+    # AT can be deployed). By allowed tenant we understan active tenant
     # with VMT installed.
-    has_many :compute_sites,
-             -> { where(atmosphere_compute_sites: {active: true}).uniq },
+    has_many :tenants,
+             -> { where(atmosphere_tenants: {active: true}).uniq },
              through: :virtual_machine_templates,
-             class_name: 'Atmosphere::ComputeSite'
+             class_name: 'Atmosphere::Tenant'
 
     validates :visible_to, presence: true
 
@@ -120,10 +120,10 @@ module Atmosphere
       where(query, state)
     end
 
-    scope :with_vmt, ->(cs_site_id, vmt_id_at_site) do
-      joins(virtual_machine_templates: :compute_site).
+    scope :with_vmt, ->(t_tenant_id, vmt_id_at_site) do
+      joins(virtual_machine_templates: :tenant).
       where(
-        atmosphere_compute_sites: { site_id: cs_site_id },
+        atmosphere_tenants: { tenant_id: t_tenant_id },
         atmosphere_virtual_machine_templates: { id_at_site: vmt_id_at_site }
       )
     end

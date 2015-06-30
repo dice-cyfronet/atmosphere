@@ -22,7 +22,7 @@ module Atmosphere
         end
 
         def appliance_types
-          appliance_types = @appliance_types.active.includes(:compute_sites).references(:compute_sites).
+          appliance_types = @appliance_types.active.includes(:tenants).references(:tenants).
               includes(:appliance_configuration_templates).references(:appliance_configuration_templates).order(:id)
           appliance_types = pdp.filter(appliance_types, params[:mode])
           render json: { appliance_types: appliance_types }, serializer: ClewApplianceTypesSerializer

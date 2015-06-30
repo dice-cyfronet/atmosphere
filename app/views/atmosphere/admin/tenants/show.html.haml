@@ -8,44 +8,44 @@
   %table.show-table
     %tr
       %td= t('compute_sites.site')
-      %td.monospace= @compute_site.site_id
+      %td.monospace= @tenant.tenant_id
     %tr
       %td= t('compute_sites.name')
-      %td= @compute_site.name
+      %td= @tenant.name
     %tr
       %td= t('compute_sites.location')
-      %td= @compute_site.location
+      %td= @tenant.location
     %tr
       %td= t('compute_sites.site_type')
-      %td= @compute_site.site_type
+      %td= @tenant.site_type
     %tr
       %td= t('compute_sites.technology')
-      %td= @compute_site.technology
+      %td= @tenant.technology
     %tr
       %td= t('compute_sites.http_proxy_url')
-      %td.monospace= @compute_site.http_proxy_url
+      %td.monospace= @tenant.http_proxy_url
     %tr
       %td= t('compute_sites.https_proxy_url')
-      %td.monospace= @compute_site.https_proxy_url
+      %td.monospace= @tenant.https_proxy_url
     %tr
       %td= t('compute_sites.configuration')
-      %td.monospace= @compute_site.config
+      %td.monospace= @tenant.config
     %tr
       %td= t('compute_sites.template_filters')
-      %td.monospace= @compute_site.template_filters
+      %td.monospace= @tenant.template_filters
     %tr
       %td= t('compute_sites.wrangler_url')
-      %td.monospace= @compute_site.wrangler_url
+      %td.monospace= @tenant.wrangler_url
     %tr
       %td= t('compute_sites.wrangler_username')
-      %td.monospace= @compute_site.wrangler_username
+      %td.monospace= @tenant.wrangler_username
     %tr
       %td= t('compute_sites.wrangler_password')
-      %td.monospace= @compute_site.wrangler_password
+      %td.monospace= @tenant.wrangler_password
 
 %p
   .btn-group
-    = link_to edit_admin_compute_site_path(@compute_site),
+    = link_to edit_admin_compute_site_path(@tenant),
       class: 'btn btn-warning', title: t('edit') do
       =icon 'bars'
       = t('edit')

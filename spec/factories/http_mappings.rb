@@ -5,6 +5,6 @@ FactoryGirl.define do
     base_url "http://base.url"
     appliance
     port_mapping_template
-    compute_site
+    tenant
   end
 end

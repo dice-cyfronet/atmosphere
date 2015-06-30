@@ -1,13 +1,13 @@
 #
-# Compute site serializer. For normal user basic compute site data
+# Tenant serializer. For normal user basic tenant data
 # is returned. When current user has admin role than additionally
-# compute site configuration is returned.
+# tenant configuration is returned.
 #
 module Atmosphere
-  class ComputeSiteSerializer < ActiveModel::Serializer
+  class TenantSerializer < ActiveModel::Serializer
     embed :ids
 
-    attributes :id, :site_id, :name, :location, :site_type, :technology
+    attributes :id, :tenant_id, :name, :location, :site_type, :technology
 
     def attributes
       hash = super

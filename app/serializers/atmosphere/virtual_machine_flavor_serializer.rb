@@ -4,7 +4,7 @@ module Atmosphere
 
     attributes :id, :flavor_name,
       :cpu, :memory, :hdd, :hourly_cost,
-      :compute_site_id, :id_at_site,
+      :tenant_id, :id_at_site,
       :supported_architectures, :active, :cost_map
 
     private

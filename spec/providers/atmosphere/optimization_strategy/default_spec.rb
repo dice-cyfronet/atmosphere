@@ -47,7 +47,7 @@ describe Atmosphere::OptimizationStrategy::Default do
     before do
       create(:virtual_machine_template,
              appliance_type: shareable_appl_type,
-             compute_site: openstack)
+             tenant: openstack)
     end
 
     context 'development mode' do
@@ -55,40 +55,40 @@ describe Atmosphere::OptimizationStrategy::Default do
       let(:dev_appliance_set) { create(:dev_appliance_set) }
       let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not allow to reuse vm for dev appliance' do
-        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-        appl2 = Atmosphere::Appliance.new(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
+        appl2 = Atmosphere::Appliance.new(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
         subject = Atmosphere::OptimizationStrategy::Default.new(appl2)
         expect(subject.can_reuse_vm?).to be_falsy
       end
 
       it 'does not reuse available vm if it is in dev mode' do
-        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
-        appl2 = Atmosphere::Appliance.new(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
+        appl2 = Atmosphere::Appliance.new(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
         subject = Atmosphere::OptimizationStrategy::Default.new(appl2)
         expect(subject.vm_to_reuse).to be nil
       end
     end
 
-    it 'scopes potential VMs to ones on compute sites funded by chosen fund' do
-      nonfunded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
+    it 'scopes potential VMs to ones on tenants funded by chosen fund' do
+      nonfunded_t = create(:openstack_with_flavors, funds: [create(:fund)])
       a = create(:appliance,
                  appliance_type: not_shareable_appl_type,
                  fund: fund,
-                 compute_sites: Atmosphere::ComputeSite.all)
+                 tenants: Atmosphere::Tenant.all)
       create(:virtual_machine_template,
              appliance_type: a.appliance_type,
-             compute_site: nonfunded_cs)
+             tenant: nonfunded_t)
       create(:virtual_machine_template,
              appliance_type: a.appliance_type,
-             compute_site: openstack)
-      supported_appliance_types = Atmosphere::ComputeSite.all.map do |cs|
-        cs.virtual_machine_templates.map(&:appliance_type)
+             tenant: openstack)
+      supported_appliance_types = Atmosphere::Tenant.all.map do |t|
+        t.virtual_machine_templates.map(&:appliance_type)
       end
       expect(supported_appliance_types).to all(include(a.appliance_type))
       default_strategy = Atmosphere::OptimizationStrategy::Default.new(a)
       vm_candidates = default_strategy.send(:vmt_candidates_for, a)
       expect(vm_candidates.count).to eq 1
-      expect(vm_candidates.first.compute_site).to eq openstack
+      expect(vm_candidates.first.tenant).to eq openstack
     end
   end
 end

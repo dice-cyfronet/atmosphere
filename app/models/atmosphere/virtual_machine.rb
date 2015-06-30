@@ -40,8 +40,8 @@ module Atmosphere
       class_name: 'Atmosphere::VirtualMachineTemplate',
       foreign_key: 'virtual_machine_template_id'
 
-    belongs_to :compute_site,
-      class_name: 'Atmosphere::ComputeSite'
+    belongs_to :tenant,
+      class_name: 'Atmosphere::Tenant'
 
     belongs_to :virtual_machine_flavor,
       class_name: 'Atmosphere::VirtualMachineFlavor'
@@ -59,7 +59,7 @@ module Atmosphere
               presence: true
 
     validates :id_at_site,
-              uniqueness: { scope: :compute_site_id }
+              uniqueness: { scope: :tenant_id }
 
     validates :state, inclusion: ALLOWED_STATES
 
@@ -80,7 +80,7 @@ module Atmosphere
           appliance_configuration_instance_id:
             appliance.appliance_configuration_instance_id
         },
-        compute_site: appliance.compute_sites
+        tenant: appliance.tenants
       )
     end
 
@@ -93,7 +93,7 @@ module Atmosphere
     end
 
     def uuid
-      "#{compute_site.site_id}-vm-#{id_at_site}"
+      "#{tenant.tenant_id}-vm-#{id_at_site}"
     end
 
     def reboot
@@ -150,11 +150,11 @@ module Atmosphere
       return unless pmts
       already_added_mapping_tmpls = port_mappings ? port_mappings.collect {|m| m.port_mapping_template} : []
       to_add = pmts.select {|pmt| pmt.application_protocol.none?} - already_added_mapping_tmpls
-      compute_site.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
+      tenant.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
     end
 
     def delete_dnat(ip = self.ip)
-      compute_site.dnat_client.remove(ip)
+      tenant.dnat_client.remove(ip)
     end
 
     def update_in_monitoring
@@ -224,7 +224,7 @@ module Atmosphere
             logger: 'error',
             extra: {
               id_at_site: id_at_site,
-              compute_site_id: compute_site_id
+              tenant_id: tenant_id
             }
           }
         )
@@ -263,7 +263,7 @@ module Atmosphere
     end
 
     def cloud_client
-      @cloud_client ||= compute_site.cloud_client
+      @cloud_client ||= tenant.cloud_client
     end
   end
 end

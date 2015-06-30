@@ -3,7 +3,7 @@ module Atmosphere
 
     attribute :appliance_types
 
-    attribute :compute_sites
+    attribute :tenants
 
     def appliance_types
       object[:appliance_types].map { |at| map_at(at) }
@@ -19,19 +19,19 @@ module Atmosphere
         preference_memory: at.preference_memory,
         preference_disk: at.preference_disk,
         matched_flavor: map_flavor(flavor),
-        compute_site_ids: at.compute_site_ids,
+        tenant_ids: at.tenant_ids,
         appliance_configuration_templates: at.appliance_configuration_templates
       }
     end
 
-    def compute_sites
-      compute_sites = {}
+    def tenants
+      tenants = {}
       object[:appliance_types].each do |at|
-        at.compute_sites.each do |cs|
-          compute_sites[cs.id] ||= cs
+        at.tenants.each do |t|
+          tenants[t.id] ||= t
         end
       end
-      compute_sites.values.map { |cs| map_cs(cs) }
+      tenants.values.map { |t| map_t(t) }
     end
 
     def map_flavor(flavor)
@@ -41,7 +41,7 @@ module Atmosphere
         cpu: flavor.cpu,
         memory: flavor.memory,
         hdd: flavor.hdd,
-        compute_site_id: flavor.compute_site_id,
+        tenant_id: flavor.tenant_id,
         id_at_site: flavor.id_at_site,
         supported_architectures: flavor.supported_architectures,
         active: flavor.active,
@@ -50,19 +50,19 @@ module Atmosphere
       }
     end
 
-    def map_cs(cs)
+    def map_t(t)
       {
-        id: cs.id,
-        site_id: cs.site_id,
-        name: cs.name,
-        location: cs.location,
-        site_type: cs.site_type,
-        technology: cs.technology,
-        http_proxy_url: cs.http_proxy_url,
-        https_proxy_url: cs.https_proxy_url,
+        id: t.id,
+        tenant_id: t.tenant_id,
+        name: t.name,
+        location: t.location,
+        site_type: t.site_type,
+        technology: t.technology,
+        http_proxy_url: t.http_proxy_url,
+        https_proxy_url: t.https_proxy_url,
         config: "SANITIZED",
-        template_filters: cs.template_filters,
-        active: cs.active
+        template_filters: t.template_filters,
+        active: t.active
       }
     end
 

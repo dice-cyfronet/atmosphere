@@ -6,6 +6,6 @@ module Atmosphere
     embed :ids
 
     attributes :id, :id_at_site, :name, :state, :ip, :virtual_machine_flavor_id
-    has_one :compute_site
+    has_one :tenant
   end
 end

@@ -38,7 +38,7 @@ module Atmosphere
 
     private
     def delete_dnat
-      virtual_machine.compute_site.dnat_client.remove_port_mapping(self)
+      virtual_machine.tenant.dnat_client.remove_port_mapping(self)
     end
 
   end

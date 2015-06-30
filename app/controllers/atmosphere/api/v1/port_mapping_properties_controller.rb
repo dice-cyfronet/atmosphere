@@ -48,7 +48,7 @@ module Atmosphere
         private
 
         def port_mapping_property_params
-          params.require(:port_mapping_property).permit(:key, :value, :compute_site_id, :port_mapping_template_id)
+          params.require(:port_mapping_property).permit(:key, :value, :tenant_id, :port_mapping_template_id)
         end
 
         def initialize_manager

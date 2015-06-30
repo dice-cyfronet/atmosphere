@@ -120,7 +120,7 @@ RSpec::Matchers.define :port_mapping_property_eq do |expected|
     (actual['key'] == expected.key) &&
     (actual['value'] == expected.value) &&
     ((expected.port_mapping_template && (actual['port_mapping_template_id'] == expected.port_mapping_template_id)) or
-        (expected.compute_site && (actual['compute_site_id'] == expected.compute_site.id)))
+        (expected.tenant && (actual['tenant_id'] == expected.tenant.id)))
   end
 end
 
@@ -129,8 +129,8 @@ RSpec::Matchers.define :be_updated_by_port_mapping_property do |expected|
     (actual['key'] == expected[:key] || expected[:key].blank?) &&
     (actual['value'] == expected[:value] || expected[:value].blank?) &&
     ((actual['port_mapping_template_id'] == expected[:port_mapping_template_id]) or
-        (actual['compute_site_id'] == expected[:compute_site_id]) or
-        (expected[:port_mapping_template_id].blank? && expected[:compute_site_id].blank?))
+        (actual['tenant_id'] == expected[:tenant_id]) or
+        (expected[:port_mapping_template_id].blank? && expected[:tenant_id].blank?))
   end
 end
 
@@ -215,7 +215,7 @@ RSpec::Matchers.define :vm_eq do |expected|
     actual['name'] == expected.name &&
     actual['state'] == expected.state.to_s &&
     actual['ip'] == expected.ip &&
-    actual['compute_site_id'] == expected.compute_site_id
+    actual['tenant_id'] == expected.tenant_id
     # admin
     # actual['virtual_machine_template_id'] == expected.virtual_machine_template_id
     # actual['appliance_ids'] == TODO
@@ -249,12 +249,12 @@ RSpec::Matchers.define :at_be_updated_by do |expected|
   end
 end
 
-RSpec::Matchers.define :vmt_fog_data_equals do |fog_vmt, site|
+RSpec::Matchers.define :vmt_fog_data_equals do |fog_vmt, tenant|
   match do |actual|
     actual.id_at_site == fog_vmt['id'] &&
     actual.name == fog_vmt['name'] &&
     actual.state.to_s == fog_vmt['status'].downcase &&
-    actual.compute_site == site
+    actual.tenant == tenant
   end
 end
 
@@ -263,15 +263,15 @@ RSpec::Matchers.define :vm_fog_data_equals do |fog_vm_data, template|
     actual.id_at_site == fog_vm_data.id &&
     actual.name == fog_vm_data.name &&
     actual.state.to_s == fog_vm_data.state.downcase &&
-    actual.compute_site == template.compute_site &&
+    actual.tenant == template.tenant &&
     actual.source_template == template
   end
 end
 
-RSpec::Matchers.define :compute_site_basic_eq do |expected|
+RSpec::Matchers.define :tenant_basic_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
-    actual['site_id'] == expected.site_id &&
+    actual['tenant_id'] == expected.tenant_id &&
     actual['name'] == expected.name &&
     actual['location'] == expected.location &&
     actual['site_type'] == expected.site_type &&
@@ -280,10 +280,10 @@ RSpec::Matchers.define :compute_site_basic_eq do |expected|
   end
 end
 
-RSpec::Matchers.define :compute_site_full_eq do |expected|
+RSpec::Matchers.define :tenant_full_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
-    actual['site_id'] == expected.site_id &&
+    actual['tenant_id'] == expected.tenant_id &&
     actual['name'] == expected.name &&
     actual['location'] == expected.location &&
     actual['site_type'] == expected.site_type &&
@@ -326,7 +326,7 @@ RSpec::Matchers.define :vmt_eq do |expected|
         actual['name'] == expected.name &&
         actual['state'] == expected.state.to_s &&
         actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
-        actual['compute_site_id'] == expected.compute_site_id &&
+        actual['tenant_id'] == expected.tenant_id &&
         actual['appliance_type_id'] == expected.appliance_type_id &&
         actual['architecture'] == expected.architecture.to_s
   end

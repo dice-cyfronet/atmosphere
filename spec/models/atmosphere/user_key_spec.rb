@@ -15,10 +15,10 @@ require 'rails_helper'
 
 describe Atmosphere::UserKey do
 
-  let (:cs) {create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
+  let (:t) {create(:tenant, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}')}
   before do
     Fog.mock!
-    cs.cloud_client.reset_data
+    t.cloud_client.reset_data
   end
 
   subject { create(:user_key) }
@@ -32,24 +32,24 @@ describe Atmosphere::UserKey do
   end
   it { should belong_to :user }
 
-  it 'should import key to cloud site' do
+  it 'should import key to tenant' do
     subject.name
-    Atmosphere::ComputeSite.all.each { |cs| subject.import_to_cloud(cs) }
-    Atmosphere::ComputeSite.all.each do |cs|
-      keypair = cs.cloud_client.key_pairs.select{|k| k.name == subject.id_at_site}.first
+    Atmosphere::Tenant.all.each { |t| subject.import_to_cloud(t) }
+    Atmosphere::Tenant.all.each do |t|
+      keypair = t.cloud_client.key_pairs.select{|k| k.name == subject.id_at_site}.first
       expect(keypair.name).to eq(subject.id_at_site)
     end
   end
 
   it 'should not raise error if key is imported twice' do
     subject.name
-    Atmosphere::ComputeSite.all.each { |cs| subject.import_to_cloud(cs); subject.import_to_cloud(cs) }
+    Atmosphere::Tenant.all.each { |t| subject.import_to_cloud(t); subject.import_to_cloud(t) }
   end
 
   # there is no need for equivalent test for amazon because AWS does not raise error when trying to deleting key that was not imported
-  it 'should handle key not found error when deleting key from openstack cloud site' do
-    cs = create(:openstack_compute_site)
-    allow(cs.cloud_client).to receive(:delete_key_pair).and_raise(Fog::Compute::OpenStack::NotFound.new)
+  it 'should handle key not found error when deleting key from openstack tenant' do
+    t = create(:openstack_tenant)
+    allow(t.cloud_client).to receive(:delete_key_pair).and_raise(Fog::Compute::OpenStack::NotFound.new)
     subject.destroy
   end
 

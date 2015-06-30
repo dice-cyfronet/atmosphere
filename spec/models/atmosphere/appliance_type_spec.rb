@@ -192,15 +192,15 @@ describe Atmosphere::ApplianceType do
     end
   end
 
-  it 'allow to be started only on active compute site' do
-    active_cs = create(:compute_site, active: true)
-    inactive_cs = create(:compute_site, active: false)
-    active_vmt = create(:virtual_machine_template, compute_site: active_cs)
-    inactive_vmt = create(:virtual_machine_template, compute_site: inactive_cs)
+  it 'allow to be started only on active tenant' do
+    active_t = create(:tenant, active: true)
+    inactive_t = create(:tenant, active: false)
+    active_vmt = create(:virtual_machine_template, tenant: active_t)
+    inactive_vmt = create(:virtual_machine_template, tenant: inactive_t)
     at = create(:appliance_type,
       virtual_machine_templates: [active_vmt, inactive_vmt])
 
-    expect(at.compute_sites).to eq [active_cs]
+    expect(at.tenants).to eq [active_t]
   end
 
   context '#appropriate_for?' do

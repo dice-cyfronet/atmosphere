@@ -3,16 +3,16 @@
 
 %ul.nav.nav-tabs
   - @virtual_machine_templates.each_with_index do |kv, i|
-    - cs = kv.first
+    - t = kv.first
     %li{ class: ('active' if i==0) }
-      %a(href="##{cs.site_id}-tab" data-toggle='tab')
-        = cs.name
+      %a(href="##{t.tenant_id}-tab" data-toggle='tab')
+        = t.name
 
 %p
   .tab-content
     - @virtual_machine_templates.each_with_index do |kv, i|
-      - cs, vmts = kv
-      .tab-pane{ id: "#{cs.site_id}-tab", class: ("active" if i==0) }
+      - t, vmts = kv
+      .tab-pane{ id: "#{t.tenant_id}-tab", class: ("active" if i==0) }
         %table.vmt-table
           %th.uuid= t('virtual_machine_templates.uuid')
           %th= t('virtual_machine_templates.name')

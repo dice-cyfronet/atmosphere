@@ -13,9 +13,9 @@ module Atmosphere
         )
       end
 
-      def perform(cs_id, params)
-        cs = ComputeSite.find(cs_id)
-        c = cs.cloud_client
+      def perform(t_id, params)
+        t = Tenant.find(t_id)
+        c = t.cloud_client
         c.servers.create_orig(params)
       end
     end

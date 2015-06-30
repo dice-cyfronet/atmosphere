@@ -23,11 +23,11 @@ module Atmosphere
     private
 
     def tag(vm, tags_map)
-      cs = vm.compute_site
-      if ['openstack', 'rackspace'].include?(cs.technology)
-        tag_vm_on_openstack(vm, cs.cloud_client, tags_map)
+      t = vm.tenant
+      if ['openstack', 'rackspace'].include?(t.technology)
+        tag_vm_on_openstack(vm, t.cloud_client, tags_map)
       else
-        tag_vm(vm.id_at_site, cs.cloud_client, tags_map)
+        tag_vm(vm.id_at_site, t.cloud_client, tags_map)
       end
     end
 

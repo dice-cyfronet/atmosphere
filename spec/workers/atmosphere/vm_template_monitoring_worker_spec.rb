@@ -13,8 +13,8 @@ describe Atmosphere::VmTemplateMonitoringWorker do
     it { should be_processed_in :monitoring }
   end
 
-  context 'updating cloud site images' do
-    let(:cyfronet_folsom) { create(:compute_site, site_id: 'cyfronet-folsom',config: '{"provider": "openstack", "openstack_auth_url": "http://10.100.0.2:5000/v2.0/tokens", "openstack_api_key": "key", "openstack_username": "user"}') }
+  context 'updating tenant images' do
+    let(:cyfronet_folsom) { create(:tenant, tenant_id: 'cyfronet-folsom',config: '{"provider": "openstack", "openstack_auth_url": "http://10.100.0.2:5000/v2.0/tokens", "openstack_api_key": "key", "openstack_username": "user"}') }
     let(:ubuntu_data) { image 'ubuntu', 'Ubuntu 12.04', :ACTIVE }
     let(:arch_data)   { image 'arch',   'Arch',         :SAVING }
     let(:centos_data) { image 'centos', 'Centos',       :ERROR }
@@ -56,7 +56,7 @@ describe Atmosphere::VmTemplateMonitoringWorker do
     end
 
     context 'when some templates exist' do
-      let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', compute_site: cyfronet_folsom, state: :saving) }
+      let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', tenant: cyfronet_folsom, state: :saving) }
 
       it 'does not create duplicated templates' do
         expect {
@@ -74,11 +74,11 @@ describe Atmosphere::VmTemplateMonitoringWorker do
 
     context 'when template removed' do
       before do
-        create(:virtual_machine_template, id_at_site: 'ubuntu', compute_site: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'arch', compute_site: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'centos', compute_site: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'old_vmt', compute_site: cyfronet_folsom, created_at: 6.minutes.ago)
-        create(:virtual_machine_template, id_at_site: 'young_vmt', compute_site: cyfronet_folsom)
+        create(:virtual_machine_template, id_at_site: 'ubuntu', tenant: cyfronet_folsom)
+        create(:virtual_machine_template, id_at_site: 'arch', tenant: cyfronet_folsom)
+        create(:virtual_machine_template, id_at_site: 'centos', tenant: cyfronet_folsom)
+        create(:virtual_machine_template, id_at_site: 'old_vmt', tenant: cyfronet_folsom, created_at: 6.minutes.ago)
+        create(:virtual_machine_template, id_at_site: 'young_vmt', tenant: cyfronet_folsom)
       end
 
       it 'removes deleted template' do
@@ -97,7 +97,7 @@ describe Atmosphere::VmTemplateMonitoringWorker do
         expect(logger).to receive(:error)
         allow(logger).to receive(:debug)
 
-        allow_any_instance_of(Atmosphere::ComputeSite)
+        allow_any_instance_of(Atmosphere::Tenant)
           .to receive(:cloud_client).and_return(cloud_client)
         allow(cloud_client).to receive(:images).and_raise(Excon::Errors::Unauthorized.new 'error')
       end

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe Atmosphere::ComputeSiteHttpMappings do
+describe Atmosphere::TenantHttpMappings do
 
-  let(:cs)   { create(:compute_site) }
-  let(:vm)   { create(:virtual_machine, compute_site: cs) }
+  let(:t)   { create(:tenant) }
+  let(:vm)   { create(:virtual_machine, tenant: t) }
   let(:appl) { create(:appliance, virtual_machines: [vm]) }
   let(:pmt)  { create(:port_mapping_template) }
 
@@ -11,7 +11,7 @@ describe Atmosphere::ComputeSiteHttpMappings do
     create(:http_mapping,
       appliance: appl,
       application_protocol: :http,
-      compute_site: cs,
+      tenant: t,
       port_mapping_template: pmt)
   end
 
@@ -19,7 +19,7 @@ describe Atmosphere::ComputeSiteHttpMappings do
     create(:http_mapping,
       appliance: appl,
       application_protocol: :https,
-      compute_site: cs,
+      tenant: t,
       port_mapping_template: pmt)
   end
 
@@ -29,9 +29,9 @@ describe Atmosphere::ComputeSiteHttpMappings do
       port_mapping_template: pmt)
   end
 
-  subject { Atmosphere::ComputeSiteHttpMappings.new(cs) }
+  subject { Atmosphere::TenantHttpMappings.new(t) }
 
-  it 'returns comptue site mappings' do
+  it 'returns tenant mappings' do
     mappings = subject.find
 
     expect(mappings.size).to eq 2

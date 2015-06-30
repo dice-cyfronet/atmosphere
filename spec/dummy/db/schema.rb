@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150410124111) do
+ActiveRecord::Schema.define(version: 20150630095410) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,11 +33,6 @@ ActiveRecord::Schema.define(version: 20150410124111) do
   end
 
   add_index "atmosphere_actions", ["appliance_id"], name: "index_atmosphere_actions_on_appliance_id", using: :btree
-
-  create_table "atmosphere_appliance_compute_sites", force: :cascade do |t|
-    t.integer "appliance_id"
-    t.integer "compute_site_id"
-  end
 
   create_table "atmosphere_appliance_configuration_instances", force: :cascade do |t|
     t.text     "payload"
@@ -69,6 +64,11 @@ ActiveRecord::Schema.define(version: 20150410124111) do
   end
 
   add_index "atmosphere_appliance_sets", ["user_id"], name: "index_atmosphere_appliance_sets_on_user_id", using: :btree
+
+  create_table "atmosphere_appliance_tenants", force: :cascade do |t|
+    t.integer "appliance_id"
+    t.integer "tenant_id"
+  end
 
   create_table "atmosphere_appliance_types", force: :cascade do |t|
     t.string   "name",                                null: false
@@ -115,31 +115,6 @@ ActiveRecord::Schema.define(version: 20150410124111) do
     t.string   "currency",      default: "EUR",                    null: false
     t.integer  "amount_billed", default: 0,                        null: false
     t.integer  "user_id"
-  end
-
-  create_table "atmosphere_compute_site_funds", force: :cascade do |t|
-    t.integer "compute_site_id"
-    t.integer "fund_id"
-  end
-
-  create_table "atmosphere_compute_sites", force: :cascade do |t|
-    t.string   "site_id",                                     null: false
-    t.string   "name"
-    t.string   "location"
-    t.string   "site_type",               default: "private"
-    t.string   "technology"
-    t.string   "http_proxy_url"
-    t.string   "https_proxy_url"
-    t.text     "config"
-    t.text     "template_filters"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "wrangler_url"
-    t.string   "wrangler_username"
-    t.string   "wrangler_password"
-    t.boolean  "active",                  default: true
-    t.string   "nic_provider_class_name"
-    t.text     "nic_provider_config"
   end
 
   create_table "atmosphere_deployments", force: :cascade do |t|
@@ -205,14 +180,14 @@ ActiveRecord::Schema.define(version: 20150410124111) do
   create_table "atmosphere_migration_jobs", force: :cascade do |t|
     t.integer  "appliance_type_id"
     t.integer  "virtual_machine_template_id"
-    t.integer  "compute_site_source_id"
-    t.integer  "compute_site_destination_id"
+    t.integer  "tenant_source_id"
+    t.integer  "tenant_destination_id"
     t.text     "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "compute_site_source_id", "compute_site_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
+  add_index "atmosphere_migration_jobs", ["appliance_type_id", "virtual_machine_template_id", "tenant_source_id", "tenant_destination_id"], name: "atmo_mj_ix", unique: true, using: :btree
 
   create_table "atmosphere_os_families", force: :cascade do |t|
     t.string "name", default: "Windows", null: false
@@ -245,6 +220,31 @@ ActiveRecord::Schema.define(version: 20150410124111) do
     t.integer  "virtual_machine_id",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "atmosphere_tenant_funds", force: :cascade do |t|
+    t.integer "tenant_id"
+    t.integer "fund_id"
+  end
+
+  create_table "atmosphere_tenants", force: :cascade do |t|
+    t.string   "tenant_id",                                   null: false
+    t.string   "name"
+    t.string   "location"
+    t.string   "tenant_type",             default: "private"
+    t.string   "technology"
+    t.string   "http_proxy_url"
+    t.string   "https_proxy_url"
+    t.text     "config"
+    t.text     "template_filters"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "wrangler_url"
+    t.string   "wrangler_username"
+    t.string   "wrangler_password"
+    t.boolean  "active",                  default: true
+    t.string   "nic_provider_class_name"
+    t.text     "nic_provider_config"
   end
 
   create_table "atmosphere_user_funds", force: :cascade do |t|
@@ -343,23 +343,23 @@ ActiveRecord::Schema.define(version: 20150410124111) do
   add_foreign_key "atmosphere_dev_mode_property_sets", "atmosphere_appliances", column: "appliance_id"
   add_foreign_key "atmosphere_endpoints", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
   add_foreign_key "atmosphere_http_mappings", "atmosphere_appliances", column: "appliance_id"
-  add_foreign_key "atmosphere_http_mappings", "atmosphere_compute_sites", column: "compute_site_id"
   add_foreign_key "atmosphere_http_mappings", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
+  add_foreign_key "atmosphere_http_mappings", "atmosphere_tenants", column: "compute_site_id"
   add_foreign_key "atmosphere_migration_jobs", "atmosphere_appliance_types", column: "appliance_type_id", name: "atmo_mj_at_fk"
-  add_foreign_key "atmosphere_migration_jobs", "atmosphere_compute_sites", column: "compute_site_destination_id", name: "atmo_mj_csd_fk"
-  add_foreign_key "atmosphere_migration_jobs", "atmosphere_compute_sites", column: "compute_site_source_id", name: "atmo_mj_css_fk"
+  add_foreign_key "atmosphere_migration_jobs", "atmosphere_tenants", column: "tenant_destination_id", name: "atmo_mj_csd_fk"
+  add_foreign_key "atmosphere_migration_jobs", "atmosphere_tenants", column: "tenant_source_id", name: "atmo_mj_css_fk"
   add_foreign_key "atmosphere_migration_jobs", "atmosphere_virtual_machine_templates", column: "virtual_machine_template_id", name: "atmo_mj_vmt_fk"
-  add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_compute_sites", column: "compute_site_id"
   add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
+  add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_tenants", column: "compute_site_id"
   add_foreign_key "atmosphere_port_mapping_templates", "atmosphere_appliance_types", column: "appliance_type_id"
   add_foreign_key "atmosphere_port_mapping_templates", "atmosphere_dev_mode_property_sets", column: "dev_mode_property_set_id"
   add_foreign_key "atmosphere_port_mappings", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
   add_foreign_key "atmosphere_port_mappings", "atmosphere_virtual_machines", column: "virtual_machine_id"
   add_foreign_key "atmosphere_user_keys", "atmosphere_users", column: "user_id"
-  add_foreign_key "atmosphere_virtual_machine_flavors", "atmosphere_compute_sites", column: "compute_site_id"
+  add_foreign_key "atmosphere_virtual_machine_flavors", "atmosphere_tenants", column: "compute_site_id"
   add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_appliance_types", column: "appliance_type_id"
-  add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_compute_sites", column: "compute_site_id", name: "atmo_vmt_cs_fk"
+  add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_tenants", column: "compute_site_id", name: "atmo_vmt_cs_fk"
   add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_virtual_machines", column: "virtual_machine_id", name: "atmo_vmt_vm_fk"
-  add_foreign_key "atmosphere_virtual_machines", "atmosphere_compute_sites", column: "compute_site_id", name: "atmo_vm_cs_fk"
+  add_foreign_key "atmosphere_virtual_machines", "atmosphere_tenants", column: "compute_site_id", name: "atmo_vm_cs_fk"
   add_foreign_key "atmosphere_virtual_machines", "atmosphere_virtual_machine_templates", column: "virtual_machine_template_id", name: "atmo_vm_vmt_fk"
 end

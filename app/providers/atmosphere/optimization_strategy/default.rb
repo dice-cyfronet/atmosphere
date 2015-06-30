@@ -36,8 +36,8 @@ module Atmosphere
         VirtualMachineTemplate.where(
           appliance_type: appliance.appliance_type,
           state: 'active',
-          compute_site_id:
-            appliance.compute_sites.active.funded_by(appliance.fund)
+          tenant_id:
+            appliance.tenants.active.funded_by(appliance.fund)
         )
       end
 
@@ -75,7 +75,7 @@ module Atmosphere
           opt_flavors_and_tmpls_map = tmpls.inject({}) do |hsh, tmpl|
             opt_fl = (
               min_elements_by(
-                tmpl.compute_site.virtual_machine_flavors.active.select do |f|
+                tmpl.tenant.virtual_machine_flavors.active.select do |f|
                   f.supports_architecture?(tmpl.architecture) &&
                   f.memory >= min_mem &&
                   f.cpu >= min_cpu &&
@@ -108,7 +108,7 @@ module Atmosphere
         def min_mem
           @min_mem ||= to_i(options[:memory]) ||
             tmpls.first.appliance_type.preference_memory ||
-            (tmpls.first.compute_site.public? ? 1536 : 512)
+            (tmpls.first.tenant.public? ? 1536 : 512)
         end
 
         def min_cpu

@@ -154,7 +154,7 @@ describe Atmosphere::ApplianceVmsManager do
         allow(vm).to receive(:valid?).and_return(true)
 
         expect(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
-          with(id_at_site: 'server_id', compute_site: tmpl.compute_site).
+          with(id_at_site: 'server_id', tenant: tmpl.tenant).
           and_return(vm)
 
         expect(vm).to receive(:name=).with(name)

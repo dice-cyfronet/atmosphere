@@ -65,7 +65,7 @@ describe Atmosphere::Api::V1::ClewController do
                                     "url"=>httpm.url,
                                     "appliance_id"=>httpm.appliance_id,
                                     "port_mapping_template_id"=>httpm.port_mapping_template_id,
-                                    "compute_site_id"=>httpm.compute_site_id,
+                                    "tenant_id"=>httpm.tenant_id,
                                     "monitoring_status"=>httpm.monitoring_status,
                                     "custom_name"=>httpm.custom_name,
                                     "custom_url"=>httpm.custom_url
@@ -85,18 +85,18 @@ describe Atmosphere::Api::V1::ClewController do
                             [{"id"=>vm1.id,
                               "ip"=>vm1.ip,
                               "state"=>vm1.state,
-                              "compute_site"=>
-                                  {"id"=>cs.id,
-                                   "site_id"=>cs.site_id,
-                                   "name"=>cs.name,
-                                   "location"=>cs.location,
-                                   "site_type"=>cs.site_type,
-                                   "technology"=>cs.technology,
-                                   "http_proxy_url"=>cs.http_proxy_url,
-                                   "https_proxy_url"=>cs.https_proxy_url,
+                              "tenant"=>
+                                  {"id"=>t.id,
+                                   "tenant_id"=>t.tenant_id,
+                                   "name"=>t.name,
+                                   "location"=>t.location,
+                                   "site_type"=>t.site_type,
+                                   "technology"=>t.technology,
+                                   "http_proxy_url"=>t.http_proxy_url,
+                                   "https_proxy_url"=>t.https_proxy_url,
                                    "config"=>"SANITIZED",
-                                   "template_filters"=>cs.template_filters,
-                                   "active"=>cs.active},
+                                   "template_filters"=>t.template_filters,
+                                   "active"=>t.active},
                               "virtual_machine_flavor"=>nil,
                               "port_mappings"=>[{"id"=>pm.id,
                                                  "public_ip"=>pm.public_ip,
@@ -117,8 +117,8 @@ describe Atmosphere::Api::V1::ClewController do
       json_response['clew_appliance_instances']
     end
 
-    def cs
-      vm1.compute_site
+    def t
+      vm1.tenant
     end
   end
 
@@ -138,17 +138,17 @@ describe Atmosphere::Api::V1::ClewController do
       let!(:at3)  { create(:active_appliance_type, author: user) }
       let!(:at4)  { create(:active_appliance_type, visible_to: :all) }
 
-      let(:cs) { create(:compute_site) }
+      let(:t) { create(:tenant) }
 
-      let!(:vmt3) { create(:virtual_machine_template, compute_site: cs, appliance_type: at3) }
-      let!(:vmt4) { create(:virtual_machine_template, compute_site: cs, appliance_type: at4) }
+      let!(:vmt3) { create(:virtual_machine_template, tenant: t, appliance_type: at3) }
+      let!(:vmt4) { create(:virtual_machine_template, tenant: t, appliance_type: at4) }
 
       let!(:act1) { create(:appliance_configuration_template, appliance_type: at1) }
       let!(:act2) { create(:appliance_configuration_template, appliance_type: at2) }
       let!(:act3) { create(:appliance_configuration_template, appliance_type: at3) }
       let!(:act4) { create(:appliance_configuration_template, appliance_type: at4) }
 
-      let!(:flavor)   { create(:flavor, compute_site: cs) }
+      let!(:flavor)   { create(:flavor, tenant: t) }
 
       it 'returns 200' do
         get api("/clew/appliance_types", user)
@@ -160,7 +160,7 @@ describe Atmosphere::Api::V1::ClewController do
 
         expect(response.status).to eq 200
         expect(clew_at_response['appliance_types'].size).to eq 2
-        expect(clew_at_response['compute_sites'].size).to eq 3
+        expect(clew_at_response['tenants'].size).to eq 3
         expect(clew_at_response['appliance_types'][0]).to clew_at_eq at3
         expect(clew_at_response['appliance_types'][1]).to clew_at_eq at4
         expect(clew_at_response['appliance_types'][0]['matched_flavor']).to clew_flavor_eq  flavor
@@ -172,15 +172,15 @@ describe Atmosphere::Api::V1::ClewController do
 
     it 'does not return AT with visible_to owner when user is not owner' do
       user = create(:user)
-      cs = create(:compute_site)
-      create(:flavor, compute_site: cs)
+      t = create(:tenant)
+      create(:flavor, tenant: t)
 
       owned_at = create(:appliance_type, visible_to: :owner, author: user)
       create(:virtual_machine_template,
-             compute_site: cs, appliance_type: owned_at)
+             tenant: t, appliance_type: owned_at)
       not_owned_at = create(:appliance_type, visible_to: :owner)
       create(:virtual_machine_template,
-             compute_site: cs, appliance_type: not_owned_at)
+             tenant: t, appliance_type: not_owned_at)
 
       get api('/clew/appliance_types', user)
 

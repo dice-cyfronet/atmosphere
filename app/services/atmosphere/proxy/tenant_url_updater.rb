@@ -1,7 +1,7 @@
 module Atmosphere
-  class Proxy::ComputeSiteUrlUpdater
-    def initialize(compute_site, mappings_finder_class=::ComputeSiteHttpMappings, url_generator_class=Proxy::UrlGenerator)
-      @compute_site = compute_site
+  class Proxy::TenantUrlUpdater
+    def initialize(tenant, mappings_finder_class=::TenantHttpMappings, url_generator_class=Proxy::UrlGenerator)
+      @tenant = tenant
       @mappings_finder_class = mappings_finder_class
       @url_generator_class = url_generator_class
     end
@@ -16,11 +16,11 @@ module Atmosphere
     private
 
     def finder
-      @finder ||= @mappings_finder_class.new(@compute_site)
+      @finder ||= @mappings_finder_class.new(@tenant)
     end
 
     def url_generator
-      @url_generator ||= @url_generator_class.new(@compute_site)
+      @url_generator ||= @url_generator_class.new(@tenant)
     end
 
     def log_error(mapping)

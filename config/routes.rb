@@ -39,7 +39,7 @@ Atmosphere::Engine.routes.draw do
       end
       resources :appliance_configuration_templates, except: [:show]
     end
-    resources :compute_sites
+    resources :tenants
     resources :virtual_machines, only: [:index, :show] do
       member do
         post :save_as_template
@@ -55,7 +55,7 @@ Atmosphere::Engine.routes.draw do
     resources :virtual_machine_flavors, only: [:edit, :update]
     resources :user_keys, except: [:edit, :update]
     resources :funds
-    resources :compute_site_funds, only: [:create, :destroy]
+    resources :tenant_funds, only: [:create, :destroy]
     resources :user_funds, only: [:create, :destroy, :update]
     resources :billing_logs, only: [:index]
     resources :migration_jobs, only: [:index]
@@ -63,7 +63,7 @@ Atmosphere::Engine.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :compute_sites, only: [:index, :show]
+      resources :tenants, only: [:index, :show]
 
       resources :virtual_machine_flavors, only: [:index]
 

@@ -1,20 +1,20 @@
 require 'rails_helper'
 
-describe Atmosphere::Proxy::ComputeSiteAppliancesUpdater do
+describe Atmosphere::Proxy::TenantAppliancesUpdater do
 
-  let(:cs) { build(:compute_site) }
+  let(:t) { build(:tenant) }
 
   let(:finder) { double}
   let(:finder_class) { double }
   let(:updater_class) { double }
 
   before do
-    expect(finder_class).to receive(:new).with(cs).and_return(finder)
+    expect(finder_class).to receive(:new).with(t).and_return(finder)
   end
 
-  subject { Atmosphere::Proxy::ComputeSiteAppliancesUpdater.new(cs, finder_class, updater_class) }
+  subject { Atmosphere::Proxy::TenantAppliancesUpdater.new(t, finder_class, updater_class) }
 
-  it 'updates appliances with http mappings registered on compute site' do
+  it 'updates appliances with http mappings registered on tenant' do
     appl1 = double('appl1')
     appl2 = double('appl2')
     allow(finder).to receive(:find).and_return([appl1, appl2])

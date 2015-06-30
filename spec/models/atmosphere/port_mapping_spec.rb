@@ -28,7 +28,7 @@ describe Atmosphere::PortMapping do
   it 'calls remove port mapping method of Dnat Wrangler service when it is destroyed' do
     pm = create(:port_mapping)
     wrg = double('wrangler')
-    allow(pm.virtual_machine.compute_site)
+    allow(pm.virtual_machine.tenant)
       .to receive(:dnat_client).and_return(wrg)
 
     expect(wrg).to receive(:remove_port_mapping).with(pm)

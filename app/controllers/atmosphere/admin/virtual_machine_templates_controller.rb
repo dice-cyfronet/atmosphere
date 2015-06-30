@@ -27,8 +27,8 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
 
   # POST /virtual_machine_templates/1/migrate
   def migrate
-    cs_id = virtual_machine_template_params[:compute_site_id]
-    @virtual_machine_template.export(cs_id)
+    t_id = virtual_machine_template_params[:tenant_id]
+    @virtual_machine_template.export(t_id)
     redirect_to admin_virtual_machine_templates_url,
                 notice: 'Virtual machine template migration task was successfully enqueued.'
   end
@@ -59,7 +59,7 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
   # Only allow a trusted parameter "white list" through.
   def virtual_machine_template_params
     params.require(:virtual_machine_template).permit(:id_at_site, :name, :state,
-                                                     :compute_site_id,
+                                                     :tenant_id,
                                                      :virtual_machine_id,
                                                      :appliance_type_id)
   end

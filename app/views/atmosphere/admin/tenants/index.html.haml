@@ -17,23 +17,23 @@
       %th.actions
         = t('actions')
 
-    - @compute_sites.each do |compute_site|
+    - @tenants.each do |tenant|
       %tr
         %td.monospace
-          = compute_site.site_id
-        %td= compute_site.name
-        %td= compute_site.location
-        %td= compute_site.site_type
-        %td= compute_site.technology
+          = tenant.tenant_id
+        %td= tenant.name
+        %td= tenant.location
+        %td= tenant.site_type
+        %td= tenant.technology
         %td.actions
           .btn-group
-            = link_to admin_compute_site_path(compute_site),
+            = link_to admin_compute_site_path(tenant),
               class: 'btn btn-success btn-xs', title: t('compute_sites.show') do
               =icon 'bars'
-            = link_to edit_admin_compute_site_path(compute_site),
+            = link_to edit_admin_compute_site_path(tenant),
               class: 'btn btn-warning btn-xs', title: t('compute_sites.edit') do
               =icon 'edit'
-            = link_to admin_compute_site_path(compute_site), method: :delete, data: { confirm: t('are_you_sure_cs') },
+            = link_to admin_compute_site_path(tenant), method: :delete, data: { confirm: t('are_you_sure_cs') },
               class: 'btn btn-danger btn-xs', title: t('compute_sites.remove') do
               =icon 'trash-o'
 
@@ -65,10 +65,10 @@
         .pull-right= t 'actions'
 
 
-    - @compute_sites.each do |compute_site|
-      - compute_site.virtual_machine_flavors.each do |flavor|
+    - @tenants.each do |tenant|
+      - tenant.virtual_machine_flavors.each do |flavor|
         %tr
-          %td.monospace= compute_site.site_id
+          %td.monospace= tenant.tenant_id
           %td
             - if flavor.active
               = flavor.flavor_name

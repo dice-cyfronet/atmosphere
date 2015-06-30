@@ -2,14 +2,14 @@ require 'rails_helper'
 
 describe Atmosphere::Cloud::VmCreator do
   let(:default_flavor) { build(:virtual_machine_flavor, id_at_site: 'def_f_id') }
-  let(:cs) do
-    build(:compute_site).tap do |cs|
-      cs.virtual_machine_flavors = [
+  let(:t) do
+    build(:tenant).tap do |t|
+      t.virtual_machine_flavors = [
         default_flavor
       ]
     end
   end
-  let(:vmt) { build(:virtual_machine_template, compute_site: cs, id_at_site: 'vmt_id') }
+  let(:vmt) { build(:virtual_machine_template, tenant: t, id_at_site: 'vmt_id') }
 
   let(:servers_cloud_client) { double('server cloud client') }
   let(:cloud_client) { double('cloud_client', servers: servers_cloud_client) }
@@ -18,7 +18,7 @@ describe Atmosphere::Cloud::VmCreator do
   let(:server) { double('server', id: server_id) }
 
   before do
-    allow(cs).to receive(:cloud_client).and_return(cloud_client)
+    allow(t).to receive(:cloud_client).and_return(cloud_client)
   end
 
   it 'creates VM' do
@@ -80,7 +80,7 @@ describe Atmosphere::Cloud::VmCreator do
 
   it 'creates VM with user key' do
     user_key = double(id_at_site: 'my_key_name')
-    expect(user_key).to receive(:import_to_cloud).with(cs)
+    expect(user_key).to receive(:import_to_cloud).with(t)
     expect(servers_cloud_client).to receive(:create) do |params|
       expect(params[:key_name]).to eq 'my_key_name'
     end.and_return(server)
@@ -90,7 +90,7 @@ describe Atmosphere::Cloud::VmCreator do
 
   context 'amazon' do
     before do
-      cs.technology = 'aws'
+      t.technology = 'aws'
 
       allow(servers_cloud_client).to receive(:create).and_return(server)
     end

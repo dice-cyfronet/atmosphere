@@ -4,10 +4,10 @@ FactoryGirl.define do
     id_at_site { FFaker::Internet.ip_v4_address }
     state :active
     source_template
-    compute_site
+    tenant
 
-    # By default, assign some random VM flavor which belongs to this VM's compute_site
-    virtual_machine_flavor { self.compute_site.virtual_machine_flavors.first }
+    # By default, assign some random VM flavor which belongs to this VM's tenants
+    virtual_machine_flavor { self.tenant.virtual_machine_flavors.first }
 
     trait :active_vm do
       ip { FFaker::Internet.ip_v4_address }

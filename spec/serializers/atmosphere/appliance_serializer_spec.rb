@@ -2,9 +2,9 @@ require 'rails_helper'
 
 describe Atmosphere::ApplianceSerializer do
   it 'returns information about connected VMs' do
-    cs = create(:compute_site)
-    vm1 = create(:virtual_machine, compute_site: cs)
-    vm2 = create(:virtual_machine, compute_site: cs)
+    t = create(:tenant)
+    vm1 = create(:virtual_machine, tenant: t)
+    vm2 = create(:virtual_machine, tenant: t)
     appliance = build(:appliance, virtual_machines: [vm1, vm2])
     serializer = Atmosphere::ApplianceSerializer.new(appliance)
 

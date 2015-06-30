@@ -73,7 +73,7 @@ module Atmosphere
         url: hm.url,
         appliance_id: hm.appliance_id,
         port_mapping_template_id: hm.port_mapping_template_id,
-        compute_site_id: hm.compute_site_id,
+        tenant_id: hm.tenant_id,
         monitoring_status: hm.monitoring_status,
         custom_name: hm.custom_name,
         custom_url: hm.custom_url
@@ -85,25 +85,25 @@ module Atmosphere
         id: vm.id,
         ip: vm.ip,
         state: vm.state,
-        compute_site: map_cs(vm.compute_site),
+        tenant: map_t(vm.tenant),
         virtual_machine_flavor: vm.virtual_machine_flavor,
         port_mappings: vm.port_mappings
       }
     end
 
-    def map_cs(cs)
+    def map_t(t)
       {
-        id: cs.id,
-        site_id: cs.site_id,
-        name: cs.name,
-        location: cs.location,
-        site_type: cs.site_type,
-        technology: cs.technology,
-        http_proxy_url: cs.http_proxy_url,
-        https_proxy_url: cs.https_proxy_url,
+        id: t.id,
+        tenant_id: t.tenant_id,
+        name: t.name,
+        location: t.location,
+        site_type: t.site_type,
+        technology: t.technology,
+        http_proxy_url: t.http_proxy_url,
+        https_proxy_url: t.https_proxy_url,
         config: "SANITIZED",
-        template_filters: cs.template_filters,
-        active: cs.active
+        template_filters: t.template_filters,
+        active: t.active
       }
     end
   end

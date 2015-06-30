@@ -50,8 +50,8 @@ describe Atmosphere::Api::V1::AppliancesController do
         end
 
         it 'returns appliances connected with concrete VM' do
-          cs = create(:compute_site)
-          vm = create(:virtual_machine, compute_site: cs)
+          t = create(:tenant)
+          vm = create(:virtual_machine, tenant: t)
           appliance = create(:appliance,
             virtual_machines: [vm], appliance_set: user_as)
           other_appliance = create(:appliance, appliance_set: user_as)
@@ -395,29 +395,29 @@ describe Atmosphere::Api::V1::AppliancesController do
       end
     end
 
-    context 'with_selected_compute_sites' do
+    context 'with_selected_tenants' do
 
-      let!(:compute_site_1) {create(:compute_site)}
-      let!(:compute_site_2) {create(:compute_site)}
+      let!(:tenant_1) {create(:tenant)}
+      let!(:tenant_2) {create(:tenant)}
 
-      let!(:static_dev_request_body_with_one_cs) do
+      let!(:static_dev_request_body_with_one_ts) do
         {
             appliance: {
                 configuration_template_id: static_config.id,
                 appliance_set_id: development_set.id,
                 fund_id: fund.id,
-                compute_site_ids: [compute_site_1.id]
+                tenant_ids: [tenant_1.id]
             }
         }
       end
 
-      let!(:static_dev_request_body_with_two_cs) do
+      let!(:static_dev_request_body_with_two_ts) do
         {
             appliance: {
                 configuration_template_id: static_config.id,
                 appliance_set_id: development_set.id,
                 fund_id: fund.id,
-                compute_site_ids: [compute_site_1.id, compute_site_2.id]
+                tenant_ids: [tenant_1.id, tenant_2.id]
             }
         }
       end
@@ -428,22 +428,22 @@ describe Atmosphere::Api::V1::AppliancesController do
         expect(optimizer).to receive(:run).once
       end
 
-      it 'creates new appliance with default cs binding' do
+      it 'creates new appliance with default t binding' do
         expect {
           post api("/appliances", user), static_request_body
-        }.to change { Atmosphere::ApplianceComputeSite.count}.by(2)
+        }.to change { Atmosphere::ApplianceTenant.count}.by(2)
       end
 
-      it 'creates new appliance bound to one cs' do
-        post api("/appliances", developer), static_dev_request_body_with_one_cs
+      it 'creates new appliance bound to one t' do
+        post api("/appliances", developer), static_dev_request_body_with_one_ts
         a = Atmosphere::Appliance.find(appliance_response['id'])
-        expect(a.compute_sites.count).to eq 1
+        expect(a.tenants.count).to eq 1
       end
 
-      it 'creates new appliance bound to two cs' do
-        post api("/appliances", developer), static_dev_request_body_with_two_cs
+      it 'creates new appliance bound to two ts' do
+        post api("/appliances", developer), static_dev_request_body_with_two_ts
         a = Atmosphere::Appliance.find(appliance_response['id'])
-        expect(a.compute_sites.count).to eq 2
+        expect(a.tenants.count).to eq 2
       end
     end
 

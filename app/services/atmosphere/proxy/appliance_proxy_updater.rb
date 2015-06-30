@@ -101,17 +101,17 @@ module Atmosphere
         appliance.http_mappings.find_or_initialize_by(port_mapping_template_id: pmt.id, application_protocol: type)
       end
 
-      def main_compute_site
-        @main_cs ||= ComputeSite.with_appliance(appliance).first
+      def main_tenant
+        @main_t ||= Tenant.with_appliance(appliance).first
       end
 
       def url_generator
-        @url_generator ||= Proxy::UrlGenerator.new(main_compute_site)
+        @url_generator ||= Proxy::UrlGenerator.new(main_tenant)
       end
 
       def update_for_pmt(pmt, type)
         http_mapping = mapping(pmt, type)
-        http_mapping.compute_site ||= main_compute_site
+        http_mapping.tenant ||= main_tenant
         http_mapping.url = url_generator.url_for(http_mapping) if http_mapping.url.blank?
         http_mapping.base_url = url_generator.base_url(http_mapping) if http_mapping.base_url.blank?
         http_mapping
@@ -131,7 +131,7 @@ module Atmosphere
 
       def remove_proxy(pmt, type)
         Sidekiq::Client.push(
-          'queue' => mapping(pmt, type).compute_site.site_id,
+          'queue' => mapping(pmt, type).tenant.tenant_id,
           'class' => Redirus::Worker::RmProxy,
           'args' => ["#{pmt.service_name}-#{appliance.id}", type])
       end

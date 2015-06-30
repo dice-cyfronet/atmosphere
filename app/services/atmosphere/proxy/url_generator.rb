@@ -1,8 +1,8 @@
 module Atmosphere
   class Proxy::UrlGenerator
 
-    def initialize(compute_site)
-      @compute_site = compute_site
+    def initialize(tenant)
+      @tenant = tenant
     end
 
     def self.glue(base_url, prefix)
@@ -19,8 +19,8 @@ module Atmosphere
 
     def base_url(http_mapping)
       http_mapping.application_protocol.http? ?
-        @compute_site.http_proxy_url :
-        @compute_site.https_proxy_url
+        @tenant.http_proxy_url :
+        @tenant.https_proxy_url
     end
   end
 end

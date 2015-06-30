@@ -7,16 +7,16 @@ describe Atmosphere::VmTagsCreatorWorker do
   tags_map = {'1_tag_name' => '1_value', '2_tag_name' => '2_value'}
 
   let(:cloud_client_mock) {double('cloud client')}
-  let(:cs_mock) { double('compute site') }
+  let(:t_mock) { double('tenant') }
   let(:vm_mock) { double('virtual machine')}
 
   before do
-    allow(cs_mock).to receive(:cloud_client).and_return cloud_client_mock
+    allow(t_mock).to receive(:cloud_client).and_return cloud_client_mock
     allow(Atmosphere::VirtualMachine).
       to receive(:find_by).with(id: vm_id).and_return(vm_mock)
     allow(vm_mock).to receive(:id).and_return vm_id
     allow(vm_mock).to receive(:id_at_site).and_return id_at_site
-    allow(vm_mock).to receive(:compute_site).and_return cs_mock
+    allow(vm_mock).to receive(:tenant).and_return t_mock
   end
 
   context 'active vm' do
@@ -25,7 +25,7 @@ describe Atmosphere::VmTagsCreatorWorker do
     end
     context 'on openstack' do
       before do
-        allow(cs_mock).to receive(:technology).and_return('openstack')
+        allow(t_mock).to receive(:technology).and_return('openstack')
       end
 
       it 'calls cloud client with appropriate tag parameters' do
@@ -47,7 +47,7 @@ describe Atmosphere::VmTagsCreatorWorker do
 
     context 'on amazon' do
       before do
-        allow(cs_mock).to receive(:technology).and_return('aws')
+        allow(t_mock).to receive(:technology).and_return('aws')
       end
 
       it 'calls cloud client with appropriate tag parameters' do
@@ -91,7 +91,7 @@ describe Atmosphere::VmTagsCreatorWorker do
     context 'on openstack' do
 
       before do
-        allow(cs_mock).to receive(:technology).and_return('openstack')
+        allow(t_mock).to receive(:technology).and_return('openstack')
       end
 
       it 'does not call cloud client' do
@@ -112,7 +112,7 @@ describe Atmosphere::VmTagsCreatorWorker do
 
     context 'on amazon' do
       before do
-        allow(cs_mock).to receive(:technology).and_return('aws')
+        allow(t_mock).to receive(:technology).and_return('aws')
       end
 
       it 'calls cloud client with appropriate tag parameters' do

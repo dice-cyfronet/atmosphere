@@ -1,8 +1,8 @@
-= simple_form_for([:admin, @compute_site]) do |f|
+= simple_form_for([:admin, @tenant]) do |f|
   = f.error_notification
 
   .inputs
-    = f.input :site_id
+    = f.input :tenant_id
     = f.input :name
     = f.input :active
     = f.input :location

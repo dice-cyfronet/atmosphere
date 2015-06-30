@@ -1,22 +1,22 @@
 require 'rails_helper'
 
-describe Atmosphere::Proxy::ComputeSiteUrlUpdater do
+describe Atmosphere::Proxy::TenantUrlUpdater do
   let(:finder) { double('http_mapping_finder') }
   let(:finder_class) { double }
 
   let(:url_generator) { double('url_generator') }
   let(:url_generator_class) { double }
 
-  let(:cs) { double('compute_site') }
+  let(:t) { double('tenant') }
 
   before do
-    allow(finder_class).to receive(:new).with(cs).and_return(finder)
-    allow(url_generator_class).to receive(:new).with(cs).and_return(url_generator)
+    allow(finder_class).to receive(:new).with(t).and_return(finder)
+    allow(url_generator_class).to receive(:new).with(t).and_return(url_generator)
   end
 
   subject do
-    Atmosphere::Proxy::ComputeSiteUrlUpdater
-      .new(cs, finder_class, url_generator_class)
+    Atmosphere::Proxy::TenantUrlUpdater
+      .new(t, finder_class, url_generator_class)
   end
 
   it 'updates all http mappings' do

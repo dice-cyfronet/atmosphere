@@ -9,10 +9,10 @@ describe Atmosphere::Cloud::VmTagsManager do
     a_set_2 = create(:appliance_set, user: u2)
     appl1 = create(:appliance, appliance_type: at, appliance_set: a_set_1)
     appl2 = create(:appliance, appliance_type: at, appliance_set: a_set_2)
-    cs = create(:compute_site)
+    t = create(:tenant)
     vm = create(:virtual_machine,
                 appliances: [appl1, appl2],
-                compute_site: cs, id_at_site: 'SERVER_ID')
+                tenant: t, id_at_site: 'SERVER_ID')
 
     expect(Atmosphere::VmTagsCreatorWorker).
       to receive(:perform_async) do |vm_id, hsh|

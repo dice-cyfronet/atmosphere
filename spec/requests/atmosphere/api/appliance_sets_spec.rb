@@ -116,16 +116,16 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
         let!(:conf_tmpl_1) { create(:appliance_configuration_template, appliance_type: at_1) }
         let!(:at_2) { create(:appliance_type, visible_to: :all)}
         let!(:conf_tmpl_2) { create(:appliance_configuration_template, appliance_type: at_2) }
-        let(:cs) { create(:compute_site) }
-        let(:tmpl_1) { create(:virtual_machine_template, appliance_type: at_1, compute_site: cs) }
-        let(:tmpl_2) { create(:virtual_machine_template, appliance_type: at_2, compute_site: cs) }
+        let(:t) { create(:tenant) }
+        let(:tmpl_1) { create(:virtual_machine_template, appliance_type: at_1, tenant: t) }
+        let(:tmpl_2) { create(:virtual_machine_template, appliance_type: at_2, tenant: t) }
 
         AS_NAME = 'AS with appliances and optimization policy'
 
         let!(:appliances_params) {
           [
-            {configuration_template_id: conf_tmpl_1.id, params: {a: 'A'}, vms: [{cpu: 1, mem: 512, compute_site_ids: [1]}]},
-            {configuration_template_id: conf_tmpl_2.id, params: {b: 'B'}, vms: [{cpu: 1, mem: 512, compute_site_ids: [1]}]}
+            {configuration_template_id: conf_tmpl_1.id, params: {a: 'A'}, vms: [{cpu: 1, mem: 512, tenant_ids: [1]}]},
+            {configuration_template_id: conf_tmpl_2.id, params: {b: 'B'}, vms: [{cpu: 1, mem: 512, tenant_ids: [1]}]}
           ]
 
         }

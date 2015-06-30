@@ -7,7 +7,7 @@ FactoryGirl.define do
     description { SecureRandom.hex(4) }
     last_billing Date.parse('2014-01-14 12:00')
 
-    compute_sites Atmosphere::ComputeSite.all
+    tenants Atmosphere::Tenant.all
 
     # Create a rich fund by default so there's no risk of interfering with non-billing tests.
     fund { FactoryGirl.create(:fund, balance: 1000000) }
