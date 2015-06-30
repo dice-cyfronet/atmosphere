@@ -28,7 +28,7 @@ describe Atmosphere::Fund do
 
     it 'lists all correct unassigned tenants' do
       # NOTE I know the below seems strange but otherwise rspec tricked me :(
-      csf = Atmosphere::TenantFund.new(tenant: t1)
+      tf = Atmosphere::TenantFund.new(tenant: t1)
       subject.tenant_funds << tf
       subject.save
       expect(subject.unsupported_tenants).to match_array [t2, t3]

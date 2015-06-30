@@ -274,7 +274,7 @@ RSpec::Matchers.define :tenant_basic_eq do |expected|
     actual['tenant_id'] == expected.tenant_id &&
     actual['name'] == expected.name &&
     actual['location'] == expected.location &&
-    actual['site_type'] == expected.site_type &&
+    actual['tenant_type'] == expected.tenant_type &&
     actual['technology'] == expected.technology &&
     actual['config'] == nil
   end
@@ -286,7 +286,7 @@ RSpec::Matchers.define :tenant_full_eq do |expected|
     actual['tenant_id'] == expected.tenant_id &&
     actual['name'] == expected.name &&
     actual['location'] == expected.location &&
-    actual['site_type'] == expected.site_type &&
+    actual['tenant_type'] == expected.tenant_type &&
     actual['technology'] == expected.technology &&
     actual['config'] == expected.config
   end

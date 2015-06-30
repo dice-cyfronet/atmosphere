@@ -7,7 +7,7 @@ module Atmosphere
   class TenantSerializer < ActiveModel::Serializer
     embed :ids
 
-    attributes :id, :tenant_id, :name, :location, :site_type, :technology
+    attributes :id, :tenant_id, :name, :location, :tenant_type, :technology
 
     def attributes
       hash = super

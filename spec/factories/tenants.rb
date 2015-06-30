@@ -1,8 +1,8 @@
 FactoryGirl.define do
-  factory :tenants, aliases: [:openstack_tenant], class: 'Atmosphere::Tenant' do |f|
+  factory :tenant, aliases: [:openstack_tenant], class: 'Atmosphere::Tenant' do |f|
+    tenant_type 'private'
     tenant_id { SecureRandom.hex(4) }
     name { SecureRandom.hex(4) }
-    site_type 'private'
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
     http_proxy_url { FFaker::Internet.uri('http') }
@@ -32,7 +32,7 @@ FactoryGirl.define do
     end
 
     factory :amazon_with_flavors, traits: [:amazon_flavors] do
-      site_type 'public'
+      tenant_type 'public'
       technology 'aws'
       #config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
       after(:create) do |t|
@@ -45,7 +45,7 @@ FactoryGirl.define do
     end
 
     factory :amazon_tenant do
-      site_type 'public'
+      tenant_type 'public'
       technology 'aws'
       config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
     end

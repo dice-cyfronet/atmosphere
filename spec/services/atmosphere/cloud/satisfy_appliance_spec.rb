@@ -234,7 +234,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     context 'not shareable appliance type' do
       let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
       let(:t) { create(:openstack_with_flavors, funds: [fund]) }
-      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, Tenant: t)}
+      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, tenant: t)}
       let(:config_inst) { create(:appliance_configuration_instance) }
       let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
       let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }

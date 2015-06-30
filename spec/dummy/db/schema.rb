@@ -171,7 +171,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.integer  "port_mapping_template_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "compute_site_id",                              null: false
+    t.integer  "tenant_id",                                    null: false
     t.string   "monitoring_status",        default: "pending"
     t.string   "custom_name"
     t.string   "base_url",                                     null: false
@@ -197,7 +197,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.string   "key",                      null: false
     t.string   "value",                    null: false
     t.integer  "port_mapping_template_id"
-    t.integer  "compute_site_id"
+    t.integer  "tenant_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -292,7 +292,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.float   "cpu"
     t.float   "memory"
     t.float   "hdd"
-    t.integer "compute_site_id"
+    t.integer "tenant_id"
     t.string  "id_at_site"
     t.string  "supported_architectures", default: "x86_64"
     t.boolean "active",                  default: true
@@ -303,7 +303,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.string   "name",                                     null: false
     t.string   "state",                                    null: false
     t.boolean  "managed_by_atmosphere", default: false,    null: false
-    t.integer  "compute_site_id",                          null: false
+    t.integer  "tenant_id",                                null: false
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"
@@ -312,7 +312,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.integer  "version"
   end
 
-  add_index "atmosphere_virtual_machine_templates", ["compute_site_id", "id_at_site"], name: "atmo_vm_tmpls_on_cs_id_and_id_at_site_ix", unique: true, using: :btree
+  add_index "atmosphere_virtual_machine_templates", ["tenant_id", "id_at_site"], name: "atmo_vm_tmpls_on_cs_id_and_id_at_site_ix", unique: true, using: :btree
 
   create_table "atmosphere_virtual_machines", force: :cascade do |t|
     t.string   "id_at_site",                                  null: false
@@ -320,7 +320,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.string   "state",                                       null: false
     t.string   "ip"
     t.boolean  "managed_by_atmosphere",       default: false, null: false
-    t.integer  "compute_site_id",                             null: false
+    t.integer  "tenant_id",                                   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
@@ -329,7 +329,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.datetime "updated_at_site"
   end
 
-  add_index "atmosphere_virtual_machines", ["compute_site_id", "id_at_site"], name: "atmo_vm_cs_id_id_at_site_ix", unique: true, using: :btree
+  add_index "atmosphere_virtual_machines", ["tenant_id", "id_at_site"], name: "atmo_vm_cs_id_id_at_site_ix", unique: true, using: :btree
   add_index "atmosphere_virtual_machines", ["virtual_machine_template_id"], name: "atmo_vm_vmt_ix", using: :btree
 
   add_foreign_key "atmosphere_appliance_configuration_instances", "atmosphere_appliance_configuration_templates", column: "appliance_configuration_template_id", name: "ac_instances_ac_template_id_fk"
@@ -344,22 +344,22 @@ ActiveRecord::Schema.define(version: 20150630095410) do
   add_foreign_key "atmosphere_endpoints", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
   add_foreign_key "atmosphere_http_mappings", "atmosphere_appliances", column: "appliance_id"
   add_foreign_key "atmosphere_http_mappings", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
-  add_foreign_key "atmosphere_http_mappings", "atmosphere_tenants", column: "compute_site_id"
+  add_foreign_key "atmosphere_http_mappings", "atmosphere_tenants", column: "tenant_id"
   add_foreign_key "atmosphere_migration_jobs", "atmosphere_appliance_types", column: "appliance_type_id", name: "atmo_mj_at_fk"
   add_foreign_key "atmosphere_migration_jobs", "atmosphere_tenants", column: "tenant_destination_id", name: "atmo_mj_csd_fk"
   add_foreign_key "atmosphere_migration_jobs", "atmosphere_tenants", column: "tenant_source_id", name: "atmo_mj_css_fk"
   add_foreign_key "atmosphere_migration_jobs", "atmosphere_virtual_machine_templates", column: "virtual_machine_template_id", name: "atmo_mj_vmt_fk"
   add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
-  add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_tenants", column: "compute_site_id"
+  add_foreign_key "atmosphere_port_mapping_properties", "atmosphere_tenants", column: "tenant_id"
   add_foreign_key "atmosphere_port_mapping_templates", "atmosphere_appliance_types", column: "appliance_type_id"
   add_foreign_key "atmosphere_port_mapping_templates", "atmosphere_dev_mode_property_sets", column: "dev_mode_property_set_id"
   add_foreign_key "atmosphere_port_mappings", "atmosphere_port_mapping_templates", column: "port_mapping_template_id"
   add_foreign_key "atmosphere_port_mappings", "atmosphere_virtual_machines", column: "virtual_machine_id"
   add_foreign_key "atmosphere_user_keys", "atmosphere_users", column: "user_id"
-  add_foreign_key "atmosphere_virtual_machine_flavors", "atmosphere_tenants", column: "compute_site_id"
+  add_foreign_key "atmosphere_virtual_machine_flavors", "atmosphere_tenants", column: "tenant_id"
   add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_appliance_types", column: "appliance_type_id"
-  add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_tenants", column: "compute_site_id", name: "atmo_vmt_cs_fk"
+  add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_tenants", column: "tenant_id", name: "atmo_vmt_cs_fk"
   add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_virtual_machines", column: "virtual_machine_id", name: "atmo_vmt_vm_fk"
-  add_foreign_key "atmosphere_virtual_machines", "atmosphere_tenants", column: "compute_site_id", name: "atmo_vm_cs_fk"
+  add_foreign_key "atmosphere_virtual_machines", "atmosphere_tenants", column: "tenant_id", name: "atmo_vm_cs_fk"
   add_foreign_key "atmosphere_virtual_machines", "atmosphere_virtual_machine_templates", column: "virtual_machine_template_id", name: "atmo_vm_vmt_fk"
 end

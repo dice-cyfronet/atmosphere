@@ -97,7 +97,7 @@ module Atmosphere
         tenant_id: t.tenant_id,
         name: t.name,
         location: t.location,
-        site_type: t.site_type,
+        tenant_type: t.tenant_type,
         technology: t.technology,
         http_proxy_url: t.http_proxy_url,
         https_proxy_url: t.https_proxy_url,

@@ -72,7 +72,7 @@ module Atmosphere
 
     validates :tenant_id, presence: true
 
-    validates :site_type,
+    validates :tenant_type,
               presence: true,
               inclusion: %w(public private)
 
@@ -82,7 +82,7 @@ module Atmosphere
 
     validate :nic_provider_class_defined, if: :nic_provider_class_name?
 
-    enumerize :site_type, in: [:public, :private], predicates: true
+    enumerize :tenant_type, in: [:public, :private], predicates: true
     enumerize :technology,
               in: [:openstack, :aws, :azure, :rackspace, :google_compute],
               predicates: true

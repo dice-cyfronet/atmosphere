@@ -13,7 +13,7 @@ en:
         name: Name
         active: Active
         location: Location
-        site_type: Site type
+        tenant_type: Tenant type
         technology: Technology
         http_proxy_url: HTTP Proxy URL
         https_proxy_url: HTTPS Proxy URL

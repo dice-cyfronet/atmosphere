@@ -12,7 +12,7 @@
       %th= t('compute_sites.site')
       %th= t('compute_sites.name')
       %th= t('compute_sites.location')
-      %th= t('compute_sites.site_type')
+      %th= t('compute_sites.tenant_type')
       %th= t('compute_sites.technology')
       %th.actions
         = t('actions')
@@ -23,7 +23,7 @@
           = tenant.tenant_id
         %td= tenant.name
         %td= tenant.location
-        %td= tenant.site_type
+        %td= tenant.tenant_type
         %td= tenant.technology
         %td.actions
           .btn-group

@@ -74,7 +74,7 @@ module Atmosphere
     def source_t_and_uuid
       metadata = image.tags
 
-      [metadata['source_cs'], metadata['source_uuid']]
+      [metadata['source_t'], metadata['source_uuid']]
     end
 
     def young?

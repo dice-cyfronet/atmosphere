@@ -50,7 +50,7 @@ class Atmosphere::Admin::TenantsController < Atmosphere::Admin::ApplicationContr
     # Only allow a trusted parameter "white list" through.
     def tenant_params
       params.require(:tenant).permit(
-        :tenant_id, :name, :active, :location, :site_type,
+        :tenant_id, :name, :active, :location, :tenant_type,
         :technology, :config, :template_filters,
         :http_proxy_url, :https_proxy_url, :wrangler_url,
         :wrangler_username, :wrangler_password)

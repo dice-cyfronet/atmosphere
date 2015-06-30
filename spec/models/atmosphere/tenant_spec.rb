@@ -30,14 +30,14 @@ describe Atmosphere::Tenant do
   it { should be_valid }
 
   it { should validate_presence_of :tenant_id }
-  it { should validate_presence_of :site_type }
+  it { should validate_presence_of :tenant_type }
   it { should validate_presence_of :technology }
 
   it { should have_many :port_mapping_properties }
   it { should have_many(:virtual_machine_templates).dependent(:destroy) }
   it { should have_many(:virtual_machines).dependent(:destroy) }
 
-  it { should validate_inclusion_of(:site_type).in_array(%w(public private))}
+  it { should validate_inclusion_of(:tenant_type).in_array(%w(public private))}
 
   context 'cloud' do
     context 'openstack' do

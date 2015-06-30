@@ -55,15 +55,15 @@ describe Atmosphere::OptimizationStrategy::Default do
       let(:dev_appliance_set) { create(:dev_appliance_set) }
       let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not allow to reuse vm for dev appliance' do
-        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
-        appl2 = Atmosphere::Appliance.new(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
+        appl1 = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
+        appl2 = Atmosphere::Appliance.new(appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
         subject = Atmosphere::OptimizationStrategy::Default.new(appl2)
         expect(subject.can_reuse_vm?).to be_falsy
       end
 
       it 'does not reuse available vm if it is in dev mode' do
-        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
-        appl2 = Atmosphere::Appliance.new(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::ComputeSite.all)
+        appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
+        appl2 = Atmosphere::Appliance.new(appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
         subject = Atmosphere::OptimizationStrategy::Default.new(appl2)
         expect(subject.vm_to_reuse).to be nil
       end

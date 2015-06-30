@@ -165,7 +165,7 @@ describe Atmosphere::VirtualMachineTemplate do
     let(:cloud_client) { double(:cloud_client, images: images) }
 
     before do
-      allow(cs).to receive(:cloud_client).and_return(cloud_client)
+      allow(t).to receive(:cloud_client).and_return(cloud_client)
     end
 
     context 'when template is managed by atmosphere' do
@@ -253,7 +253,7 @@ describe Atmosphere::VirtualMachineTemplate do
 
     before do
       allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))
-      allow(cs).to receive(:cloud_client).and_return(cloud_client)
+      allow(t).to receive(:cloud_client).and_return(cloud_client)
     end
 
     it 'sets managed_by_atmosphere to true' do

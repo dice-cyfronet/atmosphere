@@ -6,9 +6,9 @@ describe Atmosphere::Api::V1::TenantsController do
   let(:user) { create(:user) }
   let(:admin) { create(:admin) }
 
-  let!(:t1) { create(:tenant, site_type: :private) }
-  let!(:t2) { create(:tenant, site_type: :private) }
-  let!(:t3) { create(:tenant, site_type: :public) }
+  let!(:t1) { create(:tenant, tenant_type: :private) }
+  let!(:t2) { create(:tenant, tenant_type: :private) }
+  let!(:t3) { create(:tenant, tenant_type: :public) }
 
   describe 'GET /tenants' do
     context 'when unauthenticated' do
@@ -35,7 +35,7 @@ describe Atmosphere::Api::V1::TenantsController do
 
       context 'search' do
         it 'returns only public tenants' do
-          get api("/tenants?site_type=private", user)
+          get api("/tenants?tenant_type=private", user)
           expect(ts_response.size).to eq 2
           expect(ts_response[0]).to tenant_basic_eq t1
           expect(ts_response[1]).to tenant_basic_eq t2

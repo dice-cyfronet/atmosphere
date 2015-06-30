@@ -14,7 +14,7 @@ GET /compute_sites
       "site_id":"cyfronet-folsom",
       "name":"Cyfronet",
       "location":"Cracow",
-      "site_type":"private",
+      "tenant_type":"private",
       "technology":"openstack",
       "config": "site specific config visible only for admin"
     }, {
@@ -44,7 +44,7 @@ Parameters:
     "site_id":"cyfronet-folsom",
     "name":"Cyfronet",
     "location":"Cracow",
-    "site_type":"private",
+    "tenant_type":"private",
     "technology":"openstack",
     "config": "site specific config visible only for admin"
   }
