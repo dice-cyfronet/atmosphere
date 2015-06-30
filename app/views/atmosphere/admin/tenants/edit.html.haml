@@ -1,13 +1,13 @@
 %h1
   = t('editing')
-  = t('compute_sites.long_title_single')
+  = t('tenants.long_title_single')
 
 = render 'form'
 
 %p
   .btn-group
     = link_to admin_compute_site_path(@tenant),
-      class: 'btn btn-success', title: t('compute_sites.show') do
+      class: 'btn btn-success', title: t('tenants.show') do
       =icon 'bars'
       = t('show')
     = link_to admin_compute_sites_path,

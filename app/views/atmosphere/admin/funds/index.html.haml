@@ -52,7 +52,7 @@
       %tr
         %td(colspan=5)
           = succeed ':' do
-            %strong= t 'compute_sites.title'
+            %strong= t 'tenants.title'
           - if fund.tenant_funds.present?
             - fund.tenant_funds.each do |tenant_fund|
               .btn-group
@@ -62,28 +62,28 @@
                   method: :delete,
                   data: { confirm: t('are_you_sure') },
                   class: 'btn btn-default btn-xs has_bottom_tooltip',
-                  title: t('funds.remove_site.help',
-                  cs: compute_site_fund.compute_site.name) do
+                  title: t('funds.remove_tenant.help',
+                  cs: tenant_fund.tenant.name) do
                   = icon 'times'
           - else
             %i.text-muted
               = surround '(',')' do
-                = t 'funds.no_sites'
+                = t 'funds.no_tenants'
         %td
           - if fund.unsupported_tenants.present?
             = simple_form_for([:admin, Atmosphere::TenantFund.new(fund: fund)]) do |f|
               = f.association :fund, as: :hidden
               = f.association :tenant,
                 collection: fund.unsupported_tenants,
-                prompt: t('funds.add_site.prompt'),
+                prompt: t('funds.add_tenant.prompt'),
                 input_html: { class: 'form-control tiny-select has_bottom_tooltip self-submit',
-                  title: t('funds.add_site.help') },
+                  title: t('funds.add_tenant.help') },
                 wrapper_html: { class: 'tiny-select-wrapper' },
                 label: false
           - else
             %i.text-muted.pull-right
               = surround '(',')' do
-                = t 'funds.add_site.all_assigned'
+                = t 'funds.add_tenant.all_assigned'
 
 
       %tr

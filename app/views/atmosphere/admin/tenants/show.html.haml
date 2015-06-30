@@ -2,45 +2,45 @@
 
 %h1
   = t('show')
-  = t('compute_sites.long_title_single')
+  = t('tenants.long_title_single')
 
 %p
   %table.show-table
     %tr
-      %td= t('compute_sites.site')
+      %td= t('tenants.tenant')
       %td.monospace= @tenant.tenant_id
     %tr
-      %td= t('compute_sites.name')
+      %td= t('tenants.name')
       %td= @tenant.name
     %tr
-      %td= t('compute_sites.location')
+      %td= t('tenants.location')
       %td= @tenant.location
     %tr
-      %td= t('compute_sites.tenant_type')
+      %td= t('tenants.tenant_type')
       %td= @tenant.tenant_type
     %tr
-      %td= t('compute_sites.technology')
+      %td= t('tenants.technology')
       %td= @tenant.technology
     %tr
-      %td= t('compute_sites.http_proxy_url')
+      %td= t('tenants.http_proxy_url')
       %td.monospace= @tenant.http_proxy_url
     %tr
-      %td= t('compute_sites.https_proxy_url')
+      %td= t('tenants.https_proxy_url')
       %td.monospace= @tenant.https_proxy_url
     %tr
-      %td= t('compute_sites.configuration')
+      %td= t('tenants.configuration')
       %td.monospace= @tenant.config
     %tr
-      %td= t('compute_sites.template_filters')
+      %td= t('tenants.template_filters')
       %td.monospace= @tenant.template_filters
     %tr
-      %td= t('compute_sites.wrangler_url')
+      %td= t('tenants.wrangler_url')
       %td.monospace= @tenant.wrangler_url
     %tr
-      %td= t('compute_sites.wrangler_username')
+      %td= t('tenants.wrangler_username')
       %td.monospace= @tenant.wrangler_username
     %tr
-      %td= t('compute_sites.wrangler_password')
+      %td= t('tenants.wrangler_password')
       %td.monospace= @tenant.wrangler_password
 
 %p
