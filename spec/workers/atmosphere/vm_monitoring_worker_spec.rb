@@ -24,8 +24,7 @@ describe Atmosphere::VmMonitoringWorker do
     let(:t) { double('t', cloud_client: cloud_client) }
 
     before do
-      allow(Atmosphere::Tenant)
-        .to receive(:find).with(1).and_return(t)
+      allow(Atmosphere::Tenant).to receive(:find).with(1).and_return(t)
     end
 
     context 'and cloud client returns information about VMs' do
