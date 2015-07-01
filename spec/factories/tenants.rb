@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :tenant, aliases: [:openstack_tenant], class: 'Atmosphere::Tenant' do |f|
     tenant_type 'private'
     tenant_id { SecureRandom.hex(4) }
+    network_id { SecureRandom.hex(8) }
     name { SecureRandom.hex(4) }
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'

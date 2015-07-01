@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150630095410) do
+ActiveRecord::Schema.define(version: 20150701134020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -245,6 +245,7 @@ ActiveRecord::Schema.define(version: 20150630095410) do
     t.boolean  "active",                  default: true
     t.string   "nic_provider_class_name"
     t.text     "nic_provider_config"
+    t.string   "network_id"
   end
 
   create_table "atmosphere_user_funds", force: :cascade do |t|
