@@ -14,7 +14,7 @@ namespace :billing do
       f.save
 
       puts "Binding to compute sites..."
-      Atmosphere::ComputeSite.all.each {|cs| cs.funds << f}
+      Atmosphere::Tenant.all.each {|cs| cs.funds << f}
 
       puts "Binding to users..."
       Atmosphere::User.all.each {|u| u.funds << f}
