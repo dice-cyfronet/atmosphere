@@ -4,12 +4,14 @@ module Atmosphere
 
     attributes :id, :flavor_name,
       :cpu, :memory, :hdd, :hourly_cost,
-      :tenant_id, :id_at_site,
+      :compute_site_id, :id_at_site,
       :supported_architectures, :active, :cost_map
 
     private
 
-    # Returns a full cost map for this flavor (depending on os_family)
+    def compute_site_id
+      object.tenant_id
+    end
 
     def active
       object.usable?

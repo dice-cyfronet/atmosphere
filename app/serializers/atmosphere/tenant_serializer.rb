@@ -7,7 +7,7 @@ module Atmosphere
   class TenantSerializer < ActiveModel::Serializer
     embed :ids
 
-    attributes :id, :tenant_id, :name, :location, :tenant_type, :technology
+    attributes :id, :site_id, :name, :location, :site_type, :technology
 
     def attributes
       hash = super
@@ -19,6 +19,14 @@ module Atmosphere
 
     def admin?
       scope.has_role? :admin
+    end
+
+    def site_id
+      object.tenant_id
+    end
+
+    def site_type
+      object.tenant_type
     end
   end
 end

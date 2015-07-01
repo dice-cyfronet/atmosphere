@@ -65,7 +65,7 @@ describe Atmosphere::Api::V1::ClewController do
                                     "url"=>httpm.url,
                                     "appliance_id"=>httpm.appliance_id,
                                     "port_mapping_template_id"=>httpm.port_mapping_template_id,
-                                    "tenant_id"=>httpm.tenant_id,
+                                    "compute_site_id"=>httpm.tenant_id,
                                     "monitoring_status"=>httpm.monitoring_status,
                                     "custom_name"=>httpm.custom_name,
                                     "custom_url"=>httpm.custom_url
@@ -85,12 +85,12 @@ describe Atmosphere::Api::V1::ClewController do
                             [{"id"=>vm1.id,
                               "ip"=>vm1.ip,
                               "state"=>vm1.state,
-                              "tenant"=>
+                              "compute_site"=>
                                   {"id"=>t.id,
-                                   "tenant_id"=>t.tenant_id,
+                                   "site_id"=>t.tenant_id,
                                    "name"=>t.name,
                                    "location"=>t.location,
-                                   "tenant_type"=>t.tenant_type,
+                                   "site_type"=>t.tenant_type,
                                    "technology"=>t.technology,
                                    "http_proxy_url"=>t.http_proxy_url,
                                    "https_proxy_url"=>t.https_proxy_url,
@@ -160,7 +160,7 @@ describe Atmosphere::Api::V1::ClewController do
 
         expect(response.status).to eq 200
         expect(clew_at_response['appliance_types'].size).to eq 2
-        expect(clew_at_response['tenants'].size).to eq 3
+        expect(clew_at_response['compute_sites'].size).to eq 3
         expect(clew_at_response['appliance_types'][0]).to clew_at_eq at3
         expect(clew_at_response['appliance_types'][1]).to clew_at_eq at4
         expect(clew_at_response['appliance_types'][0]['matched_flavor']).to clew_flavor_eq  flavor

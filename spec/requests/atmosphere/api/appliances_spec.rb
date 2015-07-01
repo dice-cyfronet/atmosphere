@@ -395,7 +395,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       end
     end
 
-    context 'with_selected_tenants' do
+    context 'with_selected_compute_sites' do
 
       let!(:tenant_1) {create(:tenant)}
       let!(:tenant_2) {create(:tenant)}

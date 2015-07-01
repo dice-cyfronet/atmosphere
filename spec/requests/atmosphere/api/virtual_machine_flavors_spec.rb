@@ -50,7 +50,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
 
       context 'params in invalid format' do
         it 'returns 422 status' do
-          ['hdd', 'memory', 'cpu', 'tenant_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
+          ['hdd', 'memory', 'cpu', 'compute_site_id', 'appliance_type_id', 'appliance_configuration_instance_id'].each do |param_name|
             get api("/virtual_machine_flavors?#{param_name}=INVALID", user)
             expect(response.status).to eq 422
             expect(json_response)
@@ -68,7 +68,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         end
 
         it "allows appliance type filters and requirements" do
-          get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&tenant_id=#{t.id}", user)
+          get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{t.id}", user)
           expect(response.status).to eq 200
         end
 
@@ -78,13 +78,13 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         end
       end
 
-      context 'when filter defined for tenant' do
+      context 'when filter defined for compute site' do
 
-        it "returns flavors at given tenant only" do
-          get api("/virtual_machine_flavors?tenant_id=#{t.id}", user)
+        it 'returns flavors at given compute site only' do
+          get api("/virtual_machine_flavors?compute_site_id=#{t.id}", user)
           flavors = fls_response
           expect(flavors.size).to eq 1
-          expect(flavors.first['tenant_id']).to eq t.id
+          expect(flavors.first['compute_site_id']).to eq t.id
         end
       end
 
@@ -97,13 +97,13 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           flavors.each{|f| expect(f['memory']).to be >= required_mem }
         end
 
-        it "returns flavors with memory grater or equal to specified and available at given tenant" do
-          get api("/virtual_machine_flavors?memory=#{required_mem}&tenant_id=#{t2.id}", user)
+        it "returns flavors with memory grater or equal to specified and available at given compute site" do
+          get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{t2.id}", user)
           flavors = fls_response
           expect(flavors.size).to be >= 1
           flavors.each{|f|
             expect(f['memory']).to be >= required_mem
-            expect(f['tenant_id']).to eq t2.id
+            expect(f['compute_site_id']).to eq t2.id
           }
         end
 
@@ -112,7 +112,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
             create(:virtual_machine_flavor, memory: required_mem + 512, tenant: t2)
             create(:virtual_machine_flavor, memory: required_mem + 1024, tenant: t2)
             n = 2
-            get api("/virtual_machine_flavors?memory=#{required_mem}&tenant_id=#{t2.id}&limit=#{n}", user)
+            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{t2.id}&limit=#{n}", user)
             flavors = fls_response
             expect(flavors.size).to be <= n
           end
@@ -121,7 +121,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
             create(:virtual_machine_flavor, memory: required_mem + 512, tenant: t2)
             create(:virtual_machine_flavor, memory: required_mem + 1024, tenant: t2)
             n = -2
-            get api("/virtual_machine_flavors?memory=#{required_mem}&tenant_id=#{t2.id}&limit=#{n}", user)
+            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{t2.id}&limit=#{n}", user)
             flavors = fls_response
             expect(flavors.size).to be >= 0
           end
@@ -149,7 +149,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(flavors.size).to eq 1
           fl = flavors.first
           expect(fl['memory']).to be >= required_mem
-          expect(fl['tenant_id']).to eq tmpl.tenant_id
+          expect(fl['compute_site_id']).to eq tmpl.tenant_id
         end
 
         it 'returns only active flavors when asking about AT flavor chosen by optimizer' do
@@ -166,7 +166,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(response.size).to eq 1
           first = response.first
           expect(first['active']).to be_truthy
-          expect(first['tenant_id']).to eq active_t.id
+          expect(first['compute_site_id']).to eq active_t.id
         end
 
         context 'reqiurements specified' do
@@ -179,10 +179,10 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           end
         end
 
-        context 'filter for tenant specified' do
-          it "applies tenant filtering" do
+        context 'filter for compute site specified' do
+          it 'applies compute site filtering' do
             tmpl = create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
-            get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&tenant_id=#{t2.id + 1}", user)
+            get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{t2.id + 1}", user)
             flavors = fls_response
             expect(flavors.size).to eq 0
           end
@@ -231,7 +231,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(response.size).to eq 1
           first = response.first
           expect(first['active']).to be_truthy
-          expect(first['tenant_id']).to eq active_t.id
+          expect(first['compute_site_id']).to eq active_t.id
         end
       end
     end

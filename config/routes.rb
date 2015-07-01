@@ -63,7 +63,7 @@ Atmosphere::Engine.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :tenants, only: [:index, :show]
+      resources :compute_sites, only: [:index, :show]
 
       resources :virtual_machine_flavors, only: [:index]
 

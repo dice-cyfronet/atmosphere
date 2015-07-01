@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Atmosphere::VirtualMachineFlavorSerializer do
 
   context 'activity flag tests' do
-    it 'is active on active tenant' do
+    it 'is active on active compute site' do
       flavor = flavor_on_t(t_active: true, active: true)
 
       result = serialize(flavor)
@@ -11,7 +11,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
       expect(result['virtual_machine_flavor']['active']).to be_truthy
     end
 
-    it 'is inactive on inactive tenant' do
+    it 'is inactive on inactive compute site' do
       flavor = flavor_on_t(t_active: false, active: true)
 
       result = serialize(flavor)
@@ -19,7 +19,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
       expect(result['virtual_machine_flavor']['active']).to be_falsy
     end
 
-    it 'is inactive when not bound to tenant' do
+    it 'is inactive when not bound to compute site' do
       flavor = create(:flavor, tenant: nil, active: true)
 
       result = serialize(flavor)

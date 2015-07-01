@@ -13,8 +13,9 @@ module Atmosphere
 
     has_many :appliances, :port_mapping_templates,
              :appliance_configuration_templates,
-             :virtual_machine_templates,
-             :tenants
+             :virtual_machine_templates
+
+    has_many :tenants, key: :compute_site_ids
 
     private
 

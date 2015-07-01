@@ -8,6 +8,6 @@ module Atmosphere
     attributes :id, :key, :value
 
     has_one :port_mapping_template
-    has_one :tenant
+    has_one :tenant, key: :compute_site_id
   end
 end

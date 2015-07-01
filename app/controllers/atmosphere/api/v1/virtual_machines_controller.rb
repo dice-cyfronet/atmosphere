@@ -31,6 +31,10 @@ module Atmosphere
             filter[:virtual_machine_flavor_id] = params[:flavor_id]
           end
 
+          if params[:compute_site_id]
+            filter[:tenant_id] = params[:compute_site_id]
+          end
+
           filter
         end
 

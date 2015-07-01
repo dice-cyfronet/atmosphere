@@ -120,7 +120,7 @@ RSpec::Matchers.define :port_mapping_property_eq do |expected|
     (actual['key'] == expected.key) &&
     (actual['value'] == expected.value) &&
     ((expected.port_mapping_template && (actual['port_mapping_template_id'] == expected.port_mapping_template_id)) or
-        (expected.tenant && (actual['tenant_id'] == expected.tenant.id)))
+        (expected.tenant && (actual['compute_site_id'] == expected.tenant.id)))
   end
 end
 
@@ -129,7 +129,7 @@ RSpec::Matchers.define :be_updated_by_port_mapping_property do |expected|
     (actual['key'] == expected[:key] || expected[:key].blank?) &&
     (actual['value'] == expected[:value] || expected[:value].blank?) &&
     ((actual['port_mapping_template_id'] == expected[:port_mapping_template_id]) or
-        (actual['tenant_id'] == expected[:tenant_id]) or
+        (actual['compute_site_id'] == expected[:tenant_id]) or
         (expected[:port_mapping_template_id].blank? && expected[:tenant_id].blank?))
   end
 end
@@ -215,7 +215,7 @@ RSpec::Matchers.define :vm_eq do |expected|
     actual['name'] == expected.name &&
     actual['state'] == expected.state.to_s &&
     actual['ip'] == expected.ip &&
-    actual['tenant_id'] == expected.tenant_id
+    actual['compute_site_id'] == expected.tenant_id
     # admin
     # actual['virtual_machine_template_id'] == expected.virtual_machine_template_id
     # actual['appliance_ids'] == TODO
@@ -268,25 +268,25 @@ RSpec::Matchers.define :vm_fog_data_equals do |fog_vm_data, template|
   end
 end
 
-RSpec::Matchers.define :tenant_basic_eq do |expected|
+RSpec::Matchers.define :compute_site_basic_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
-    actual['tenant_id'] == expected.tenant_id &&
+    actual['site_id'] == expected.tenant_id &&
     actual['name'] == expected.name &&
     actual['location'] == expected.location &&
-    actual['tenant_type'] == expected.tenant_type &&
+    actual['site_type'] == expected.tenant_type &&
     actual['technology'] == expected.technology &&
     actual['config'] == nil
   end
 end
 
-RSpec::Matchers.define :tenant_full_eq do |expected|
+RSpec::Matchers.define :compute_site_full_eq do |expected|
   match do |actual|
     actual['id'] == expected.id &&
-    actual['tenant_id'] == expected.tenant_id &&
+    actual['site_id'] == expected.tenant_id &&
     actual['name'] == expected.name &&
     actual['location'] == expected.location &&
-    actual['tenant_type'] == expected.tenant_type &&
+    actual['site_type'] == expected.tenant_type &&
     actual['technology'] == expected.technology &&
     actual['config'] == expected.config
   end
@@ -326,7 +326,7 @@ RSpec::Matchers.define :vmt_eq do |expected|
         actual['name'] == expected.name &&
         actual['state'] == expected.state.to_s &&
         actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
-        actual['tenant_id'] == expected.tenant_id &&
+        actual['compute_site_id'] == expected.tenant_id &&
         actual['appliance_type_id'] == expected.appliance_type_id &&
         actual['architecture'] == expected.architecture.to_s
   end

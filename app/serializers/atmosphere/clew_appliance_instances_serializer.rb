@@ -73,7 +73,7 @@ module Atmosphere
         url: hm.url,
         appliance_id: hm.appliance_id,
         port_mapping_template_id: hm.port_mapping_template_id,
-        tenant_id: hm.tenant_id,
+        compute_site_id: hm.tenant_id,
         monitoring_status: hm.monitoring_status,
         custom_name: hm.custom_name,
         custom_url: hm.custom_url
@@ -85,7 +85,7 @@ module Atmosphere
         id: vm.id,
         ip: vm.ip,
         state: vm.state,
-        tenant: map_t(vm.tenant),
+        compute_site: map_t(vm.tenant),
         virtual_machine_flavor: vm.virtual_machine_flavor,
         port_mappings: vm.port_mappings
       }
@@ -94,10 +94,10 @@ module Atmosphere
     def map_t(t)
       {
         id: t.id,
-        tenant_id: t.tenant_id,
+        site_id: t.tenant_id,
         name: t.name,
         location: t.location,
-        tenant_type: t.tenant_type,
+        site_type: t.tenant_type,
         technology: t.technology,
         http_proxy_url: t.http_proxy_url,
         https_proxy_url: t.https_proxy_url,

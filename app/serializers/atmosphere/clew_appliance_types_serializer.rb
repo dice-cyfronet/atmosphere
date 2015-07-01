@@ -3,7 +3,7 @@ module Atmosphere
 
     attribute :appliance_types
 
-    attribute :tenants
+    attribute :tenants, key: :compute_sites
 
     def appliance_types
       object[:appliance_types].map { |at| map_at(at) }
@@ -19,7 +19,7 @@ module Atmosphere
         preference_memory: at.preference_memory,
         preference_disk: at.preference_disk,
         matched_flavor: map_flavor(flavor),
-        tenant_ids: at.tenant_ids,
+        compute_site_ids: at.tenant_ids,
         appliance_configuration_templates: at.appliance_configuration_templates
       }
     end
@@ -41,7 +41,7 @@ module Atmosphere
         cpu: flavor.cpu,
         memory: flavor.memory,
         hdd: flavor.hdd,
-        tenant_id: flavor.tenant_id,
+        compute_site_id: flavor.tenant_id,
         id_at_site: flavor.id_at_site,
         supported_architectures: flavor.supported_architectures,
         active: flavor.active,
@@ -53,10 +53,10 @@ module Atmosphere
     def map_t(t)
       {
         id: t.id,
-        tenant_id: t.tenant_id,
+        site_id: t.tenant_id,
         name: t.name,
         location: t.location,
-        tenant_type: t.tenant_type,
+        site_type: t.tenant_type,
         technology: t.technology,
         http_proxy_url: t.http_proxy_url,
         https_proxy_url: t.https_proxy_url,

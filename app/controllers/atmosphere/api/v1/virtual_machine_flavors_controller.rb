@@ -10,13 +10,13 @@ module Atmosphere
                       :validate_filter_combination!, only: :index
 
         # Query params may include either:
-        # - appliance_configuration_instance_id and optionally tenant_id
-        # - appliance_type_id and optionally tenant_id
-        # - a combination of tenant_id, cpu, memory, hdd
+        # - appliance_configuration_instance_id and optionally compute_site_id
+        # - appliance_type_id and optionally compute_site_id
+        # - a combination of compute_site_id, cpu, memory, hdd
         # or be empty.
         def index
           flavors = []
-          cs_id = params[:tenant_id]
+          cs_id = params[:compute_site_id]
 
           if optimizer_query?
             tmpls = VirtualMachineTemplate.active.on_active_cs
@@ -69,7 +69,7 @@ module Atmosphere
         def allowed_query_params
           [
             'appliance_configuration_instance_id',
-            'appliance_type_id','tenant_id',
+            'appliance_type_id','compute_site_id',
             'cpu', 'memory', 'hdd'
           ]
         end
