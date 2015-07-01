@@ -45,8 +45,8 @@ describe Atmosphere::ApplianceCreator do
 
   it 'creates appliance with optimization policy params' do
     vms = [
-           { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [1] },
-           { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [1] }
+      { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [1] },
+      { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [1] }
           ]
     created_appl_params = ActionController::Parameters.
                             new(appliance_set_id: as.id,
