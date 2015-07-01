@@ -12,7 +12,8 @@ describe Atmosphere::Optimizer do
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:fund) { create(:fund) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
-  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenant: openstack)}
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, \
+    tenant: openstack) }
 
   subject { Atmosphere::Optimizer.instance }
 
@@ -34,8 +35,10 @@ describe Atmosphere::Optimizer do
       it 'if cheaper flavor does not support architecture' do
         t = create(:tenant)
         tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, tenant: t)
-        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, tenant: t, supported_architectures: 'i386')
-        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, tenant: t, supported_architectures: 'x86_64')
+        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, tenant: t, \
+          supported_architectures: 'i386')
+        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, tenant: t, \
+          supported_architectures: 'x86_64')
 
         fl_32b.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
         fl_64b.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
@@ -77,14 +80,16 @@ describe Atmosphere::Optimizer do
           all_discarded_flavors.each {|f|
             f.reload
             if(f.memory >= appl_type.preference_memory and f.cpu >= appl_type.preference_cpu)
-              expect(f.get_hourly_cost_for(Atmosphere::OSFamily.first) >= flavor.get_hourly_cost_for(Atmosphere::OSFamily.first)).to be true
+              expect(f.get_hourly_cost_for(Atmosphere::OSFamily.first) >= \
+                flavor.get_hourly_cost_for(Atmosphere::OSFamily.first)).to be true
             end
           }
         end
 
         it 'selects flavor with more ram if prices are equal' do
           biggest_os_flavor = openstack.virtual_machine_flavors.max_by {|f| f.memory}
-          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, tenant: amazon)
+          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, \
+            cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, tenant: amazon)
           biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
           optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
           amazon.reload

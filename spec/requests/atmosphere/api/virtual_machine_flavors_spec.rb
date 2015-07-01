@@ -180,7 +180,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         end
 
         context 'filter for tenant specified' do
-          it "applies tenant filtering" do
+          it 'applies tenant filtering' do
             create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
             get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&tenant_id=#{t2.id + 1}", user)
             flavors = fls_response
