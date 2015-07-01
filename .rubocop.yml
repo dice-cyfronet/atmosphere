@@ -9,3 +9,8 @@ AllCops:
 StringLiterals:
   EnforcedStyle: single_quotes
   Enabled: true
+
+LineLength:
+  Description: 'Extend line length to 120 characters.'
+  Enabled: true
+  Max: 120
