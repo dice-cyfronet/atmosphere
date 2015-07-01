@@ -4,7 +4,7 @@ class Atmosphere::Admin::TenantsController < Atmosphere::Admin::ApplicationContr
 
   # GET /tenants
   def index
-    @tenants = @tenantss.order(:name)
+    @tenants = @tenants.order(:name)
   end
 
   # GET /tenants/1

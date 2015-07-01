@@ -14,7 +14,11 @@ describe Atmosphere::VmTemplateMonitoringWorker do
   end
 
   context 'updating tenant images' do
-    let(:cyfronet_folsom) { create(:tenant, tenant_id: 'cyfronet-folsom',config: '{"provider": "openstack", "openstack_auth_url": "http://10.100.0.2:5000/v2.0/tokens", "openstack_api_key": "key", "openstack_username": "user"}') }
+    let(:cyfronet_folsom) do
+      create(:tenant, tenant_id: 'cyfronet-folsom', \
+      config: '{"provider": "openstack", "openstack_auth_url": "http://10.100.0.2:5000/v2.0/tokens",
+      "openstack_api_key": "key", "openstack_username": "user"}')
+    end
     let(:ubuntu_data) { image 'ubuntu', 'Ubuntu 12.04', :ACTIVE }
     let(:arch_data)   { image 'arch',   'Arch',         :SAVING }
     let(:centos_data) { image 'centos', 'Centos',       :ERROR }

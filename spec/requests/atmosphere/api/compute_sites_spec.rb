@@ -20,12 +20,12 @@ describe Atmosphere::Api::V1::ComputeSitesController do
 
     context 'when authenticated as user' do
       it 'returns 200 Success' do
-        get api("/compute_sites", user)
+        get api('/compute_sites', user)
         expect(response.status).to eq 200
       end
 
       it 'returns only basic compute site information' do
-        get api("/compute_sites", user)
+        get api('/compute_sites', user)
         expect(ts_response).to be_an Array
         expect(ts_response.size).to eq 3
         expect(ts_response[0]).to compute_site_basic_eq t1
@@ -35,7 +35,7 @@ describe Atmosphere::Api::V1::ComputeSitesController do
 
       context 'search' do
         it 'returns only private compute sites' do
-          get api("/compute_sites?site_type=private", user)
+          get api('/compute_sites?site_type=private', user)
           expect(ts_response.size).to eq 2
           expect(ts_response[0]).to compute_site_basic_eq t1
           expect(ts_response[1]).to compute_site_basic_eq t2
@@ -45,7 +45,7 @@ describe Atmosphere::Api::V1::ComputeSitesController do
 
     context 'when authenticated as admin' do
       it 'returns full compute site information' do
-        get api("/compute_sites", admin)
+        get api('/compute_sites', admin)
         expect(ts_response.size).to eq 3
         expect(ts_response[0]).to compute_site_full_eq t1
         expect(ts_response[1]).to compute_site_full_eq t2
@@ -64,7 +64,7 @@ describe Atmosphere::Api::V1::ComputeSitesController do
 
     context 'when authenticated as user' do
       it 'returns 200 Success' do
-        get api("/compute_sites", user)
+        get api('/compute_sites', user)
         expect(response.status).to eq 200
       end
 
@@ -74,7 +74,7 @@ describe Atmosphere::Api::V1::ComputeSitesController do
       end
 
       it 'returns 404 (Not Found) on nonexistent compute site' do
-        get api("/compute_sites/nonexisting", user)
+        get api('/compute_sites/nonexisting', user)
         expect(response.status).to eq 404
       end
     end

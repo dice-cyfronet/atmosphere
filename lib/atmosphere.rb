@@ -32,7 +32,7 @@ module Atmosphere
       atmosphere: [
         Atmosphere::ApplianceType,
         Atmosphere::ApplianceSet,
-        Atmosphere::ComputeSite,
+        Atmosphere::Tenant,
         Atmosphere::VirtualMachine,
         Atmosphere::VirtualMachineTemplate,
         Atmosphere::MigrationJob,
