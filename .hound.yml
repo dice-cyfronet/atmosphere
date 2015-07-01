@@ -1,7 +1,3 @@
 ruby:
   enabled: true
   config_file: .rubocop.yml
-LineLength:
-  Description: 'Extend line length to 120 characters.'
-  Enabled: true
-  Max: 120
