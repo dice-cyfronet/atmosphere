@@ -58,12 +58,12 @@
               .btn-group
                 %span.btn.btn-default.btn-xs.disabled.non-opaque
                   = tenant_fund.tenant.name
-                = link_to admin_compute_site_fund_path(tenant_fund),
+                = link_to admin_tenant_fund_path(tenant_fund),
                   method: :delete,
                   data: { confirm: t('are_you_sure') },
                   class: 'btn btn-default btn-xs has_bottom_tooltip',
                   title: t('funds.remove_tenant.help',
-                  cs: tenant_fund.tenant.name) do
+                           tenant: tenant_fund.tenant.name) do
                   = icon 'times'
           - else
             %i.text-muted

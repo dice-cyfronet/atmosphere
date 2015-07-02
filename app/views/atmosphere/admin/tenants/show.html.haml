@@ -45,11 +45,11 @@
 
 %p
   .btn-group
-    = link_to edit_admin_compute_site_path(@tenant),
+    = link_to edit_admin_tenant_path(@tenant),
       class: 'btn btn-warning', title: t('edit') do
       =icon 'bars'
       = t('edit')
-    = link_to admin_compute_sites_path,
+    = link_to admin_tenants_path,
       class: 'btn btn-default', title: t('back') do
       =icon 'reply'
       = t('back')

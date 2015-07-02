@@ -22,7 +22,7 @@ class Atmosphere::Admin::TenantsController < Atmosphere::Admin::ApplicationContr
   # POST /tenants
   def create
     if @tenant.save
-      redirect_to admin_compute_sites_url(@tenant), notice: 'Tenant was successfully created.'
+      redirect_to admin_tenants_url(@tenant), notice: 'Tenant was successfully created.'
     else
       render action: 'new'
     end
