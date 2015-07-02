@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150701134021) do
+ActiveRecord::Schema.define(version: 20150701173332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -298,6 +298,11 @@ ActiveRecord::Schema.define(version: 20150701134021) do
     t.string  "id_at_site"
     t.string  "supported_architectures", default: "x86_64"
     t.boolean "active",                  default: true
+  end
+
+  create_table "atmosphere_virtual_machine_template_tenants", force: :cascade do |t|
+    t.integer "virtual_machine_template_id"
+    t.integer "tenant_id"
   end
 
   create_table "atmosphere_virtual_machine_templates", force: :cascade do |t|

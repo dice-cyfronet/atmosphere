@@ -173,7 +173,7 @@ describe Atmosphere::VirtualMachineTemplate do
       let(:tmp) do
         build(:virtual_machine_template,
               managed_by_atmosphere: true,
-              tenant: t)
+              tenants: [t])
       end
 
       it 'removes template from tenant' do
@@ -209,7 +209,7 @@ describe Atmosphere::VirtualMachineTemplate do
 
     context 'when template is not managed by atmosphere' do
       let(:t) { build(:tenant) }
-      let(:external_tmp) { build(:virtual_machine_template, tenant: t) }
+      let(:external_tmp) { build(:virtual_machine_template, tenants: [t]) }
 
       it 'removes template from compute site' do
         expect(images).to_not receive(:destroy)
@@ -223,7 +223,7 @@ describe Atmosphere::VirtualMachineTemplate do
     context 'when tpl is in saving state' do
       let(:t) { create(:tenant) }
       let(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
-      let!(:tpl_in_saving_state) { create(:virtual_machine_template, source_vm: vm, state: :saving, tenant: t) }
+      let!(:tpl_in_saving_state) { create(:virtual_machine_template, source_vm: vm, state: :saving, tenants: [t]) }
 
       context 'and source VM is assigned to appliance' do
         before { create(:appliance, virtual_machines: [vm]) }
@@ -248,8 +248,8 @@ describe Atmosphere::VirtualMachineTemplate do
   describe '::create_from_vm' do
     let(:t) { create(:tenant) }
     let(:cloud_client) { double(:cloud_client) }
-    let(:vm) { create(:virtual_machine, id_at_site: 'id', tenant: t) }
-    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id2', tenant: t) }
+    let(:vm) { create(:virtual_machine, id_at_site: 'id', tenants: [t]) }
+    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id2', tenants: [t]) }
 
     before do
       allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))

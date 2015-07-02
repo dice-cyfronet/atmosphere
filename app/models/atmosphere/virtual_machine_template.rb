@@ -37,14 +37,12 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::MigrationJob'
 
-    belongs_to :tenant,
-      class_name: 'Atmosphere::Tenant'
+    has_and_belongs_to_many :tenants,
+      class_name: 'Atmosphere::Tenant',
+      join_table: 'atmosphere_virtual_machine_template_tenants'
 
     belongs_to :appliance_type,
       class_name: 'Atmosphere::ApplianceType'
-
-    validates :tenant_id,
-              presence: true
 
     validates :id_at_site,
               presence: true,

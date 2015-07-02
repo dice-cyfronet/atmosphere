@@ -27,9 +27,9 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::VirtualMachine'
 
-    has_many :virtual_machine_templates,
-      dependent: :destroy,
-      class_name: 'Atmosphere::VirtualMachineTemplate'
+    has_and_belongs_to_many :virtual_machine_templates,
+      class_name: 'Atmosphere::VirtualMachineTemplate',
+      join_table: 'atmosphere_virtual_machine_template_tenants'
 
     has_many :port_mapping_properties,
       dependent: :destroy,
