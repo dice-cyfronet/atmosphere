@@ -1,7 +1,7 @@
 %h1
   = t('tenants.long_title_single')
   .pull-right
-    = link_to new_admin_compute_site_path,
+    = link_to new_admin_tenant_path,
       class: 'btn btn-success', title: t('tenants.new') do
       = icon 'plus'
       = t('add_new')
@@ -27,7 +27,7 @@
         %td= tenant.technology
         %td.actions
           .btn-group
-            = link_to admin_compute_site_path(tenant),
+            = link_to admin_tenant_path(tenant),
               class: 'btn btn-success btn-xs', title: t('tenants.show') do
               =icon 'bars'
             = link_to edit_admin_compute_site_path(tenant),
