@@ -42,7 +42,7 @@
               - appliance_set.appliances.each do |appliance|
                 %br
                 - appliance.virtual_machines.each do |virtual_machine|
-                  = virtual_machine.compute_site.name
+                  = virtual_machine.tenant.name
                   %br
             %td
               - appliance_set.appliances.each do |appliance|

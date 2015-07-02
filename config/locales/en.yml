@@ -245,7 +245,7 @@ en:
       help: Remove this fund (may cause users to lose their default and only fund!).
       success: Fund was removed, along with its associations to Compute Sites and Users.
     remove_tenant:
-      help: This will remove %{t} from the list of Tenants where users are able to use that Fund.
+      help: This will remove %{tenant} from the list of Tenants where users are able to use that Fund.
       success: Tenant %{t} was removed from the list of supported tenants for Fund %{fund}.
     add_tenant:
       prompt: Add Tenant...

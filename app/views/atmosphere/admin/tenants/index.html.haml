@@ -30,10 +30,10 @@
             = link_to admin_tenant_path(tenant),
               class: 'btn btn-success btn-xs', title: t('tenants.show') do
               =icon 'bars'
-            = link_to edit_admin_compute_site_path(tenant),
+            = link_to edit_admin_tenant_path(tenant),
               class: 'btn btn-warning btn-xs', title: t('tenants.edit') do
               =icon 'edit'
-            = link_to admin_compute_site_path(tenant), method: :delete, data: { confirm: t('are_you_sure_t') },
+            = link_to admin_tenant_path(tenant), method: :delete, data: { confirm: t('are_you_sure_t') },
               class: 'btn btn-danger btn-xs', title: t('tenants.remove') do
               =icon 'trash-o'
 
