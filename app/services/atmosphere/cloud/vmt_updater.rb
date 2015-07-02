@@ -17,7 +17,7 @@ module Atmosphere
     attr_reader :image
 
     def perform_update!
-      vmt.id_at_site =  image.id
+      vmt.id_at_site = image.id
       vmt.name = image.name
       vmt.architecture = image.architecture
       vmt.state = image.status.downcase.to_sym
@@ -39,8 +39,19 @@ module Atmosphere
     end
 
     def vmt
-      @vmt ||= @tenant.virtual_machine_templates
-        .find_or_initialize_by(id_at_site: @image.id)
+      # TODO: Hacky solution to get around the non-existence of Atmosphere::ComputeSite
+      # Fix this after reinstating ComputeSite as a first-class AR
+      cs_vmt_list = @tenant.get_all_tenants_for_cs.collect do |t|
+        t.virtual_machine_templates
+      end.flatten.compact
+      vmt = Atmosphere::VirtualMachineTemplate.find do |vmt|
+        cs_vmt_list.collect {|vmt| vmt.id_at_site}.include? @image.id
+      end
+      if vmt
+        vmt
+      else
+        Atmosphere::VirtualMachineTemplate.new(id_at_site: @image.id)
+      end
     end
 
     def logger
@@ -64,7 +75,7 @@ module Atmosphere
 
       unless @source_vmt && source_t_id && source_id_at_site
         @source_vmt = VirtualMachineTemplate.
-          on_cs_with_src(source_t_id, source_id_at_site).
+          on_tenant_with_src(source_t_id, source_id_at_site).
           first
       end
 

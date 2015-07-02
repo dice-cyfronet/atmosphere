@@ -69,14 +69,18 @@ module Atmosphere
 
     scope :active, -> { where(state: 'active') }
 
-    scope :on_active_cs, -> do
-      joins(:tenant).
-        where(atmosphere_tenants: { active: true })
+    scope :on_active_tenant, -> do
+      joins(:atmosphere_virtual_machine_template_tenants => :atmosphere_tenants)
+        .where('atmosphere_tenants.active = ?', true)
     end
 
-    scope :on_cs, ->(t) { where(tenant_id: t) }
+    #   joins(:tenants).
+    #     where(tenants.any? {|t| t.active})
+    # end
 
-    scope :on_cs_with_src, ->(t_id, source_id) do
+    scope :on_tenant, ->(t) { where(tenant_id: t) }
+
+    scope :on_tenant_with_src, ->(t_id, source_id) do
       joins(:tenant).
         where(atmosphere_tenants: { tenant_id: t_id },
               id_at_site: source_id)

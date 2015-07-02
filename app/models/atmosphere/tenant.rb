@@ -171,6 +171,10 @@ module Atmosphere
         )
     end
 
+    def get_all_tenants_for_cs
+      Atmosphere::Tenant.where("compute_site_id = #{compute_site_id}").all
+    end
+
     private
 
     def update_cloud_client

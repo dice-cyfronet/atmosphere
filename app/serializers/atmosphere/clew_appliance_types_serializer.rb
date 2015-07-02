@@ -73,7 +73,7 @@ module Atmosphere
       params[:memory] &&= at.preference_memory
       params[:hdd] &&= at.preference_disk
 
-      tmpls = VirtualMachineTemplate.active.on_active_cs
+      tmpls = VirtualMachineTemplate.active.on_active_tenant
         .where(appliance_type_id: at.id)
       flavor = nil
 

@@ -4,12 +4,12 @@ module Atmopshere
 
     included do
       every(Atmosphere.monitoring.intervals.vmt, 'monitoring.templates') do
-        action_on_actice_cses('templates monitoring',
+        action_on_active_tenants('templates monitoring',
                               Atmosphere::VmTemplateMonitoringWorker)
       end
 
       every(Atmosphere.monitoring.intervals.vm, 'monitoring.vms') do
-        action_on_actice_cses('vms monitoring',
+        action_on_active_tenants('vms monitoring',
                               Atmosphere::VmMonitoringWorker)
       end
 
@@ -40,7 +40,7 @@ module Atmopshere
         Atmosphere::HttpMappingMonitoringWorker.perform_async(:lost)
       end
 
-      def self.action_on_actice_cses(name, task)
+      def self.action_on_active_tenants(name, task)
         Atmosphere::Tenant.active.select(:id, :name).each do |t|
           Rails.logger.debug "Creating #{name} task for #{t.name}"
           task.perform_async(t.id)
