@@ -110,8 +110,8 @@ module Atmosphere
         Atmosphere::NicProvider::DefaultNicProvider
       end
     config =
-      if compute_site.nic_provider_config.present?
-        JSON.parse(compute_site.nic_provider_config).symbolize_keys
+      if tenant.nic_provider_config.present?
+        JSON.parse(tenant.nic_provider_config).symbolize_keys
       else
         {tenant: tenant}
       end
