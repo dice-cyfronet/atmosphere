@@ -76,7 +76,7 @@ describe Atmosphere do
       let(:t) { create(:tenant) }
       it 'returns NullNicProvider' do
         expect(Atmosphere.nic_provider(t).class).
-          to eq Atmosphere::NicProvider::NullNicProvider
+          to eq Atmosphere::NicProvider::DefaultNicProvider
       end
     end
 
@@ -90,13 +90,13 @@ describe Atmosphere do
 
       it 'creates provider of appropriate class if config is empty' do
         t.nic_provider_config = ''
-        expect(DummyNicProvider).to receive(:new).with({})
+        expect(DummyNicProvider).to receive(:new).with({tenant: t})
         Atmosphere.nic_provider(t)
       end
 
       it 'creates provider of appropriate class if config is empty' do
         t.nic_provider_config = nil
-        expect(DummyNicProvider).to receive(:new).with({})
+        expect(DummyNicProvider).to receive(:new).with({tenant: t})
         Atmosphere.nic_provider(t)
       end
 
