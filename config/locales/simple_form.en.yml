@@ -8,12 +8,12 @@ en:
     error_notification:
       default_message: "Please review the problems below:"
     labels:
-      compute_site:
-        site_id: Site ID
+      tenant:
+        tenant_id: Tenant ID
         name: Name
         active: Active
         location: Location
-        site_type: Site type
+        tenant_type: Tenant type
         technology: Technology
         http_proxy_url: HTTP Proxy URL
         https_proxy_url: HTTPS Proxy URL
@@ -27,7 +27,7 @@ en:
         public_key: Public key
         user: User
       virtual_machine_template:
-        site: Site
+        tenant: Tenant
         id_at_site: ID at site
         name: Name
         state: State

@@ -13,8 +13,9 @@ module Atmosphere
 
     has_many :appliances, :port_mapping_templates,
              :appliance_configuration_templates,
-             :virtual_machine_templates,
-             :compute_sites
+             :virtual_machine_templates
+
+    has_many :tenants, key: :compute_site_ids
 
     private
 
@@ -36,8 +37,8 @@ module Atmosphere
           count > 0
     end
 
-    def compute_sites
-      object.compute_sites.active
+    def tenants
+      object.tenants.active
     end
   end
 end

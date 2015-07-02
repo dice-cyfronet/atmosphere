@@ -16,7 +16,7 @@
 # Each user may belong to one or more fund and each fund may include multiple users
 # Funds are linked to Appliances instead of VMs due to the fact that a single VM may be shared by multiple Appliances
 # (and therefore multiple users), in which case all owners "chip in" to enable continued operation of the VM.
-# Funds are also linked to ComputeSites and may only be used to pay for VMs which belong to their respective ComputeSites.
+# Funds are also linked to Tenants and may only be used to pay for VMs which belong to their respective Tenants.
 module Atmosphere
   class Fund < ActiveRecord::Base
     extend Enumerize
@@ -33,13 +33,13 @@ module Atmosphere
              dependent: :destroy,
              class_name: 'Atmosphere::UserFund'
 
-    has_many :compute_sites,
-        through: :compute_site_funds,
-        class_name: 'Atmosphere::ComputeSite'
+    has_many :tenants,
+        through: :tenant_funds,
+        class_name: 'Atmosphere::Tenant'
 
-    has_many :compute_site_funds,
+    has_many :tenant_funds,
         dependent: :destroy,
-        class_name: 'Atmosphere::ComputeSiteFund'
+        class_name: 'Atmosphere::TenantFund'
 
     validates :name,
               presence: true
@@ -56,8 +56,8 @@ module Atmosphere
               in: [:delete, :suspend, :no_action],
               predicates: true
 
-    def unsupported_compute_sites
-      ComputeSite.where.not(id: compute_sites)
+    def unsupported_tenants
+      Tenant.where.not(id: tenants)
     end
 
     def unassigned_users

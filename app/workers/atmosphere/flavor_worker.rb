@@ -7,8 +7,8 @@ module Atmosphere
 
     def perform
       begin
-        Rails.logger.debug "Updating flavor info for all cloud sites."
-        FlavorManager::scan_all_sites
+        Rails.logger.debug "Updating flavor info for all tenants."
+        FlavorManager::scan_all_tenants
       end
     end
   end

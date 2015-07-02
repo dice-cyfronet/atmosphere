@@ -1,0 +1,55 @@
+%p#notice= notice
+
+%h1
+  = t('show')
+  = t('tenants.long_title_single')
+
+%p
+  %table.show-table
+    %tr
+      %td= t('tenants.tenant')
+      %td.monospace= @tenant.tenant_id
+    %tr
+      %td= t('tenants.name')
+      %td= @tenant.name
+    %tr
+      %td= t('tenants.location')
+      %td= @tenant.location
+    %tr
+      %td= t('tenants.tenant_type')
+      %td= @tenant.tenant_type
+    %tr
+      %td= t('tenants.technology')
+      %td= @tenant.technology
+    %tr
+      %td= t('tenants.http_proxy_url')
+      %td.monospace= @tenant.http_proxy_url
+    %tr
+      %td= t('tenants.https_proxy_url')
+      %td.monospace= @tenant.https_proxy_url
+    %tr
+      %td= t('tenants.configuration')
+      %td.monospace= @tenant.config
+    %tr
+      %td= t('tenants.template_filters')
+      %td.monospace= @tenant.template_filters
+    %tr
+      %td= t('tenants.wrangler_url')
+      %td.monospace= @tenant.wrangler_url
+    %tr
+      %td= t('tenants.wrangler_username')
+      %td.monospace= @tenant.wrangler_username
+    %tr
+      %td= t('tenants.wrangler_password')
+      %td.monospace= @tenant.wrangler_password
+
+%p
+  .btn-group
+    = link_to edit_admin_tenant_path(@tenant),
+      class: 'btn btn-warning', title: t('edit') do
+      =icon 'bars'
+      = t('edit')
+    = link_to admin_tenants_path,
+      class: 'btn btn-default', title: t('back') do
+      =icon 'reply'
+      = t('back')

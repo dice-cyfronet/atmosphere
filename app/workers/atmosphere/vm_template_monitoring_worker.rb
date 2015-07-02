@@ -5,23 +5,23 @@ module Atmosphere
     sidekiq_options queue: :monitoring
     sidekiq_options retry: false
 
-    def perform(site_id)
+    def perform(tenant_id)
       begin
-        logger.debug { "#{jid}: Starting VMTs monitoring for site #{site_id}" }
-        site = ComputeSite.find(site_id)
-        filters = site.template_filters ? JSON.parse(site.template_filters) : {}
+        logger.debug { "#{jid}: Starting VMTs monitoring for tenant #{tenant_id}" }
+        tenant = Tenant.find(tenant_id)
+        filters = tenant.template_filters ? JSON.parse(tenant.template_filters) : {}
 
-        logger.debug { "#{jid}: getting images state for site #{site_id} from compute site" }
+        logger.debug { "#{jid}: getting images state for tenant #{tenant_id} from tenant" }
 
         images = if filters.empty?
-                   site.cloud_client.images.all
+                   tenant.cloud_client.images.all
                  else
-                   site.cloud_client.images.all(filters)
+                   tenant.cloud_client.images.all(filters)
                  end
 
-        update_images(site, images)
+        update_images(tenant, images)
 
-        logger.debug { "#{jid}: updating VMTs finished for site #{site_id}" }
+        logger.debug { "#{jid}: updating VMTs finished for tenant #{tenant_id}" }
       rescue Excon::Errors::HTTPStatusError => e
         logger.error "#{jid}: Unable to perform VMTs monitoring job: #{e}"
       end
@@ -31,17 +31,17 @@ module Atmosphere
 
     private
 
-    def update_images(site, images)
+    def update_images(tenant, images)
       logger.debug { "#{jid}: updating VMTs" }
-      all_site_templates = site.virtual_machine_templates.to_a
+      all_tenant_templates = tenant.virtual_machine_templates.to_a
       images.each do |image|
-        updated_vmt = Cloud::VmtUpdater.new(site, image).execute
+        updated_vmt = Cloud::VmtUpdater.new(tenant, image).execute
 
-        all_site_templates.delete(updated_vmt)
+        all_tenant_templates.delete(updated_vmt)
       end
 
       #remove deleted templates
-      all_site_templates.each do |vmt|
+      all_tenant_templates.each do |vmt|
         vmt.destroy(false) if vmt.old?
       end
     end

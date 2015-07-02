@@ -11,8 +11,8 @@ class Atmosphere::Admin::MigrationJobsController < Atmosphere::Admin::Applicatio
 
   def load_deps
     @migration_jobs = @migration_jobs.includes(:appliance_type,
-                                               :compute_site_source,
-                                               :compute_site_destination)
+                                               :tenant_source,
+                                               :tenant_destination)
     @migration_jobs = @migration_jobs.decorate
   end
 end

@@ -15,8 +15,8 @@ module Atmosphere
     belongs_to :port_mapping_template,
       class_name: 'Atmosphere::PortMappingTemplate'
 
-    belongs_to :compute_site,
-      class_name: 'Atmosphere::ComputeSite'
+    belongs_to :tenant,
+      class_name: 'Atmosphere::Tenant'
 
     validates :key,
               presence: true,
@@ -27,15 +27,15 @@ module Atmosphere
 
     validates :port_mapping_template,
               presence: true,
-              if: 'compute_site == nil'
+              if: 'tenant == nil'
     validates :port_mapping_template,
               absence: true,
-              if: 'compute_site != nil'
+              if: 'tenant != nil'
 
-    validates :compute_site,
+    validates :tenant,
               presence: true,
               if: 'port_mapping_template == nil'
-    validates :compute_site,
+    validates :tenant,
               absence: true,
               if: 'port_mapping_template != nil'
 

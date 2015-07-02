@@ -16,13 +16,13 @@ class Atmosphere::MigrationJobDecorator < Draper::Decorator
     vmt ? vmt.id_at_site : 'unknown'
   end
 
-  def compute_site_source_name
-    css = object.compute_site_source
+  def tenant_source_name
+    css = object.tenant_source
     css ? css.name : 'unknown'
   end
 
-  def compute_site_destination_name
-    csd = object.compute_site_destination
+  def tenant_destination_name
+    csd = object.tenant_destination
     csd ? csd.name : 'unknown'
   end
 

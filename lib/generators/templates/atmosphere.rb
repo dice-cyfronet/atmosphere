@@ -77,7 +77,7 @@ Atmosphere.setup do |config|
 
   # Period in which Template can be automaticaly assigned into Appliance Type,
   # version can be set to origin VMT version (this mechanism is used while
-  # migrating VMT into atnother compute site) and `manage_by_atmosphere` can
+  # migrating VMT into atnother tenant) and `manage_by_atmosphere` can
   # be set to true (when VMT is assigned to Appliance Type).
   #
   # config.vmt_at_relation_update_period = 2

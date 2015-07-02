@@ -147,19 +147,19 @@ describe Atmosphere::HttpMapping do
   end
 
   it 'guarantee custom name uniques' do
-    cs = create(:compute_site)
+    t = create(:tenant)
     create(:http_mapping,
       custom_name: 'test',
       application_protocol: :http,
-      compute_site: cs)
+      tenant: t)
     hm1 = build(:http_mapping,
       custom_name: 'test',
       application_protocol: :http,
-      compute_site: cs)
+      tenant: t)
     hm2 = build(:http_mapping,
       custom_name: 'test',
       application_protocol: :https,
-      compute_site: cs)
+      tenant: t)
 
     expect(hm1.save).to be_falsy
     expect(hm2.save).to be_truthy

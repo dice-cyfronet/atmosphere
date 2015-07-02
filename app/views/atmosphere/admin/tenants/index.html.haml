@@ -1,40 +1,40 @@
 %h1
-  = t('compute_sites.long_title_single')
+  = t('tenants.long_title_single')
   .pull-right
-    = link_to new_admin_compute_site_path,
-      class: 'btn btn-success', title: t('compute_sites.new') do
+    = link_to new_admin_tenant_path,
+      class: 'btn btn-success', title: t('tenants.new') do
       = icon 'plus'
       = t('add_new')
 
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th= t('compute_sites.site')
-      %th= t('compute_sites.name')
-      %th= t('compute_sites.location')
-      %th= t('compute_sites.site_type')
-      %th= t('compute_sites.technology')
+      %th= t('tenants.tenant')
+      %th= t('tenants.name')
+      %th= t('tenants.location')
+      %th= t('tenants.tenant_type')
+      %th= t('tenants.technology')
       %th.actions
         = t('actions')
 
-    - @compute_sites.each do |compute_site|
+    - @tenants.each do |tenant|
       %tr
         %td.monospace
-          = compute_site.site_id
-        %td= compute_site.name
-        %td= compute_site.location
-        %td= compute_site.site_type
-        %td= compute_site.technology
+          = tenant.tenant_id
+        %td= tenant.name
+        %td= tenant.location
+        %td= tenant.tenant_type
+        %td= tenant.technology
         %td.actions
           .btn-group
-            = link_to admin_compute_site_path(compute_site),
-              class: 'btn btn-success btn-xs', title: t('compute_sites.show') do
+            = link_to admin_tenant_path(tenant),
+              class: 'btn btn-success btn-xs', title: t('tenants.show') do
               =icon 'bars'
-            = link_to edit_admin_compute_site_path(compute_site),
-              class: 'btn btn-warning btn-xs', title: t('compute_sites.edit') do
+            = link_to edit_admin_tenant_path(tenant),
+              class: 'btn btn-warning btn-xs', title: t('tenants.edit') do
               =icon 'edit'
-            = link_to admin_compute_site_path(compute_site), method: :delete, data: { confirm: t('are_you_sure_cs') },
-              class: 'btn btn-danger btn-xs', title: t('compute_sites.remove') do
+            = link_to admin_tenant_path(tenant), method: :delete, data: { confirm: t('are_you_sure_t') },
+              class: 'btn btn-danger btn-xs', title: t('tenants.remove') do
               =icon 'trash-o'
 
 
@@ -44,7 +44,7 @@
 %p
   %table.table.table-hover.table-condensed
     %tr
-      %th= t('compute_sites.site')
+      %th= t('tenants.tenant')
       %th= t('virtual_machine_flavor.flavor_name')
       %th
         .pull-right= t('virtual_machine_flavor.cpu')
@@ -65,10 +65,10 @@
         .pull-right= t 'actions'
 
 
-    - @compute_sites.each do |compute_site|
-      - compute_site.virtual_machine_flavors.each do |flavor|
+    - @tenants.each do |tenant|
+      - tenant.virtual_machine_flavors.each do |flavor|
         %tr
-          %td.monospace= compute_site.site_id
+          %td.monospace= tenant.tenant_id
           %td
             - if flavor.active
               = flavor.flavor_name

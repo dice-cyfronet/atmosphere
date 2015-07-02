@@ -20,9 +20,11 @@ module Atmosphere
       class_name: 'Atmosphere::Appliance'
 
     def self.get(config_template, params)
-      instance_payload = ParamsRegexpable.filter(config_template.payload, params)
+      instance_payload = Atmosphere::ParamsRegexpable.
+                         filter(config_template.payload, params)
 
-      find_instance(config_template, instance_payload) || new_instance(config_template, instance_payload)
+      find_instance(config_template, instance_payload) ||
+        new_instance(config_template, instance_payload)
     end
 
     private

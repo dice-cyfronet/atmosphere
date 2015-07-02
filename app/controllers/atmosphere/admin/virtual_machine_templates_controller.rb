@@ -2,15 +2,15 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
   load_and_authorize_resource :virtual_machine_template,
                               class: 'Atmosphere::VirtualMachineTemplate'
 
-  before_filter :set_compute_sites, except: [:index, :show, :destroy]
+  before_filter :set_tenants, except: [:index, :show, :destroy]
 
   # GET /virtual_machine_templates
   def index
     @virtual_machine_templates = @virtual_machine_templates.
-                                 joins(:compute_site).
-                                 order('atmosphere_compute_sites.name').
+                                 joins(:tenant).
+                                 order('atmosphere_tenants.name').
                                  order('atmosphere_virtual_machine_templates.name').
-                                 group_by(&:compute_site)
+                                 group_by(&:tenant)
   end
 
   # GET /virtual_machine_templates/1
@@ -27,8 +27,8 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
 
   # POST /virtual_machine_templates/1/migrate
   def migrate
-    cs_id = virtual_machine_template_params[:compute_site_id]
-    @virtual_machine_template.export(cs_id)
+    t_id = virtual_machine_template_params[:tenant_id]
+    @virtual_machine_template.export(t_id)
     redirect_to admin_virtual_machine_templates_url,
                 notice: 'Virtual machine template migration task was successfully enqueued.'
   end
@@ -56,10 +56,14 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
 
   private
 
+  def set_tenants
+    @tenants = Atmosphere::Tenant.all
+  end
+
   # Only allow a trusted parameter "white list" through.
   def virtual_machine_template_params
     params.require(:virtual_machine_template).permit(:id_at_site, :name, :state,
-                                                     :compute_site_id,
+                                                     :tenant_id,
                                                      :virtual_machine_id,
                                                      :appliance_type_id)
   end

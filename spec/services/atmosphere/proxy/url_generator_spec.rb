@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe Atmosphere::Proxy::UrlGenerator do
   describe '#url_for' do
-    let(:cs) do
-      build(:compute_site,
+    let(:t) do
+      build(:tenant,
         http_proxy_url: 'http://http.proxy',
         https_proxy_url: 'https://https.proxy')
     end
@@ -22,7 +22,7 @@ describe Atmosphere::Proxy::UrlGenerator do
       port_mapping_template: pmt)
     end
 
-    subject { Atmosphere::Proxy::UrlGenerator.new(cs) }
+    subject { Atmosphere::Proxy::UrlGenerator.new(t) }
 
     it 'generate http proxy url for http mapping' do
       mapping.application_protocol = :http

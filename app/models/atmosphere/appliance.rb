@@ -54,13 +54,13 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::Deployment'
 
-    has_many :compute_sites,
-      through: :appliance_compute_sites,
+    has_many :tenants,
+      through: :appliance_tenants,
       dependent: :destroy,
-      class_name: 'Atmosphere::ComputeSite'
+      class_name: 'Atmosphere::Tenant'
 
-    has_many :appliance_compute_sites,
-      class_name: 'Atmosphere::ApplianceComputeSite'
+    has_many :appliance_tenants,
+      class_name: 'Atmosphere::ApplianceTenant'
 
     has_one :dev_mode_property_set,
       dependent: :destroy,
@@ -86,7 +86,7 @@ module Atmosphere
     after_destroy :remove_appliance_configuration_instance_if_needed
     after_create :optimize_saved_appliance
 
-    scope :started_on_site, ->(compute_site) { joins(:virtual_machines).where(atmosphere_virtual_machines: {compute_site: compute_site}) }
+    scope :started_on_site, ->(tenant) { joins(:virtual_machines).where(atmosphere_virtual_machines: {tenant: tenant}) }
 
     def to_s
       "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
@@ -158,7 +158,7 @@ module Atmosphere
 
     def assign_fund
       funds = appliance_type.virtual_machine_templates.map do |vmt|
-        vmt.compute_site.funds
+        vmt.tenant.funds
       end.flatten.uniq
 
       self.fund = if funds.include? default_fund

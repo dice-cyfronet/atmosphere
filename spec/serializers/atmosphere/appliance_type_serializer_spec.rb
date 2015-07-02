@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 describe Atmosphere::ApplianceTypeSerializer do
-  include VmtOnCsHelpers
+  include VmtOnTHelpers
 
   it 'is inactive when all VMT started on turned off compute site' do
-    _, inactive_vmt = vmt_on_site(cs_active: false)
+    _, inactive_vmt = vmt_on_tenant(t_active: false)
     at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
     serializer = Atmosphere::ApplianceTypeSerializer.new(at)
 
@@ -13,15 +13,15 @@ describe Atmosphere::ApplianceTypeSerializer do
     expect(result['appliance_type']['active']).to be_falsy
   end
 
-  it 'returns information about only active comptue sites' do
-    _, inactive_vmt = vmt_on_site(cs_active: false)
-    active_cs, active_vmt = vmt_on_site(cs_active: true)
+  it 'returns information about only active compute site' do
+    _, inactive_vmt = vmt_on_tenant(t_active: false)
+    active_t, active_vmt = vmt_on_tenant(t_active: true)
     at = create(:appliance_type,
       virtual_machine_templates: [inactive_vmt, active_vmt])
     serializer = Atmosphere::ApplianceTypeSerializer.new(at)
 
     result = JSON.parse(serializer.to_json)
 
-    expect(result['appliance_type']['compute_site_ids']).to eq [active_cs.id]
+    expect(result['appliance_type']['compute_site_ids']).to eq [active_t.id]
   end
 end

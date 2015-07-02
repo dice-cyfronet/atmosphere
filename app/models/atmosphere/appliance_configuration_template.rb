@@ -34,7 +34,7 @@ module Atmosphere
     end
 
     def parameters
-      params = ParamsRegexpable.parameters(payload)
+      params = Atmosphere::ParamsRegexpable.parameters(payload)
       unless Atmosphere.delegation_initconf_key.blank?
         params.delete(Atmosphere.delegation_initconf_key)
       end

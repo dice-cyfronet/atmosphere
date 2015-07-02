@@ -41,9 +41,9 @@ module Atmopshere
       end
 
       def self.action_on_actice_cses(name, task)
-        Atmosphere::ComputeSite.active.select(:id, :name).each do |cs|
-          Rails.logger.debug "Creating #{name} task for #{cs.name}"
-          task.perform_async(cs.id)
+        Atmosphere::Tenant.active.select(:id, :name).each do |t|
+          Rails.logger.debug "Creating #{name} task for #{t.name}"
+          task.perform_async(t.id)
         end
       end
     end

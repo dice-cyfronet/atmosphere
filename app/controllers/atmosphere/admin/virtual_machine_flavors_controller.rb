@@ -22,7 +22,7 @@ class Atmosphere::Admin::VirtualMachineFlavorsController < Atmosphere::Admin::Ap
         @virtual_machine_flavor.set_hourly_cost_for(os_family, cost.to_i)
       end
     end
-    redirect_to admin_compute_sites_path, alert: alert
+    redirect_to admin_tenants_path, alert: alert
   end
 
   private

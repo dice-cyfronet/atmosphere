@@ -14,33 +14,33 @@ require 'rails_helper'
 
 describe Atmosphere::Fund do
 
-  describe '#unsupported_compute_sites' do
+  describe '#unsupported_tenants' do
 
     subject { build(:fund) }
 
-    let!(:cs1) { create(:compute_site) }
-    let!(:cs2) { create(:compute_site) }
-    let!(:cs3) { create(:compute_site) }
+    let!(:t1) { create(:tenant) }
+    let!(:t2) { create(:tenant) }
+    let!(:t3) { create(:tenant) }
 
-    it 'lists all sites when none is assigned' do
-      expect(subject.unsupported_compute_sites).to match_array [cs2, cs1, cs3]
+    it 'lists all tenants when none is assigned' do
+      expect(subject.unsupported_tenants).to match_array [t2, t1, t3]
     end
 
-    it 'lists all correct unassigned sites' do
+    it 'lists all correct unassigned tenants' do
       # NOTE I know the below seems strange but otherwise rspec tricked me :(
-      csf = Atmosphere::ComputeSiteFund.new(compute_site: cs1)
-      subject.compute_site_funds << csf
+      tf = Atmosphere::TenantFund.new(tenant: t1)
+      subject.tenant_funds << tf
       subject.save
-      expect(subject.unsupported_compute_sites).to match_array [cs2, cs3]
+      expect(subject.unsupported_tenants).to match_array [t2, t3]
     end
 
-    it 'returns empty array when all sites are assigned' do
-      [cs1, cs2, cs3].each do |cs|
-        csf = Atmosphere::ComputeSiteFund.new(compute_site: cs)
-        subject.compute_site_funds << csf
+    it 'returns empty array when all tenants are assigned' do
+      [t1, t2, t3].each do |t|
+        tf = Atmosphere::TenantFund.new(tenant: t)
+        subject.tenant_funds << tf
       end
       subject.save
-      expect(subject.unsupported_compute_sites).to match_array []
+      expect(subject.unsupported_tenants).to match_array []
     end
 
   end

@@ -1,12 +1,12 @@
 %h1
   = t('new')
-  = t('compute_sites.long_title_single')
+  = t('tenants.long_title_single')
 
 = render 'form'
 
 %p
   .btn-group
-    = link_to admin_compute_sites_path,
+    = link_to admin_tenants_path,
       class: 'btn btn-default', title: t('back') do
       =icon 'reply'
       = t('back')

@@ -88,7 +88,7 @@ module Atmosphere
         appliances: {
           deployments: {
             virtual_machine: [
-              :port_mappings, :compute_site, :virtual_machine_flavor
+              :port_mappings, :tenant, :virtual_machine_flavor
             ]
           },
           http_mappings: :port_mapping_template

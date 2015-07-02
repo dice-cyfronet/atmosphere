@@ -8,11 +8,11 @@ describe Atmosphere::OptimizationStrategy::Manual do
   end
 
   let!(:fund) { create(:fund) }
-  let(:cs) { create(:compute_site, active: true, funds: [fund]) }
+  let(:t) { create(:tenant, active: true, funds: [fund]) }
   let(:at) { create(:filled_appliance_type, visible_to: 'all', preference_disk: 0) }
-  let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, compute_site: cs) }
-  let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, compute_site: cs, active: true) }
-  let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, compute_site: cs, active: true) }
+  let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, tenant: t) }
+  let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, tenant: t, active: true) }
+  let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, tenant: t, active: true) }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
   let(:user) { create(:user) }
   let(:as) { create(:appliance_set, user: user)}
@@ -27,8 +27,8 @@ describe Atmosphere::OptimizationStrategy::Manual do
     fl2.reload
 
     vms = [
-           { 'cpu' => 1, 'mem' => 512, 'compute_site_ids' => [cs.id] },
-           { 'cpu' => 2, 'mem' => 1024, 'compute_site_ids' => [cs.id] }
+           { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [t.id] },
+           { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [t.id] }
           ]
     created_appl_params = ActionController::Parameters.new(
         {
@@ -66,25 +66,25 @@ describe Atmosphere::OptimizationStrategy::Manual do
   end
 
 
-  it 'scopes potential VMs to ones on compute sites funded by chosen fund' do
-    nonfunded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
+  it 'scopes potential VMs to ones on tenants funded by chosen fund' do
+    nonfunded_t = create(:openstack_with_flavors, funds: [create(:fund)])
     a = create(:appliance,
                appliance_type: not_shareable_appl_type,
                fund: fund,
-               compute_sites: Atmosphere::ComputeSite.all)
+               tenants: Atmosphere::Tenant.all)
     create(:virtual_machine_template,
            appliance_type: a.appliance_type,
-           compute_site: nonfunded_cs)
+           tenant: nonfunded_t)
     create(:virtual_machine_template,
            appliance_type: a.appliance_type,
-           compute_site: cs)
-    supported_appliance_types = Atmosphere::ComputeSite.all.map do |cs|
-      cs.virtual_machine_templates.map(&:appliance_type)
+           tenant: t)
+    supported_appliance_types = Atmosphere::Tenant.all.map do |t|
+      t.virtual_machine_templates.map(&:appliance_type)
     end
     expect(supported_appliance_types).to all(include(a.appliance_type))
     manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(a)
     vm_candidates = manual_strategy.send(:vmt_candidates_for, a)
     expect(vm_candidates.count).to eq 1
-    expect(vm_candidates.first.compute_site).to eq cs
+    expect(vm_candidates.first.tenant).to eq t
   end
 end

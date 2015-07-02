@@ -23,8 +23,8 @@ module Atmosphere
     belongs_to :port_mapping_template,
       class_name: 'Atmosphere::PortMappingTemplate'
 
-    belongs_to :compute_site,
-      class_name: 'Atmosphere::ComputeSite'
+    belongs_to :tenant,
+      class_name: 'Atmosphere::Tenant'
 
     validates :url,
               presence: true
@@ -39,12 +39,12 @@ module Atmosphere
     validates :port_mapping_template,
               presence: true
 
-    validates :compute_site,
+    validates :tenant,
               presence: true
 
     validates :custom_name,
               uniqueness: {
-                scope: [:compute_site_id, :application_protocol],
+                scope: [:tenant_id, :application_protocol],
                 allow_blank: true
               }
 
@@ -96,11 +96,11 @@ module Atmosphere
     end
 
     def rm_proxy(name)
-      Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::RmProxy, 'args' => [name, application_protocol])
+      Sidekiq::Client.push('queue' => tenant.tenant_id, 'class' => Redirus::Worker::RmProxy, 'args' => [name, application_protocol])
     end
 
     def add_proxy(name, ips=nil)
-      Sidekiq::Client.push('queue' => compute_site.site_id, 'class' => Redirus::Worker::AddProxy, 'args' => [name, workers(ips), application_protocol, properties])
+      Sidekiq::Client.push('queue' => tenant.tenant_id, 'class' => Redirus::Worker::AddProxy, 'args' => [name, workers(ips), application_protocol, properties])
     end
 
     def has_workers?(ips)

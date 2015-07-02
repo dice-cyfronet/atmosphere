@@ -13,7 +13,7 @@ module Atmosphere
         p[:appliance_type_id] = at.id
         p[:name] ||= at.name
         p[:description] ||= at.description
-        p[:compute_sites] = allowed_compute_sites
+        p[:tenants] = allowed_tenants
       end
     end
 
@@ -63,18 +63,18 @@ module Atmosphere
     end
 
     def basic_allowed_params
-      [:appliance_set_id, :name, :description, :compute_site_ids]
+      [:appliance_set_id, :name, :description, :tenant_ids]
     end
 
     def config_template_id
       params[:configuration_template_id]
     end
 
-    def allowed_compute_sites
-      if params[:compute_site_ids].blank?
-        ComputeSite.active
+    def allowed_tenants
+      if params[:tenant_ids].blank?
+        Tenant.active
       else
-        ComputeSite.where(id: params[:compute_site_ids], active: true)
+        Tenant.where(id: params[:tenant_ids], active: true)
       end
     end
 

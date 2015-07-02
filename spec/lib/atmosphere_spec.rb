@@ -8,24 +8,24 @@ describe Atmosphere do
 
   context 'cloud client cache' do
     it 'returns cached client if valid' do
-      site_id, client = register_cloud_cient
+      tenant_id, client = register_cloud_cient
 
-      expect(Atmosphere.get_cloud_client(site_id)).to eq client
+      expect(Atmosphere.get_cloud_client(tenant_id)).to eq client
     end
 
     it 'returns nil when cached cloud client is outdated' do
-      site_id, client = register_cloud_cient
+      tenant_id, client = register_cloud_cient
       time_travel(8.hours)
 
-      expect(Atmosphere.get_cloud_client(site_id)).to be_nil
+      expect(Atmosphere.get_cloud_client(tenant_id)).to be_nil
     end
 
     def register_cloud_cient
       client = 'cloud_cilent'
-      site_id = 'cloud_site_id'
-      Atmosphere.register_cloud_client(site_id, client)
+      tenant_id = 'tenant_id'
+      Atmosphere.register_cloud_client(tenant_id, client)
 
-      [ site_id, client ]
+      [ tenant_id, client ]
     end
   end
 
@@ -72,38 +72,38 @@ describe Atmosphere do
       end
     end
 
-    context 'when compute site does not define provider class name' do
-      let(:cs) { create(:compute_site) }
+    context 'when tenant does not define provider class name' do
+      let(:t) { create(:tenant) }
       it 'returns NullNicProvider' do
-        expect(Atmosphere.nic_provider(cs).class).
-          to eq Atmosphere::NicProvider::NullNicProvider
+        expect(Atmosphere.nic_provider(t).class).
+          to eq Atmosphere::NicProvider::DefaultNicProvider
       end
     end
 
-    context 'when compute site defines provider class name' do
+    context 'when tenant defines provider class name' do
       let(:c_name) { 'DummyNicProvider' }
-      let(:cs) { create(:compute_site, nic_provider_class_name: c_name) }
+      let(:t) { create(:tenant, nic_provider_class_name: c_name) }
 
       it 'returns provider of appropriate class' do
-        expect(Atmosphere.nic_provider(cs).class).to eq DummyNicProvider
+        expect(Atmosphere.nic_provider(t).class).to eq DummyNicProvider
       end
 
       it 'creates provider of appropriate class if config is empty' do
-        cs.nic_provider_config = ''
-        expect(DummyNicProvider).to receive(:new).with({})
-        Atmosphere.nic_provider(cs)
+        t.nic_provider_config = ''
+        expect(DummyNicProvider).to receive(:new).with({tenant: t})
+        Atmosphere.nic_provider(t)
       end
 
       it 'creates provider of appropriate class if config is empty' do
-        cs.nic_provider_config = nil
-        expect(DummyNicProvider).to receive(:new).with({})
-        Atmosphere.nic_provider(cs)
+        t.nic_provider_config = nil
+        expect(DummyNicProvider).to receive(:new).with({tenant: t})
+        Atmosphere.nic_provider(t)
       end
 
-      it 'creates provider with compute site specific configuration' do
-        cs.nic_provider_config = '{"key": "val"}'
+      it 'creates provider with tenant specific configuration' do
+        t.nic_provider_config = '{"key": "val"}'
         expect(DummyNicProvider).to receive(:new).with(key: 'val')
-        Atmosphere.nic_provider(cs)
+        Atmosphere.nic_provider(t)
       end
     end
   end

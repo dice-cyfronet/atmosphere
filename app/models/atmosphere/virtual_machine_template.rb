@@ -37,21 +37,18 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::MigrationJob'
 
-    belongs_to :compute_site,
-      class_name: 'Atmosphere::ComputeSite'
+    belongs_to :tenant,
+      class_name: 'Atmosphere::Tenant'
 
     belongs_to :appliance_type,
       class_name: 'Atmosphere::ApplianceType'
 
-    validates :compute_site_id,
-              presence: true
-
-    validates :compute_site_id,
+    validates :tenant_id,
               presence: true
 
     validates :id_at_site,
               presence: true,
-              uniqueness: { scope: :compute_site_id }
+              uniqueness: { scope: :tenant_id }
 
     validates :state,
               presence: true,
@@ -75,26 +72,26 @@ module Atmosphere
     scope :active, -> { where(state: 'active') }
 
     scope :on_active_cs, -> do
-      joins(:compute_site).
-        where(atmosphere_compute_sites: { active: true })
+      joins(:tenant).
+        where(atmosphere_tenants: { active: true })
     end
 
-    scope :on_cs, ->(cs) { where(compute_site_id: cs) }
+    scope :on_cs, ->(t) { where(tenant_id: t) }
 
-    scope :on_cs_with_src, ->(cs_id, source_id) do
-      joins(:compute_site).
-        where(atmosphere_compute_sites: { site_id: cs_id },
+    scope :on_cs_with_src, ->(t_id, source_id) do
+      joins(:tenant).
+        where(atmosphere_tenants: { tenant_id: t_id },
               id_at_site: source_id)
     end
 
     def uuid
-      "#{compute_site.site_id}-tmpl-#{id_at_site}"
+      "#{tenant.tenant_id}-tmpl-#{id_at_site}"
     end
 
     def self.create_from_vm(virtual_machine, name = virtual_machine.name)
       name_with_timestamp = "#{name}/#{VirtualMachineTemplate.generate_timestamp}"
       tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
-      cs = virtual_machine.compute_site
+      cs = virtual_machine.tenant
 
       id_at_site = cs.cloud_client
         .save_template(virtual_machine.id_at_site, tmpl_name)
@@ -154,11 +151,11 @@ module Atmosphere
       incarnation && incarnation.hourly_cost
     end
 
-    def export(compute_site_id)
-      destination_compute_site = ComputeSite.find(compute_site_id)
-      if destination_compute_site != compute_site
-        vmt_migrator = VmtMigrator.new(self, compute_site,
-                                       destination_compute_site)
+    def export(tenant_id)
+      destination_tenant = Tenant.find(tenant_id)
+      if destination_tenant != tenant
+        vmt_migrator = VmtMigrator.new(self, tenant,
+                                       destination_tenant)
         vmt_migrator.execute
       end
     end
@@ -194,7 +191,7 @@ module Atmosphere
     end
 
     def cloud_client
-      compute_site.cloud_client
+      tenant.cloud_client
     end
 
     def update_version?

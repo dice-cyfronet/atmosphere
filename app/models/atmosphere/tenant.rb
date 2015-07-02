@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: compute_sites
+# Table name: tenants
 #
 #  id                :integer          not null, primary key
 #  site_id           :string(255)      not null
@@ -20,7 +20,7 @@
 #  active            :boolean          default(TRUE)
 #
 module Atmosphere
-  class ComputeSite < ActiveRecord::Base
+  class Tenant < ActiveRecord::Base
     extend Enumerize
 
     has_many :virtual_machines,
@@ -45,34 +45,34 @@ module Atmosphere
       class_name: 'Atmosphere::ApplianceType'
 
     has_many :funds,
-      through: :compute_site_funds,
+      through: :tenant_funds,
       class_name: 'Atmosphere::Fund'
 
-    has_many :compute_site_funds,
+    has_many :tenant_funds,
       dependent: :destroy,
-      class_name: 'Atmosphere::ComputeSiteFund'
+      class_name: 'Atmosphere::TenantFund'
 
     has_many :appliances,
-      through: :appliance_compute_sites,
+      through: :appliance_tenants,
       class_name: 'Atmosphere::Appliance'
 
-    has_many :appliance_compute_sites,
+    has_many :appliance_tenants,
       dependent: :destroy,
-      class_name: 'Atmosphere::ApplianceComputeSite'
+      class_name: 'Atmosphere::ApplianceTenant'
 
     has_many :migration_job_cs_source,
       dependent: :destroy,
       class_name: 'Atmosphere::MigrationJob',
-      foreign_key: 'compute_site_source_id'
+      foreign_key: 'tenant_source_id'
 
     has_many :migration_job_cs_desination,
       dependent: :destroy,
       class_name: 'Atmosphere::MigrationJob',
-      foreign_key: 'compute_site_destination_id'
+      foreign_key: 'tenant_destination_id'
 
-    validates :site_id, presence: true
+    validates :tenant_id, presence: true
 
-    validates :site_type,
+    validates :tenant_type,
               presence: true,
               inclusion: %w(public private)
 
@@ -82,7 +82,7 @@ module Atmosphere
 
     validate :nic_provider_class_defined, if: :nic_provider_class_name?
 
-    enumerize :site_type, in: [:public, :private], predicates: true
+    enumerize :tenant_type, in: [:public, :private], predicates: true
     enumerize :technology,
               in: [:openstack, :aws, :azure, :rackspace, :google_compute],
               predicates: true
@@ -137,7 +137,7 @@ module Atmosphere
     end
 
     def cloud_client
-      Atmosphere.get_cloud_client(self.site_id) || register_cloud_client
+      Atmosphere.get_cloud_client(self.tenant_id) || register_cloud_client
     end
 
     def dnat_client
@@ -148,8 +148,8 @@ module Atmosphere
       previously_changed?('http_proxy_url', 'https_proxy_url')
     end
 
-    def site_id_previously_changed?
-      previously_changed?('site_id')
+    def tenant_id_previously_changed?
+      previously_changed?('tenant_id')
     end
 
     def default_flavor
@@ -184,12 +184,12 @@ module Atmosphere
     def register_cloud_client
       cloud_site_conf = JSON.parse(self.config).symbolize_keys
       client = Fog::Compute.new(cloud_site_conf)
-      Atmosphere.register_cloud_client(self.site_id, client)
+      Atmosphere.register_cloud_client(self.tenant_id, client)
       client
     end
 
     def unregister_cloud_client
-      Atmosphere.unregister_cloud_client(site_id)
+      Atmosphere.unregister_cloud_client(tenant_id)
     end
 
     def previously_changed?(*args)

@@ -78,31 +78,31 @@ module Atmosphere
     end
 
     def import_to_clouds
-      ComputeSite.all.each {|cs| import_to_cloud(cs)}
+      Tenant.all.each {|cs| import_to_cloud(cs)}
     end
 
-    def import_to_cloud(cs)
-      cloud_client = cs.cloud_client
-      logger.debug "Importing key #{id_at_site} to #{cs.name}"
+    def import_to_cloud(t)
+      cloud_client = t.cloud_client
+      logger.debug "Importing key #{id_at_site} to #{t.name}"
       begin
         cloud_client.import_key_pair(id_at_site, public_key)
       rescue Excon::Errors::Conflict, Fog::Compute::AWS::Error
         logger.info $!
       end
-      logger.info "Imported key #{id_at_site} to #{cs.name}"
+      logger.info "Imported key #{id_at_site} to #{t.name}"
     end
 
     def delete_in_clouds
-      ComputeSite.all.each do |cs|
-        cloud_client = cs.cloud_client
-        logger.debug "Deleting key #{id_at_site} from #{cs.name}"
-        # ignore key not found errors because it is possible that key was never imported to compute site
+      Tenant.all.each do |t|
+        cloud_client = t.cloud_client
+        logger.debug "Deleting key #{id_at_site} from #{t.name}"
+        # ignore key not found errors because it is possible that key was never imported to tenant
         begin
           cloud_client.delete_key_pair(id_at_site)
         rescue Fog::Compute::OpenStack::NotFound,
                Fog::Compute::RackspaceV2::NotFound
         end
-        logger.info "Deleted key #{id_at_site} from #{cs.name}"
+        logger.info "Deleted key #{id_at_site} from #{t.name}"
       end
     end
 

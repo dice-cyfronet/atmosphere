@@ -7,16 +7,16 @@
 #  fund_id         :integer
 #
 
-# Linking table between ComputeSites and Funds
+# Linking table between Fenants and Funds
 module Atmosphere
-  class ComputeSiteFund < ActiveRecord::Base
-    belongs_to :compute_site,
-               class_name: 'Atmosphere::ComputeSite'
+  class TenantFund < ActiveRecord::Base
+    belongs_to :tenant,
+               class_name: 'Atmosphere::Tenant'
 
     belongs_to :fund,
                class_name: 'Atmosphere::Fund'
 
-    validates :compute_site_id,
+    validates :tenant_id,
               uniqueness: {
                 scope: :fund_id,
                 message: I18n.t('funds.unique_compute_site')

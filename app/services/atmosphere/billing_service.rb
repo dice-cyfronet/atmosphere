@@ -144,7 +144,7 @@ module Atmosphere
     end
 
     # Determines whether this appliance can afford to use a given VM (which may be shared)
-    # Requires this appliance's fund to be bound to the VM's compute_site
+    # Requires this appliance's fund to be bound to the VM's tenant
     def self.can_afford_vm?(appliance, vm)
       if appliance.fund.blank?
         raise Atmosphere::BillingException.new(message: "can_afford_vm? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
@@ -165,11 +165,11 @@ module Atmosphere
       end
       amt_due = ((billable_time*hourly_cost)/(vm.appliances.count+1)).round
       # Return boolean based on 2 conditions
-      amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) && (appliance.fund.compute_sites.include? vm.compute_site)
+      amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) && (appliance.fund.tenants.include? vm.tenant)
     end
 
     # Determines whether this appliance can afford to fully use a VM of a given flavor (which may not be spawned yet)
-    # Requires this appliance's fund to be bound to the flavor's compute site
+    # Requires this appliance's fund to be bound to the flavor's tenant
     def self.can_afford_flavor?(appliance, flavor)
       if appliance.fund.blank?
         raise Atmosphere::BillingException.new(message: "can_afford_flavor? invoked on an appliance (with id #{appliance.id}) which has no fund assigned. Unable to proceed.")
@@ -181,7 +181,7 @@ module Atmosphere
       end
       amt_due = (billable_time*(hourly_cost)).round
       if amt_due <= (appliance.fund.balance-appliance.fund.overdraft_limit) and
-        appliance.fund.compute_sites.include? flavor.compute_site
+        appliance.fund.tenants.include? flavor.tenant
         return true
       else
         return false

@@ -94,7 +94,7 @@ describe Atmosphere::Proxy::ApplianceProxyUpdater do
         http_mapping = appl.http_mappings.find_by(port_mapping_template: http)
 
         expect(Sidekiq::Client).to have_received(:push).exactly(4).times do |options|
-          expect(options['queue']).to eq http_mapping.compute_site.site_id
+          expect(options['queue']).to eq http_mapping.tenant.tenant_id
         end
       end
     end

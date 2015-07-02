@@ -17,12 +17,12 @@
 
 # VirtualMachineFlavor
 # Added by PN on 2014-01-14
-# This class stores information on the VM flavors available at each compute site registered with AIR
+# This class stores information on the VM flavors available at each tenant registered with AIR
 # For each flavor, the associated hourly cost is defined.
 module Atmosphere
   class VirtualMachineFlavor < ActiveRecord::Base
-    belongs_to :compute_site,
-      class_name: 'Atmosphere::ComputeSite'
+    belongs_to :tenant,
+      class_name: 'Atmosphere::Tenant'
 
     has_many :virtual_machines,
       class_name: 'Atmosphere::VirtualMachine',
@@ -61,9 +61,9 @@ module Atmosphere
       where(supported_architectures: ['i386_and_x86_64', arch])
     end
 
-    scope :on_cs, ->(cs) do
-      cs_id = cs.respond_to?(:id) ? cs.id : cs
-      where(compute_site_id: cs_id)
+    scope :on_cs, ->(t) do
+      t_id = t.respond_to?(:id) ? t.id : t
+      where(tenant_id: t_id)
     end
 
     scope :active, -> { where(active: true) }
@@ -102,7 +102,7 @@ module Atmosphere
     end
 
     def usable?
-      active && compute_site && compute_site.active
+      active && tenant && tenant.active
     end
 
     def supports_architecture?(arch)

@@ -2,7 +2,7 @@ module Atmosphere
   class Cloud::VmCreator
     def initialize(tmpl, options={})
       @tmpl = tmpl
-      @flavor = options[:flavor] || tmpl.compute_site.default_flavor
+      @flavor = options[:flavor] || tmpl.tenant.default_flavor
       @name = options[:name] || tmpl.name
       @user_data = options[:user_data]
       @user_key = options[:user_key]
@@ -20,14 +20,14 @@ module Atmosphere
         server_params[:nics] = [{ net_id: @nic }]
       end
 
-      case (@tmpl.compute_site.technology)
+      case (@tmpl.tenant.technology)
       when 'azure'
         server_params[:vm_name] = SecureRandom.hex(5)
         server_params[:vm_user] = Atmosphere.azure_vm_user
         server_params[:password] = Atmosphere.azure_vm_password
         server_params[:image] = tmpl_id
         server_params[:location] = 'North Europe'
-        server_params[:cs_id] = @tmpl.compute_site.id
+        server_params[:cs_id] = @tmpl.tenant.id
         server_params[:vm_size] = flavor_id
         set_azure_endpoints(server_params)
       else # TODO: Untangle AWS and OpenStack
@@ -92,7 +92,7 @@ module Atmosphere
     end
 
     def client
-      @tmpl.compute_site.cloud_client
+      @tmpl.tenant.cloud_client
     end
 
     def set_security_groups!(params)
@@ -101,15 +101,15 @@ module Atmosphere
     end
 
     def register_user_key!
-      @user_key.import_to_cloud(@tmpl.compute_site) if @user_key
+      @user_key.import_to_cloud(@tmpl.tenant) if @user_key
     end
 
     def amazon?
-      @tmpl.compute_site.technology == 'aws'
+      @tmpl.tenant.technology == 'aws'
     end
 
     def google?
-      @tmpl.compute_site.technology == 'google_compute'
+      @tmpl.tenant.technology == 'google_compute'
     end
   end
 end

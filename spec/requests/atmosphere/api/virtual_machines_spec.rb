@@ -43,7 +43,7 @@ describe Atmosphere::Api::V1::VirtualMachinesController do
         end
 
         it 'returns only vms started on selected compute site' do
-          get api("/virtual_machines?compute_site_id=#{vm1.compute_site.id}", user)
+          get api("/virtual_machines?compute_site_id=#{vm1.tenant.id}", user)
           expect(vms_response.size).to eq 1
           expect(vms_response[0]).to vm_eq vm1
         end

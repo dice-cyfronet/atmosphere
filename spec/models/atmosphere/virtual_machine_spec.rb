@@ -29,12 +29,12 @@ describe Atmosphere::VirtualMachine do
   let(:priv_ip_2) { '10.1.1.22' }
   let(:public_ip) { '149.156.10.145' }
   let(:public_port) { 23457 }
-  let(:cs) { create(:openstack_with_flavors) }
+  let(:t) { create(:openstack_with_flavors) }
   let(:appliance) { create(:appliance) }
-  let(:vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: true) }
+  let(:vm) { create(:virtual_machine, tenant: t, managed_by_atmosphere: true) }
   let(:vm_ipless) { create(:virtual_machine, appliances: [appliance]) }
-  let(:external_vm) { create(:virtual_machine, compute_site: cs, managed_by_atmosphere: false) }
-  let(:default_flavor) { cs.virtual_machine_flavors.first }
+  let(:external_vm) { create(:virtual_machine, tenant: t, managed_by_atmosphere: false) }
+  let(:default_flavor) { t.virtual_machine_flavors.first }
 
   it { should have_many(:port_mappings).dependent(:delete_all) }
   it { should validate_inclusion_of(:state).in_array(%w(active build deleted error hard_reboot password reboot rebuild rescue resize revert_resize shutoff suspended unknown verify_resize saving)) }
@@ -45,11 +45,11 @@ describe Atmosphere::VirtualMachine do
 
     it 'is not performed if it is being saved as template' do
       create(:virtual_machine_template, source_vm: vm, state: :saving)
-      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+      allow(vm.tenant).to receive(:cloud_client).and_return(cc_mock)
 
       expect(servers_mock).to_not receive(:destroy)
       expect(Raven).to_not receive(:capture_message)
-      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+      allow(vm.tenant).to receive(:cloud_client).and_return(cc_mock)
 
       vm.destroy(true)
     end
@@ -57,13 +57,13 @@ describe Atmosphere::VirtualMachine do
     it 'is performed if vm does not have saved templates' do
       expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return true
       expect(Raven).to_not receive(:capture_message)
-      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+      allow(vm.tenant).to receive(:cloud_client).and_return(cc_mock)
 
       vm.destroy(true)
     end
 
     it 'does not allow to destroy not managed virtual machine' do
-      allow(external_vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+      allow(external_vm.tenant).to receive(:cloud_client).and_return(cc_mock)
       expect(servers_mock).to_not receive(:destroy)
       expect(Raven).to_not receive(:capture_message)
       external_vm.destroy(true)
@@ -74,7 +74,7 @@ describe Atmosphere::VirtualMachine do
     it 'does not report error to Raven if succeds to delete vm' do
       expect(servers_mock).to receive(:destroy).with(vm.id_at_site).and_return true
       expect(Raven).to_not receive(:capture_message)
-      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+      allow(vm.tenant).to receive(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
     end
 
@@ -86,11 +86,11 @@ describe Atmosphere::VirtualMachine do
           logger: 'error',
           extra: {
             id_at_site: vm.id_at_site,
-            compute_site_id: vm.compute_site_id
+            tenant_id: vm.tenant_id
           }
         }
       )
-      allow(vm.compute_site).to receive(:cloud_client).and_return(cc_mock)
+      allow(vm.tenant).to receive(:cloud_client).and_return(cc_mock)
       vm.destroy(true)
     end
 
@@ -103,7 +103,7 @@ describe Atmosphere::VirtualMachine do
     end
 
     def delete_with_success_when_exception(e)
-      allow(vm.compute_site).
+      allow(vm.tenant).
         to receive(:cloud_client).
         and_return(cc_mock)
 
@@ -195,8 +195,8 @@ describe Atmosphere::VirtualMachine do
     let(:wrg) { double('wrangler') }
 
     before do
-      allow(vm.compute_site).to receive(:dnat_client).and_return(wrg)
-      allow(vm_ipless.compute_site).to receive(:dnat_client).and_return(wrg)
+      allow(vm.tenant).to receive(:dnat_client).and_return(wrg)
+      allow(vm_ipless.tenant).to receive(:dnat_client).and_return(wrg)
     end
 
     context 'registration' do
@@ -218,9 +218,9 @@ describe Atmosphere::VirtualMachine do
       before do
         # we are testing dnat unregistration not cloud action, thus we can mock it
         servers_double = double
-        allow(vm.compute_site.cloud_client)
+        allow(vm.tenant.cloud_client)
           .to receive(:servers).and_return(servers_double)
-        allow(vm_ipless.compute_site.cloud_client)
+        allow(vm_ipless.tenant.cloud_client)
           .to receive(:servers).and_return(servers_double)
         allow(servers_double).to receive(:destroy)
       end
@@ -343,12 +343,12 @@ describe Atmosphere::VirtualMachine do
     let(:vm) { create(:virtual_machine, id_at_site: id_at_site) }
 
     before do
-      allow_any_instance_of(Atmosphere::ComputeSite)
+      allow_any_instance_of(Atmosphere::Tenant)
         .to receive(:cloud_client).and_return(cloud_client)
       allow(servers).to receive(:get).with(id_at_site).and_return(server)
     end
 
-    it 'sends reboot action to underlying compute site' do
+    it 'sends reboot action to underlying tenant' do
       invoke_cloud_action(:reboot)
     end
 
@@ -356,7 +356,7 @@ describe Atmosphere::VirtualMachine do
       change_state_after_action(:reboot, 'reboot')
     end
 
-    it 'sends stop action to underlying compute site' do
+    it 'sends stop action to underlying tenant' do
       invoke_cloud_action(:stop)
     end
 
@@ -364,7 +364,7 @@ describe Atmosphere::VirtualMachine do
       change_state_after_action(:stop, 'shutoff')
     end
 
-    it 'sends pause action to underlying compute site' do
+    it 'sends pause action to underlying tenant' do
       invoke_cloud_action(:pause)
     end
 
@@ -372,7 +372,7 @@ describe Atmosphere::VirtualMachine do
       change_state_after_action(:pause, 'paused')
     end
 
-    it 'sends start action to underlying compute site' do
+    it 'sends start action to underlying tenant' do
       invoke_cloud_action(:start)
     end
 

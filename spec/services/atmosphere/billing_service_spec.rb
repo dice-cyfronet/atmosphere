@@ -2,11 +2,11 @@ require 'rails_helper'
 
 describe Atmosphere::BillingService do
 
-  let!(:cs) { create(:openstack_with_flavors) }
-  let!(:cs_fund) { create(:fund, compute_sites: [cs]) }
-  let!(:non_cs_fund) { create(:fund, compute_sites: [])}
-  let!(:empty_fund) { create(:fund, balance: 0, overdraft_limit: 0, compute_sites: [cs] )}
-  let!(:non_cs_fund) { create(:fund, compute_sites: [])}
+  let!(:t) { create(:openstack_with_flavors) }
+  let!(:t_fund) { create(:fund, tenants: [t]) }
+  let!(:non_t_fund) { create(:fund, tenants: [])}
+  let!(:empty_fund) { create(:fund, balance: 0, overdraft_limit: 0, tenants: [t] )}
+  let!(:non_t_fund) { create(:fund, tenants: [])}
 
   let!(:wf) { create(:workflow_appliance_set) }
 
@@ -15,14 +15,14 @@ describe Atmosphere::BillingService do
 
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: cs)}
-  let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, compute_site: cs)}
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenant: t)}
+  let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, tenant: t)}
 
-  let!(:not_shareable_vm1) { create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cs.virtual_machine_flavors.first)  }
-  let!(:not_shareable_vm2) { create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cs.virtual_machine_flavors.first)  }
-  let!(:not_shareable_vm3) { create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cs.virtual_machine_flavors.first)  }
-  let!(:not_shareable_vm4) { create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cs.virtual_machine_flavors.first)  }
-  let!(:shareable_vm) { create(:virtual_machine, compute_site: cs, source_template: tmpl_of_shareable_at, virtual_machine_flavor: cs.virtual_machine_flavors.first)  }
+  let!(:not_shareable_vm1) { create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }
+  let!(:not_shareable_vm2) { create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }
+  let!(:not_shareable_vm3) { create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }
+  let!(:not_shareable_vm4) { create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }
+  let!(:shareable_vm) { create(:virtual_machine, tenant: t, source_template: tmpl_of_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }
 
   let(:optimizer) { double("optimizer") }
 
@@ -43,7 +43,7 @@ describe Atmosphere::BillingService do
     let(:config_inst) { create(:appliance_configuration_instance) }
 
     it 'creates new funded non-shareable appliance as default' do
-      appl = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
+      appl = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1])
 
       vmf = appl.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
@@ -87,9 +87,9 @@ describe Atmosphere::BillingService do
 
     it 'creates new funded shareable appliance' do
 
-      original_balance = cs_fund.balance
+      original_balance = t_fund.balance
 
-      appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
+      appl1 = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
@@ -98,18 +98,18 @@ describe Atmosphere::BillingService do
       appl1.reload
       expect(Atmosphere::BillingLog.all.count).to eq 1
 
-      cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost))
+      t_fund.reload
+      expect(t_fund.balance).to eq original_balance - ((appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost))
 
-      appl2 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
+      appl2 = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [shareable_vm])
 
       Atmosphere::BillingService.bill_appliance(appl2, Time.now.utc, "mock billing", true)
       appl2.reload
       expect(appl1.amount_billed).to eq appl1.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost
       expect(appl2.amount_billed).to eq (appl2.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost*0.5).round
 
-      cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - (appl2.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost*1.5).round
+      t_fund.reload
+      expect(t_fund.balance).to eq original_balance - (appl2.virtual_machines.first.virtual_machine_flavor.flavor_os_families.first.hourly_cost*1.5).round
 
     end
   end
@@ -118,15 +118,15 @@ describe Atmosphere::BillingService do
 
     let(:config_inst) { create(:appliance_configuration_instance) }
 
-    let!(:free_flavor) { create(:virtual_machine_flavor, compute_site: cs) }
-    let!(:cheap_flavor) { create(:virtual_machine_flavor, compute_site: cs) }
-    let!(:expensive_flavor) { create(:virtual_machine_flavor, compute_site: cs) }
+    let!(:free_flavor) { create(:virtual_machine_flavor, tenant: t) }
+    let!(:cheap_flavor) { create(:virtual_machine_flavor, tenant: t) }
+    let!(:expensive_flavor) { create(:virtual_machine_flavor, tenant: t) }
 
-    let!(:switzerland) { create(:fund, balance: 1000000, overdraft_limit: 0, compute_sites: [cs])}
-    let!(:middle_class) { create(:fund, balance: 100, overdraft_limit: 0, compute_sites: [cs] )}
-    let!(:zus) { create(:fund, balance: 5, overdraft_limit: 0, compute_sites: [cs] )}
-    let!(:amber_gold) { create(:fund, balance: 0, overdraft_limit: -1000, compute_sites: [cs] )}
-    let!(:alien_fund) { create(:fund, balance: 1000000, overdraft_limit: 0, compute_sites: [])}
+    let!(:switzerland) { create(:fund, balance: 1000000, overdraft_limit: 0, tenants: [t])}
+    let!(:middle_class) { create(:fund, balance: 100, overdraft_limit: 0, tenants: [t] )}
+    let!(:zus) { create(:fund, balance: 5, overdraft_limit: 0, tenants: [t] )}
+    let!(:amber_gold) { create(:fund, balance: 0, overdraft_limit: -1000, tenants: [t] )}
+    let!(:alien_fund) { create(:fund, balance: 1000000, overdraft_limit: 0, tenants: [])}
 
     let!(:rich_appl) { create(:appliance, fund: switzerland, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm1]) }
     let!(:middle_class_appl) { create(:appliance, fund: middle_class, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, virtual_machines: [not_shareable_vm2]) }
@@ -154,16 +154,16 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingService.can_afford_flavor?(standalone_zus_appl, cheap_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(amber_gold_appl, expensive_flavor)).to eq true
 
-      # alien_appl cannot afford anything because its fund is not bound to ComputeSite cs
+      # alien_appl cannot afford anything because its fund is not bound to Tenant t
       expect(Atmosphere::BillingService.can_afford_flavor?(alien_appl, cheap_flavor)).to eq false
       expect(Atmosphere::BillingService.can_afford_flavor?(alien_appl, free_flavor)).to eq false
     end
 
     it 'can or cannot afford vms' do
-      expensive_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: expensive_flavor)
-      cheap_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cheap_flavor)
-      free_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: free_flavor)
-      shareable_vm = create(:virtual_machine, compute_site: cs, source_template: tmpl_of_shareable_at, virtual_machine_flavor: free_flavor)
+      expensive_vm = create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: expensive_flavor)
+      cheap_vm = create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: cheap_flavor)
+      free_vm = create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: free_flavor)
+      shareable_vm = create(:virtual_machine, tenant: t, source_template: tmpl_of_shareable_at, virtual_machine_flavor: free_flavor)
 
       free_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 0)
       cheap_flavor.flavor_os_families.first.update_attribute(:hourly_cost, 10)
@@ -174,7 +174,7 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, cheap_vm)).to eq false
       expect(Atmosphere::BillingService.can_afford_vm?(zus_appl1, free_vm)).to eq true
 
-      # alien_appl cannot afford anything because its fund is not bound to ComputeSite cs
+      # alien_appl cannot afford anything because its fund is not bound to Tenant t
       expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, cheap_vm)).to eq false
       expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, shareable_vm)).to eq false
       expect(Atmosphere::BillingService.can_afford_vm?(alien_appl, free_vm)).to eq false
@@ -183,10 +183,10 @@ describe Atmosphere::BillingService do
   end
 
   context 'os_families' do
-    let(:windows_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
-    let(:linux_flavor) { create(:virtual_machine_flavor, compute_site: cs)}
+    let(:windows_flavor) { create(:virtual_machine_flavor, tenant: t)}
+    let(:linux_flavor) { create(:virtual_machine_flavor, tenant: t)}
 
-    let(:poor_fund) { create(:fund, balance: 75, overdraft_limit: 0, compute_sites: [cs] )}
+    let(:poor_fund) { create(:fund, balance: 75, overdraft_limit: 0, tenants: [t] )}
 
     let(:config_inst) { create(:appliance_configuration_instance) }
 
@@ -223,17 +223,17 @@ describe Atmosphere::BillingService do
 
       empty_fund.balance = 10
       empty_fund.save
-      original_balance = cs_fund.balance
+      original_balance = t_fund.balance
       empty_original_balance = empty_fund.balance
 
       # Standard non-shared appliance
-      appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [not_shareable_vm1])
+      appl1 = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [not_shareable_vm1])
       # Another standard non-shared appliance
-      appl2 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [not_shareable_vm2])
+      appl2 = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [not_shareable_vm2])
       # An appliance which is shareable but not yet shared
-      appl3a = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [shareable_vm])
+      appl3a = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [shareable_vm])
       # A shareable appliance which should reuse appl3a's VM
-      appl3b = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [shareable_vm])
+      appl3b = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst_shared, virtual_machines: [shareable_vm])
       # An appliance with a nearly-expired fund
       expiring_appl = create(:appliance, fund: empty_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst3, virtual_machines: [not_shareable_vm3])
 
@@ -249,10 +249,10 @@ describe Atmosphere::BillingService do
       appl3a.reload
       appl3b.reload
       expiring_appl.reload
-      cs_fund.reload
+      t_fund.reload
       empty_fund.reload
 
-      expect(cs_fund.balance).to eq original_balance - (cost_unit*3).round
+      expect(t_fund.balance).to eq original_balance - (cost_unit*3).round
       expect(empty_fund.balance).to eq empty_original_balance - cost_unit
 
       # Roll back prepaid_by in each appliance by 2 hours
@@ -282,10 +282,10 @@ describe Atmosphere::BillingService do
       appl3a.reload
       appl3b.reload
       expiring_appl.reload
-      cs_fund.reload
+      t_fund.reload
       empty_fund.reload
 
-      expect(cs_fund.balance).to eq original_balance - (cost_unit*9).round # 3 from previous billing and 6 from this billing
+      expect(t_fund.balance).to eq original_balance - (cost_unit*9).round # 3 from previous billing and 6 from this billing
       expect(empty_fund.balance).to eq empty_original_balance - cost_unit # No change here
 
       expect appl1.amount_billed = cost_unit*3
@@ -308,10 +308,10 @@ describe Atmosphere::BillingService do
     let(:config_inst1) { create(:appliance_configuration_instance) }
 
     it 'performs final billing for appliance' do
-      original_balance = cs_fund.balance
+      original_balance = t_fund.balance
 
       # Standard non-shared appliance
-      appl1 = create(:appliance, fund: cs_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst1, virtual_machines: [not_shareable_vm1])
+      appl1 = create(:appliance, fund: t_fund, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst1, virtual_machines: [not_shareable_vm1])
 
       vmf = appl1.virtual_machines.first.virtual_machine_flavor
       vmf.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
@@ -320,8 +320,8 @@ describe Atmosphere::BillingService do
 
       Atmosphere::BillingService.bill_appliance(appl1, Time.now.utc, "mock billing", true)
 
-      cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - cost_unit
+      t_fund.reload
+      expect(t_fund.balance).to eq original_balance - cost_unit
 
 
       # Advance the clock by 1.5 hours and destroy appl1
@@ -333,8 +333,8 @@ describe Atmosphere::BillingService do
       expect(Atmosphere::BillingLog.all.count).to eq 2
 
       # This should incur another 30-minute expense, triggered automatically by Appliance.destroy
-      cs_fund.reload
-      expect(cs_fund.balance).to eq original_balance - (cost_unit*1.5).round
+      t_fund.reload
+      expect(t_fund.balance).to eq original_balance - (cost_unit*1.5).round
 
     end
   end

@@ -1,7 +1,7 @@
 module Atmosphere
-  class Proxy::ComputeSiteAppliancesUpdater
-    def initialize(compute_site, finder_class=AppliancesWithMappingOnComputeSite, updater_class=Proxy::ApplianceProxyUpdater)
-      @compute_site = compute_site
+  class Proxy::TenantAppliancesUpdater
+    def initialize(tenant, finder_class=AppliancesWithMappingOnTenant, updater_class=Proxy::ApplianceProxyUpdater)
+      @tenant = tenant
       @finder_class = finder_class
       @updater_class = updater_class
     end
@@ -15,7 +15,7 @@ module Atmosphere
     private
 
     def affected_appliances
-      @finder_class.new(@compute_site).find
+      @finder_class.new(@tenant).find
     end
   end
 end

@@ -37,7 +37,7 @@ en:
   keep_it_secret: Keep it secret, keep it safe!
   reset: Reset
   are_you_sure: Are you sure?
-  are_you_sure_cs: Warning! This will irrevocably destroy all Virtual Machine Templates and Virtual Machines running on this CS which have been created by Atmosphere. Are you sure?
+  are_you_sure_t: Warning! This will irrevocably destroy all Virtual Machine Templates and Virtual Machines running on this tenant have been created by Atmosphere. Are you sure?
   are_you_sure_at: Warning! This will irrevocably destroy all Virtual Machine Templates marked as managed by atmosphere connected with this Appliance Type. Are you sure?
   actions: Actions
   add_new: Add new
@@ -94,7 +94,7 @@ en:
     type: Type
     appliance_type: Appliance Type
     virtual_machines: Virtual Machines
-    site: Site
+    tenant: Tenant
     flavor: Flavor
     fund: "Fund:"
     no_fund_assigned: no fund assigned
@@ -108,14 +108,14 @@ en:
     edit: Edit this Appliance Set
     remove: Remove this Appliance Set
     cannot_remove_appliance: "Unable to remove %{appliance.name} (%{appliance.id})"
-  compute_sites:
-    title: Sites
-    long_title: Compute Sites and Pricing
-    long_title_single: Compute Site
-    site: Site
+  tenants:
+    title: Tenants
+    long_title: Cloud Tenants and Pricing
+    long_title_single: Tenant
+    tenant: Tenant
     name: Name
     location: Location
-    site_type: Site type
+    tenant_type: Tenant type
     technology: Technology
     http_proxy_url: HTTP Proxy URL
     https_proxy_url: HTTPS Proxy URL
@@ -125,10 +125,10 @@ en:
     wrangler_url: IP Wrangler URL
     wrangler_username: IP Wrangler Username
     wrangler_password: IP Wrangler Password
-    new: New Compute Site
-    show: Show this Compute Site
-    edit: Edit this Compute Site
-    remove: Remove this Compute Site
+    new: New Tenant
+    show: Show this Tenant
+    edit: Edit this Tenant
+    remove: Remove this Tenant
   virtual_machine_flavor:
     flavor_name: Flavor name
     cpu: CPU
@@ -166,7 +166,7 @@ en:
     title: Templates
     long_title: Virtual Machine Templates
     long_title_single: Virtual Machine Template
-    site: Site
+    tenant: Tenant
     uuid: UUID
     name: Name
     state: State
@@ -183,8 +183,8 @@ en:
     appliance_type: Appliance Type
     virtual_machine_template: Virtual Machine Template
     virtual_machine_template_uuid: UUID
-    compute_site_source: Source
-    compute_site_destination: Destination
+    tenant_source: Source
+    tenant_destination: Destination
     status: Status
     last_update: Last update
   user_keys:
@@ -228,7 +228,7 @@ en:
     currency_label: Currency
     overdraft_limit: Overdraft limit
     termination_policy: Termination policy
-    unique_compute_site: No need to duplicate a Compute Site assignment to the same Fund.
+    unique_tenant: No need to duplicate a Tenant assignment to the same Fund.
     unique_user: No need to duplicate a User assignment to the same Fund.
     new:
       help: Create a new fund - the fund will be created with no Compute Sites and no Users assigned.
@@ -244,14 +244,14 @@ en:
     destroy:
       help: Remove this fund (may cause users to lose their default and only fund!).
       success: Fund was removed, along with its associations to Compute Sites and Users.
-    remove_site:
-      help: This will remove %{cs} from the list of Compute Sites where users are able to use that Fund.
-      success: Compute Site %{cs} was removed from the list of supported sites for Fund %{fund}.
-    add_site:
-      prompt: Add compute site...
-      help: Append a Compute Site to the list of sites supported by this Fund.
-      all_assigned: all compute sites assigned
-      success: Compute Site %{cs} was added to the list of sites supported by Fund %{fund}.
+    remove_tenant:
+      help: This will remove %{tenant} from the list of Tenants where users are able to use that Fund.
+      success: Tenant %{t} was removed from the list of supported tenants for Fund %{fund}.
+    add_tenant:
+      prompt: Add Tenant...
+      help: Append a tenant to the list of tenants supported by this Fund.
+      all_assigned: all tenants assigned
+      success: Tenant %{t} was added to the list of tenants supported by Fund %{fund}.
     remove_user:
       help: "This will remove %{user} from this Fund, preventing this person from drawing upon this Fund's resources."
       success: User %{user} was removed from the list of users assigned to Fund %{fund}.
@@ -274,7 +274,7 @@ en:
         help: |
           The billing system will permit the instance to continue running when funding expires. The balance of the
           corresponding fund may become negative as a result of further charges.
-    no_sites: no compute sites assigned
+    no_tenants: no tenants assigned
     no_users: no users allowed to use this fund
     set_default:
       to_true: Set %{fund} to be the default fund for %{user}.

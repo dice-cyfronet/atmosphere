@@ -164,33 +164,33 @@ describe Atmosphere::Appliance do
       expect(appliance.fund).to eq appliance.send(:default_fund)
     end
 
-    it 'prefers default fund if it supports relevant compute site' do
-      default_cs = create(:openstack_with_flavors,
+    it 'prefers default fund if it supports relevant tenant' do
+      default_t = create(:openstack_with_flavors,
                           funds: [appliance_set.user.default_fund])
-      funded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
-      appliance_set.user.funds << funded_cs.funds.first
+      funded_t = create(:openstack_with_flavors, funds: [create(:fund)])
+      appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
              appliance_type: appliance_type,
-             compute_site: default_cs)
+             tenant: default_t)
       create(:virtual_machine_template,
              appliance_type: appliance_type,
-             compute_site: funded_cs)
-      supported_appliance_types = Atmosphere::ComputeSite.all.map do |cs|
-        cs.virtual_machine_templates.map(&:appliance_type)
+             tenant: funded_t)
+      supported_appliance_types = Atmosphere::Tenant.all.map do |t|
+        t.virtual_machine_templates.map(&:appliance_type)
       end
       expect(supported_appliance_types).to all(include(appliance_type))
-      expect(appliance.fund).not_to eq funded_cs.funds.first
+      expect(appliance.fund).not_to eq funded_t.funds.first
       expect(appliance.fund).to eq appliance.send(:default_fund)
     end
 
-    it 'chooses one of user funds that support relevant compute site' do
+    it 'chooses one of user funds that support relevant tenant' do
       create(:openstack_with_flavors, funds: [appliance_set.user.default_fund])
-      funded_cs = create(:openstack_with_flavors, funds: [create(:fund)])
-      appliance_set.user.funds << funded_cs.funds.first
+      funded_t = create(:openstack_with_flavors, funds: [create(:fund)])
+      appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
              appliance_type: appliance_type,
-             compute_site: funded_cs)
-      expect(appliance.fund).to eq funded_cs.funds.first
+             tenant: funded_t)
+      expect(appliance.fund).to eq funded_t.funds.first
       expect(appliance.fund).not_to eq appliance.send(:default_fund)
     end
   end

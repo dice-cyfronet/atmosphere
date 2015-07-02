@@ -33,10 +33,6 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
     end
 
     context 'when authenticated as owner' do
-      # A handy array for array-matchers
-      let!(:pmps) { [pmp1.as_json(except: [:created_at, :updated_at]),
-                     pmp1b.as_json(except: [:created_at, :updated_at])] }
-
       it 'returns 200 Success' do
         get api("/port_mapping_properties?port_mapping_template_id=#{pmt1.id}", user)
         expect(response.status).to eq 200
@@ -46,7 +42,7 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
         get api("/port_mapping_properties?port_mapping_template_id=#{pmt1.id}", user)
         expect(pmps_response).to be_an Array
         expect(pmps_response.size).to eq 2
-        expect(pmps_response).to match_array pmps
+        expect(pmps_response).to match_array [pmp_json(pmp1), pmp_json(pmp1b)]
       end
 
       it 'returns public port_mapping_properties' do
@@ -58,6 +54,12 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
         expect(pmps_response).to be_an Array
         expect(pmps_response.size).to eq 1
         expect(pmps_response[0]).to port_mapping_property_eq pmp2
+      end
+    end
+
+    def pmp_json(pmp)
+      pmp.as_json(except: [:created_at, :updated_at, :tenant_id]).tap do |hsh|
+        hsh['compute_site_id'] = pmp.tenant_id
       end
     end
   end

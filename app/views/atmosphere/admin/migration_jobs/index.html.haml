@@ -8,8 +8,8 @@
       %th= t('migration_jobs.virtual_machine_template')
       %th.uuid
         = t('migration_jobs.virtual_machine_template_uuid')
-      %th= t('migration_jobs.compute_site_source')
-      %th= t('migration_jobs.compute_site_destination')
+      %th= t('migration_jobs.tenant_source')
+      %th= t('migration_jobs.tenant_destination')
       %th= t('migration_jobs.status')
       %th= t('migration_jobs.last_update')
 
@@ -18,7 +18,7 @@
         %td= migration_job.appliance_type_name
         %td= migration_job.virtual_machine_template_name
         %td.monospace= migration_job.virtual_machine_template_id_at_site
-        %td= migration_job.compute_site_source_name
-        %td= migration_job.compute_site_destination_name
+        %td= migration_job.tenant_source_name
+        %td= migration_job.tenant_destination_name
         %td= migration_job.status_last_line
         %td= migration_job.updated_at

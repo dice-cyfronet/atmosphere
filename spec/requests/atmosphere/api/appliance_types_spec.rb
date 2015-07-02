@@ -244,28 +244,28 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
       it 'returns compute sites for appliance type' do
         user = create(:user)
-        cs1  = create(:compute_site)
-        cs2  = create(:compute_site)
+        t1  = create(:tenant)
+        t2  = create(:tenant)
         at   = create(:appliance_type, visible_to: :all)
-        create(:virtual_machine_template, compute_site: cs1, appliance_type: at)
-        create(:virtual_machine_template, compute_site: cs2, appliance_type: at)
+        create(:virtual_machine_template, tenant: t1, appliance_type: at)
+        create(:virtual_machine_template, tenant: t2, appliance_type: at)
 
         get api("/appliance_types/#{at.id}", user)
 
-        expect(at_response["compute_site_ids"]).to include(cs1.id, cs2.id)
+        expect(at_response['compute_site_ids']).to include(t1.id, t2.id)
 
       end
 
       it 'does not return the same compute site twice for appliance type' do
         user = create(:user)
-        cs1  = create(:compute_site)
+        t1  = create(:tenant)
 
         at  = create(:appliance_type, visible_to: :all)
-        create(:virtual_machine_template, compute_site: cs1, appliance_type: at)
-        create(:virtual_machine_template, compute_site: cs1, appliance_type: at)
+        create(:virtual_machine_template, tenant: t1, appliance_type: at)
+        create(:virtual_machine_template, tenant: t1, appliance_type: at)
 
         get api("/appliance_types/#{at.id}", user)
-        expect(at_response["compute_site_ids"]).to eq [cs1.id]
+        expect(at_response['compute_site_ids']).to eq [t1.id]
       end
     end
   end

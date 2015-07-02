@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
   include ApiHelpers
-  include VmtOnCsHelpers
+  include VmtOnTHelpers
 
   let(:user) { create(:user) }
 
@@ -20,14 +20,14 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
     context 'when authenticated' do
 
       required_mem = 1024
-      let(:cs) { create(:compute_site) }
-      let(:cs2) { create(:compute_site) }
+      let(:t) { create(:tenant) }
+      let(:t2) { create(:tenant) }
       let!(:f1) { create(:virtual_machine_flavor) }
       let!(:f2) { create(:virtual_machine_flavor) }
-      let!(:f3) { create(:virtual_machine_flavor, compute_site: cs) }
+      let!(:f3) { create(:virtual_machine_flavor, tenant: t) }
       let!(:f4) { create(:virtual_machine_flavor, memory: required_mem - 256) }
       let!(:f5) { create(:virtual_machine_flavor, memory: required_mem) }
-      let!(:f6) { create(:virtual_machine_flavor, memory: required_mem + 256, compute_site: cs2) }
+      let!(:f6) { create(:virtual_machine_flavor, memory: required_mem + 256, tenant: t2) }
       let(:at) { create(:appliance_type, preference_memory:required_mem) }
 
       it 'returns 200' do
@@ -67,12 +67,12 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(response.status).to eq 409
         end
 
-        it "allows appliance type filters and requirements" do
-          get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{cs.id}", user)
+        it 'allows appliance type filters and requirements' do
+          get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{t.id}", user)
           expect(response.status).to eq 200
         end
 
-        it "returns 200 for empty filters" do
+        it 'returns 200 for empty filters' do
           get api('/virtual_machine_flavors', user)
           expect(response.status).to eq 200
         end
@@ -80,48 +80,48 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
 
       context 'when filter defined for compute site' do
 
-        it "returns flavors at given cs only" do
-          get api("/virtual_machine_flavors?compute_site_id=#{cs.id}", user)
+        it 'returns flavors at given compute site only' do
+          get api("/virtual_machine_flavors?compute_site_id=#{t.id}", user)
           flavors = fls_response
           expect(flavors.size).to eq 1
-          expect(flavors.first['compute_site_id']).to eq cs.id
+          expect(flavors.first['compute_site_id']).to eq t.id
         end
       end
 
       context 'when requirements filter defined' do
 
-        it "returns flavors with memory grater or equal to specified" do
+        it 'returns flavors with memory grater or equal to specified' do
           get api("/virtual_machine_flavors?memory=#{required_mem}", user)
           flavors = fls_response
           expect(flavors.size).to be >= 2
           flavors.each{|f| expect(f['memory']).to be >= required_mem }
         end
 
-        it "returns flavors with memory grater or equal to specified and available at given cs" do
-          get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{cs2.id}", user)
+        it 'returns flavors with memory grater or equal to specified and available at given compute site' do
+          get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{t2.id}", user)
           flavors = fls_response
           expect(flavors.size).to be >= 1
           flavors.each{|f|
             expect(f['memory']).to be >= required_mem
-            expect(f['compute_site_id']).to eq cs2.id
+            expect(f['compute_site_id']).to eq t2.id
           }
         end
 
-        context "limit specified" do
+        context 'limit specified' do
           it "returns no more than limit flavors" do
-            create(:virtual_machine_flavor, memory: required_mem + 512, compute_site: cs2)
-            create(:virtual_machine_flavor, memory: required_mem + 1024, compute_site: cs2)
+            create(:virtual_machine_flavor, memory: required_mem + 512, tenant: t2)
+            create(:virtual_machine_flavor, memory: required_mem + 1024, tenant: t2)
             n = 2
-            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{cs2.id}&limit=#{n}", user)
+            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{t2.id}&limit=#{n}", user)
             flavors = fls_response
             expect(flavors.size).to be <= n
           end
 
-          it "ignores limit if it is not grater or equal 1" do
-            create(:virtual_machine_flavor, memory: required_mem + 512, compute_site: cs2)
-            create(:virtual_machine_flavor, memory: required_mem + 1024, compute_site: cs2)
+          it 'ignores limit if it is not grater or equal 1' do
+            create(:virtual_machine_flavor, memory: required_mem + 512, tenant: t2)
+            create(:virtual_machine_flavor, memory: required_mem + 1024, tenant: t2)
             n = -2
-            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{cs2.id}&limit=#{n}", user)
+            get api("/virtual_machine_flavors?memory=#{required_mem}&compute_site_id=#{t2.id}&limit=#{n}", user)
             flavors = fls_response
             expect(flavors.size).to be >= 0
           end
@@ -130,33 +130,33 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
 
       context 'filter for appliance type defined' do
 
-        it "returns empty list if AT does not exist" do
+        it 'returns empty list if AT does not exist' do
           get api("/virtual_machine_flavors?appliance_type_id=#{at.id + 1}", user)
           flavors = fls_response
           expect(flavors.size).to eq 0
         end
 
-        it "returns empty list if there are no templates for AT" do
+        it 'returns empty list if there are no templates for AT' do
           get api("/virtual_machine_flavors?appliance_type_id=#{at.id}", user)
           flavors = fls_response
           expect(flavors.size).to eq 0
         end
 
-        it "returns one flavor with memory greater or equal to preference memory specified in at" do
-          tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs2, state: 'active')
+        it 'returns one flavor with memory greater or equal to preference memory specified in at' do
+          tmpl = create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
           get api("/virtual_machine_flavors?appliance_type_id=#{at.id}", user)
           flavors = fls_response
           expect(flavors.size).to eq 1
           fl = flavors.first
           expect(fl['memory']).to be >= required_mem
-          expect(fl['compute_site_id']).to eq tmpl.compute_site_id
+          expect(fl['compute_site_id']).to eq tmpl.tenant_id
         end
 
         it 'returns only active flavors when asking about AT flavor chosen by optimizer' do
-          inactive_cs, inactive_vmt = vmt_on_site(cs_active: false)
-          active_cs, active_vmt = vmt_on_site(cs_active: true)
-          create(:flavor, compute_site: inactive_cs)
-          create(:flavor, compute_site: active_cs)
+          inactive_t, inactive_vmt = vmt_on_tenant(t_active: false)
+          active_t, active_vmt = vmt_on_tenant(t_active: true)
+          create(:flavor, tenant: inactive_t)
+          create(:flavor, tenant: active_t)
           at_with_2_vmt = create(:appliance_type,
             virtual_machine_templates: [inactive_vmt, active_vmt])
 
@@ -166,23 +166,23 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(response.size).to eq 1
           first = response.first
           expect(first['active']).to be_truthy
-          expect(first['compute_site_id']).to eq active_cs.id
+          expect(first['compute_site_id']).to eq active_t.id
         end
 
         context 'reqiurements specified' do
 
           it 'returns one flavor' do
-            tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs, state: 'active')
+            create(:virtual_machine_template, appliance_type: at, tenant: t, state: 'active')
             get api("virtual_machine_flavors?cpu=1&memory=1024&hdd=5&appliance_type_id=#{at.id}", user)
             flavors = fls_response
             expect(flavors.size).to eq 1
           end
         end
 
-        context 'filter for cs specified' do
-          it "applies compute site filtering" do
-            tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs2, state: 'active')
-            get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{cs2.id + 1}", user)
+        context 'filter for compute site specified' do
+          it 'applies compute site filtering' do
+            create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
+            get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{t2.id + 1}", user)
             flavors = fls_response
             expect(flavors.size).to eq 0
           end
@@ -192,19 +192,20 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
       context 'filter for appliance configuration instance specified' do
         let(:aci) { create(:appliance_configuration_instance) }
 
-        it "returns 404 if config instance does not exist" do
+        it 'returns 404 if config instance does not exist' do
           get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id + 1}", user)
           expect(response.status).to eq 404
         end
 
-        it "returns 404 if aci does not have a config template" do
+        it 'returns 404 if aci does not have a config template' do
           get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id}", user)
           expect(response.status).to eq 404
         end
 
-        it "returns one flavor with memory greater or equal to preference memory specified in at associated with config" do
-          tmpl = create(:virtual_machine_template, appliance_type: at, compute_site: cs2, state: 'active')
-          config_tmpl = create(:appliance_configuration_template, appliance_configuration_instances: [aci], appliance_type: at)
+        it 'returns one flavor with memory greater or equal to preference specified in at associated with config' do
+          create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
+          config_tmpl = create(:appliance_configuration_template, appliance_configuration_instances: [aci], \
+            appliance_type: at)
           get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id}", user)
           expect(response.status).to eq 200
           flavors = fls_response
@@ -214,10 +215,10 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         end
 
         it 'returns only active flavors when asking about AT flavor chosen by optimizer' do
-          inactive_cs, inactive_vmt = vmt_on_site(cs_active: false)
-          active_cs, active_vmt = vmt_on_site(cs_active: true)
-          create(:flavor, compute_site: inactive_cs)
-          create(:flavor, compute_site: active_cs)
+          inactive_t, inactive_vmt = vmt_on_tenant(t_active: false)
+          active_t, active_vmt = vmt_on_tenant(t_active: true)
+          create(:flavor, tenant: inactive_t)
+          create(:flavor, tenant: active_t)
           at_with_2_vmt = create(:appliance_type,
             virtual_machine_templates: [inactive_vmt, active_vmt])
           config_tmpl = create(:appliance_configuration_template,
@@ -231,7 +232,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(response.size).to eq 1
           first = response.first
           expect(first['active']).to be_truthy
-          expect(first['compute_site_id']).to eq active_cs.id
+          expect(first['compute_site_id']).to eq active_t.id
         end
       end
     end

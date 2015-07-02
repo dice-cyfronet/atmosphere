@@ -9,7 +9,9 @@ module Atmosphere
 
     private
 
-    # Returns a full cost map for this flavor (depending on os_family)
+    def compute_site_id
+      object.tenant_id
+    end
 
     def active
       object.usable?

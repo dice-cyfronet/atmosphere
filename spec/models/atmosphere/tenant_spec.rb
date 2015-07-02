@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: compute_sites
+# Table name: tenants
 #
 #  id                :integer          not null, primary key
 #  site_id           :string(255)      not null
@@ -22,22 +22,22 @@
 
 require 'rails_helper'
 
-describe Atmosphere::ComputeSite do
+describe Atmosphere::Tenant do
 
   before { Fog.mock! }
 
-  subject { FactoryGirl.create(:compute_site, technology: 'openstack') }
+  subject { FactoryGirl.create(:tenant, technology: 'openstack') }
   it { should be_valid }
 
-  it { should validate_presence_of :site_id }
-  it { should validate_presence_of :site_type }
+  it { should validate_presence_of :tenant_id }
+  it { should validate_presence_of :tenant_type }
   it { should validate_presence_of :technology }
 
   it { should have_many :port_mapping_properties }
   it { should have_many(:virtual_machine_templates).dependent(:destroy) }
   it { should have_many(:virtual_machines).dependent(:destroy) }
 
-  it { should validate_inclusion_of(:site_type).in_array(%w(public private))}
+  it { should validate_inclusion_of(:tenant_type).in_array(%w(public private))}
 
   context 'cloud' do
     context 'openstack' do
@@ -48,7 +48,7 @@ describe Atmosphere::ComputeSite do
     end
 
     context 'aws' do
-      let(:aws) { FactoryGirl.create(:compute_site, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}') }
+      let(:aws) { FactoryGirl.create(:tenant, technology: 'aws', config: '{"provider": "aws", "aws_access_key_id": "bzdura",  "aws_secret_access_key": "bzdura",  "region": "eu-west-1"}') }
       it 'returns appropriate cloud client for aws' do
         expect(aws.cloud_client).to be_an_instance_of(Fog::Compute::AWS::Mock)
       end
@@ -58,28 +58,28 @@ describe Atmosphere::ComputeSite do
   context 'nic provider class' do
     context 'is misconfigured' do
       it 'is invalid if class does not exist' do
-        misconfigured_cs =
-          build(:compute_site, nic_provider_class_name: 'NotExistingClass')
-        expect(misconfigured_cs).to be_invalid
+        misconfigured_t =
+          build(:tenant, nic_provider_class_name: 'NotExistingClass')
+        expect(misconfigured_t).to be_invalid
       end
       it 'is invalid if name does not point to a class' do
-        misconfigured_cs =
-          build(:compute_site, nic_provider_class_name: 'Atmosphere')
-        expect(misconfigured_cs).to be_invalid
+        misconfigured_t =
+          build(:tenant, nic_provider_class_name: 'Atmosphere')
+        expect(misconfigured_t).to be_invalid
       end
     end
     context 'is configured fine' do
       it 'is valid if class exist' do
-        cs = build(:compute_site, nic_provider_class_name: 'String')
-        expect(cs).to be_valid
+        t = build(:tenant, nic_provider_class_name: 'String')
+        expect(t).to be_valid
       end
       it 'is valid if class name is nil' do
-        cs = build(:compute_site, nic_provider_class_name: nil)
-        expect(cs).to be_valid
+        t = build(:tenant, nic_provider_class_name: nil)
+        expect(t).to be_valid
       end
       it 'is valid if class name is empty string' do
-        cs = build(:compute_site, nic_provider_class_name: '')
-        expect(cs).to be_valid
+        t = build(:tenant, nic_provider_class_name: '')
+        expect(t).to be_valid
       end
     end
   end
@@ -91,13 +91,13 @@ describe Atmosphere::ComputeSite do
   end
 
   context 'if technology is invalid' do
-    let(:invalid) { build(:compute_site, technology: 'INVALID_TECHNOLOGY') }
+    let(:invalid) { build(:tenant, technology: 'INVALID_TECHNOLOGY') }
     it 'is invalid' do
       expect(invalid).to be_invalid
     end
   end
 
-  context 'compute site is updated' do
+  context 'tenant is updated' do
 
     it 'recreates cloud client if configuration was updated' do
       expect(Fog::Compute).to receive(:new)
@@ -133,7 +133,7 @@ describe Atmosphere::ComputeSite do
       end
 
       it 'sets cloud client to nil if config is blank' do
-        expect(Atmosphere).to receive(:unregister_cloud_client).with(subject.site_id)
+        expect(Atmosphere).to receive(:unregister_cloud_client).with(subject.tenant_id)
         subject.config = ''
         subject.save
       end
@@ -142,127 +142,127 @@ describe Atmosphere::ComputeSite do
 
   end
 
-  context 'compute site is destroyed' do
+  context 'tenant is destroyed' do
     it 'unregisters cloud client' do
-      expect(Atmosphere).to receive(:unregister_cloud_client).with(subject.site_id)
+      expect(Atmosphere).to receive(:unregister_cloud_client).with(subject.tenant_id)
       subject.destroy
     end
   end
 
   context '#with_appliance_type' do
-    let(:compute_site) { create(:compute_site) }
-    let(:vm) { create(:virtual_machine, compute_site: compute_site) }
+    let(:tenant) { create(:tenant) }
+    let(:vm) { create(:virtual_machine, tenant: tenant) }
     let(:at) { create(:appliance_type) }
     let!(:appl) { create(:appliance, appliance_type: at, virtual_machines: [ vm ]) }
 
-    it 'loads not readonly compute sites' do
-      Atmosphere::ComputeSite.with_appliance_type(at).each do |cs|
-        expect(cs.readonly?).to be_falsy
+    it 'loads not readonly tenants' do
+      Atmosphere::Tenant.with_appliance_type(at).each do |t|
+        expect(t.readonly?).to be_falsy
       end
     end
   end
 
   context '#with_dev_property_set' do
-    let(:compute_site) { create(:compute_site) }
-    let(:vm) { create(:virtual_machine, compute_site: compute_site) }
+    let(:tenant) { create(:tenant) }
+    let(:vm) { create(:virtual_machine, tenant: tenant) }
     let(:as) { create(:dev_appliance_set) }
     let!(:appl) { create(:appliance, appliance_set: as, virtual_machines: [ vm ]) }
 
-    it 'loads not readonly compute sites' do
-      Atmosphere::ComputeSite.with_dev_property_set(appl.dev_mode_property_set).each do |cs|
-        expect(cs.readonly?).to be_falsy
+    it 'loads not readonly tenants' do
+      Atmosphere::Tenant.with_dev_property_set(appl.dev_mode_property_set).each do |t|
+        expect(t.readonly?).to be_falsy
       end
     end
   end
 
   context '#proxy_urls_changed?' do
-    let(:cs) { create(:compute_site) }
+    let(:t) { create(:tenant) }
 
     it 'returns true when http proxy url changed' do
-      cs.http_proxy_url = "updated"
-      cs.save
+      t.http_proxy_url = "updated"
+      t.save
 
-      expect(cs.proxy_urls_changed?).to be_truthy
+      expect(t.proxy_urls_changed?).to be_truthy
     end
 
     it 'returns true when https proxy url changed' do
-      cs.https_proxy_url = "updated"
-      cs.save
+      t.https_proxy_url = "updated"
+      t.save
 
-      expect(cs.proxy_urls_changed?).to be_truthy
+      expect(t.proxy_urls_changed?).to be_truthy
     end
 
     it 'return false when other parameters updated' do
-      cs.site_id = 'updated'
-      cs.save
+      t.tenant_id = 'updated'
+      t.save
 
-      expect(cs.proxy_urls_changed?).to be_falsy
+      expect(t.proxy_urls_changed?).to be_falsy
     end
   end
 
-  context '#site_id_previously_changed?' do
-    let(:cs) { create(:compute_site) }
+  context '#tenant_id_previously_changed?' do
+    let(:t) { create(:tenant) }
 
-    it 'returns true when site_id changed' do
-      cs.https_proxy_url = "updated"
-      cs.save
+    it 'returns true when tenant_id changed' do
+      t.https_proxy_url = "updated"
+      t.save
 
-      expect(cs.site_id_previously_changed?).to be_falsy
+      expect(t.tenant_id_previously_changed?).to be_falsy
     end
 
     it 'returns false when other attribues changed' do
-      cs.site_id = 'updated'
-      cs.save
+      t.tenant_id = 'updated'
+      t.save
 
-      expect(cs.site_id_previously_changed?).to be_truthy
+      expect(t.tenant_id_previously_changed?).to be_truthy
     end
   end
 
   context '#default_flavor' do
     let(:first_flavor) { build(:virtual_machine_flavor) }
-    let(:cs) do
-      build(:compute_site).tap do |cs|
-        cs.virtual_machine_flavors = [first_flavor, build(:virtual_machine_flavor)]
+    let(:t) do
+      build(:tenant).tap do |t|
+        t.virtual_machine_flavors = [first_flavor, build(:virtual_machine_flavor)]
       end
     end
 
     it 'returns first flavor as default one' do
-      expect(cs.default_flavor).to eq first_flavor
+      expect(t.default_flavor).to eq first_flavor
     end
   end
 
-  context 'when active and non active compute sites' do
-    it 'returns only active compute sites using default scope' do
-      cs1 = create(:compute_site, active: true)
-      create(:compute_site, active: false)
-      cs3 = create(:compute_site, active: true)
+  context 'when active and non active tenants' do
+    it 'returns only active tenants using default scope' do
+      t1 = create(:tenant, active: true)
+      create(:tenant, active: false)
+      t3 = create(:tenant, active: true)
 
-      cses = Atmosphere::ComputeSite.active
+      ts = Atmosphere::Tenant.active
 
-      expect(cses.count).to eq 2
-      expect(cses).to include cs1
-      expect(cses).to include cs3
+      expect(ts.count).to eq 2
+      expect(ts).to include t1
+      expect(ts).to include t3
     end
   end
 
   describe '#funded_by' do
     before :each do
-      @cs = create(:compute_site)
+      @t = create(:tenant)
     end
 
     it 'returns empty table when no funding found' do
-      expect(Atmosphere::ComputeSite.funded_by(create(:fund))).to eq []
+      expect(Atmosphere::Tenant.funded_by(create(:fund))).to eq []
     end
 
-    it 'selects only funded subset of sites' do
-      @cs.funds << create(:fund)
-      expect(Atmosphere::ComputeSite.funded_by(create(:fund))).to eq []
-      create(:compute_site, funds: [create(:fund)])
-      cs2 = create(:compute_site, funds: [create(:fund), @cs.funds.first])
+    it 'selects only funded subset of tenants' do
+      @t.funds << create(:fund)
+      expect(Atmosphere::Tenant.funded_by(create(:fund))).to eq []
+      create(:tenant, funds: [create(:fund)])
+      t2 = create(:tenant, funds: [create(:fund), @t.funds.first])
       expect(Atmosphere::Fund.count).to eq 4
-      expect(Atmosphere::ComputeSite.count).to eq 3
-      expect(Atmosphere::ComputeSite.funded_by(@cs.funds.first)).
-        to match_array [@cs, cs2]
+      expect(Atmosphere::Tenant.count).to eq 3
+      expect(Atmosphere::Tenant.funded_by(@t.funds.first)).
+        to match_array [@t, t2]
     end
   end
 end

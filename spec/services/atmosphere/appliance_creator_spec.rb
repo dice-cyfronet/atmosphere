@@ -6,12 +6,12 @@ describe Atmosphere::ApplianceCreator do
   let(:at) { create(:filled_appliance_type, visible_to: 'all') }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
   let(:as) { create(:appliance_set, user: user)}
-  let!(:active_cs) { create(:compute_site, active: true) }
-  let!(:inactive_cs) { create(:compute_site, active: false) }
+  let!(:active_t) { create(:tenant, active: true) }
+  let!(:inactive_t) { create(:tenant, active: false) }
 
-  context 'compute site ids not provided' do
+  context 'tenant ids not provided' do
 
-    it 'creates appliance with allowed active compute site only' do
+    it 'creates appliance with allowed active tenant only' do
       created_appl_params = ActionController::Parameters.
                               new(appliance_set_id: as.id,
                                   configuration_template_id: cfg_tmpl.id)
@@ -20,33 +20,33 @@ describe Atmosphere::ApplianceCreator do
 
       appl = creator.build
 
-      expect(appl.compute_sites).to eq [active_cs]
-      expect(appl.compute_sites.first.active).to be true
+      expect(appl.tenants).to eq [active_t]
+      expect(appl.tenants.first.active).to be true
     end
 
   end
 
-  context 'compute site ids provided' do
+  context 'tenant ids provided' do
 
-    it 'creates appliance with allowed active compute site only' do
+    it 'creates appliance with allowed active tenants only' do
       created_appl_params = ActionController::Parameters.
                               new(appliance_set_id: as.id,
                                   configuration_template_id: cfg_tmpl.id,
-                                  compute_site_ids: [active_cs, inactive_cs])
+                                  tenant_ids: [active_t, inactive_t])
       creator = Atmosphere::ApplianceCreator.
                   new(created_appl_params, 'dummy-token')
 
       appl = creator.build
 
-      expect(appl.compute_sites).to eq [active_cs]
-      expect(appl.compute_sites.first.active).to be true
+      expect(appl.tenants).to eq [active_t]
+      expect(appl.tenants.first.active).to be true
     end
   end
 
   it 'creates appliance with optimization policy params' do
     vms = [
-           { 'cpu' => 1, 'mem' => 512, 'compute_site_ids' => [1] },
-           { 'cpu' => 2, 'mem' => 1024, 'compute_site_ids' => [1] }
+      { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [1] },
+      { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [1] }
           ]
     created_appl_params = ActionController::Parameters.
                             new(appliance_set_id: as.id,

@@ -108,8 +108,8 @@ module Fog
 
         alias_method :create_orig, :create
         def create(params)
-          # Cyrrently hardcoded, in the feature it can be moved somewhere,
-          # for example into compute site configuration?
+          # Currently hardcoded, in the feature it can be moved somewhere,
+          # for example into tenant configuration?
           params[:zone] = ZONE
 
           # Such user account with root privilage will be created on

@@ -1,7 +1,7 @@
 module Atmosphere
   class VmUpdater
-    def initialize(site, server, updater_class = Proxy::ApplianceProxyUpdater)
-      @site = site
+    def initialize(tenant, server, updater_class = Proxy::ApplianceProxyUpdater)
+      @tenant = tenant
       @server = server
       @updater_class = updater_class
     end
@@ -14,7 +14,7 @@ module Atmosphere
 
     private
 
-    attr_reader :site, :server
+    attr_reader :tenant, :server
 
     def perform_update!
       vm.source_template ||= source_template
@@ -113,11 +113,11 @@ module Atmosphere
     end
 
     def vm
-      @vm ||= site.virtual_machines.find_or_initialize_by(id_at_site: server.id)
+      @vm ||= tenant.virtual_machines.find_or_initialize_by(id_at_site: server.id)
     end
 
     def source_template
-      VirtualMachineTemplate.find_by(compute_site: site, id_at_site: server.image_id)
+      VirtualMachineTemplate.find_by(tenant: tenant, id_at_site: server.image_id)
     end
 
     def update_ips?
@@ -136,7 +136,7 @@ module Atmosphere
 
     def vm_flavor
       VirtualMachineFlavor.
-        where(compute_site: vm.compute_site,
+        where(tenant: vm.tenant,
               id_at_site: flavor_id).first
     end
 

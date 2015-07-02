@@ -32,7 +32,7 @@ module Atmosphere
       atmosphere: [
         Atmosphere::ApplianceType,
         Atmosphere::ApplianceSet,
-        Atmosphere::ComputeSite,
+        Atmosphere::Tenant,
         Atmosphere::VirtualMachine,
         Atmosphere::VirtualMachineTemplate,
         Atmosphere::MigrationJob,
@@ -101,19 +101,19 @@ module Atmosphere
     @@ability_class.constantize
   end
 
-  def self.nic_provider(compute_site)
-    class_name = compute_site.nic_provider_class_name
+  def self.nic_provider(tenant)
+    class_name = tenant.nic_provider_class_name
     nic_provider_class =
       if class_name
         class_name.constantize
       else
-        Atmosphere::NicProvider::NullNicProvider
+        Atmosphere::NicProvider::DefaultNicProvider
       end
     config =
-      if compute_site.nic_provider_config.present?
-        JSON.parse(compute_site.nic_provider_config).symbolize_keys
+      if tenant.nic_provider_config.present?
+        JSON.parse(tenant.nic_provider_config).symbolize_keys
       else
-        {}
+        {tenant: tenant}
       end
     nic_provider_class.new(config)
   end

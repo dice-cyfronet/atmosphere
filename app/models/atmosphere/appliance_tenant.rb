@@ -7,13 +7,13 @@
 #  compute_site_id :integer
 #
 
-# ApplianceComputeSites provide a m:n link between appliances and compute_sites.
+# ApplianceTenants provide a m:n link between appliances and tenants
 module Atmosphere
-  class ApplianceComputeSite < ActiveRecord::Base
+  class ApplianceTenant < ActiveRecord::Base
     belongs_to :appliance,
       class_name: 'Atmosphere::Appliance'
 
-    belongs_to :compute_site,
-    class_name: 'Atmosphere::ComputeSite'
+    belongs_to :tenant,
+    class_name: 'Atmosphere::Tenant'
   end
 end

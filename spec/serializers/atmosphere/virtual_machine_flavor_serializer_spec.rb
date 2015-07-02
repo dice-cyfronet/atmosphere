@@ -4,7 +4,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
 
   context 'activity flag tests' do
     it 'is active on active compute site' do
-      flavor = flavor_on_cs(cs_active: true, active: true)
+      flavor = flavor_on_t(t_active: true, active: true)
 
       result = serialize(flavor)
 
@@ -12,7 +12,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
     end
 
     it 'is inactive on inactive compute site' do
-      flavor = flavor_on_cs(cs_active: false, active: true)
+      flavor = flavor_on_t(t_active: false, active: true)
 
       result = serialize(flavor)
 
@@ -20,7 +20,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
     end
 
     it 'is inactive when not bound to compute site' do
-      flavor = create(:flavor, compute_site: nil, active: true)
+      flavor = create(:flavor, tenant: nil, active: true)
 
       result = serialize(flavor)
 
@@ -28,7 +28,7 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
     end
 
     it 'sets active flag to false when flavor is inactive' do
-      flavor = flavor_on_cs(cs_active: true, active: false)
+      flavor = flavor_on_t(t_active: true, active: false)
 
       result = serialize(flavor)
 
@@ -67,8 +67,8 @@ describe Atmosphere::VirtualMachineFlavorSerializer do
     JSON.parse(serializer.to_json)
   end
 
-  def flavor_on_cs(options)
-    cs = create(:compute_site, active: options[:cs_active])
-    create(:flavor, compute_site: cs, active: options[:active])
+  def flavor_on_t(options)
+    t = create(:tenant, active: options[:t_active])
+    create(:flavor, tenant: t, active: options[:active])
   end
 end

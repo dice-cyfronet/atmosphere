@@ -1,7 +1,7 @@
 module Atmosphere
   class Cloud::VmtUpdater
-    def initialize(site, image, options = {})
-      @site = site
+    def initialize(tenant, image, options = {})
+      @tenant = tenant
       @image = image
       @all = options[:all]
     end
@@ -39,7 +39,7 @@ module Atmosphere
     end
 
     def vmt
-      @vmt ||= @site.virtual_machine_templates
+      @vmt ||= @tenant.virtual_machine_templates
         .find_or_initialize_by(id_at_site: @image.id)
     end
 
@@ -48,10 +48,10 @@ module Atmosphere
     end
 
     def appliance_type
-      source_cs_id, source_id_at_site = source_cs_and_uuid
+      source_t_id, source_id_at_site = source_t_and_uuid
 
-      if source_cs_id && source_id_at_site
-        ApplianceType.with_vmt(source_cs_id, source_id_at_site).first
+      if source_t_id && source_id_at_site
+        ApplianceType.with_vmt(source_t_id, source_id_at_site).first
       end
     end
 
@@ -60,21 +60,21 @@ module Atmosphere
     end
 
     def source_vmt
-      source_cs_id, source_id_at_site = source_cs_and_uuid
+      source_t_id, source_id_at_site = source_t_and_uuid
 
-      unless @source_vmt && source_cs_id && source_id_at_site
+      unless @source_vmt && source_t_id && source_id_at_site
         @source_vmt = VirtualMachineTemplate.
-          on_cs_with_src(source_cs_id, source_id_at_site).
+          on_cs_with_src(source_t_id, source_id_at_site).
           first
       end
 
       @source_vmt
     end
 
-    def source_cs_and_uuid
+    def source_t_and_uuid
       metadata = image.tags
 
-      [metadata['source_cs'], metadata['source_uuid']]
+      [metadata['source_t'], metadata['source_uuid']]
     end
 
     def young?

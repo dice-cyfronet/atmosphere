@@ -1,14 +1,15 @@
 FactoryGirl.define do
-  factory :compute_site, aliases: [:openstack_compute_site], class: 'Atmosphere::ComputeSite' do |f|
-    site_id { SecureRandom.hex(4) }
+  factory :tenant, aliases: [:openstack_tenant], class: 'Atmosphere::Tenant' do |f|
+    tenant_type 'private'
+    tenant_id { SecureRandom.hex(4) }
+    network_id { SecureRandom.hex(8) }
     name { SecureRandom.hex(4) }
-    site_type 'private'
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
     http_proxy_url { FFaker::Internet.uri('http') }
     https_proxy_url { FFaker::Internet.uri('https') }
 
-    # Create 4 VM flavors for this compute_site by default
+    # Create 4 VM flavors for this tenant by default
     # virtual_machine_flavors { FactoryGirl.create_list(:virtual_machine_flavor, 4) }
 
     trait :openstack_flavors do
@@ -32,31 +33,31 @@ FactoryGirl.define do
     end
 
     factory :amazon_with_flavors, traits: [:amazon_flavors] do
-      site_type 'public'
+      tenant_type 'public'
       technology 'aws'
       #config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
-      after(:create) do |cs|
-        cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 60)
-        cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 70)
-        cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 80)
-        cs.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 90)
-        cs.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
+      after(:create) do |t|
+        t.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 60)
+        t.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 70)
+        t.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 80)
+        t.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 90)
+        t.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
       end
     end
 
-    factory :amazon_compute_site do
-      site_type 'public'
+    factory :amazon_tenant do
+      tenant_type 'public'
       technology 'aws'
       config '{"provider":"aws", "aws_access_key_id":"wrong", "aws_secret_access_key":"wrong", "region":"eu-west-1"}'
     end
 
     factory :openstack_with_flavors, traits: [:openstack_flavors] do
-      after(:create) do |cs|
-        cs.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
-        cs.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
-        cs.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 30)
-        cs.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 40)
-        cs.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 50)
+      after(:create) do |t|
+        t.virtual_machine_flavors.first.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
+        t.virtual_machine_flavors.second.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
+        t.virtual_machine_flavors.third.set_hourly_cost_for(Atmosphere::OSFamily.first, 30)
+        t.virtual_machine_flavors.fourth.set_hourly_cost_for(Atmosphere::OSFamily.first, 40)
+        t.virtual_machine_flavors.fifth.set_hourly_cost_for(Atmosphere::OSFamily.first, 50)
       end
     end
   end

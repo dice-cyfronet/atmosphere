@@ -4,7 +4,7 @@ module Atmosphere
 
     @@ability_builder_classes = [
         ::Atmosphere::UserAbilityBuilder,
-        ::Atmosphere::ComputeSiteAbilityBuilder,
+        ::Atmosphere::TenantAbilityBuilder,
         ::Atmosphere::ApplianceAbilityBuilder,
         ::Atmosphere::ApplianceTypeAbilityBuilder,
         ::Atmosphere::ApplianceSetAbilityBuilder,

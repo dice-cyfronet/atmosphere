@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Atmosphere::Optimizer do
-  include VmtOnCsHelpers
+  include VmtOnTHelpers
 
   before do
     Fog.mock!
@@ -12,7 +12,8 @@ describe Atmosphere::Optimizer do
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:fund) { create(:fund) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
-  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, compute_site: openstack)}
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, \
+    tenant: openstack) }
 
   subject { Atmosphere::Optimizer.instance }
 
@@ -32,10 +33,12 @@ describe Atmosphere::Optimizer do
 
     context 'is selected with appropriate architecture' do
       it 'if cheaper flavor does not support architecture' do
-        cs = create(:compute_site)
-        tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, compute_site: cs)
-        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, compute_site: cs, supported_architectures: 'i386')
-        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, compute_site: cs, supported_architectures: 'x86_64')
+        t = create(:tenant)
+        tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, tenant: t)
+        fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, tenant: t, \
+          supported_architectures: 'i386')
+        fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, tenant: t, \
+          supported_architectures: 'x86_64')
 
         fl_32b.set_hourly_cost_for(Atmosphere::OSFamily.first, 10)
         fl_64b.set_hourly_cost_for(Atmosphere::OSFamily.first, 20)
@@ -48,24 +51,24 @@ describe Atmosphere::Optimizer do
 
     context 'is selected optimaly' do
       context 'appliance type preferences not specified' do
-        it 'selects instance with at least 1.5GB RAM for public compute site' do
+        it 'selects instance with at least 1.5GB RAM for public tenant' do
           appl_type = build(:appliance_type)
-          tmpl = build(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type)
+          tmpl = build(:virtual_machine_template, tenant: amazon, appliance_type: appl_type)
           selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl])
           expect(flavor.memory).to be >= 1536
         end
 
-        it 'selects instance with 512MB RAM for private compute site' do
+        it 'selects instance with 512MB RAM for private tenant' do
           appl_type = build(:appliance_type)
-          tmpl = build(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type)
+          tmpl = build(:virtual_machine_template, tenant: openstack, appliance_type: appl_type)
           selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl])
           expect(flavor.memory).to be >= 512
         end
       end
 
       context 'appliance type preferences specified' do
-        let(:tmpl_at_amazon) { create(:virtual_machine_template, compute_site: amazon, appliance_type: appl_type) }
-        let(:tmpl_at_openstack) { create(:virtual_machine_template, compute_site: openstack, appliance_type: appl_type) }
+        let(:tmpl_at_amazon) { create(:virtual_machine_template, tenant: amazon, appliance_type: appl_type) }
+        let(:tmpl_at_openstack) { create(:virtual_machine_template, tenant: openstack, appliance_type: appl_type) }
 
         it 'selects cheapest flavour that satisfies requirements' do
           selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl_at_amazon, tmpl_at_openstack])
@@ -77,14 +80,16 @@ describe Atmosphere::Optimizer do
           all_discarded_flavors.each {|f|
             f.reload
             if(f.memory >= appl_type.preference_memory and f.cpu >= appl_type.preference_cpu)
-              expect(f.get_hourly_cost_for(Atmosphere::OSFamily.first) >= flavor.get_hourly_cost_for(Atmosphere::OSFamily.first)).to be true
+              expect(f.get_hourly_cost_for(Atmosphere::OSFamily.first) >= \
+                flavor.get_hourly_cost_for(Atmosphere::OSFamily.first)).to be true
             end
           }
         end
 
         it 'selects flavor with more ram if prices are equal' do
           biggest_os_flavor = openstack.virtual_machine_flavors.max_by {|f| f.memory}
-          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, compute_site: amazon)
+          optimal_flavor = create(:virtual_machine_flavor, memory: biggest_os_flavor.memory + 256, \
+            cpu: biggest_os_flavor.cpu, hdd: biggest_os_flavor.hdd, tenant: amazon)
           biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
           optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
           amazon.reload
@@ -112,7 +117,7 @@ describe Atmosphere::Optimizer do
 
     context 'dev mode properties' do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
-      let!(:vmt) { create(:virtual_machine_template, compute_site: amazon, appliance_type: at) }
+      let!(:vmt) { create(:virtual_machine_template, tenant: amazon, appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
       let(:appl_vm_manager) do
@@ -133,13 +138,13 @@ describe Atmosphere::Optimizer do
             expect(flavor.cpu).to eq 2
           end
 
-          create(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          create(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
         end
       end
 
       context 'when preferences set in appliance' do
         before do
-          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, compute_sites: Atmosphere::ComputeSite.all)
+          @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
           @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end
