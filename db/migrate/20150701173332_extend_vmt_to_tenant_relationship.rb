@@ -13,7 +13,7 @@ class ExtendVmtToTenantRelationship < ActiveRecord::Migration
         tenant_id) VALUES(#{t['id'].to_s}, #{t['tenant_id'].to_s})")
     end
     # Get rid of old FKey
-    # execute("ALTER TABLE atmosphere_virtual_machine_templates DROP COLUMN tenant_id")
+    execute("ALTER TABLE atmosphere_virtual_machine_templates ALTER COLUMN tenant_id DROP NOT NULL")
 
   end
 

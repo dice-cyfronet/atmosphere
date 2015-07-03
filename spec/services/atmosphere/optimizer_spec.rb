@@ -13,7 +13,7 @@ describe Atmosphere::Optimizer do
   let!(:fund) { create(:fund) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, \
-    tenant: openstack) }
+    tenants: [openstack]) }
 
   subject { Atmosphere::Optimizer.instance }
 
@@ -34,7 +34,7 @@ describe Atmosphere::Optimizer do
     context 'is selected with appropriate architecture' do
       it 'if cheaper flavor does not support architecture' do
         t = create(:tenant)
-        tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, tenant: t)
+        tmpl_64b = create(:virtual_machine_template, architecture: 'x86_64', appliance_type: appl_type, tenants: [t])
         fl_32b = create(:virtual_machine_flavor, flavor_name: 'flavor 32', cpu: 2, memory: 1024, hdd: 30, tenant: t, \
           supported_architectures: 'i386')
         fl_64b = create(:virtual_machine_flavor, flavor_name: 'flavor 64', cpu: 2, memory: 1024, hdd: 30, tenant: t, \
@@ -53,22 +53,22 @@ describe Atmosphere::Optimizer do
       context 'appliance type preferences not specified' do
         it 'selects instance with at least 1.5GB RAM for public tenant' do
           appl_type = build(:appliance_type)
-          tmpl = build(:virtual_machine_template, tenant: amazon, appliance_type: appl_type)
+          tmpl = build(:virtual_machine_template, tenants: [amazon], appliance_type: appl_type)
           selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl])
           expect(flavor.memory).to be >= 1536
         end
 
         it 'selects instance with 512MB RAM for private tenant' do
           appl_type = build(:appliance_type)
-          tmpl = build(:virtual_machine_template, tenant: openstack, appliance_type: appl_type)
+          tmpl = build(:virtual_machine_template, tenants: [openstack], appliance_type: appl_type)
           selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl])
           expect(flavor.memory).to be >= 512
         end
       end
 
       context 'appliance type preferences specified' do
-        let(:tmpl_at_amazon) { create(:virtual_machine_template, tenant: amazon, appliance_type: appl_type) }
-        let(:tmpl_at_openstack) { create(:virtual_machine_template, tenant: openstack, appliance_type: appl_type) }
+        let(:tmpl_at_amazon) { create(:virtual_machine_template, tenants: [amazon], appliance_type: appl_type) }
+        let(:tmpl_at_openstack) { create(:virtual_machine_template, tenants: [openstack], appliance_type: appl_type) }
 
         it 'selects cheapest flavour that satisfies requirements' do
           selected_tmpl, flavor = subject.select_tmpl_and_flavor([tmpl_at_amazon, tmpl_at_openstack])
@@ -117,7 +117,7 @@ describe Atmosphere::Optimizer do
 
     context 'dev mode properties' do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
-      let!(:vmt) { create(:virtual_machine_template, tenant: amazon, appliance_type: at) }
+      let!(:vmt) { create(:virtual_machine_template, tenants: [amazon], appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
       let(:appl_vm_manager) do

@@ -47,7 +47,7 @@ describe Atmosphere::OptimizationStrategy::Default do
     before do
       create(:virtual_machine_template,
              appliance_type: shareable_appl_type,
-             tenant: openstack)
+             tenants: [openstack])
     end
 
     context 'development mode' do
@@ -77,10 +77,10 @@ describe Atmosphere::OptimizationStrategy::Default do
                  tenants: Atmosphere::Tenant.all)
       create(:virtual_machine_template,
              appliance_type: a.appliance_type,
-             tenant: nonfunded_t)
+             tenants: [nonfunded_t])
       create(:virtual_machine_template,
              appliance_type: a.appliance_type,
-             tenant: openstack)
+             tenants: [openstack])
       supported_appliance_types = Atmosphere::Tenant.all.map do |t|
         t.virtual_machine_templates.map(&:appliance_type)
       end
@@ -88,7 +88,7 @@ describe Atmosphere::OptimizationStrategy::Default do
       default_strategy = Atmosphere::OptimizationStrategy::Default.new(a)
       vm_candidates = default_strategy.send(:vmt_candidates_for, a)
       expect(vm_candidates.count).to eq 1
-      expect(vm_candidates.first.tenant).to eq openstack
+      expect(vm_candidates.first.tenants.first).to eq openstack
     end
   end
 end

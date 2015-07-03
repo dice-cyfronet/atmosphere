@@ -60,7 +60,7 @@ describe Atmosphere::VmTemplateMonitoringWorker do
     end
 
     context 'when some templates exist' do
-      let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', tenant: cyfronet_folsom, state: :saving) }
+      let!(:ubuntu) { create(:virtual_machine_template, id_at_site: 'ubuntu', tenants: [cyfronet_folsom], state: :saving) }
 
       it 'does not create duplicated templates' do
         expect {
@@ -78,11 +78,11 @@ describe Atmosphere::VmTemplateMonitoringWorker do
 
     context 'when template removed' do
       before do
-        create(:virtual_machine_template, id_at_site: 'ubuntu', tenant: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'arch', tenant: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'centos', tenant: cyfronet_folsom)
-        create(:virtual_machine_template, id_at_site: 'old_vmt', tenant: cyfronet_folsom, created_at: 6.minutes.ago)
-        create(:virtual_machine_template, id_at_site: 'young_vmt', tenant: cyfronet_folsom)
+        create(:virtual_machine_template, id_at_site: 'ubuntu', tenants: [cyfronet_folsom])
+        create(:virtual_machine_template, id_at_site: 'arch', tenants: [cyfronet_folsom])
+        create(:virtual_machine_template, id_at_site: 'centos', tenants: [cyfronet_folsom])
+        create(:virtual_machine_template, id_at_site: 'old_vmt', tenants: [cyfronet_folsom], created_at: 6.minutes.ago)
+        create(:virtual_machine_template, id_at_site: 'young_vmt', tenants: [cyfronet_folsom])
       end
 
       it 'removes deleted template' do

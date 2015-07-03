@@ -17,6 +17,7 @@
 
 module Atmosphere
   class VirtualMachineTemplate < ActiveRecord::Base
+    prepend Atmosphere::VirtualMachineTemplateExt
     extend Enumerize
     include Childhoodable
 
@@ -76,17 +77,22 @@ module Atmosphere
 
     scope :on_tenant, ->(t) do
       joins(:tenants)
-        .where('atmosphere_tenants.id = ?', t.id)
+        .where('atmosphere_tenants.id = ?', t)
     end
 
     scope :on_tenant_with_src, ->(t_id, source_id) do
       joins(:tenants)
-        .where('atmosphere_tenants.id = ? AND
-        id_at_site = ?', t_id, source_id)
+        .where("atmosphere_tenants.tenant_id = '#{t_id}' AND
+        id_at_site = '#{source_id}'")
     end
 
     def uuid
-      "#{tenant.tenant_id}-tmpl-#{id_at_site}"
+      if tenants.blank?
+        "NOTENANT-tmpl-#{id_at_site}"
+      else
+        # Kinda hacky - assumes all vmt.tenants share the same site_id.
+        "#{tenants.first.site_id}-tmpl-#{id_at_site}"
+      end
     end
 
     def self.create_from_vm(virtual_machine, name = virtual_machine.name)
@@ -105,6 +111,7 @@ module Atmosphere
       vm_template.name = tmpl_name
       vm_template.managed_by_atmosphere = true
       vm_template.state = :saving
+      vm_template.tenants = [t]
       virtual_machine.state = :saving
 
       begin
@@ -192,7 +199,11 @@ module Atmosphere
     end
 
     def cloud_client
-      tenant.cloud_client
+      # WARNING! This will fail when the VMT is available on multiple tenants
+      # The method should be overridden in any subproject which makes use of tenants.
+      if tenants.present?
+        tenants.first.cloud_client
+      end
     end
 
     def update_version?

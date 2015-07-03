@@ -195,8 +195,8 @@ describe Atmosphere::ApplianceType do
   it 'allow to be started only on active tenant' do
     active_t = create(:tenant, active: true)
     inactive_t = create(:tenant, active: false)
-    active_vmt = create(:virtual_machine_template, tenant: active_t)
-    inactive_vmt = create(:virtual_machine_template, tenant: inactive_t)
+    active_vmt = create(:virtual_machine_template, tenants: [active_t])
+    inactive_vmt = create(:virtual_machine_template, tenants: [inactive_t])
     at = create(:appliance_type,
       virtual_machine_templates: [active_vmt, inactive_vmt])
 

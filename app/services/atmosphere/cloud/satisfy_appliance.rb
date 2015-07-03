@@ -1,6 +1,7 @@
 module Atmosphere
   module Cloud
     class SatisfyAppliance
+
       def initialize(appliance)
         @appliance = appliance
       end

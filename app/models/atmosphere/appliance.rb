@@ -22,7 +22,7 @@
 
 module Atmosphere
   class Appliance < ActiveRecord::Base
-    include Atmosphere::ApplianceExt
+    prepend Atmosphere::ApplianceExt
     extend Enumerize
     serialize :optimization_policy_params
 
@@ -157,8 +157,10 @@ module Atmosphere
     private
 
     def assign_fund
+      # WARNING: this will fail to assign the correct fund in deployments which restrict users to specific tenants.
+      # This method should be overridden in any subproject which makes use of tenants.
       funds = appliance_type.virtual_machine_templates.map do |vmt|
-        vmt.tenant.funds
+        vmt.tenants.first.funds
       end.flatten.uniq
 
       self.fund = if funds.include? default_fund

@@ -14,7 +14,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:fund) { create(:fund) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
-  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenant: openstack)}
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenants: [openstack])}
 
   context 'new appliance created' do
     context 'development mode' do
@@ -234,7 +234,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     context 'not shareable appliance type' do
       let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
       let(:t) { create(:openstack_with_flavors, funds: [fund]) }
-      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, tenant: t)}
+      let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, tenants: [t])}
       let(:config_inst) { create(:appliance_configuration_instance) }
       let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
       let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: not_shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
@@ -405,8 +405,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     context 'is selected optimaly' do
       context 'appliance type preferences specified' do
 
-        let(:tmpl_at_amazon) { create(:virtual_machine_template, tenant: amazon, appliance_type: appl_type) }
-        let(:tmpl_at_openstack) { create(:virtual_machine_template, tenant: openstack, appliance_type: appl_type) }
+        let(:tmpl_at_amazon) { create(:virtual_machine_template, tenants: [amazon], appliance_type: appl_type) }
+        let(:tmpl_at_openstack) { create(:virtual_machine_template, tenants: [openstack], appliance_type: appl_type) }
 
         context 'preferences exceeds resources of avaiable flavors' do
 
@@ -437,16 +437,16 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       context 'optimizer respects appliance-tenant binding' do
         let(:t1) { create(:openstack_with_flavors, funds: [fund]) }
         let(:t2) { create(:openstack_with_flavors, funds: [fund]) }
-        let(:vmt1_1) { create(:virtual_machine_template, tenant: t1)}
-        let(:vmt2_1) { create(:virtual_machine_template, tenant: t1)}
-        let(:vmt2_2) { create(:virtual_machine_template, tenant: t2)}
+        let(:vmt1_1) { create(:virtual_machine_template, tenants: [t1])}
+        let(:vmt2_1) { create(:virtual_machine_template, tenants: [t1])}
+        let(:vmt2_2) { create(:virtual_machine_template, tenants: [t2])}
         let(:wf_set_2) { create(:appliance_set, appliance_set_type: "workflow")}
         let(:at_with_tenant) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
         let(:at_with_two_tenants) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
         let(:a1_unrestricted) { create(:appliance, appliance_type: at_with_tenant, tenants: [t1, t2])}
         let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_type: at_with_tenant, tenants: [t2])}
 
-        let!(:vmt3) { create(:virtual_machine_template, tenant: t2, managed_by_atmosphere: true)}
+        let!(:vmt3) { create(:virtual_machine_template, tenants: [t2], managed_by_atmosphere: true)}
         let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
         let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow")}
         let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, tenant: t2, managed_by_atmosphere: true)}
@@ -502,7 +502,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     context 'dev mode properties' do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
-      let!(:vmt) { create(:virtual_machine_template, tenant: amazon, appliance_type: at) }
+      let!(:vmt) { create(:virtual_machine_template, tenants: [amazon], appliance_type: at) }
       let(:as) { create(:appliance_set, appliance_set_type: :development) }
 
       let(:appl_vm_manager) do

@@ -248,8 +248,8 @@ describe Atmosphere::VirtualMachineTemplate do
   describe '::create_from_vm' do
     let(:t) { create(:tenant) }
     let(:cloud_client) { double(:cloud_client) }
-    let(:vm) { create(:virtual_machine, id_at_site: 'id', tenants: [t]) }
-    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site:  'id2', tenants: [t]) }
+    let(:vm) { create(:virtual_machine, id_at_site: 'id', tenant: t) }
+    let(:vm2) { create(:virtual_machine, name: vm.name, id_at_site: 'id2', tenant: t) }
 
     before do
       allow(cloud_client).to receive(:save_template).and_return(SecureRandom.hex(5))

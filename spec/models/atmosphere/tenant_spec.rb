@@ -34,7 +34,7 @@ describe Atmosphere::Tenant do
   it { should validate_presence_of :technology }
 
   it { should have_many :port_mapping_properties }
-  it { should have_many(:virtual_machine_templates).dependent(:destroy) }
+  it { should have_and_belong_to_many(:virtual_machine_templates) }
   it { should have_many(:virtual_machines).dependent(:destroy) }
 
   it { should validate_inclusion_of(:tenant_type).in_array(%w(public private))}

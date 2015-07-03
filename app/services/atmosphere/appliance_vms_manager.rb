@@ -3,6 +3,9 @@
 #
 module Atmosphere
   class ApplianceVmsManager
+
+    prepend Atmosphere::ApplianceVmsManagerExt
+
     def initialize(appliance,
         updater_class = Proxy::ApplianceProxyUpdater,
         vm_creator_class = Cloud::VmCreator,
@@ -60,9 +63,11 @@ module Atmosphere
 
     def instantiate_vm(tmpl, flavor, name)
       server_id = start_vm_on_cloud(tmpl, flavor, name)
+      # TODO It is CRITICALLY IMPORTANT to replace this tenant assignment with one referring
+      # to the current user of @appliance (needs a suitable method/attribute in Atmosphere::User).
       vm = VirtualMachine.find_or_initialize_by(
           id_at_site: server_id,
-          tenant: tmpl.tenant
+          tenant: tmpl.tenants.first
         )
       vm.name = name
       vm.source_template = tmpl
@@ -90,16 +95,24 @@ module Atmosphere
     end
 
     def start_vm_on_cloud(tmpl, flavor, name)
-      nic = Atmosphere.nic_provider(tmpl.tenant).get(@appliance)
+      # WARNING: this will not work properly in deployments which restrict users to tenants.
+      # (More specifically, it will use a semi-random cloud client and network ID
+      # to launch the VM as the Atmosphere engine has no concept of "desired tenant".)
+      # This method should be overridden in any subproject which makes use of tenants.
+      nic = Atmosphere.nic_provider(tmpl.tenants.first).get(@appliance)
       if nic.present?
         Rails.logger.info("Using custom NIC: #{nic}")
       else
         Rails.logger.info('Using default NIC.')
       end
 
+      # TODO It is CRITICALLY IMPORTANT to replace this tenant assignment with one referring
+      # to the current user of @appliance (needs a suitable method/attribute in Atmosphere::User).
       @vm_creator_class.new(
           tmpl,
-          flavor: flavor, name: name,
+          tenant: tmpl.tenants.first,
+          flavor: flavor,
+          name: name,
           user_data: appliance.user_data,
           user_key: appliance.user_key,
           nic: nic

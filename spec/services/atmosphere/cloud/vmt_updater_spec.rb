@@ -41,6 +41,7 @@ describe Atmosphere::Cloud::VmtUpdater do
   it 'new VMT with version when it is migrated from other tenant' do
     _, source_vmt, source_t = at_with_vmt_on_tenant
     target_t = create(:tenant)
+
     image = open_stack_image('target_vmt_id',
                              source_t.tenant_id,
                              source_vmt.id_at_site)
@@ -63,7 +64,7 @@ describe Atmosphere::Cloud::VmtUpdater do
                              source_t.tenant_id,
                              source_vmt.id_at_site)
     target_vmt = create(:virtual_machine_template,
-                        tenant: target_t,
+                        tenants: [target_t],
                         id_at_site: 'target_vmt_id')
     updater = Atmosphere::Cloud::VmtUpdater.new(target_t, image)
 
@@ -81,7 +82,7 @@ describe Atmosphere::Cloud::VmtUpdater do
       source_t.tenant_id, source_vmt.id_at_site)
     updater = Atmosphere::Cloud::VmtUpdater.new(target_t, image)
     target_vmt = create(:virtual_machine_template,
-      tenant: target_t,
+      tenants: [target_t],
       id_at_site: 'target_vmt_id',
       created_at: (Atmosphere.vmt_at_relation_update_period + 1).hours.ago)
 
@@ -133,7 +134,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     create(:virtual_machine_template,
            id_at_site: 'id',
            state: :active,
-           tenant: target_t)
+           tenants: [target_t])
     updater = Atmosphere::Cloud::VmtUpdater.new(target_t, image)
 
     expect(Atmosphere::Cloud::RemoveOlderVmtWorker).
@@ -174,7 +175,7 @@ describe Atmosphere::Cloud::VmtUpdater do
     source_vmt = create(:virtual_machine_template,
       id_at_site: 'source_vmt_id',
       appliance_type: at,
-      tenant: source_t)
+      tenants: [source_t])
 
     [at, source_vmt, source_t]
   end

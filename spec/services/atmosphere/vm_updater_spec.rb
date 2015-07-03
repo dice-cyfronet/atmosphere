@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Atmosphere::VmUpdater do
   let(:t)  { create(:tenant) }
   let!(:flavor) { create(:virtual_machine_flavor, tenant: t) }
-  let(:vmt) { create(:virtual_machine_template, tenant: t) }
+  let(:vmt) { create(:virtual_machine_template, tenants: [t]) }
 
   let(:updater) { double('updater', update: true) }
   let(:updater_class) { double('updater_class', new: updater) }

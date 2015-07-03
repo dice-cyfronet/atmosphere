@@ -310,7 +310,7 @@ ActiveRecord::Schema.define(version: 20150701173332) do
     t.string   "name",                                     null: false
     t.string   "state",                                    null: false
     t.boolean  "managed_by_atmosphere", default: false,    null: false
-    t.integer  "tenant_id",                                null: false
+    t.integer  "tenant_id"
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"

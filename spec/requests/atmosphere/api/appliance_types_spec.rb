@@ -247,8 +247,8 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         t1  = create(:tenant)
         t2  = create(:tenant)
         at   = create(:appliance_type, visible_to: :all)
-        create(:virtual_machine_template, tenant: t1, appliance_type: at)
-        create(:virtual_machine_template, tenant: t2, appliance_type: at)
+        create(:virtual_machine_template, tenants: [t1], appliance_type: at)
+        create(:virtual_machine_template, tenants: [t2], appliance_type: at)
 
         get api("/appliance_types/#{at.id}", user)
 
@@ -261,8 +261,8 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         t1  = create(:tenant)
 
         at  = create(:appliance_type, visible_to: :all)
-        create(:virtual_machine_template, tenant: t1, appliance_type: at)
-        create(:virtual_machine_template, tenant: t1, appliance_type: at)
+        create(:virtual_machine_template, tenants: [t1], appliance_type: at)
+        create(:virtual_machine_template, tenants: [t1], appliance_type: at)
 
         get api("/appliance_types/#{at.id}", user)
         expect(at_response['compute_site_ids']).to eq [t1.id]

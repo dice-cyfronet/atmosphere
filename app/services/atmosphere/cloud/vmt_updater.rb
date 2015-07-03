@@ -21,6 +21,7 @@ module Atmosphere
       vmt.name = image.name
       vmt.architecture = image.architecture
       vmt.state = image.status.downcase.to_sym
+      vmt.tenants << @tenant if !(vmt.tenants.include? @tenant)
       if young?
         vmt.appliance_type ||= appliance_type
         vmt.version = version if version
@@ -41,17 +42,9 @@ module Atmosphere
     def vmt
       # TODO: Hacky solution to get around the non-existence of Atmosphere::ComputeSite
       # Fix this after reinstating ComputeSite as a first-class AR
-      cs_vmt_list = @tenant.get_all_tenants_for_cs.collect do |t|
-        t.virtual_machine_templates
-      end.flatten.compact
-      vmt = Atmosphere::VirtualMachineTemplate.find do |vmt|
-        cs_vmt_list.collect {|vmt| vmt.id_at_site}.include? @image.id
-      end
-      if vmt
-        vmt
-      else
-        Atmosphere::VirtualMachineTemplate.new(id_at_site: @image.id)
-      end
+
+      @vmt ||= @tenant.get_all_vmts_for_cs
+      .find_or_initialize_by(id_at_site: @image.id)
     end
 
     def logger
