@@ -42,7 +42,12 @@ module Atmosphere
 
       #remove deleted templates
       all_tenant_templates.each do |vmt|
-        vmt.destroy(false) if vmt.old?
+        # Unlink VMT from current tenant first
+        tenant.virtual_machine_templates = tenant.virtual_machine_templates-[vmt]
+        tenant.save
+        # Reload and delete VMT only if it has no more linked tenants (and is not young).
+        vmt.reload
+        vmt.destroy(false) if vmt.old? and vmt.tenants.blank?
       end
     end
 

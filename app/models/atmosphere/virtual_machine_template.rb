@@ -70,20 +70,19 @@ module Atmosphere
     scope :active, -> { where(state: 'active') }
 
     scope :on_active_tenant, -> do
-      joins(:atmosphere_virtual_machine_template_tenants => :atmosphere_tenants)
+      joins(:tenants)
         .where('atmosphere_tenants.active = ?', true)
     end
 
-    #   joins(:tenants).
-    #     where(tenants.any? {|t| t.active})
-    # end
-
-    scope :on_tenant, ->(t) { where(tenant_id: t) }
+    scope :on_tenant, ->(t) do
+      joins(:tenants)
+        .where('atmosphere_tenants.id = ?', t.id)
+    end
 
     scope :on_tenant_with_src, ->(t_id, source_id) do
-      joins(:tenant).
-        where(atmosphere_tenants: { tenant_id: t_id },
-              id_at_site: source_id)
+      joins(:tenants)
+        .where('atmosphere_tenants.id = ? AND
+        id_at_site = ?', t_id, source_id)
     end
 
     def uuid
@@ -93,13 +92,13 @@ module Atmosphere
     def self.create_from_vm(virtual_machine, name = virtual_machine.name)
       name_with_timestamp = "#{name}/#{VirtualMachineTemplate.generate_timestamp}"
       tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
-      cs = virtual_machine.tenant
+      t = virtual_machine.tenant
 
-      id_at_site = cs.cloud_client
+      id_at_site = t.cloud_client
         .save_template(virtual_machine.id_at_site, tmpl_name)
       logger.info "Created template #{id_at_site}"
 
-      vm_template = cs.virtual_machine_templates
+      vm_template = t.virtual_machine_templates
         .find_or_initialize_by(id_at_site: id_at_site)
 
       vm_template.source_vm = virtual_machine
