@@ -117,9 +117,8 @@ module Atmosphere
     end
 
     def source_template
-      VirtualMachineTemplate.joins(:tenants).
-        find_by(atmosphere_tenants: { tenant_id: tenant.id },
-                id_at_site: server.image_id)
+      VirtualMachineTemplate.joins(:tenants)
+        .find_by("atmosphere_tenants.id = ? AND atmosphere_virtual_machine_templates.id_at_site = ?", tenant.id, server.image_id)
     end
 
     def update_ips?

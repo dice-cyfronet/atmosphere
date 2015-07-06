@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Atmosphere::VmUpdater do
   let(:t)  { create(:tenant) }
   let!(:flavor) { create(:virtual_machine_flavor, tenant: t) }
-  let(:vmt) { create(:virtual_machine_template, tenants: [t]) }
+  let(:vmt) { create(:virtual_machine_template, id_at_site: 'vmt_id_at_site', tenants: [t]) }
 
   let(:updater) { double('updater', update: true) }
   let(:updater_class) { double('updater_class', new: updater) }
@@ -204,7 +204,6 @@ describe Atmosphere::VmUpdater do
 
       it 'sets VMs details' do
         subject.execute
-
         expect(updated_vm).to vm_fog_data_equals(server, vmt)
       end
     end

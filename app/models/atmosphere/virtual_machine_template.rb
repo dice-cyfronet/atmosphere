@@ -55,10 +55,11 @@ module Atmosphere
     validates :architecture,
               inclusion: %w(i386 x86_64)
 
+    validate :cant_have_vmt_not_bound_to_any_tenants
+
     enumerize :state, in: ALLOWED_STATES
 
     before_save :set_version, if: :update_version?
-    before_validation :cant_have_vmt_not_bound_to_any_tenants
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
