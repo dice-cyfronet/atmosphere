@@ -43,8 +43,7 @@ module Atmosphere
       # TODO: Hacky solution to get around the non-existence of Atmosphere::ComputeSite
       # Fix this after reinstating ComputeSite as a first-class AR
 
-      @vmt ||= @tenant.get_all_vmts_for_cs
-      .find_or_initialize_by(id_at_site: @image.id)
+      @vmt ||= VirtualMachineTemplate.find_or_initialize_by(id_at_site: @image.id)
     end
 
     def logger

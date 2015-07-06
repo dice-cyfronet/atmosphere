@@ -105,6 +105,15 @@ describe Atmosphere::Cloud::VmtUpdater do
     expect(target_vmt.appliance_type).to be_nil
   end
 
+  it 'does not duplicate VMT records when nothing has changed' do
+    t = create(:tenant)
+    image = open_stack_image('vmt_id', t.tenant_id, 'irrelevant')
+    updater = Atmosphere::Cloud::VmtUpdater.new(t, image)
+
+    expect { updater.execute }.to change { Atmosphere::VirtualMachineTemplate.count }.by(1)
+    expect { updater.execute }.to change { Atmosphere::VirtualMachineTemplate.count }.by(0)
+  end
+
   it 'does not set relation to AT when tenant does not exist' do
     target_t = create(:tenant)
     image = open_stack_image('target_vmt_id',
