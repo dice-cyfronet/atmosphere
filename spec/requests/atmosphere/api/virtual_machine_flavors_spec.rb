@@ -149,7 +149,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
           expect(flavors.size).to eq 1
           fl = flavors.first
           expect(fl['memory']).to be >= required_mem
-          expect(tmpl.tenants.collect{|t| t.id}).to include fl['compute_site_id']
+          expect(tmpl.tenants.pluck(:id)).to include fl['compute_site_id']
         end
 
         it 'returns only active flavors when asking about AT flavor chosen by optimizer' do

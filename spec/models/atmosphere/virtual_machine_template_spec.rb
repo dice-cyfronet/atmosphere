@@ -50,6 +50,16 @@ describe Atmosphere::VirtualMachineTemplate do
     end
   end
 
+  context 'tenant assignment validation' do
+    it 'does not permit a vmt to be saved with blank tenant assignment' do
+      vmt = build(:virtual_machine_template)
+      expect(vmt.valid?).to be_truthy
+      vmt.tenants = []
+      expect(vmt.valid?).to be_falsy
+      expect(vmt.errors[:tenants]).to include 'A Virtual Machine Template must be attached to at least one Tenant'
+    end
+  end
+
   context 'state is updated' do
     let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true) }
     subject { create(:virtual_machine_template, source_vm: vm, state: :saving) }

@@ -6,7 +6,6 @@ FactoryGirl.define do
 
     tenants { [FactoryGirl.create(:tenant)] }
 
-
     trait :managed_vmt do
       managed_by_atmosphere true
     end

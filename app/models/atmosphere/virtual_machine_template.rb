@@ -46,8 +46,7 @@ module Atmosphere
       class_name: 'Atmosphere::ApplianceType'
 
     validates :id_at_site,
-              presence: true,
-              uniqueness: { scope: :tenant_id }
+              presence: true
 
     validates :state,
               presence: true,
@@ -59,6 +58,7 @@ module Atmosphere
     enumerize :state, in: ALLOWED_STATES
 
     before_save :set_version, if: :update_version?
+    before_validation :cant_have_vmt_not_bound_to_any_tenants
     before_update :release_source_vm, if: :saved?
     after_update :destroy_source_vm, if: :saved?
     before_destroy :cant_destroy_non_managed_vmt
@@ -82,8 +82,8 @@ module Atmosphere
 
     scope :on_tenant_with_src, ->(t_id, source_id) do
       joins(:tenants)
-        .where("atmosphere_tenants.tenant_id = '#{t_id}' AND
-        id_at_site = '#{source_id}'")
+        .where("atmosphere_tenants.tenant_id = ? AND
+        id_at_site = ?", t_id, source_id)
     end
 
     def uuid
@@ -196,6 +196,10 @@ module Atmosphere
 
     def cant_destroy_non_managed_vmt
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
+    end
+
+    def cant_have_vmt_not_bound_to_any_tenants
+      errors.add :tenants, 'A Virtual Machine Template must be attached to at least one Tenant' unless tenants.present?
     end
 
     def cloud_client

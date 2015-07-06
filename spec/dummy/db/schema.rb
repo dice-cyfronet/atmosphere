@@ -310,7 +310,6 @@ ActiveRecord::Schema.define(version: 20150701173332) do
     t.string   "name",                                     null: false
     t.string   "state",                                    null: false
     t.boolean  "managed_by_atmosphere", default: false,    null: false
-    t.integer  "tenant_id"
     t.integer  "virtual_machine_id"
     t.integer  "appliance_type_id"
     t.datetime "created_at"
@@ -318,8 +317,6 @@ ActiveRecord::Schema.define(version: 20150701173332) do
     t.string   "architecture",          default: "x86_64"
     t.integer  "version"
   end
-
-  add_index "atmosphere_virtual_machine_templates", ["tenant_id", "id_at_site"], name: "atmo_vm_tmpls_on_cs_id_and_id_at_site_ix", unique: true, using: :btree
 
   create_table "atmosphere_virtual_machines", force: :cascade do |t|
     t.string   "id_at_site",                                  null: false
@@ -365,7 +362,6 @@ ActiveRecord::Schema.define(version: 20150701173332) do
   add_foreign_key "atmosphere_user_keys", "atmosphere_users", column: "user_id"
   add_foreign_key "atmosphere_virtual_machine_flavors", "atmosphere_tenants", column: "tenant_id"
   add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_appliance_types", column: "appliance_type_id"
-  add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_tenants", column: "tenant_id", name: "atmo_vmt_cs_fk"
   add_foreign_key "atmosphere_virtual_machine_templates", "atmosphere_virtual_machines", column: "virtual_machine_id", name: "atmo_vmt_vm_fk"
   add_foreign_key "atmosphere_virtual_machines", "atmosphere_tenants", column: "tenant_id", name: "atmo_vm_cs_fk"
   add_foreign_key "atmosphere_virtual_machines", "atmosphere_virtual_machine_templates", column: "virtual_machine_template_id", name: "atmo_vm_vmt_fk"
