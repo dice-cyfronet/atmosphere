@@ -4,7 +4,7 @@ FactoryGirl.define do
     id_at_site { FFaker::Internet.ip_v4_address }
     state :active
 
-    tenants { [FactoryGirl.create(:tenant)] }
+    tenants { [FactoryGirl.build(:tenant)] }
 
     trait :managed_vmt do
       managed_by_atmosphere true

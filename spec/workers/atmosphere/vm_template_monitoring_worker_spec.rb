@@ -57,6 +57,17 @@ describe Atmosphere::VmTemplateMonitoringWorker do
         expect(db_arch).to vmt_fog_data_equals arch_data, cyfronet_folsom
         expect(db_centos).to vmt_fog_data_equals centos_data, cyfronet_folsom
       end
+
+      it 'deletes template record when not bound to any tenants' do
+        subject.perform(cyfronet_folsom.id)
+        db_ubuntu = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'ubuntu')
+        db_ubuntu.created_at -= 2.hours
+        db_ubuntu.save
+        cyfronet_folsom.cloud_client.data[:images].delete("ubuntu")
+        subject.perform(cyfronet_folsom.id)
+        db_ubuntu = Atmosphere::VirtualMachineTemplate.find_by(id_at_site: 'ubuntu')
+        expect(db_ubuntu).to be_blank
+      end
     end
 
     context 'when some templates exist' do
