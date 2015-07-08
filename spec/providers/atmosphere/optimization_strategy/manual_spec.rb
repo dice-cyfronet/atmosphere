@@ -15,7 +15,6 @@ describe Atmosphere::OptimizationStrategy::Manual do
   let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, tenant: t, active: true) }
   let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, tenant: t, active: true) }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
-  #let(:user) { create(:user) }
   let(:as) { create(:appliance_set, user: user)}
   let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
 

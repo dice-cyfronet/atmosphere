@@ -173,7 +173,7 @@ describe Atmosphere::Optimizer do
       context 'when preferences set in appliance' do
         before do
           @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
-          Atmosphere::Fund.all.each {|f| f.tenants = Atmosphere::Tenant.all}
+          Atmosphere::Fund.all.each { |f| f.tenants = Atmosphere::Tenant.all }
           @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end

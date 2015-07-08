@@ -441,15 +441,15 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         let(:vmt1_1) { create(:virtual_machine_template, tenants: [t1])}
         let(:vmt2_1) { create(:virtual_machine_template, tenants: [t1])}
         let(:vmt2_2) { create(:virtual_machine_template, tenants: [t2])}
-        let(:wf_set_2) { create(:appliance_set, appliance_set_type: "workflow", user: u)}
+        let(:wf_set_2) { create(:appliance_set, appliance_set_type: 'workflow', user: u) }
         let(:at_with_tenant) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
         let(:at_with_two_tenants) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
-        let(:a1_unrestricted) { create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, tenants: [t1, t2])}
-        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, tenants: [t2])}
+        let(:a1_unrestricted) { create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, tenants: [t1, t2]) }
+        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, tenants: [t2]) }
 
         let!(:vmt3) { create(:virtual_machine_template, tenants: [t2], managed_by_atmosphere: true)}
         let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
-        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow", user: u)}
+        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow", user: u) }
         let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, tenant: t2, managed_by_atmosphere: true)}
         let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, tenants: [t2], virtual_machines: [vm_shared])}
 
@@ -533,7 +533,6 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       context 'when preferences set in appliance' do
         before do
           @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
-          #Atmosphere::Fund.all.each {|f| f.tenants = Atmosphere::Tenant.all}
           @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end
