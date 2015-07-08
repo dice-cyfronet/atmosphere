@@ -8,13 +8,14 @@ describe Atmosphere::OptimizationStrategy::Manual do
   end
 
   let!(:fund) { create(:fund) }
+  let!(:user) { create(:user, funds: [fund]) }
   let(:t) { create(:tenant, active: true, funds: [fund]) }
   let(:at) { create(:filled_appliance_type, visible_to: 'all', preference_disk: 0) }
   let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, tenants: [t]) }
   let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, tenant: t, active: true) }
   let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, tenant: t, active: true) }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
-  let(:user) { create(:user) }
+  #let(:user) { create(:user) }
   let(:as) { create(:appliance_set, user: user)}
   let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
 
@@ -69,6 +70,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
   it 'scopes potential VMs to ones on tenants funded by chosen fund' do
     nonfunded_t = create(:openstack_with_flavors, funds: [create(:fund)])
     a = create(:appliance,
+               appliance_set: as,
                appliance_type: not_shareable_appl_type,
                fund: fund,
                tenants: Atmosphere::Tenant.all)

@@ -7,18 +7,19 @@ describe Atmosphere::Optimizer do
     Fog.mock!
   end
 
-  let!(:wf) { create(:workflow_appliance_set) }
-  let!(:wf2) { create(:workflow_appliance_set) }
-  let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:fund) { create(:fund) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
+  let!(:u) { create(:user, funds: [fund]) }
+  let!(:wf) { create(:workflow_appliance_set, user: u) }
+  let!(:wf2) { create(:workflow_appliance_set, user: u) }
+  let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, \
     tenants: [openstack]) }
 
   subject { Atmosphere::Optimizer.instance }
 
   it 'is not nil' do
-     expect(subject).not_to be_nil
+    expect(subject).not_to be_nil
   end
 
   context 'flavor' do
@@ -49,7 +50,34 @@ describe Atmosphere::Optimizer do
       end
     end
 
-    context 'is selected optimaly' do
+    context 'selection acknowledges user-tenant relationship through funds' do
+      let(:u1) { create(:user) }
+      let(:u2) { create(:user) }
+      let(:t1) { create(:tenant) }
+      let(:t2) { create(:tenant) }
+      let(:f1) { create(:fund, tenants: [t1]) }
+      let(:f2) { create(:fund, tenants: [t2]) }
+      let(:vmt1) { create(:virtual_machine_template, tenants: [t1]) }
+      let(:vmt2) { create(:virtual_machine_template, tenants: [t2]) }
+      let(:atype) { create(:appliance_type, virtual_machine_templates: [vmt1, vmt2]) }
+
+      it 'selects correct virtual machine template for each user' do
+        u1.funds = [f1]
+        u2.funds = [f2]
+        aset1 = create(:appliance_set, user: u1)
+        aset2 = create(:appliance_set, user: u2)
+        a1 = create(:appliance, appliance_set: aset1, appliance_type: atype, fund: f1)
+        a2 = create(:appliance, appliance_set: aset2, appliance_type: atype, fund: f2)
+        opt_strategy_for_a1 = Atmosphere::OptimizationStrategy::Default.new(a1)
+        opt_strategy_for_a2 = Atmosphere::OptimizationStrategy::Default.new(a2)
+        tmpls1 = opt_strategy_for_a1.new_vms_tmpls_and_flavors
+        tmpls2 = opt_strategy_for_a2.new_vms_tmpls_and_flavors
+        expect(tmpls1.first[:template]).to eq vmt1
+        expect(tmpls2.first[:template]).to eq vmt2
+      end
+    end
+
+    context 'is selected optimally' do
       context 'appliance type preferences not specified' do
         it 'selects instance with at least 1.5GB RAM for public tenant' do
           appl_type = build(:appliance_type)
@@ -102,7 +130,7 @@ describe Atmosphere::Optimizer do
           expect(tmpl).to eq tmpl_at_amazon
         end
 
-        context 'preferences exceeds resources of avaiable flavors' do
+        context 'preferences exceeds resources of available flavors' do
           it 'returns nil flavor' do
             appl_type.preference_cpu = 64
             appl_type.save
@@ -118,7 +146,7 @@ describe Atmosphere::Optimizer do
     context 'dev mode properties' do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
       let!(:vmt) { create(:virtual_machine_template, tenants: [amazon], appliance_type: at) }
-      let(:as) { create(:appliance_set, appliance_set_type: :development) }
+      let(:as) { create(:appliance_set, appliance_set_type: :development, user: u) }
 
       let(:appl_vm_manager) do
         double('appliance_vms_manager',
@@ -145,6 +173,7 @@ describe Atmosphere::Optimizer do
       context 'when preferences set in appliance' do
         before do
           @appl = build(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
+          Atmosphere::Fund.all.each {|f| f.tenants = Atmosphere::Tenant.all}
           @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.new(name: 'pref_test')
           @appl.dev_mode_property_set.appliance = @appl
         end

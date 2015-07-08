@@ -37,14 +37,32 @@ module Atmosphere
           appliance_type: appliance.appliance_type,
           state: 'active',
         )
-        vmts.select do |vmt|
-          (vmt.tenants & appliance.tenants.active.funded_by(appliance.fund)).present?
+        if appliance.tenants.present?
+          vmts = restrict_by_user_requirements(vmts, appliance)
         end
+        vmts = restrict_by_tenant_availability(vmts, appliance)
+        vmts
       end
 
       private
 
       attr_reader :appliance
+
+      def restrict_by_user_requirements(vmts, appliance)
+        # If the user requests that the appliance be bound to a specific set of tenants,
+        # the optimizer should honor this selection.
+        vmts.select do |vmt|
+          (vmt.tenants & appliance.tenants.active.funded_by(appliance.fund)).present?
+        end
+      end
+
+      def restrict_by_tenant_availability(vmts, appliance)
+        # In all cases the optimizer should only suggest those vmts which the user is able to access
+        # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance's owner).
+        vmts.select do |vmt|
+          (vmt.tenants & appliance.appliance_set.user.funds.map(&:tenants).flatten.uniq.compact).present?
+        end
+      end
 
       def reuse?(vm)
         vm.appliances.count < Atmosphere.optimizer.max_appl_no &&
