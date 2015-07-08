@@ -15,8 +15,8 @@ describe Atmosphere::BillingService do
 
   let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
-  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenant: t)}
-  let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, tenant: t)}
+  let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenants: [t])}
+  let!(:tmpl_of_not_shareable_at) { create(:virtual_machine_template, appliance_type: not_shareable_appl_type, tenants: [t])}
 
   let!(:not_shareable_vm1) { create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }
   let!(:not_shareable_vm2) { create(:virtual_machine, tenant: t, source_template: tmpl_of_not_shareable_at, virtual_machine_flavor: t.virtual_machine_flavors.first)  }

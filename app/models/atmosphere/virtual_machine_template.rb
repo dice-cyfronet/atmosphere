@@ -17,6 +17,7 @@
 
 module Atmosphere
   class VirtualMachineTemplate < ActiveRecord::Base
+    prepend Atmosphere::VirtualMachineTemplateExt
     extend Enumerize
     include Childhoodable
 
@@ -37,18 +38,15 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::MigrationJob'
 
-    belongs_to :tenant,
-      class_name: 'Atmosphere::Tenant'
+    has_and_belongs_to_many :tenants,
+      class_name: 'Atmosphere::Tenant',
+      join_table: 'atmosphere_virtual_machine_template_tenants'
 
     belongs_to :appliance_type,
       class_name: 'Atmosphere::ApplianceType'
 
-    validates :tenant_id,
-              presence: true
-
     validates :id_at_site,
-              presence: true,
-              uniqueness: { scope: :tenant_id }
+              presence: true
 
     validates :state,
               presence: true,
@@ -56,6 +54,8 @@ module Atmosphere
 
     validates :architecture,
               inclusion: %w(i386 x86_64)
+
+    validate :cant_have_vmt_not_bound_to_any_tenants
 
     enumerize :state, in: ALLOWED_STATES
 
@@ -71,39 +71,48 @@ module Atmosphere
 
     scope :active, -> { where(state: 'active') }
 
-    scope :on_active_cs, -> do
-      joins(:tenant).
-        where(atmosphere_tenants: { active: true })
+    scope :on_active_tenant, -> do
+      joins(:tenants)
+        .where('atmosphere_tenants.active = ?', true)
     end
 
-    scope :on_cs, ->(t) { where(tenant_id: t) }
+    scope :on_tenant, ->(t) do
+      joins(:tenants)
+        .where('atmosphere_tenants.id = ?', t)
+    end
 
-    scope :on_cs_with_src, ->(t_id, source_id) do
-      joins(:tenant).
-        where(atmosphere_tenants: { tenant_id: t_id },
-              id_at_site: source_id)
+    scope :on_tenant_with_src, ->(t_id, source_id) do
+      joins(:tenants)
+        .where("atmosphere_tenants.tenant_id = ? AND
+        id_at_site = ?", t_id, source_id)
     end
 
     def uuid
-      "#{tenant.tenant_id}-tmpl-#{id_at_site}"
+      if tenants.blank?
+        "NOTENANT-tmpl-#{id_at_site}"
+      else
+        # Kinda hacky - assumes all vmt.tenants share the same site_id.
+        "#{tenants.first.site_id}-tmpl-#{id_at_site}"
+      end
     end
 
     def self.create_from_vm(virtual_machine, name = virtual_machine.name)
       name_with_timestamp = "#{name}/#{VirtualMachineTemplate.generate_timestamp}"
       tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
-      cs = virtual_machine.tenant
+      t = virtual_machine.tenant
 
-      id_at_site = cs.cloud_client
+      id_at_site = t.cloud_client
         .save_template(virtual_machine.id_at_site, tmpl_name)
       logger.info "Created template #{id_at_site}"
 
-      vm_template = cs.virtual_machine_templates
+      vm_template = t.virtual_machine_templates
         .find_or_initialize_by(id_at_site: id_at_site)
 
       vm_template.source_vm = virtual_machine
       vm_template.name = tmpl_name
       vm_template.managed_by_atmosphere = true
       vm_template.state = :saving
+      vm_template.tenants = [t]
       virtual_machine.state = :saving
 
       begin
@@ -190,8 +199,16 @@ module Atmosphere
       errors.add :base, 'Virtual Machine Template is not managed by atmosphere' unless managed_by_atmosphere
     end
 
+    def cant_have_vmt_not_bound_to_any_tenants
+      errors.add :tenants, 'A Virtual Machine Template must be attached to at least one Tenant' unless tenants.present?
+    end
+
     def cloud_client
-      tenant.cloud_client
+      # WARNING! This will fail when the VMT is available on multiple tenants
+      # The method should be overridden in any subproject which makes use of tenants.
+      if tenants.present?
+        tenants.first.cloud_client
+      end
     end
 
     def update_version?

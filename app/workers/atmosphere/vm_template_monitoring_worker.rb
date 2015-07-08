@@ -36,13 +36,20 @@ module Atmosphere
       all_tenant_templates = tenant.virtual_machine_templates.to_a
       images.each do |image|
         updated_vmt = Cloud::VmtUpdater.new(tenant, image).execute
-
         all_tenant_templates.delete(updated_vmt)
       end
 
       #remove deleted templates
       all_tenant_templates.each do |vmt|
-        vmt.destroy(false) if vmt.old?
+
+        # Reload and delete VMT only if it has no more linked tenants (and is not young).
+        if vmt.old?
+          # Unlink VMT from current tenant first
+          tenant.virtual_machine_templates = tenant.virtual_machine_templates-[vmt]
+          if vmt.tenants.blank?
+            vmt.destroy(false)
+          end
+        end
       end
     end
 

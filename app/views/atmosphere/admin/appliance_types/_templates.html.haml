@@ -14,7 +14,7 @@
       %tr
         %td= vmt.id_at_site
         %td= vmt.name
-        %td= vmt.tenant.name
+        %td= vmt.tenants.pluck(:name).join(", ")
         %td= vmt.state
         %td
           = link_to admin_virtual_machine_template_path(id: vmt.id, virtual_machine_template: { appliance_type_id: nil }), method: :put,

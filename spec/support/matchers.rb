@@ -251,7 +251,7 @@ RSpec::Matchers.define :vmt_fog_data_equals do |fog_vmt, tenant|
     actual.id_at_site == fog_vmt['id'] &&
       actual.name == fog_vmt['name'] &&
       actual.state.to_s == fog_vmt['status'].downcase &&
-      actual.tenant == tenant
+      actual.tenants.include?(tenant)
   end
 end
 
@@ -260,8 +260,8 @@ RSpec::Matchers.define :vm_fog_data_equals do |fog_vm_data, template|
     actual.id_at_site == fog_vm_data.id &&
       actual.name == fog_vm_data.name &&
       actual.state.to_s == fog_vm_data.state.downcase &&
-      actual.tenant == template.tenant &&
-      actual.source_template == template
+      actual.source_template == template &&
+      template.tenants.include?(actual.tenant)
   end
 end
 
@@ -323,9 +323,9 @@ RSpec::Matchers.define :vmt_eq do |expected|
       actual['name'] == expected.name &&
       actual['state'] == expected.state.to_s &&
       actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
-      actual['compute_site_id'] == expected.tenant_id &&
       actual['appliance_type_id'] == expected.appliance_type_id &&
-      actual['architecture'] == expected.architecture.to_s
+      actual['architecture'] == expected.architecture.to_s &&
+      expected.tenants.pluck(:id).include?(actual['compute_site_id'])
   end
 end
 

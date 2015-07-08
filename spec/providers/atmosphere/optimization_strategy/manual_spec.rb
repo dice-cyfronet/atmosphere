@@ -10,7 +10,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
   let!(:fund) { create(:fund) }
   let(:t) { create(:tenant, active: true, funds: [fund]) }
   let(:at) { create(:filled_appliance_type, visible_to: 'all', preference_disk: 0) }
-  let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, tenant: t) }
+  let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, tenants: [t]) }
   let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, tenant: t, active: true) }
   let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, tenant: t, active: true) }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
@@ -74,10 +74,10 @@ describe Atmosphere::OptimizationStrategy::Manual do
                tenants: Atmosphere::Tenant.all)
     create(:virtual_machine_template,
            appliance_type: a.appliance_type,
-           tenant: nonfunded_t)
+           tenants: [nonfunded_t])
     create(:virtual_machine_template,
            appliance_type: a.appliance_type,
-           tenant: t)
+           tenants: [t])
     supported_appliance_types = Atmosphere::Tenant.all.map do |t|
       t.virtual_machine_templates.map(&:appliance_type)
     end
@@ -85,6 +85,6 @@ describe Atmosphere::OptimizationStrategy::Manual do
     manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(a)
     vm_candidates = manual_strategy.send(:vmt_candidates_for, a)
     expect(vm_candidates.count).to eq 1
-    expect(vm_candidates.first.tenant).to eq t
+    expect(vm_candidates.first.tenants.first).to eq t
   end
 end

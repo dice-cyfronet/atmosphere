@@ -22,7 +22,7 @@
 
 module Atmosphere
   class Appliance < ActiveRecord::Base
-    include Atmosphere::ApplianceExt
+    prepend Atmosphere::ApplianceExt
     extend Enumerize
     serialize :optimization_policy_params
 
@@ -157,9 +157,11 @@ module Atmosphere
     private
 
     def assign_fund
+      # TODO: This could be buggy. Make sure to verify that Atmosphere uses the correct fund to spawn VMs
+      # in the selected tenant.
       funds = appliance_type.virtual_machine_templates.map do |vmt|
-        vmt.tenant.funds
-      end.flatten.uniq
+        vmt.tenants.map(&:funds)
+      end.flatten.uniq.compact
 
       self.fund = if funds.include? default_fund
                     default_fund

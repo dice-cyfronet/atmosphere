@@ -9,7 +9,7 @@ describe Atmosphere::Cloud::VmCreator do
       ]
     end
   end
-  let(:vmt) { build(:virtual_machine_template, tenant: t, id_at_site: 'vmt_id') }
+  let(:vmt) { build(:virtual_machine_template, tenants: [t], id_at_site: 'vmt_id') }
 
   let(:servers_cloud_client) { double('server cloud client') }
   let(:cloud_client) { double('cloud_client', servers: servers_cloud_client) }

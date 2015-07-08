@@ -171,10 +171,10 @@ describe Atmosphere::Appliance do
       appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
              appliance_type: appliance_type,
-             tenant: default_t)
+             tenants: [default_t])
       create(:virtual_machine_template,
              appliance_type: appliance_type,
-             tenant: funded_t)
+             tenants: [funded_t])
       supported_appliance_types = Atmosphere::Tenant.all.map do |t|
         t.virtual_machine_templates.map(&:appliance_type)
       end
@@ -189,7 +189,7 @@ describe Atmosphere::Appliance do
       appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
              appliance_type: appliance_type,
-             tenant: funded_t)
+             tenants: [funded_t])
       expect(appliance.fund).to eq funded_t.funds.first
       expect(appliance.fund).not_to eq appliance.send(:default_fund)
     end

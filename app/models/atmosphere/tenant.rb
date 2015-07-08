@@ -27,9 +27,9 @@ module Atmosphere
       dependent: :destroy,
       class_name: 'Atmosphere::VirtualMachine'
 
-    has_many :virtual_machine_templates,
-      dependent: :destroy,
-      class_name: 'Atmosphere::VirtualMachineTemplate'
+    has_and_belongs_to_many :virtual_machine_templates,
+      class_name: 'Atmosphere::VirtualMachineTemplate',
+      join_table: 'atmosphere_virtual_machine_template_tenants'
 
     has_many :port_mapping_properties,
       dependent: :destroy,
@@ -169,6 +169,14 @@ module Atmosphere
           :nic_provider_class_name,
           "#{nic_provider_class_name} class is undefined"
         )
+    end
+
+    def get_all_tenants_for_cs
+      Atmosphere::Tenant.where("site_id = '#{site_id}'").all
+    end
+
+    def get_all_vmts_for_cs
+      Atmosphere::VirtualMachineTemplate.joins(:tenants).where("atmosphere_tenants.site_id = '#{site_id}'").all
     end
 
     private

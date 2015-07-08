@@ -2,16 +2,14 @@
   = t('virtual_machine_templates.long_title')
 
 %ul.nav.nav-tabs
-  - @virtual_machine_templates.each_with_index do |kv, i|
-    - t = kv.first
-    %li{ class: ('active' if i==0) }
+  - @vmt_hash.keys.each_with_index do |t, i|
+    %li{ class: ('active' if i == 0) }
       %a(href="##{t.tenant_id}-tab" data-toggle='tab')
         = t.name
 
 %p
   .tab-content
-    - @virtual_machine_templates.each_with_index do |kv, i|
-      - t, vmts = kv
+    - @vmt_hash.keys.each_with_index do |t, i|
       .tab-pane{ id: "#{t.tenant_id}-tab", class: ("active" if i==0) }
         %table.vmt-table
           %th.uuid= t('virtual_machine_templates.uuid')
@@ -20,7 +18,7 @@
           %th= t('virtual_machine_templates.managed_by_atmosphere')
           %th= t('virtual_machine_templates.version')
           %th.actions= t('actions')
-          - vmts.each do |vmt|
+          - @vmt_hash[t].each do |vmt|
             %tr
               %td.monospace= vmt.id_at_site
               %td= vmt.name

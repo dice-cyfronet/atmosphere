@@ -19,9 +19,9 @@ module Atmosphere
           cs_id = params[:compute_site_id]
 
           if optimizer_query?
-            tmpls = VirtualMachineTemplate.active.on_active_cs
+            tmpls = VirtualMachineTemplate.active.on_active_tenant
               .where(appliance_type_id: appl_type_id)
-            tmpls = tmpls.on_cs(cs_id) if cs_id
+            tmpls = tmpls.on_tenant(cs_id) if cs_id
 
             unless tmpls.blank?
               _, flavor = Optimizer.instance
@@ -31,7 +31,7 @@ module Atmosphere
             end
           else
             flavors = VirtualMachineFlavor.with_prefs(params).where(filter)
-            flavors = flavors.on_cs(cs_id) if cs_id
+            flavors = flavors.on_tenant(cs_id) if cs_id
           end
           flavors = flavors.first(limit) if limit
 

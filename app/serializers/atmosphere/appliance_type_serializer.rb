@@ -33,7 +33,7 @@ module Atmosphere
 
     def vmt_with_state?(state)
       object.virtual_machine_templates.
-        on_active_cs.where(state: state).
+        on_active_tenant.where(state: state).
           count > 0
     end
 

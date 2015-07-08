@@ -33,12 +33,13 @@ module Atmosphere
       protected
 
       def vmt_candidates_for(appliance)
-        VirtualMachineTemplate.where(
+        vmts = VirtualMachineTemplate.where(
           appliance_type: appliance.appliance_type,
           state: 'active',
-          tenant_id:
-            appliance.tenants.active.funded_by(appliance.fund)
         )
+        vmts.select do |vmt|
+          (vmt.tenants & appliance.tenants.active.funded_by(appliance.fund)).present?
+        end
       end
 
       private
@@ -72,10 +73,11 @@ module Atmosphere
         end
 
         def select
+          # TODO: Hack. Assumes all tenants in a given CS share the same set of flavors.
           opt_flavors_and_tmpls_map = tmpls.inject({}) do |hsh, tmpl|
             opt_fl = (
               min_elements_by(
-                tmpl.tenant.virtual_machine_flavors.active.select do |f|
+                tmpl.tenants.first.virtual_machine_flavors.active.select do |f|
                   f.supports_architecture?(tmpl.architecture) &&
                   f.memory >= min_mem &&
                   f.cpu >= min_cpu &&
@@ -106,9 +108,10 @@ module Atmosphere
         attr_reader :tmpls, :options
 
         def min_mem
+          # TODO: Predicate default value on ComputeSite.public? once ComputeSite is reimplemented.
           @min_mem ||= to_i(options[:memory]) ||
             tmpls.first.appliance_type.preference_memory ||
-            (tmpls.first.tenant.public? ? 1536 : 512)
+            (tmpls.first.tenants.first.public? ? 1536 : 512)
         end
 
         def min_cpu

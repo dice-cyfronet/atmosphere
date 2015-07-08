@@ -122,11 +122,12 @@ describe Atmosphere::ApplianceVmsManager do
         to receive(:new).
         with(
           tmpl,
+          tenant: tmpl.tenants.first,
           flavor: flavor,
           name: name,
           user_data: 'user data',
           user_key: 'user key',
-          nic: tmpl.tenant.network_id
+          nic: tmpl.tenants.first.network_id
         ).
         and_return(vm_creator)
       allow(tags_mng).to receive(:execute)
@@ -154,7 +155,7 @@ describe Atmosphere::ApplianceVmsManager do
         allow(vm).to receive(:valid?).and_return(true)
 
         expect(Atmosphere::VirtualMachine).to receive(:find_or_initialize_by).
-          with(id_at_site: 'server_id', tenant: tmpl.tenant).
+          with(id_at_site: 'server_id', tenant: tmpl.tenants.first).
           and_return(vm)
 
         expect(vm).to receive(:name=).with(name)

@@ -140,8 +140,8 @@ describe Atmosphere::Api::V1::ClewController do
 
       let(:t) { create(:tenant) }
 
-      let!(:vmt3) { create(:virtual_machine_template, tenant: t, appliance_type: at3) }
-      let!(:vmt4) { create(:virtual_machine_template, tenant: t, appliance_type: at4) }
+      let!(:vmt3) { create(:virtual_machine_template, tenants: [t], appliance_type: at3) }
+      let!(:vmt4) { create(:virtual_machine_template, tenants: [t], appliance_type: at4) }
 
       let!(:act1) { create(:appliance_configuration_template, appliance_type: at1) }
       let!(:act2) { create(:appliance_configuration_template, appliance_type: at2) }
@@ -177,10 +177,10 @@ describe Atmosphere::Api::V1::ClewController do
 
       owned_at = create(:appliance_type, visible_to: :owner, author: user)
       create(:virtual_machine_template,
-             tenant: t, appliance_type: owned_at)
+             tenants: [t], appliance_type: owned_at)
       not_owned_at = create(:appliance_type, visible_to: :owner)
       create(:virtual_machine_template,
-             tenant: t, appliance_type: not_owned_at)
+             tenants: [t], appliance_type: not_owned_at)
 
       get api('/clew/appliance_types', user)
 

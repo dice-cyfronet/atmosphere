@@ -6,11 +6,12 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
 
   # GET /virtual_machine_templates
   def index
-    @virtual_machine_templates = @virtual_machine_templates.
-                                 joins(:tenant).
-                                 order('atmosphere_tenants.name').
-                                 order('atmosphere_virtual_machine_templates.name').
-                                 group_by(&:tenant)
+    @vmt_hash = {}
+    Atmosphere::Tenant.joins(:virtual_machine_templates).
+        order('atmosphere_tenants.name').
+        order('atmosphere_virtual_machine_templates.name').all.each do |t|
+      @vmt_hash[t] = t.virtual_machine_templates
+    end
   end
 
   # GET /virtual_machine_templates/1

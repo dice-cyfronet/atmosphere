@@ -121,7 +121,7 @@ module Atmosphere
     end
 
     scope :with_vmt, ->(t_tenant_id, vmt_id_at_site) do
-      joins(virtual_machine_templates: :tenant).
+      joins(virtual_machine_templates: :tenants).
       where(
         atmosphere_tenants: { tenant_id: t_tenant_id },
         atmosphere_virtual_machine_templates: { id_at_site: vmt_id_at_site }

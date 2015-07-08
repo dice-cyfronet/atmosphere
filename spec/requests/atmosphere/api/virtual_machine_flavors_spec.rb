@@ -143,13 +143,13 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         end
 
         it 'returns one flavor with memory greater or equal to preference memory specified in at' do
-          tmpl = create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
+          tmpl = create(:virtual_machine_template, appliance_type: at, tenants: [t2], state: 'active')
           get api("/virtual_machine_flavors?appliance_type_id=#{at.id}", user)
           flavors = fls_response
           expect(flavors.size).to eq 1
           fl = flavors.first
           expect(fl['memory']).to be >= required_mem
-          expect(fl['compute_site_id']).to eq tmpl.tenant_id
+          expect(tmpl.tenants.pluck(:id)).to include fl['compute_site_id']
         end
 
         it 'returns only active flavors when asking about AT flavor chosen by optimizer' do
@@ -172,7 +172,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         context 'reqiurements specified' do
 
           it 'returns one flavor' do
-            create(:virtual_machine_template, appliance_type: at, tenant: t, state: 'active')
+            create(:virtual_machine_template, appliance_type: at, tenants: [t], state: 'active')
             get api("virtual_machine_flavors?cpu=1&memory=1024&hdd=5&appliance_type_id=#{at.id}", user)
             flavors = fls_response
             expect(flavors.size).to eq 1
@@ -181,7 +181,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
 
         context 'filter for compute site specified' do
           it 'applies compute site filtering' do
-            create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
+            create(:virtual_machine_template, appliance_type: at, tenants: [t2], state: 'active')
             get api("/virtual_machine_flavors?appliance_type_id=#{at.id}&compute_site_id=#{t2.id + 1}", user)
             flavors = fls_response
             expect(flavors.size).to eq 0
@@ -203,7 +203,7 @@ describe Atmosphere::Api::V1::VirtualMachineFlavorsController do
         end
 
         it 'returns one flavor with memory greater or equal to preference specified in at associated with config' do
-          create(:virtual_machine_template, appliance_type: at, tenant: t2, state: 'active')
+          create(:virtual_machine_template, appliance_type: at, tenants: [t2], state: 'active')
           config_tmpl = create(:appliance_configuration_template, appliance_configuration_instances: [aci], \
             appliance_type: at)
           get api("/virtual_machine_flavors?appliance_configuration_instance_id=#{aci.id}", user)

@@ -61,7 +61,7 @@ module Atmosphere
       where(supported_architectures: ['i386_and_x86_64', arch])
     end
 
-    scope :on_cs, ->(t) do
+    scope :on_tenant, ->(t) do
       t_id = t.respond_to?(:id) ? t.id : t
       where(tenant_id: t_id)
     end
