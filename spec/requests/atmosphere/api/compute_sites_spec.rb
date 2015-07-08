@@ -10,6 +10,8 @@ describe Atmosphere::Api::V1::ComputeSitesController do
   let!(:t2) { create(:tenant, tenant_type: :private) }
   let!(:t3) { create(:tenant, tenant_type: :public) }
 
+  let!(:f1) { create(:fund, users: [admin, user], tenants: [t1, t2, t3]) }
+
   describe 'GET /compute_sites' do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -31,6 +33,15 @@ describe Atmosphere::Api::V1::ComputeSitesController do
         expect(ts_response[0]).to compute_site_basic_eq t1
         expect(ts_response[1]).to compute_site_basic_eq t2
         expect(ts_response[2]).to compute_site_basic_eq t3
+      end
+
+      it 'finds only those tenants which the user is authorized to access' do
+        f1.tenants = [t1, t3]
+        get api('/compute_sites', user)
+        expect(ts_response).to be_an Array
+        expect(ts_response.size).to eq 2
+        expect(ts_response[0]).to compute_site_basic_eq t1
+        expect(ts_response[1]).to compute_site_basic_eq t3
       end
 
       context 'search' do
