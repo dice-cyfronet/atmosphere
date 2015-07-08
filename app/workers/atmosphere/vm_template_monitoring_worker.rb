@@ -42,7 +42,6 @@ module Atmosphere
       #remove deleted templates
       all_tenant_templates.each do |vmt|
 
-        puts "+++Figuring out what to do with VMT #{vmt.inspect}"
         # Reload and delete VMT only if it has no more linked tenants (and is not young).
         if vmt.old?
           # Unlink VMT from current tenant first
