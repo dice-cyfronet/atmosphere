@@ -16,9 +16,10 @@ module Atmosphere
             appl_manager.reuse_vm!(vm)
             action.log(I18n.t('satisfy_appliance.reused', vm: vm.id_at_site))
           else
-            new_vms_tmpls_and_flavors.each do |tmpl_and_flavor|
-              tmpl = tmpl_and_flavor[:template]
-              flavor = tmpl_and_flavor[:flavor]
+            new_vms_tmpls_and_flavors_and_tenants.each do |tmpl_and_flavor_and_tenant|
+              tmpl = tmpl_and_flavor_and_tenant[:template]
+              flavor = tmpl_and_flavor_and_tenant[:flavor]
+              tenant = tmpl_and_flavor_and_tenant[:tenant]
               if tmpl.blank?
                 appliance.state = :unsatisfied
                 appliance.state_explanation =
@@ -31,14 +32,21 @@ module Atmosphere
                   I18n.t('satisfy_appliance.no_flavor')
 
                 action.warn(appliance.state_explanation)
+              elsif tenant.nil?
+                appliance.state = :unsatisfied
+                appliance.state_explanation =
+                    I18n.t('satisfy_appliance.no_tenant')
+
+                action.warn(appliance.state_explanation)
               else
                 action.log(I18n.t('satisfy_appliance.starting_vm',
                                   tmpl: tmpl.id_at_site,
                                   flavor: flavor.id_at_site))
-                appl_manager.spawn_vm!(tmpl, flavor, vm_name)
+                appl_manager.spawn_vm!(tmpl, tenant, flavor, vm_name)
                 action.log(I18n.t('satisfy_appliance.vm_started',
                                   tmpl: tmpl.id_at_site,
-                                  flavor: flavor.id_at_site))
+                                  flavor: flavor.id_at_site,
+                                  tenant: tenant.tenant_id))
               end
             end
           end
@@ -69,8 +77,8 @@ module Atmosphere
         appliance.name.blank? ? appliance.appliance_type.name : appliance.name
       end
 
-      def new_vms_tmpls_and_flavors
-        optimization_strategy.new_vms_tmpls_and_flavors
+      def new_vms_tmpls_and_flavors_and_tenants
+        optimization_strategy.new_vms_tmpls_and_flavors_and_tenants
       end
 
       def optimization_strategy

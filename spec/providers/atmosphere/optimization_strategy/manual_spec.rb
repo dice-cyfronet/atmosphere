@@ -44,13 +44,15 @@ describe Atmosphere::OptimizationStrategy::Manual do
 
     manual_policy = Atmosphere::OptimizationStrategy::Manual.new(appl)
 
-    tmpls_and_flavors = manual_policy.new_vms_tmpls_and_flavors
+    tmpls_and_flavors_and_tenants = manual_policy.new_vms_tmpls_and_flavors_and_tenants
 
-    expect(tmpls_and_flavors.size).to eq 2
-    expect(tmpls_and_flavors[0][:template]).to eq tmpl
-    expect(tmpls_and_flavors[0][:flavor]).to eq fl1
-    expect(tmpls_and_flavors[1][:template]).to eq tmpl
-    expect(tmpls_and_flavors[1][:flavor]).to eq fl2
+    expect(tmpls_and_flavors_and_tenants.size).to eq 2
+    expect(tmpls_and_flavors_and_tenants[0][:template]).to eq tmpl
+    expect(tmpls_and_flavors_and_tenants[0][:flavor]).to eq fl1
+    expect(tmpls_and_flavors_and_tenants[0][:tenant]).to eq t
+    expect(tmpls_and_flavors_and_tenants[1][:template]).to eq tmpl
+    expect(tmpls_and_flavors_and_tenants[1][:flavor]).to eq fl2
+    expect(tmpls_and_flavors_and_tenants[1][:tenant]).to eq t
   end
 
   context '#vms_to_start' do

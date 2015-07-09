@@ -24,9 +24,9 @@ module Atmosphere
       end
     end
 
-    def spawn_vm!(tmpl, flavor, name)
+    def spawn_vm!(tmpl, tenant, flavor, name)
       if BillingService.can_afford_flavor?(appliance, flavor)
-        instantiate_vm(tmpl, flavor, name)
+        instantiate_vm(tmpl, tenant, flavor, name)
       else
         not_enough_funds
       end
@@ -34,7 +34,7 @@ module Atmosphere
 
     def start_vms!(vms_descs)
       if BillingService.can_afford_flavors?(appliance, vms_descs.map{ |desc| desc[:flavor]})
-        vms_descs.each { |desc| instantiate_vm(desc[:template], desc[:flavor], desc[:name]) }
+        vms_descs.each { |desc| instantiate_vm(desc[:template], desc[:tenant], desc[:flavor], desc[:name]) }
       else
         unsatisfied('Not enough funds to scale')
       end
@@ -61,13 +61,11 @@ module Atmosphere
       unsatisfied('Not enough funds')
     end
 
-    def instantiate_vm(tmpl, flavor, name)
-      server_id = start_vm_on_cloud(tmpl, flavor, name)
-      # TODO It is CRITICALLY IMPORTANT to replace this tenant assignment with one referring
-      # to the current user of @appliance (needs a suitable method/attribute in Atmosphere::User).
+    def instantiate_vm(tmpl, tenant, flavor, name)
+      server_id = start_vm_on_cloud(tmpl, tenant, flavor, name)
       vm = VirtualMachine.find_or_initialize_by(
           id_at_site: server_id,
-          tenant: tmpl.tenants.first
+          tenant: tenant
         )
       vm.name = name
       vm.source_template = tmpl
@@ -94,23 +92,17 @@ module Atmosphere
       end
     end
 
-    def start_vm_on_cloud(tmpl, flavor, name)
-      # WARNING: this will not work properly in deployments which restrict users to tenants.
-      # (More specifically, it will use a semi-random cloud client and network ID
-      # to launch the VM as the Atmosphere engine has no concept of "desired tenant".)
-      # This method should be overridden in any subproject which makes use of tenants.
-      nic = Atmosphere.nic_provider(tmpl.tenants.first).get(@appliance)
+    def start_vm_on_cloud(tmpl, tenant, flavor, name)
+      nic = Atmosphere.nic_provider(tenant).get(@appliance)
       if nic.present?
         Rails.logger.info("Using custom NIC: #{nic}")
       else
         Rails.logger.info('Using default NIC.')
       end
 
-      # TODO It is CRITICALLY IMPORTANT to replace this tenant assignment with one referring
-      # to the current user of @appliance (needs a suitable method/attribute in Atmosphere::User).
       @vm_creator_class.new(
           tmpl,
-          tenant: tmpl.tenants.first,
+          tenant: tenant,
           flavor: flavor,
           name: name,
           user_data: appliance.user_data,

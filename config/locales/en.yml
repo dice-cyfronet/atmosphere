@@ -102,6 +102,7 @@ en:
     billing_state: "Billing state:"
     state: "State:"
     no_flavor: No flavor
+    no_tenant: No tenant
     no_appliances: No appliances.
     new: New Appliance Set
     show: Show this Appliance Set

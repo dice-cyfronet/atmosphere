@@ -15,13 +15,14 @@ module Atmosphere
       Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
     end
 
-    def select_tmpl_and_flavor(tmpls, options={})
-      tmpl_and_flavor = select_tmpls_and_flavors(tmpls, options).first
-      [tmpl_and_flavor[:template], tmpl_and_flavor[:flavor]]
+    def select_tmpl_and_flavor_and_tenant(tmpls, appliance=nil, options={})
+      tmpl_and_flavor_and_tenant = select_tmpls_and_flavors_and_tenants(tmpls, appliance, options).first
+      [tmpl_and_flavor_and_tenant[:template], tmpl_and_flavor_and_tenant[:tenant],
+        tmpl_and_flavor_and_tenant[:flavor]]
     end
 
-    def select_tmpls_and_flavors(tmpls, options={})
-      OptimizationStrategy::Default.select_tmpls_and_flavors(tmpls, options)
+    def select_tmpls_and_flavors_and_tenants(tmpls, appliance=nil, options={})
+      OptimizationStrategy::Default.select_tmpls_and_flavors_and_tenants(tmpls, appliance, options)
     end
   end
 end

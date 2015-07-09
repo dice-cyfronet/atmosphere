@@ -103,6 +103,11 @@ module Atmosphere
       roles.map { |r| r == :admin ? 'cloudadmin' : r.to_s }
     end
 
+    # Returns a list of this user's tenants to which the user is linked via fund assignments
+    def tenants
+      funds.map(&:tenants).flatten.uniq.compact
+    end
+
     private
 
     # Checks whether any fund has been assigned to this user.
