@@ -167,12 +167,19 @@ module Atmosphere
             if @appliance.tenants.present?
               # If appliance is manually restricted to a specific subset of tenants,
               # return intersection of template tenants and appliance tenants.
-              # The second intersection (with user tenants) is for safety -
-              # we must never spawn a VM in a tenant which the given user has no access to.
-              tmpl.tenants & @appliance.tenants & @appliance.appliance_set.user.tenants
+              # The second and third intersections (with appliance fund tenants and user tenants)
+              # are for safety - we must never spawn a VM in a tenant which is not linked
+              # to appliance.fund or cannot be accessed by the current user.
+              tmpl.tenants &
+                @appliance.tenants &
+                @appliance.fund.tenants &
+                @appliance.appliance_set.user.tenants
             else
-              # Otherwise simply return intersection of template tenants and user tenants.
-              tmpl.tenants & @appliance.appliance_set.user.tenants
+              # Otherwise simply return intersection of template tenants, appliance fund tenants
+              # and user tenants.
+              tmpl.tenants &
+                @appliance.fund.tenants &
+                @appliance.appliance_set.user.tenants
             end
           end
         end
