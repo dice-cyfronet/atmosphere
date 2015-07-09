@@ -1,7 +1,7 @@
 module Atmosphere
   class Cloud::VmCreator
 
-    prepend Atmosphere::Cloud::VmCreatorExt
+    include Atmosphere::Cloud::VmCreatorExt
 
     def initialize(tmpl, options={})
       @tmpl = tmpl
@@ -65,7 +65,7 @@ module Atmosphere
           if pmt.transport_protocol == :tcp
             # 22 ssh is present by default on Azure for linux
             # and if it is specified explicitly it causes error
-            unless pmt.target_port == 22 
+            unless pmt.target_port == 22
               tcp_endpoints_str << "#{pmt.target_port}:#{pmt.target_port},"
             end
           else
