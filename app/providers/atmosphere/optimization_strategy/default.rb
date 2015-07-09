@@ -37,14 +37,10 @@ module Atmosphere
           appliance_type: appliance.appliance_type,
           state: 'active'
         )
-        puts "VMTs 0: #{vmts.map(&:id_at_site)}"
         if appliance.tenants.present?
-          puts "Appliance has tenants: #{appliance.tenants.map(&:tenant_id)}"
           vmts = restrict_by_user_requirements(vmts, appliance)
-          puts "VMTs 1: #{vmts.map(&:id_at_site)}"
         end
         vmts = restrict_by_tenant_availability(vmts, appliance)
-        puts "VMTs 2: #{vmts.map(&:id_at_site)}"
         vmts
       end
 
@@ -55,16 +51,6 @@ module Atmosphere
       def restrict_by_user_requirements(vmts, appliance)
         # If the user requests that the appliance be bound to a specific set of tenants,
         # the optimizer should honor this selection.
-        # TODO: This does not work! Why doesn't this work???
-        # appliance.tenants returns tenants as expected, but appliance.tenants.active
-        # and appliance.tenants.inactive both produce an EMPTY LIST!
-        # (even though the SQL is correct!)
-        puts "A.T: #{appliance.tenants.to_sql}"
-        puts "A.T: #{appliance.tenants.map{|t| t.tenant_id.to_s + ' ' + t.active.to_s}}"
-        puts "A.T.A.: #{appliance.tenants.active.to_sql}"
-        puts "A.T.A.: #{appliance.tenants.active.map(&:tenant_id)}"
-        puts "A.T.InA.: #{appliance.tenants.inactive.to_sql}"
-        puts "A.T.InA.: #{appliance.tenants.inactive.map(&:tenant_id)}"
 
         # Workaround
         funded_active_tenants = appliance.tenants.funded_by(appliance.fund).reject{|t| t.active == false}
@@ -76,9 +62,9 @@ module Atmosphere
 
       def restrict_by_tenant_availability(vmts, appliance)
         # In all cases the optimizer should only suggest those vmts which the user is able to access
-        # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance's owner).
+        # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance).
         vmts.select do |vmt|
-          (vmt.tenants & appliance.appliance_set.user.funds.map(&:tenants).flatten.uniq.compact).present?
+          (vmt.tenants & appliance.fund.tenants).present?
         end
       end
 
