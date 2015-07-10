@@ -96,11 +96,16 @@ module Atmosphere
     end
 
     def rm_proxy(name)
-      Sidekiq::Client.push('queue' => tenant.tenant_id, 'class' => Redirus::Worker::RmProxy, 'args' => [name, application_protocol])
+      Sidekiq::Client.push('queue' => tenant.site_id,
+                           'class' => Redirus::Worker::RmProxy,
+                           'args' => [name, application_protocol])
     end
 
     def add_proxy(name, ips=nil)
-      Sidekiq::Client.push('queue' => tenant.tenant_id, 'class' => Redirus::Worker::AddProxy, 'args' => [name, workers(ips), application_protocol, properties])
+      Sidekiq::Client.push('queue' => tenant.site_id,
+                           'class' => Redirus::Worker::AddProxy,
+                           'args' => [name, workers(ips),
+                                      application_protocol, properties])
     end
 
     def has_workers?(ips)
