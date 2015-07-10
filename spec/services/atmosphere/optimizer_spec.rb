@@ -204,40 +204,42 @@ describe Atmosphere::Optimizer do
       @opt_strategy_for_a2 = Atmosphere::OptimizationStrategy::Default.new(@a2)
     end
 
-    it 'selects correct virtual machine template for each user' do
+    it 'selects correct virtual machine template, tenant and flavor for user with one fund assignment' do
       tmpls1 = @opt_strategy_for_a1.new_vms_tmpls_and_flavors_and_tenants
       tmpls2 = @opt_strategy_for_a2.new_vms_tmpls_and_flavors_and_tenants
       expect(tmpls1.first[:template]).to eq vmt1
+      expect(tmpls1.first[:flavor]).to eq Atmosphere::VirtualMachineFlavor.find_by(tenant: t1, id_at_site: '5')
+      expect(tmpls1.first[:tenant]).to eq t1
       expect(tmpls2.first[:template]).to eq vmt2
+      expect(tmpls2.first[:flavor]).to eq Atmosphere::VirtualMachineFlavor.find_by(tenant: t2, id_at_site: '5')
+      expect(tmpls2.first[:tenant]).to eq t2
     end
 
-    it 'selects correct virtual machine flavor and tenant for each user' do
+    it 'selects correct virtual machine template, tenant and flavor for user with multiple fund assignments' do
       # Make t2 flavors expensive compared to t1 flavors
       t2.virtual_machine_flavors.map(&:flavor_os_families).flatten.uniq.compact.each do |fof|
-        fof.hourly_cost *= 10000
+        fof.hourly_cost *= 1000
         fof.save
       end
 
-      # Add a new user with access to all tenants
+      # Add a new user with access to all tenants and an empty user
       u3 = create(:user, funds: [f1, f2])
-      u4 = create(:user, funds: [])
       aset3 = create(:appliance_set, user: u3)
-      aset4 = create(:appliance_set, user: u4)
-      a3 = create(:appliance, appliance_set: aset3, appliance_type: atype, fund: f1)
-      a4 = create(:appliance, appliance_set: aset4, appliance_type: atype, fund: f1)
+      a3 = create(:appliance, appliance_set: aset3, appliance_type: atype, fund: f1, tenants: [t1, t2])
       opt_strategy_for_a3 = Atmosphere::OptimizationStrategy::Default.new(a3)
-      opt_strategy_for_a4 = Atmosphere::OptimizationStrategy::Default.new(a4)
-      tmpls1 = @opt_strategy_for_a1.new_vms_tmpls_and_flavors_and_tenants
-      tmpls2 = @opt_strategy_for_a2.new_vms_tmpls_and_flavors_and_tenants
       tmpls3 = opt_strategy_for_a3.new_vms_tmpls_and_flavors_and_tenants
-      tmpls4 = opt_strategy_for_a4.new_vms_tmpls_and_flavors_and_tenants
 
-      expect(tmpls1.first[:flavor]).to eq Atmosphere::VirtualMachineFlavor.find_by(tenant: t1, id_at_site: '5')
-      expect(tmpls1.first[:tenant]).to eq t1
-      expect(tmpls2.first[:flavor]).to eq Atmosphere::VirtualMachineFlavor.find_by(tenant: t2, id_at_site: '5')
-      expect(tmpls2.first[:tenant]).to eq t2
       expect(tmpls3.first[:flavor]).to eq Atmosphere::VirtualMachineFlavor.find_by(tenant: t1, id_at_site: '5')
       expect(tmpls3.first[:tenant]).to eq t1
+    end
+
+    it 'selects correct virtual machine template, tenant and flavor for user with no fund assignments' do
+      u4 = create(:user, funds: [])
+      aset4 = create(:appliance_set, user: u4)
+      a4 = create(:appliance, appliance_set: aset4, appliance_type: atype, fund: f1)
+      opt_strategy_for_a4 = Atmosphere::OptimizationStrategy::Default.new(a4)
+      tmpls4 = opt_strategy_for_a4.new_vms_tmpls_and_flavors_and_tenants
+
       expect(tmpls4.first[:flavor]).to be_nil
       expect(tmpls4.first[:tenant]).to be_nil
     end
