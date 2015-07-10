@@ -20,7 +20,7 @@ module Atmosphere
       end
 
       def new_vms_tmpls_and_flavors_and_tenants
-        tmpls = vmt_candidates_for(appliance)
+        tmpls = vmt_candidates
         return [{template: nil, flavor: nil, tenant: nil}] if tmpls.blank?
 
         Default.select_tmpls_and_flavors_and_tenants(tmpls, appliance, preferences)
@@ -32,15 +32,15 @@ module Atmosphere
 
       protected
 
-      def vmt_candidates_for(appliance)
+      def vmt_candidates
         vmts = VirtualMachineTemplate.where(
           appliance_type: appliance.appliance_type,
           state: 'active'
         )
         if appliance.tenants.present?
-          vmts = restrict_by_user_requirements(vmts, appliance)
+          vmts = restrict_by_user_requirements(vmts)
         end
-        restrict_by_tenant_availability(vmts, appliance)
+        restrict_by_tenant_availability(vmts)
       end
 
       private
@@ -49,7 +49,7 @@ module Atmosphere
 
       # If the user requests that the appliance be bound to a specific set of tenants,
       # the optimizer should honor this selection. This method ensures that it happens.
-      def restrict_by_user_requirements(vmts, appliance)
+      def restrict_by_user_requirements(vmts)
         vmts.joins(:tenants).
           where(atmosphere_tenants: { id:  user_selected_tenants })
       end
@@ -60,7 +60,7 @@ module Atmosphere
 
       # In all cases the optimizer should only suggest those vmts which the user is able to access
       # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance).
-      def restrict_by_tenant_availability(vmts, appliance)
+      def restrict_by_tenant_availability(vmts)
         vmts.joins(:tenants).
           where(atmosphere_tenants: { id: appliance.fund.tenants })
       end
