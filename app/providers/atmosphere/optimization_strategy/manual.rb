@@ -17,7 +17,7 @@ module Atmosphere
 
       def new_vms_tmpls_and_flavors_and_tenants
         tmpls_and_flavors_and_tenants = []
-        tmpls = vmt_candidates_for(@appliance)
+        tmpls = vmt_candidates
         appliance.optimization_policy_params['vms'].each do |vm|
           options = {cpu: vm['cpu'], memory: vm['mem']}
           tmpls_and_flavors_and_tenants += Default.select_tmpls_and_flavors_and_tenants(tmpls, @appliance, options)

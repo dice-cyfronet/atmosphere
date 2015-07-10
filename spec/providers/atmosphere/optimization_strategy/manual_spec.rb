@@ -86,7 +86,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
     end
     expect(supported_appliance_types).to all(include(a.appliance_type))
     manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(a)
-    vm_candidates = manual_strategy.send(:vmt_candidates_for, a)
+    vm_candidates = manual_strategy.send(:vmt_candidates)
     expect(vm_candidates.count).to eq 1
     expect(vm_candidates.first.tenants.first).to eq t
   end

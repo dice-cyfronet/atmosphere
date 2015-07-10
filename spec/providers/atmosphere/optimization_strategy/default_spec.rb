@@ -89,7 +89,7 @@ describe Atmosphere::OptimizationStrategy::Default do
       end
       expect(supported_appliance_types).to all(include(a.appliance_type))
       default_strategy = Atmosphere::OptimizationStrategy::Default.new(a)
-      vm_candidates = default_strategy.send(:vmt_candidates_for, a)
+      vm_candidates = default_strategy.send(:vmt_candidates)
       expect(vm_candidates.count).to eq 1
       expect(vm_candidates.first.tenants.first).to eq openstack
     end
