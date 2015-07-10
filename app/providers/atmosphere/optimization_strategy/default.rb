@@ -8,7 +8,7 @@ module Atmosphere
       end
 
       def self.select_tmpls_and_flavors_and_tenants(tmpls, appliance, options)
-        VmAndFlavorAndTenant.new(tmpls, appliance, options).select
+        VmtAndFlavorAndTenant.new(tmpls, appliance, options).select
       end
 
       def can_reuse_vm?
@@ -40,32 +40,28 @@ module Atmosphere
         if appliance.tenants.present?
           vmts = restrict_by_user_requirements(vmts, appliance)
         end
-        vmts = restrict_by_tenant_availability(vmts, appliance)
-        vmts
+        restrict_by_tenant_availability(vmts, appliance)
       end
 
       private
 
       attr_reader :appliance
 
+      # If the user requests that the appliance be bound to a specific set of tenants,
+      # the optimizer should honor this selection. This method ensures that it happens.
       def restrict_by_user_requirements(vmts, appliance)
-        # If the user requests that the appliance be bound to a specific set of tenants,
-        # the optimizer should honor this selection.
-
-        # Workaround
-        funded_active_tenants = appliance.tenants.funded_by(appliance.fund).reject{|t| t.active == false}
-
-        vmts.select do |vmt|
-          (vmt.tenants & funded_active_tenants).present?
-        end
+        funded_active_tenants = appliance.tenants.active.funded_by(appliance.fund)
+        Atmosphere::VirtualMachineTemplate.joins(:tenants).
+          where(Atmosphere::VirtualMachineTemplate.arel_table[:id].in(vmts.pluck(:id)).
+          and(Atmosphere::Tenant.arel_table[:id].in(funded_active_tenants.pluck(:id))))
       end
 
+      # In all cases the optimizer should only suggest those vmts which the user is able to access
+      # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance).
       def restrict_by_tenant_availability(vmts, appliance)
-        # In all cases the optimizer should only suggest those vmts which the user is able to access
-        # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance).
-        vmts.select do |vmt|
-          (vmt.tenants & appliance.fund.tenants).present?
-        end
+        Atmosphere::VirtualMachineTemplate.joins(:tenants).
+          where(Atmosphere::VirtualMachineTemplate.arel_table[:id].in(vmts.pluck(:id)).
+          and(Atmosphere::Tenant.arel_table[:id].in(appliance.fund.tenants.pluck(:id))))
       end
 
       def reuse?(vm)
@@ -86,7 +82,7 @@ module Atmosphere
         end
       end
 
-      class VmAndFlavorAndTenant
+      class VmtAndFlavorAndTenant
         include Atmosphere::Utils
 
         def initialize(tmpls, appliance, options={})
@@ -95,39 +91,26 @@ module Atmosphere
           @options = options
         end
 
+        # We are given a list of tmpls which MAY be spawned by the user in the context of @appliance.
+        # We are asked to return a single template, a specific flavor and a specific tenant for instantiation.
+        # Flavor prices may vary by tenant.
+        # !CAUTION! @appliance can be nil -- this will happen when the method is invoked prior to
+        # creation of an appliance.
         def select
-          # We are given a list of tmpls which MAY be spawned by the user in the context of @appliance.
-          # We are asked to return a single template, a specific flavor and a specific tenant for instantiation.
-          # Flavor prices may vary by tenant.
-          # !CAUTION! @appliance can be nil -- this will happen when the method is invoked prior to
-          # creation of an appliance.
           best_template = nil
           best_tenant = nil
           best_flavor = nil
           instantiation_cost = Float::INFINITY
 
           tmpls.each do |tmpl|
-            # Assuming tmpl is selected, figure out which tenant and which flavor to use.
             candidate_tenants = get_candidate_tenants_for_template(tmpl)
-            # For each candidate tenant find optimal flavor and the corresponding VM instantiation cost
-            # Note that candidate_tenants can be blank - we must handle this case.
-            opt_tenant = nil
-            opt_flavor_and_cost = [nil, Float::INFINITY]
             candidate_tenants.each do |t|
               opt_flavor, cost = get_optimal_flavor_for_tenant(tmpl, t)
-              if cost < opt_flavor_and_cost[1]
-                opt_tenant = t
-                opt_flavor_and_cost = [opt_flavor, cost]
-              end
-            end
-            # An optimal tenant may not have been found - in that case skip tmpl entirely.
-            # Otherwise check if the tenant that has been found is better than the current "leader"
-            if opt_tenant.present?
-              if opt_flavor_and_cost[1] < instantiation_cost
+              if cost < instantiation_cost
                 best_template = tmpl
-                best_tenant = opt_tenant
-                best_flavor = opt_flavor_and_cost[0]
-                instantiation_cost = opt_flavor_and_cost[1]
+                best_tenant = t
+                best_flavor = opt_flavor
+                instantiation_cost = cost
               end
             end
           end
@@ -164,22 +147,17 @@ module Atmosphere
             # "Start application" window) where no appliance is yet present.
             tmpl.tenants
           else
+            eligible_tenants = tmpl.tenants &
+              @appliance.fund.tenants &
+              @appliance.appliance_set.user.tenants
+
             if @appliance.tenants.present?
               # If appliance is manually restricted to a specific subset of tenants,
-              # return intersection of template tenants and appliance tenants.
-              # The second and third intersections (with appliance fund tenants and user tenants)
-              # are for safety - we must never spawn a VM in a tenant which is not linked
-              # to appliance.fund or cannot be accessed by the current user.
-              tmpl.tenants &
-                @appliance.tenants &
-                @appliance.fund.tenants &
-                @appliance.appliance_set.user.tenants
+              # return intersection of eligible tenants and appliance tenants.
+              eligible_tenants & @appliance.tenants
             else
-              # Otherwise simply return intersection of template tenants, appliance fund tenants
-              # and user tenants.
-              tmpl.tenants &
-                @appliance.fund.tenants &
-                @appliance.appliance_set.user.tenants
+              # Otherwise simply return all eligible tenants.
+              eligible_tenants
             end
           end
         end

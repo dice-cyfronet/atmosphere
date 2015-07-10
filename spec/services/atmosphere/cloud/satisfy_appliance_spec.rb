@@ -449,7 +449,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
         let!(:vmt3) { create(:virtual_machine_template, tenants: [t2], managed_by_atmosphere: true)}
         let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
-        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow", user: u) }
+        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: 'workflow', user: u) }
         let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, tenant: t2, managed_by_atmosphere: true)}
         let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, tenants: [t2], virtual_machines: [vm_shared])}
 

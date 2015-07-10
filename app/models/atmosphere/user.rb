@@ -105,7 +105,7 @@ module Atmosphere
 
     # Returns a list of this user's tenants to which the user is linked via fund assignments
     def tenants
-      funds.map(&:tenants).flatten.uniq.compact
+      Atmosphere::Tenant.joins(funds: :users).where("atmosphere_users.id = #{id}")
     end
 
     private

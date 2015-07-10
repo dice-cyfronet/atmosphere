@@ -56,14 +56,14 @@ describe Atmosphere::Optimizer do
         it 'selects instance with at least 1.5GB RAM for public tenant' do
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, tenants: [amazon], appliance_type: appl_type)
-          selected_tmpl, tenant, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl])
+          _, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl])
           expect(flavor.memory).to be >= 1536
         end
 
         it 'selects instance with 512MB RAM for private tenant' do
           appl_type = build(:appliance_type)
           tmpl = build(:virtual_machine_template, tenants: [openstack], appliance_type: appl_type)
-          selected_tmpl, tenant, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl])
+          _, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl])
           expect(flavor.memory).to be >= 512
         end
       end
@@ -73,7 +73,7 @@ describe Atmosphere::Optimizer do
         let(:tmpl_at_openstack) { create(:virtual_machine_template, tenants: [openstack], appliance_type: appl_type) }
 
         it 'selects cheapest flavour that satisfies requirements' do
-          selected_tmpl, tenant, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl_at_amazon, tmpl_at_openstack])
+          _, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl_at_amazon, tmpl_at_openstack])
           flavor.reload
 
           expect(flavor.memory).to be >= 1024
@@ -98,7 +98,7 @@ describe Atmosphere::Optimizer do
           appl_type.preference_memory = biggest_os_flavor.memory
           appl_type.save
 
-          tmpl, tenant, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl_at_amazon, tmpl_at_openstack])
+          tmpl, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl_at_amazon, tmpl_at_openstack])
 
           expect(flavor).to eq optimal_flavor
           expect(tmpl).to eq tmpl_at_amazon
@@ -109,7 +109,7 @@ describe Atmosphere::Optimizer do
             appl_type.preference_cpu = 64
             appl_type.save
 
-            tmpl, tenant, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl_at_amazon, tmpl_at_openstack])
+            _, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl_at_amazon, tmpl_at_openstack])
 
             expect(flavor).to be_nil
           end
@@ -221,8 +221,8 @@ describe Atmosphere::Optimizer do
       # Add a new user with access to all tenants
       u3 = create(:user, funds: [f1, f2])
       u4 = create(:user, funds: [])
-      aset3 =  create(:appliance_set, user: u3)
-      aset4 =  create(:appliance_set, user: u4)
+      aset3 = create(:appliance_set, user: u3)
+      aset4 = create(:appliance_set, user: u4)
       a3 = create(:appliance, appliance_set: aset3, appliance_type: atype, fund: f1)
       a4 = create(:appliance, appliance_set: aset4, appliance_type: atype, fund: f1)
       opt_strategy_for_a3 = Atmosphere::OptimizationStrategy::Default.new(a3)

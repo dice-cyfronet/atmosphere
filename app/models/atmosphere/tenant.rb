@@ -124,8 +124,6 @@ module Atmosphere
 
     scope :active, -> { where(active: true) }
 
-    scope :inactive, -> { where(active: false) }
-
     scope :funded_by, ->(fund) do
       joins(:funds)
         .where(atmosphere_funds: { id: fund.id })
