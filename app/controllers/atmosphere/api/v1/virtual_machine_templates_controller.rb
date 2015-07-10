@@ -5,10 +5,18 @@ class Atmosphere::Api::V1::VirtualMachineTemplatesController  < Atmosphere::Api:
   respond_to :json
 
   def index
-    respond_with @virtual_machine_templates.where(filter).order(:id)
+    respond_with @virtual_machine_templates.joins(:tenants).where(filter).order(:id)
   end
 
   def model_class
     Atmosphere::VirtualMachineTemplate
+  end
+
+  private
+
+  def filter
+    filter = super
+    filter[:atmosphere_tenants] = { id: current_user.tenants } unless current_user.has_role?(:admin)
+    filter
   end
 end
