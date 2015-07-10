@@ -5,10 +5,12 @@ module Atmosphere
     sidekiq_options queue: :monitoring
     sidekiq_options retry: false
 
-    def perform
+    def perform(tenant_id)
       begin
-        Rails.logger.debug "Updating flavor info for all tenants."
-        FlavorManager::scan_all_tenants
+        if tenant = Atmosphere::Tenant.find_by(id: tenant_id)
+          Rails.logger.debug "Updating flavor for #{tenant_id} tenant."
+          FlavorManager.new(tenant).execute
+        end
       end
     end
   end
