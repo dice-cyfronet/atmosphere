@@ -2,7 +2,7 @@
   = f.error_notification
 
   .inputs
-    = f.input :name
+    = f.input :name, disabled: !@fund.new_record?
     .col-xs-4
       = f.input :balance, as: :integer
     .col-xs-4
