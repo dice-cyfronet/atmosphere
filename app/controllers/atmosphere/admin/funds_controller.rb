@@ -25,7 +25,7 @@ class Atmosphere::Admin::FundsController < Atmosphere::Admin::ApplicationControl
 
   # PATCH/PUT /funds/1
   def update
-    if @fund.update(fund_params)
+    if @fund.update(update_params)
       redirect_to admin_funds_path, notice: t('funds.update.success')
     else
       render action: 'edit'
@@ -40,6 +40,12 @@ class Atmosphere::Admin::FundsController < Atmosphere::Admin::ApplicationControl
 
 
   private
+
+  def update_params
+    params.require(:fund).
+      permit(:balance, :overdraft_limit,
+             :currency_label, :termination_policy)
+  end
 
   def fund_params
     params.require(:fund).permit(

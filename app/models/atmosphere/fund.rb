@@ -56,6 +56,8 @@ module Atmosphere
               in: [:delete, :suspend, :no_action],
               predicates: true
 
+    attr_readonly :name
+
     def unsupported_tenants
       Tenant.where.not(id: tenants)
     end
