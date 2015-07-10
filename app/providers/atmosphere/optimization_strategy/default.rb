@@ -20,7 +20,7 @@ module Atmosphere
       end
 
       def new_vms_tmpls_and_flavors_and_tenants
-        tmpls = vmt_candidates_for(appliance)
+        tmpls = vmt_candidates
         return [{template: nil, flavor: nil, tenant: nil}] if tmpls.blank?
 
         Default.select_tmpls_and_flavors_and_tenants(tmpls, appliance, preferences)
