@@ -41,6 +41,7 @@ module Atmosphere
           flavor.memory = cloud_flavor.ram
           flavor.hdd = cloud_flavor.disk
           flavor.supported_architectures = cloud_flavor.supported_architectures
+          calculate_price(flavor)
 
           unless flavor.save
             Rails.logger.error(I18n.t('virtual_machine_flavor.update_failed',
@@ -49,5 +50,7 @@ module Atmosphere
           end
         end
     end
+
+    include Atmosphere::FlavorUpdaterExt
   end
 end
