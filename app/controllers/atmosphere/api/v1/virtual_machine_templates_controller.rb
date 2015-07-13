@@ -6,7 +6,7 @@ class Atmosphere::Api::V1::VirtualMachineTemplatesController  < Atmosphere::Api:
 
   def index
     respond_with @virtual_machine_templates.joins(:tenants).where(filter).
-      order(:id),
+                     order(:id),
       each_serializer: Atmosphere::VirtualMachineTemplateSerializer,
       load_all?: load_all?
   end
