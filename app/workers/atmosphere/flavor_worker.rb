@@ -9,7 +9,7 @@ module Atmosphere
       begin
         if tenant = Atmosphere::Tenant.find_by(id: tenant_id)
           Rails.logger.debug "Updating flavor for #{tenant_id} tenant."
-          FlavorManager.new(tenant).execute
+          FlavorUpdater.new(tenant).execute
         end
       end
     end

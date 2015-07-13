@@ -1,7 +1,7 @@
 # Populate the Atmosphere database with information regarding the
 # available virtual machine flavors for each compute site.
 module Atmosphere
-  class FlavorManager
+  class FlavorUpdater
     def initialize(tenant)
       @tenant = tenant
     end
