@@ -22,7 +22,7 @@
 
 module Atmosphere
   class Appliance < ActiveRecord::Base
-    prepend Atmosphere::ApplianceExt
+    include Atmosphere::ApplianceExt
     extend Enumerize
     serialize :optimization_policy_params
 

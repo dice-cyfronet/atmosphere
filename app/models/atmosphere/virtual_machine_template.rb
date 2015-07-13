@@ -17,7 +17,7 @@
 
 module Atmosphere
   class VirtualMachineTemplate < ActiveRecord::Base
-    prepend Atmosphere::VirtualMachineTemplateExt
+    include Atmosphere::VirtualMachineTemplateExt
     extend Enumerize
     include Childhoodable
 

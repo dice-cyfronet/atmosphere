@@ -31,10 +31,14 @@ class Atmosphere::Admin::TenantsController < Atmosphere::Admin::ApplicationContr
   # PATCH/PUT /tenants/1
   def update
     if @tenant.update(tenant_params)
-      ::Proxy::TenantUrlUpdater.new(@tenant).update if @tenant.proxy_urls_changed?
-      ::Proxy::TenantAppliancesUpdater.new(@tenant).update if @tenant.tenant_id_previously_changed?
+      if @tenant.proxy_urls_changed?
+        Atmosphere::Proxy::TenantUrlUpdater.new(@tenant).update
+      end
+      if @tenant.tenant_id_previously_changed?
+        Atmosphere::Proxy::TenantAppliancesUpdater.new(@tenant).update
+      end
 
-      redirect_to admin_compute_sites_url(@tenant), notice: 'Tenant was successfully updated.'
+      redirect_to admin_tenants_url(@tenant), notice: 'Tenant was successfully updated.'
     else
       render action: 'edit'
     end
@@ -43,7 +47,7 @@ class Atmosphere::Admin::TenantsController < Atmosphere::Admin::ApplicationContr
   # DELETE /tenants/1
   def destroy
     @tenant.destroy
-    redirect_to admin_compute_sites_url, notice: 'Tenant was successfully destroyed.'
+    redirect_to admin_tenants_url, notice: 'Tenant was successfully destroyed.'
   end
 
   private

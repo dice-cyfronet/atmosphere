@@ -4,7 +4,7 @@
 module Atmosphere
   class ApplianceVmsManager
 
-    prepend Atmosphere::ApplianceVmsManagerExt
+    include Atmosphere::ApplianceVmsManagerExt
 
     def initialize(appliance,
         updater_class = Proxy::ApplianceProxyUpdater,
