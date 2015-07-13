@@ -18,7 +18,8 @@ module Atmopshere
       end
 
       every(Atmosphere.monitoring.intervals.flavor, 'monitoring.flavors') do
-        Atmosphere::FlavorWorker.perform_async
+        action_on_active_tenants('flavor monitoring',
+                                 Atmosphere::FlavorWorker)
       end
 
       every(60.minutes, 'billing.bill') do
