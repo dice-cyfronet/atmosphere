@@ -61,10 +61,10 @@ describe Atmosphere::Api::V1::VirtualMachineTemplatesController do
             expect(vmts[0]).to vmt_eq @vmt1
           end
 
-          it 'reveals unauthorized VMTs to admins' do
+          it 'reveals unauthorized VMTs when load_all flag is set' do
             admin = create(:user, funds: [], roles: [:admin])
 
-            get api('/virtual_machine_templates', admin)
+            get api('/virtual_machine_templates/?all=true', admin)
 
             expect(vmts.length).to eq 2
             expect(vmts[0]).to vmt_eq @vmt1

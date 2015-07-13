@@ -19,7 +19,9 @@ module Atmosphere
           process_saving_query
 
           ats = @appliance_types.where(filter).order(:id)
-          respond_with pdp.filter(ats, params[:mode])
+          respond_with pdp.filter(ats, params[:mode]),
+                       each_serializer: Atmosphere::ApplianceTypeSerializer,
+                       load_all?: load_all?
         end
 
         def show

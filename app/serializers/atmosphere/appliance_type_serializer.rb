@@ -10,12 +10,11 @@ module Atmosphere
                :shared, :scalable, :visible_to, :author_id
     attributes :preference_cpu, :preference_memory, :preference_disk
     attributes :active, :saving
+    attributes :compute_site_ids
 
     has_many :appliances, :port_mapping_templates,
              :appliance_configuration_templates,
              :virtual_machine_templates
-
-    has_many :tenants, key: :compute_site_ids
 
     private
 
@@ -37,8 +36,12 @@ module Atmosphere
           count > 0
     end
 
-    def tenants
-      object.tenants.active
+    def compute_site_ids
+      ts = object.tenants.active
+      if defined? current_user and !(:load_all?)
+        ts = ts & current_user.tenants
+      end
+      ts.map(&:id)
     end
   end
 end

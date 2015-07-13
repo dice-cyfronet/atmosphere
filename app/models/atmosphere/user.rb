@@ -108,6 +108,10 @@ module Atmosphere
       Atmosphere::Tenant.joins(funds: :users).where("atmosphere_users.id = #{id}")
     end
 
+    def tenant_ids
+      tenants.pluck(&:id)
+    end
+
     private
 
     # Checks whether any fund has been assigned to this user.

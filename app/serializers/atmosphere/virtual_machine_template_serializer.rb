@@ -10,8 +10,13 @@ module Atmosphere
 
     has_one :appliance_type
 
+
     def compute_site_id
-      object.tenants.first.id
+      ts = object.tenants
+      if defined? current_user and !(options[:load_all?])
+        ts = ts & current_user.tenants
+      end
+      ts.blank? ? nil : ts.first.id
     end
   end
 end
