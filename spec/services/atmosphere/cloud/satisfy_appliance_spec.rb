@@ -9,16 +9,17 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     allow(Atmosphere::Optimizer.instance).to receive(:run)
   end
 
-  let!(:wf) { create(:workflow_appliance_set) }
-  let!(:wf2) { create(:workflow_appliance_set) }
-  let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:fund) { create(:fund) }
+  let!(:u) { create(:user, funds: [fund]) }
+  let!(:wf) { create(:workflow_appliance_set, user: u) }
+  let!(:wf2) { create(:workflow_appliance_set, user: u) }
+  let!(:shareable_appl_type) { create(:shareable_appliance_type) }
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenants: [openstack])}
 
   context 'new appliance created' do
     context 'development mode' do
-      let(:dev_appliance_set) { create(:dev_appliance_set) }
+      let(:dev_appliance_set) { create(:dev_appliance_set, user: u) }
       let(:config_inst) { create(:appliance_configuration_instance) }
       it 'does not reuse available vm' do
         tmpl_of_shareable_at
@@ -71,7 +72,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
         it 'to appliance name if it is not blank' do
           name = 'name full appliance'
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, n|
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, _, n|
             expect(n).to eq name
           end
 
@@ -83,7 +84,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'to appliance type name if appliance name is blank' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, n|
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, _, n|
             expect(n).to eq shareable_appl_type.name
           end
 
@@ -288,7 +289,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       it 'chooses VMT from active tenant' do
         inactive_t, inactive_vmt = vmt_on_tenant(t_active: false)
         active_t, active_vmt = vmt_on_tenant(t_active: true)
-        fund = create(:fund, tenants: [inactive_t, active_t])
+        fund.tenants << inactive_t << active_t
         flavor = create(:virtual_machine_flavor,
           tenant: active_t, id_at_site: '123')
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
@@ -310,7 +311,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     context 'when one of the flavor is turned off' do
       it 'failed when there is not active flavor' do
         t, vmt = vmt_on_tenant(t_active: true)
-        fund = create(:fund, tenants: [t])
+        fund.tenants << t
         create(:flavor, active: false, tenant: t)
         at = create(:appliance_type, virtual_machine_templates: [vmt])
         appl = create(:appliance, appliance_set: wf,
@@ -324,7 +325,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       it 'chooses VMT with active flavor' do
         t, vmt = vmt_on_tenant(t_active: true)
-        fund = create(:fund, tenants: [t])
+        fund.tenants << t
         create(:flavor, active: false, tenant: t)
         active_flavor = create(:flavor,
             active: true,
@@ -391,11 +392,11 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       allow(Atmosphere::VirtualMachine).to receive(:create)
       allow(Atmosphere::ApplianceVmsManager).to receive(:new).and_return(appl_vm_manager)
       selected_flavor = Atmosphere::Optimizer.
-                        instance.select_tmpl_and_flavor([tmpl_of_shareable_at]).
+                        instance.select_tmpl_and_flavor_and_tenant([tmpl_of_shareable_at]).
                         last
       appl = create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, fund: fund, tenants: Atmosphere::Tenant.all)
 
-      expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+      expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
         expect(flavor).to eq selected_flavor
       end
 
@@ -440,20 +441,20 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         let(:vmt1_1) { create(:virtual_machine_template, tenants: [t1])}
         let(:vmt2_1) { create(:virtual_machine_template, tenants: [t1])}
         let(:vmt2_2) { create(:virtual_machine_template, tenants: [t2])}
-        let(:wf_set_2) { create(:appliance_set, appliance_set_type: "workflow")}
+        let(:wf_set_2) { create(:appliance_set, appliance_set_type: 'workflow', user: u) }
         let(:at_with_tenant) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt1_1]) }
         let(:at_with_two_tenants) { create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt2_1, vmt2_2]) }
-        let(:a1_unrestricted) { create(:appliance, appliance_type: at_with_tenant, tenants: [t1, t2])}
-        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_type: at_with_tenant, tenants: [t2])}
+        let(:a1_unrestricted) { create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, tenants: [t1, t2]) }
+        let(:a1_restricted_unsatisfiable) { create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, tenants: [t2]) }
 
         let!(:vmt3) { create(:virtual_machine_template, tenants: [t2], managed_by_atmosphere: true)}
         let!(:shareable_at) { create(:appliance_type, visible_to: :all, shared: true, virtual_machine_templates: [vmt3]) }
-        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: "workflow")}
+        let!(:wf_set_1) { create(:appliance_set, appliance_set_type: 'workflow', user: u) }
         let!(:vm_shared) { create(:virtual_machine, source_template: vmt3, tenant: t2, managed_by_atmosphere: true)}
         let!(:a_shared) { create(:appliance, appliance_set: wf_set_1, appliance_type: shareable_at, tenants: [t2], virtual_machines: [vm_shared])}
 
         it 'spawns a vm for an unrestricted appliance' do
-          appl = create(:appliance, appliance_type: at_with_tenant, fund: fund, tenants: [t1, t2])
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, fund: fund, tenants: [t1, t2])
 
           described_class.new(appl).execute
 
@@ -462,7 +463,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'unable to spawn vm for a restricted appliance' do
-          appl = create(:appliance, appliance_type: at_with_tenant, fund: fund, tenants: [t2])
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_tenant, fund: fund, tenants: [t2])
 
           described_class.new(appl).execute
 
@@ -471,7 +472,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'spawns vm for a restricted appliance when there are matching templates' do
-          appl = create(:appliance, appliance_type: at_with_two_tenants, fund: fund, tenants: [t2])
+          appl = create(:appliance, appliance_set: wf_set_2, appliance_type: at_with_two_tenants, fund: fund, tenants: [t2])
 
           described_class.new(appl).execute
 
@@ -503,7 +504,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
     context 'dev mode properties' do
       let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
       let!(:vmt) { create(:virtual_machine_template, tenants: [amazon], appliance_type: at) }
-      let(:as) { create(:appliance_set, appliance_set_type: :development) }
+      let(:as) { create(:appliance_set, appliance_set_type: :development, user: u) }
 
       let(:appl_vm_manager) do
         double('appliance_vms_manager',
@@ -521,7 +522,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         it 'uses preferences from AT' do
           appl = create(:appliance, appliance_type: at, appliance_set: as, fund: fund, tenants: Atmosphere::Tenant.all)
 
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
             expect(flavor.cpu).to eq 2
           end
 
@@ -537,7 +538,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'takes dev mode preferences memory into account' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
             expect(flavor.memory).to eq 7680
           end
           @appl.dev_mode_property_set.preference_memory = 4000
@@ -546,7 +547,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'takes dev mode preferences cpu into account' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
             expect(flavor.cpu).to eq 4
           end
           @appl.dev_mode_property_set.preference_cpu = 4
@@ -555,7 +556,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         end
 
         it 'takes dev mode preferences disk into account' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, flavor, _|
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
             expect(flavor.hdd).to eq 840
           end
           @appl.dev_mode_property_set.preference_disk = 600

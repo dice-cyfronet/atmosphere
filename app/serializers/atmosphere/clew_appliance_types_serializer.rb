@@ -66,7 +66,11 @@ module Atmosphere
       }
     end
 
-    # TEMPORARY SOLITION - PLEASE FIX!!!!!!!!!!!!!!!!!!!!!!!!
+    # TODO: This method attempts to find an optimal flavor for a given AT
+    # However, flavor selection logic is predicated on the tenant(s) assigned to an appliance
+    # No Appliance object exists at the time this method is invoked.
+    # Actual price charged for Appliance MAY be higher than what is reported here, depending
+    # on the user's Tenant selection. This should be fixed at a later date.
     def  selected_flavor_for(at)
       params = {}
       params[:cpu] &&= at.preference_cpu
@@ -78,8 +82,8 @@ module Atmosphere
       flavor = nil
 
       unless tmpls.blank?
-        _, flavor = Optimizer.instance
-          .select_tmpl_and_flavor(tmpls, params)
+          _, _, flavor, _ = Optimizer.instance
+          .select_tmpl_and_flavor_and_tenant(tmpls, nil, params)
       end
 
       flavor

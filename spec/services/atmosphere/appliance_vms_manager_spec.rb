@@ -168,19 +168,19 @@ describe Atmosphere::ApplianceVmsManager do
         expect(vm).to receive(:valid?).and_return(true)
         expect(appl.virtual_machines).to receive(:<<).with(vm)
 
-        subject.spawn_vm!(tmpl, flavor, name)
+        subject.spawn_vm!(tmpl, tmpl.tenants.first, flavor, name)
       end
 
       it 'sets state to satisfied' do
         allow(vm).to receive(:valid?).and_return(true)
         expect(appl).to receive(:state=).with(:satisfied)
 
-        subject.spawn_vm!(tmpl, flavor, name)
+        subject.spawn_vm!(tmpl, tmpl.tenants.first, flavor, name)
       end
 
       it 'calls method to tag vm' do
         allow(vm).to receive(:valid?).and_return(true)
-        subject.spawn_vm!(tmpl, flavor, name)
+        subject.spawn_vm!(tmpl, tmpl.tenants.first, flavor, name)
         expect(tags_mng).to have_received(:execute)
       end
 
@@ -188,14 +188,14 @@ describe Atmosphere::ApplianceVmsManager do
         allow(vm).to receive(:valid?).and_return(true)
         expect(updater).to receive(:update).with({ new_vm: vm })
 
-        subject.spawn_vm!(tmpl, flavor, name)
+        subject.spawn_vm!(tmpl, tmpl.tenants.first, flavor, name)
       end
 
       it 'sets state to unsatisfied when VM cannot be assigned to appliance' do
         allow(vm).to receive(:valid?).and_return(false)
         expect(appl).to receive(:state=).with(:unsatisfied)
 
-        subject.spawn_vm!(tmpl, flavor, name)
+        subject.spawn_vm!(tmpl, tmpl.tenants.first, flavor, name)
       end
     end
 
@@ -204,7 +204,7 @@ describe Atmosphere::ApplianceVmsManager do
         allow(Atmosphere::BillingService).to receive(:can_afford_flavor?)
           .with(appl, flavor).and_return(false)
 
-        subject.spawn_vm!(tmpl, flavor, name)
+        subject.spawn_vm!(tmpl, tmpl.tenants.first, flavor, name)
       end
 
       it 'does not create any new VM' do
@@ -258,6 +258,7 @@ describe Atmosphere::ApplianceVmsManager do
         {
           template: create(:virtual_machine_template),
           flavor: create(:virtual_machine_flavor),
+          tenant: create(:tenant),
           name: name
         }
       end

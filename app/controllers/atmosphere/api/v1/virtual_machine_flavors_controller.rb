@@ -24,8 +24,8 @@ module Atmosphere
             tmpls = tmpls.on_tenant(cs_id) if cs_id
 
             unless tmpls.blank?
-              _, flavor = Optimizer.instance
-                .select_tmpl_and_flavor(tmpls, params)
+              _, _, flavor, _ = Optimizer.instance
+                .select_tmpl_and_flavor_and_tenant(tmpls, nil, params)
 
               flavors = [flavor]
             end

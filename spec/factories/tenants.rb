@@ -5,6 +5,7 @@ FactoryGirl.define do
     site_id { "site_id_#{SecureRandom.hex(4)}" }
     network_id { SecureRandom.hex(8) }
     name { SecureRandom.hex(4) }
+    active true
     technology 'openstack'
     config '{"provider": "openstack", "openstack_auth_url":  "http://10.10.0.2:5000/v2.0/tokens", "openstack_api_key":  "dummy", "openstack_username": "dummy"}'
     http_proxy_url { FFaker::Internet.uri('http') }

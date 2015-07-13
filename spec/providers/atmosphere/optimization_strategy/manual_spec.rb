@@ -8,13 +8,13 @@ describe Atmosphere::OptimizationStrategy::Manual do
   end
 
   let!(:fund) { create(:fund) }
+  let!(:user) { create(:user, funds: [fund]) }
   let(:t) { create(:tenant, active: true, funds: [fund]) }
   let(:at) { create(:filled_appliance_type, visible_to: 'all', preference_disk: 0) }
   let!(:tmpl) { create(:virtual_machine_template, appliance_type: at, tenants: [t]) }
   let!(:fl1) { create(:virtual_machine_flavor, cpu: 1, memory: 512, tenant: t, active: true) }
   let!(:fl2) { create(:virtual_machine_flavor, cpu: 2, memory: 1024, tenant: t, active: true) }
   let(:cfg_tmpl) { create(:appliance_configuration_template, appliance_type: at)}
-  let(:user) { create(:user) }
   let(:as) { create(:appliance_set, user: user)}
   let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
 
@@ -44,13 +44,15 @@ describe Atmosphere::OptimizationStrategy::Manual do
 
     manual_policy = Atmosphere::OptimizationStrategy::Manual.new(appl)
 
-    tmpls_and_flavors = manual_policy.new_vms_tmpls_and_flavors
+    tmpls_and_flavors_and_tenants = manual_policy.new_vms_tmpls_and_flavors_and_tenants
 
-    expect(tmpls_and_flavors.size).to eq 2
-    expect(tmpls_and_flavors[0][:template]).to eq tmpl
-    expect(tmpls_and_flavors[0][:flavor]).to eq fl1
-    expect(tmpls_and_flavors[1][:template]).to eq tmpl
-    expect(tmpls_and_flavors[1][:flavor]).to eq fl2
+    expect(tmpls_and_flavors_and_tenants.size).to eq 2
+    expect(tmpls_and_flavors_and_tenants[0][:template]).to eq tmpl
+    expect(tmpls_and_flavors_and_tenants[0][:flavor]).to eq fl1
+    expect(tmpls_and_flavors_and_tenants[0][:tenant]).to eq t
+    expect(tmpls_and_flavors_and_tenants[1][:template]).to eq tmpl
+    expect(tmpls_and_flavors_and_tenants[1][:flavor]).to eq fl2
+    expect(tmpls_and_flavors_and_tenants[1][:tenant]).to eq t
   end
 
   context '#vms_to_start' do
@@ -69,6 +71,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
   it 'scopes potential VMs to ones on tenants funded by chosen fund' do
     nonfunded_t = create(:openstack_with_flavors, funds: [create(:fund)])
     a = create(:appliance,
+               appliance_set: as,
                appliance_type: not_shareable_appl_type,
                fund: fund,
                tenants: Atmosphere::Tenant.all)
@@ -83,7 +86,7 @@ describe Atmosphere::OptimizationStrategy::Manual do
     end
     expect(supported_appliance_types).to all(include(a.appliance_type))
     manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(a)
-    vm_candidates = manual_strategy.send(:vmt_candidates_for, a)
+    vm_candidates = manual_strategy.send(:vmt_candidates)
     expect(vm_candidates.count).to eq 1
     expect(vm_candidates.first.tenants.first).to eq t
   end

@@ -41,6 +41,8 @@ describe Atmosphere::OptimizationStrategy::Default do
     let(:wf) { create(:workflow_appliance_set) }
     let(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
     let(:fund) { create(:fund) }
+    let(:u) { create(:user, funds: [fund]) }
+    let(:aset) { create(:appliance_set, user: u) }
     let(:shareable_appl_type) { create(:shareable_appliance_type) }
     let(:not_shareable_appl_type) { create(:not_shareable_appliance_type) }
 
@@ -72,6 +74,7 @@ describe Atmosphere::OptimizationStrategy::Default do
     it 'scopes potential VMs to ones on tenants funded by chosen fund' do
       nonfunded_t = create(:openstack_with_flavors, funds: [create(:fund)])
       a = create(:appliance,
+                 appliance_set: aset,
                  appliance_type: not_shareable_appl_type,
                  fund: fund,
                  tenants: Atmosphere::Tenant.all)
@@ -86,7 +89,7 @@ describe Atmosphere::OptimizationStrategy::Default do
       end
       expect(supported_appliance_types).to all(include(a.appliance_type))
       default_strategy = Atmosphere::OptimizationStrategy::Default.new(a)
-      vm_candidates = default_strategy.send(:vmt_candidates_for, a)
+      vm_candidates = default_strategy.send(:vmt_candidates)
       expect(vm_candidates.count).to eq 1
       expect(vm_candidates.first.tenants.first).to eq openstack
     end

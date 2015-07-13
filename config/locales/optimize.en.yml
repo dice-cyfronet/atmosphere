@@ -5,8 +5,9 @@ en:
     reused: "%{vm} reused"
     no_tmpl: "No matching template was found"
     no_flavor: "No matching flavor was found"
+    no_tenant: "No suitable tenant was found"
     starting_vm: "Spawning new VM from %{tmpl} with %{flavor} flavor"
-    vm_started: "New VM from %{tmpl} with %{flavor} flavor started"
+    vm_started: "New VM from %{tmpl} with %{flavor} flavor started on tenant %{tenant}"
     error: "Error while saving appliance %{trace}"
     end: "Satisfying appliance finished"
 
