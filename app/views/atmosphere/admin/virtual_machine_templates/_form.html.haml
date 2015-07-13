@@ -2,7 +2,7 @@
   = f.error_notification
 
   .inputs
-    = f.input :tenant_id, collection: @tenants
+    = f.association :tenants
     = f.input :id_at_site
     = f.input :name
     = f.input :state
