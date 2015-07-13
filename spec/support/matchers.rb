@@ -324,8 +324,7 @@ RSpec::Matchers.define :vmt_eq do |expected|
       actual['state'] == expected.state.to_s &&
       actual['managed_by_atmosphere'] == expected.managed_by_atmosphere &&
       actual['appliance_type_id'] == expected.appliance_type_id &&
-      actual['architecture'] == expected.architecture.to_s &&
-      expected.tenants.pluck(:id).include?(actual['compute_site_id'])
+      actual['architecture'] == expected.architecture.to_s
   end
 end
 

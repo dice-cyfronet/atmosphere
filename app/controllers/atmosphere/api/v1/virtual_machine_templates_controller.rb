@@ -5,9 +5,10 @@ class Atmosphere::Api::V1::VirtualMachineTemplatesController  < Atmosphere::Api:
   respond_to :json
 
   def index
-    respond_with @virtual_machine_templates.joins(:tenants).where(filter).order(:id),
-                 each_serializer: Atmosphere::VirtualMachineTemplateSerializer,
-                 load_all?: load_all?
+    respond_with @virtual_machine_templates.joins(:tenants).where(filter).
+      order(:id),
+      each_serializer: Atmosphere::VirtualMachineTemplateSerializer,
+      load_all?: load_all?
   end
 
   def model_class

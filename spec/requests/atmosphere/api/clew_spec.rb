@@ -208,7 +208,8 @@ describe Atmosphere::Api::V1::ClewController do
       get api('/clew/appliance_types', user)
 
       expect(clew_at_response['appliance_types'].size).to eq 1
-      expect(clew_at_response['appliance_types'][0]['compute_site_ids']).to eq [t1.id]
+      expect(clew_at_response['appliance_types'][0]['compute_site_ids']).
+        to eq [t1.id]
       expect(clew_at_response['compute_sites'].size).to eq 1
       expect(clew_at_response['compute_sites'][0]['id']).to eq t1.id
     end
