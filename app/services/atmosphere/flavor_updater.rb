@@ -9,7 +9,7 @@ module Atmosphere
     def execute
       update_existing_flavors
       purge_non_existing_flavors
-    rescue Exception => e
+    rescue StandardError => e
       Rails.logger.error(I18n.t('virtual_machine_flavor.update_flavors_failed',
                                 id: tenant.tenant_id, msg: e.message))
     end
