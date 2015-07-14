@@ -30,7 +30,6 @@ describe Atmosphere::ClewApplianceInstancesSerializer do
     as = create(:appliance_set, appliance_set_type: :portal)
     appl = create(:appliance, appliance_type: at, appliance_set: as)
     serializer = Atmosphere::ClewApplianceInstancesSerializer.new(appliance_sets: [as])
-
     result = JSON.parse(serializer.to_json)
     appl = result['clew_appliance_instances']['appliances'].first
     port_mapping_templates = appl['port_mapping_templates']

@@ -131,14 +131,15 @@ describe Atmosphere::Api::V1::ClewController do
     end
 
     context 'when authenticated' do
-      let!(:user) { create(:user) }
+      let!(:fund) { create(:fund) }
+      let!(:user) { create(:user, funds: [fund]) }
 
       let!(:at1)  { create(:filled_appliance_type, author: user) }
       let!(:at2)  { create(:appliance_type, visible_to: :all) }
       let!(:at3)  { create(:active_appliance_type, author: user) }
       let!(:at4)  { create(:active_appliance_type, visible_to: :all) }
 
-      let(:t) { create(:tenant) }
+      let(:t) { create(:tenant, funds: [fund]) }
 
       let!(:vmt3) { create(:virtual_machine_template, tenants: [t], appliance_type: at3) }
       let!(:vmt4) { create(:virtual_machine_template, tenants: [t], appliance_type: at4) }
@@ -160,7 +161,7 @@ describe Atmosphere::Api::V1::ClewController do
 
         expect(response.status).to eq 200
         expect(clew_at_response['appliance_types'].size).to eq 2
-        expect(clew_at_response['compute_sites'].size).to eq 3
+        expect(clew_at_response['compute_sites'].size).to eq 1
         expect(clew_at_response['appliance_types'][0]).to clew_at_eq at3
         expect(clew_at_response['appliance_types'][1]).to clew_at_eq at4
         expect(clew_at_response['appliance_types'][0]['matched_flavor']).to clew_flavor_eq  flavor
@@ -171,8 +172,9 @@ describe Atmosphere::Api::V1::ClewController do
     end
 
     it 'does not return AT with visible_to owner when user is not owner' do
-      user = create(:user)
-      t = create(:tenant)
+      fund = create(:fund)
+      user = create(:user, funds: [fund])
+      t = create(:tenant, funds: [fund])
       create(:flavor, tenant: t)
 
       owned_at = create(:appliance_type, visible_to: :owner, author: user)
@@ -186,6 +188,46 @@ describe Atmosphere::Api::V1::ClewController do
 
       expect(clew_at_response['appliance_types'].size).to eq 1
       expect(clew_at_response['appliance_types'][0]).to clew_at_eq owned_at
+    end
+
+    it 'does not reveal virtual machine templates to which the user is not linked via funds' do
+      fund = create(:fund)
+      user = create(:user, funds: [fund])
+      t1 = create(:openstack_with_flavors, funds: [fund])
+      t2 = create(:openstack_with_flavors, funds: [])
+      at1 = create(:appliance_type, visible_to: :all)
+      at2 = create(:appliance_type, visible_to: :all)
+      act1 = create(:appliance_configuration_template, appliance_type: at1)
+      act2 = create(:appliance_configuration_template, appliance_type: at2)
+
+      vmt1 = create(:virtual_machine_template, appliance_type: at1, tenants: [t1])
+      vmt2 = create(:virtual_machine_template, appliance_type: at1, tenants: [t2])
+      vmt3 = create(:virtual_machine_template, appliance_type: at1, tenants: [t1, t2])
+      vmt4 = create(:virtual_machine_template, appliance_type: at2, tenants: [t2])
+
+      get api('/clew/appliance_types', user)
+
+      expect(clew_at_response['appliance_types'].size).to eq 1
+      expect(clew_at_response['appliance_types'][0]['compute_site_ids']).
+        to eq [t1.id]
+      expect(clew_at_response['compute_sites'].size).to eq 1
+      expect(clew_at_response['compute_sites'][0]['id']).to eq t1.id
+    end
+
+    it 'skips AT entirely if it has no available vmts through funds' do
+      fund1 = create(:fund)
+      fund2 = create(:fund)
+      user = create(:user, login: 'foobarbazquux', funds: [fund1])
+      create(:tenant, funds: [fund1])
+      t2 = create(:tenant, funds: [fund2])
+      at = create(:appliance_type, visible_to: :all)
+      create(:appliance_configuration_template, appliance_type: at)
+      create(:virtual_machine_template, appliance_type: at, tenants: [t2])
+
+      get api('/clew/appliance_types', user)
+
+      expect(clew_at_response['appliance_types'].size).to eq 0
+      expect(clew_at_response['compute_sites'].size).to eq 0
     end
 
     def clew_at_response

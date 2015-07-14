@@ -11,7 +11,11 @@ module Atmosphere
     has_one :appliance_type
 
     def compute_site_id
-      object.tenants.first.id
+      ts = object.tenants.active
+      unless options[:load_all?]
+        ts = ts.where(id: scope.tenants)
+      end
+      ts.blank? ? nil : ts.first.id
     end
   end
 end

@@ -397,8 +397,10 @@ describe Atmosphere::Api::V1::AppliancesController do
 
     context 'with_selected_compute_sites' do
 
-      let!(:tenant_1) {create(:tenant)}
-      let!(:tenant_2) {create(:tenant)}
+      let!(:tenant_1) { create(:tenant) }
+      let!(:tenant_2) { create(:tenant) }
+      let!(:tenant_3) { create(:tenant) }
+      let!(:tenant_4) { create(:tenant) }
 
       let!(:static_dev_request_body_with_one_ts) do
         {
@@ -406,7 +408,7 @@ describe Atmosphere::Api::V1::AppliancesController do
                 configuration_template_id: static_config.id,
                 appliance_set_id: development_set.id,
                 fund_id: fund.id,
-                tenant_ids: [tenant_1.id]
+                compute_site_ids: [tenant_1.id]
             }
         }
       end
@@ -417,7 +419,7 @@ describe Atmosphere::Api::V1::AppliancesController do
                 configuration_template_id: static_config.id,
                 appliance_set_id: development_set.id,
                 fund_id: fund.id,
-                tenant_ids: [tenant_1.id, tenant_2.id]
+                compute_site_ids: [tenant_2.id, tenant_4.id]
             }
         }
       end
@@ -431,7 +433,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       it 'creates new appliance with default t binding' do
         expect {
           post api("/appliances", user), static_request_body
-        }.to change { Atmosphere::ApplianceTenant.count}.by(2)
+        }.to change { Atmosphere::ApplianceTenant.count }.by(4)
       end
 
       it 'creates new appliance bound to one t' do
@@ -446,7 +448,6 @@ describe Atmosphere::Api::V1::AppliancesController do
         expect(a.tenants.count).to eq 2
       end
     end
-
 
     context 'user keys' do
       context 'when in production mode' do
