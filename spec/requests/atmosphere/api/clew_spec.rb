@@ -218,11 +218,11 @@ describe Atmosphere::Api::V1::ClewController do
       fund1 = create(:fund)
       fund2 = create(:fund)
       user = create(:user, login: 'foobarbazquux', funds: [fund1])
-      t1 = create(:tenant, funds: [fund1])
+      create(:tenant, funds: [fund1])
       t2 = create(:tenant, funds: [fund2])
       at = create(:appliance_type, visible_to: :all)
-      act = create(:appliance_configuration_template, appliance_type: at)
-      vmt = create(:virtual_machine_template, appliance_type: at, tenants: [t2])
+      create(:appliance_configuration_template, appliance_type: at)
+      create(:virtual_machine_template, appliance_type: at, tenants: [t2])
 
       get api('/clew/appliance_types', user)
 

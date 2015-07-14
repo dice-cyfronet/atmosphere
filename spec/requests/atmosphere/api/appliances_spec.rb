@@ -397,10 +397,10 @@ describe Atmosphere::Api::V1::AppliancesController do
 
     context 'with_selected_compute_sites' do
 
-      let!(:tenant_1) {create(:tenant)}
-      let!(:tenant_2) {create(:tenant)}
-      let!(:tenant_3) {create(:tenant)}
-      let!(:tenant_4) {create(:tenant)}
+      let!(:tenant_1) { create(:tenant) }
+      let!(:tenant_2) { create(:tenant) }
+      let!(:tenant_3) { create(:tenant) }
+      let!(:tenant_4) { create(:tenant) }
 
       let!(:static_dev_request_body_with_one_ts) do
         {
@@ -433,7 +433,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       it 'creates new appliance with default t binding' do
         expect {
           post api("/appliances", user), static_request_body
-        }.to change { Atmosphere::ApplianceTenant.count}.by(4)
+        }.to change { Atmosphere::ApplianceTenant.count }.by(4)
       end
 
       it 'creates new appliance bound to one t' do
