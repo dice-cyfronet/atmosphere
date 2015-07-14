@@ -38,7 +38,7 @@ module Atmosphere
 
     def compute_site_ids
       ts = object.tenants.active
-      if !(@options[:load_all?])
+      unless @options[:load_all?]
         ts = ts & current_user.tenants
       end
       ts.map(&:id)

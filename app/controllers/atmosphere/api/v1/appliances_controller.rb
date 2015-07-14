@@ -110,7 +110,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   def build_appliance
     # The following rewrite is done to maintain compatibility with old clients
     if params[:appliance].keys.include? 'compute_site_ids'
-      params[:appliance]['tenant_ids'] = params[:appliance]['compute_site_ids']
+      params[:appliance]['tenant_ids'] = params[:appliance].delete('compute_site_ids')
     end
     @appliance = Atmosphere::ApplianceCreator.
                   new(params.require(:appliance), delegate_auth).build
