@@ -238,12 +238,11 @@ describe Atmosphere::Appliance do
       t2 = create(:tenant, funds: [f2])
       u = create(:user, funds: [f2])
       vmt = create(:virtual_machine_template, tenants: [t1, t2])
-      atype = create(:appliance_type, virtual_machine_templates: [vmt])
+      at = create(:appliance_type, virtual_machine_templates: [vmt])
       as = create(:appliance_set, user: u)
-      a = create(:appliance, appliance_set: as, appliance_type: atype, fund: nil)
+      a = create(:appliance, appliance_set: as, appliance_type: at, fund: nil)
 
       expect(a.fund).to eq f2
     end
   end
-
 end
