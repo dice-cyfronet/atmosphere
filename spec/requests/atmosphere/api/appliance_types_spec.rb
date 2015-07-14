@@ -243,9 +243,10 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       end
 
       it 'returns compute sites for appliance type' do
-        user = create(:user)
-        t1  = create(:tenant)
-        t2  = create(:tenant)
+        f = create(:fund)
+        user = create(:user, funds: [f])
+        t1  = create(:tenant, funds: [f])
+        t2  = create(:tenant, funds: [f])
         at   = create(:appliance_type, visible_to: :all)
         create(:virtual_machine_template, tenants: [t1], appliance_type: at)
         create(:virtual_machine_template, tenants: [t2], appliance_type: at)
@@ -257,9 +258,9 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       end
 
       it 'does not return the same compute site twice for appliance type' do
-        user = create(:user)
-        t1  = create(:tenant)
-
+        f = create(:fund)
+        user = create(:user, funds: [f])
+        t1  = create(:tenant, funds: [f])
         at  = create(:appliance_type, visible_to: :all)
         create(:virtual_machine_template, tenants: [t1], appliance_type: at)
         create(:virtual_machine_template, tenants: [t1], appliance_type: at)
