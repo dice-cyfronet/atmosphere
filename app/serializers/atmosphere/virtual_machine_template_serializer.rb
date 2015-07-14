@@ -13,7 +13,7 @@ module Atmosphere
     def compute_site_id
       ts = object.tenants.active
       unless options[:load_all?]
-        ts = ts & current_user.tenants
+        ts = ts.where(id: scope.tenants)
       end
       ts.blank? ? nil : ts.first.id
     end

@@ -38,10 +38,10 @@ module Atmosphere
 
     def compute_site_ids
       ts = object.tenants.active
-      unless @options[:load_all?]
-        ts = ts & current_user.tenants
+      unless options[:load_all?]
+        ts = ts.where(id: scope.tenants)
       end
-      ts.map(&:id)
+      ts.pluck(:id)
     end
   end
 end

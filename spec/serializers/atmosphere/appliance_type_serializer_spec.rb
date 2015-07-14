@@ -37,9 +37,6 @@ describe Atmosphere::ApplianceTypeSerializer do
   private
 
   def slizer(at)
-    serializer = Atmosphere::ApplianceTypeSerializer.
-      new(at, scope: @current_user)
-    def serializer.current_user() scope end
-    serializer
+    Atmosphere::ApplianceTypeSerializer.new(at, scope: @current_user)
   end
 end
