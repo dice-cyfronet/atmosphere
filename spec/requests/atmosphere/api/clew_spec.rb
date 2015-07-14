@@ -214,6 +214,22 @@ describe Atmosphere::Api::V1::ClewController do
       expect(clew_at_response['compute_sites'][0]['id']).to eq t1.id
     end
 
+    it 'skips AT entirely if it has no available vmts through funds' do
+      fund1 = create(:fund)
+      fund2 = create(:fund)
+      user = create(:user, login: 'foobarbazquux', funds: [fund1])
+      t1 = create(:tenant, funds: [fund1])
+      t2 = create(:tenant, funds: [fund2])
+      at = create(:appliance_type, visible_to: :all)
+      act = create(:appliance_configuration_template, appliance_type: at)
+      vmt = create(:virtual_machine_template, appliance_type: at, tenants: [t2])
+
+      get api('/clew/appliance_types', user)
+
+      expect(clew_at_response['appliance_types'].size).to eq 0
+      expect(clew_at_response['compute_sites'].size).to eq 0
+    end
+
     def clew_at_response
       json_response['clew_appliance_types']
     end
