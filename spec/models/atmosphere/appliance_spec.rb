@@ -146,9 +146,9 @@ describe Atmosphere::Appliance do
   end
 
   context 'when instantiated' do
-    let(:appliance_type) { create(:appliance_type) }
-    let(:appliance_set) { create(:appliance_set) }
-    let(:appliance) do
+    let!(:appliance_type) { create(:appliance_type) }
+    let!(:appliance_set) { create(:appliance_set) }
+    let!(:appliance) do
       create(:appliance,
               appliance_set: appliance_set,
               appliance_type: appliance_type,
@@ -181,17 +181,6 @@ describe Atmosphere::Appliance do
       expect(supported_appliance_types).to all(include(appliance_type))
       expect(appliance.fund).not_to eq funded_t.funds.first
       expect(appliance.fund).to eq appliance.send(:default_fund)
-    end
-
-    it 'chooses one of user funds that support relevant tenant' do
-      create(:openstack_with_flavors, funds: [appliance_set.user.default_fund])
-      funded_t = create(:openstack_with_flavors, funds: [create(:fund)])
-      appliance_set.user.funds << funded_t.funds.first
-      create(:virtual_machine_template,
-             appliance_type: appliance_type,
-             tenants: [funded_t])
-      expect(appliance.fund).to eq funded_t.funds.first
-      expect(appliance.fund).not_to eq appliance.send(:default_fund)
     end
   end
 
