@@ -6,7 +6,6 @@ describe Atmosphere::ApplianceTypeSerializer do
   it 'is inactive when all VMT started on turned off compute site' do
     _, inactive_vmt = vmt_on_tenant(t_active: false)
     at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
-    #serializer = Atmosphere::ApplianceTypeSerializer.new(at)
     @current_user = create(:user)
 
     serializer = slizer(at)
@@ -38,9 +37,9 @@ describe Atmosphere::ApplianceTypeSerializer do
   private
 
   def slizer(at)
-    serializer = Atmosphere::ApplianceTypeSerializer.new(at, { scope: @current_user })
+    serializer = Atmosphere::ApplianceTypeSerializer.
+      new(at, scope: @current_user)
     def serializer.current_user() scope end
     serializer
   end
-
 end
