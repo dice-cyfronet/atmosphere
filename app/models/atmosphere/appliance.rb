@@ -163,6 +163,12 @@ module Atmosphere
         vmt.tenants.map(&:funds)
       end.flatten.uniq.compact
 
+      # Restrict to funds which belong to this appliance's owner
+      funds = funds & appliance_set.user.funds
+
+      # Restrict to funds which match this appliance's set of selected tenants
+      funds = funds & tenants.map(&:funds) if tenants.present?
+
       self.fund = if funds.include? default_fund
                     default_fund
                   else

@@ -229,4 +229,21 @@ describe Atmosphere::Appliance do
       expect(appliance.send(:default_fund)).to eq nil
     end
   end
+
+  context '#fund_to_tenant_matching' do
+    it 'does not assign a fund which is incompatible with selected tenants' do
+      f1 = create(:fund)
+      f2 = create(:fund)
+      t1 = create(:tenant, funds: [f1])
+      t2 = create(:tenant, funds: [f2])
+      u = create(:user, funds: [f2])
+      vmt = create(:virtual_machine_template, tenants: [t1, t2])
+      atype = create(:appliance_type, virtual_machine_templates: [vmt])
+      as = create(:appliance_set, user: u)
+      a = create(:appliance, appliance_set: as, appliance_type: atype, fund: nil)
+
+      expect(a.fund).to eq f2
+    end
+  end
+
 end
