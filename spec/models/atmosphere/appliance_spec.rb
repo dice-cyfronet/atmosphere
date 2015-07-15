@@ -240,5 +240,4 @@ describe Atmosphere::Appliance do
       expect(t).to_not be_nil
     end
   end
-
 end
