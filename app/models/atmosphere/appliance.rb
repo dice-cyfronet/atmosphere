@@ -56,10 +56,10 @@ module Atmosphere
 
     has_many :tenants,
       through: :appliance_tenants,
-      dependent: :destroy,
       class_name: 'Atmosphere::Tenant'
 
     has_many :appliance_tenants,
+      dependent: :destroy,
       class_name: 'Atmosphere::ApplianceTenant'
 
     has_one :dev_mode_property_set,

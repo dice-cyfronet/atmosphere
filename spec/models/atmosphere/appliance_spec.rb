@@ -229,4 +229,17 @@ describe Atmosphere::Appliance do
       expect(appliance.send(:default_fund)).to eq nil
     end
   end
+
+  context '#clean_up_on_delete' do
+    it 'deletes linking table records but not tenants when destroyed' do
+      t = create(:tenant)
+      a = create(:appliance, tenants: [t])
+
+      expect {
+        a.destroy
+      }.to change { Atmosphere::ApplianceTenant.count }.by(-1)
+      expect(t).to_not be_nil
+    end
+  end
+
 end
