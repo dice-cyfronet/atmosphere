@@ -219,6 +219,7 @@ describe Atmosphere::Appliance do
     end
   end
 
+
   context '#assign_fund' do
     it 'does not assign a fund which is incompatible with selected tenants' do
       f1 = create(:fund)
@@ -238,5 +239,14 @@ describe Atmosphere::Appliance do
       expect(t1_a.fund).to eq f1
       expect(t2_a.fund).to eq f2
     end
+  end
+
+  it 'deletes linking table records but not tenants when destroyed' do
+    t = create(:tenant)
+    a = create(:appliance, tenants: [t])
+
+    expect { a.destroy }.
+      to change { Atmosphere::ApplianceTenant.count }.by(-1)
+    expect(t).to_not be_nil
   end
 end
