@@ -235,9 +235,8 @@ describe Atmosphere::Appliance do
       t = create(:tenant)
       a = create(:appliance, tenants: [t])
 
-      expect {
-        a.destroy
-      }.to change { Atmosphere::ApplianceTenant.count }.by(-1)
+      expect { a.destroy }.
+        to change { Atmosphere::ApplianceTenant.count }.by(-1)
       expect(t).to_not be_nil
     end
   end
