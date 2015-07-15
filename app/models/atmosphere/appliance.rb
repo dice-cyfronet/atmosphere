@@ -156,12 +156,22 @@ module Atmosphere
 
     private
 
+    # TODO: This could be buggy. Make sure to verify that Atmosphere uses
+    # the correct fund to spawn VMs in the selected tenant.
     def assign_fund
-      # TODO: This could be buggy. Make sure to verify that Atmosphere uses the correct fund to spawn VMs
-      # in the selected tenant.
-      funds = appliance_type.virtual_machine_templates.map do |vmt|
-        vmt.tenants.map(&:funds)
-      end.flatten.uniq.compact
+      funds = Fund.joins(tenants: :virtual_machine_templates).
+              where(id: appliance_set.user.funds,
+                    atmosphere_virtual_machine_templates: {
+                      appliance_type_id: appliance_type.id
+                    })
+
+      if tenants.present?
+        # we need to use map here, because this code can be invoked
+        # before first appliance save. Then appliance does not have id
+        # assigned which is required to perform tenants query with appliance
+        # join.
+        funds = funds.where(atmosphere_tenants: { id: tenants.map(&:id) })
+      end
 
       self.fund = if funds.include? default_fund
                     default_fund
