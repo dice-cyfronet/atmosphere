@@ -93,7 +93,7 @@ module Atmosphere
     end
 
     def delete_in_clouds
-      Tenant.all.each do |t|
+      Tenant.active.each do |t|
         cloud_client = t.cloud_client
         logger.debug "Deleting key #{id_at_site} from #{t.name}"
         # ignore key not found errors because it is possible that key was never imported to tenant
