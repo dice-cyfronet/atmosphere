@@ -1,3 +1,5 @@
+interactor :simple
+
 guard :rspec, cmd: 'spring rspec' do
    watch('config/application.rb')
     watch('config/environment.rb')
