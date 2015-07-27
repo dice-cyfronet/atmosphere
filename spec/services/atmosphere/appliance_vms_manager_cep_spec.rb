@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 describe Atmosphere::ApplianceVmsManager do
-
   before(:suite) do
-   Fog.mock!  
+    Fog.mock!
   end
 
   let(:server_id) { 'SERVER_ID' }
@@ -40,8 +39,10 @@ describe Atmosphere::ApplianceVmsManager do
   context 'optimization policy uses CEP' do
     let(:simple_ev) { {name: 'SIMPLE EVENT', properties: {} }}
     let(:complex_ev) { 'EPL QUERY' }
-    let(:ev_defs) { {simple_event: simple_ev, complex_event: complex_ev} }
-    let(:opt_strategy) { double('CEPFull strategy', event_definitions: ev_defs) }
+    let(:ev_defs) { { simple_event: simple_ev, complex_event: complex_ev } }
+    let(:opt_strategy) do
+      double('CEPFull strategy', event_definitions: ev_defs)
+    end
 
     it 'registers vm in CEP engine' do
       allow(appl).to receive(:optimization_strategy).and_return(opt_strategy)

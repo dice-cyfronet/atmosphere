@@ -353,7 +353,6 @@ describe Atmosphere::VirtualMachine do
       expect(monitorable_vms.size).to eq 1
       expect(monitorable_vms[0]).to eq monitorable_vm
     end
-
   end
 
   it_behaves_like 'childhoodable'

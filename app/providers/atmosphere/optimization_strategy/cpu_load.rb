@@ -11,7 +11,7 @@ module Atmosphere
 
       def event_definitions
         {
-          simple_event: {name: 'CpuLoad', properties: {}},
+          simple_event: { name: 'CpuLoad', properties: {} },
           complex_event: ''
         }
       end
