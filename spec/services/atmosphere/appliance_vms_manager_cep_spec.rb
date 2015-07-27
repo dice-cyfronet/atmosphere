@@ -34,6 +34,7 @@ describe Atmosphere::ApplianceVmsManager do
       and_return(true)
     allow_any_instance_of(Atmosphere::VirtualMachine).to receive(:valid?).
       and_return(true)
+    allow(tags_mng).to receive(:execute)
   end
 
   context 'optimization policy uses CEP' do
@@ -46,7 +47,7 @@ describe Atmosphere::ApplianceVmsManager do
       allow(appl).to receive(:optimization_strategy).and_return(opt_strategy)
       expect(cep).to receive(:add_event_type).with(simple_ev)
       expect(cep).to receive(:subscribe).with(complex_ev)
-      subject.spawn_vm!(tmpl, nil, 'CEPFULL')
+      subject.spawn_vm!(tmpl, tmpl.tenants.first, nil, 'CEPFULL')
     end
 
   end
@@ -56,7 +57,7 @@ describe Atmosphere::ApplianceVmsManager do
       allow(appl).to receive(:optimization_strategy).
         and_return(Atmosphere::OptimizationStrategy::Default.new(nil))
       # we expect that cep double is not invoked
-      subject.spawn_vm!(tmpl, nil, 'CEPLESS')
+      subject.spawn_vm!(tmpl, tmpl.tenants.first, nil, 'CEPLESS')
     end
   end
 
