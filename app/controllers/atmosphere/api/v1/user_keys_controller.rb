@@ -10,7 +10,7 @@ module Atmosphere
         respond_to :json
 
         def index
-          respond_with @user_keys.where(filter)
+          respond_with @user_keys.order(:name).where(filter)
         end
 
         def show
