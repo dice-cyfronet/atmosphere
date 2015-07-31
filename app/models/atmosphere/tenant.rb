@@ -24,51 +24,52 @@ module Atmosphere
     extend Enumerize
 
     has_many :virtual_machines,
-      dependent: :destroy,
-      class_name: 'Atmosphere::VirtualMachine'
+             dependent: :destroy,
+             class_name: 'Atmosphere::VirtualMachine'
 
     has_and_belongs_to_many :virtual_machine_templates,
       class_name: 'Atmosphere::VirtualMachineTemplate',
       join_table: 'atmosphere_virtual_machine_template_tenants'
 
     has_many :port_mapping_properties,
-      dependent: :destroy,
-      class_name: 'Atmosphere::PortMappingProperty'
+             dependent: :destroy,
+             class_name: 'Atmosphere::PortMappingProperty'
 
     has_many :virtual_machine_flavors,
-      dependent: :destroy,
-      class_name: 'Atmosphere::VirtualMachineFlavor'
+             dependent: :destroy,
+             class_name: 'Atmosphere::VirtualMachineFlavor'
 
-    # Required for API (returning all compute sites on which a given AT can be deployed)
+    # Required for API (returning all compute sites on which a given AT
+    # can be deployed)
     has_many :appliance_types,
-      through: :virtual_machine_templates,
-      class_name: 'Atmosphere::ApplianceType'
+             through: :virtual_machine_templates,
+             class_name: 'Atmosphere::ApplianceType'
 
     has_many :funds,
-      through: :tenant_funds,
-      class_name: 'Atmosphere::Fund'
+             through: :tenant_funds,
+             class_name: 'Atmosphere::Fund'
 
     has_many :tenant_funds,
-      dependent: :destroy,
-      class_name: 'Atmosphere::TenantFund'
+             dependent: :destroy,
+             class_name: 'Atmosphere::TenantFund'
 
     has_many :appliances,
-      through: :appliance_tenants,
-      class_name: 'Atmosphere::Appliance'
+             through: :appliance_tenants,
+             class_name: 'Atmosphere::Appliance'
 
     has_many :appliance_tenants,
-      dependent: :destroy,
-      class_name: 'Atmosphere::ApplianceTenant'
+             dependent: :destroy,
+             class_name: 'Atmosphere::ApplianceTenant'
 
     has_many :migration_job_cs_source,
-      dependent: :destroy,
-      class_name: 'Atmosphere::MigrationJob',
-      foreign_key: 'tenant_source_id'
+             dependent: :destroy,
+             class_name: 'Atmosphere::MigrationJob',
+             foreign_key: 'tenant_source_id'
 
     has_many :migration_job_cs_desination,
-      dependent: :destroy,
-      class_name: 'Atmosphere::MigrationJob',
-      foreign_key: 'tenant_destination_id'
+             dependent: :destroy,
+             class_name: 'Atmosphere::MigrationJob',
+             foreign_key: 'tenant_destination_id'
 
     validates :tenant_id, presence: true
 
@@ -88,8 +89,8 @@ module Atmosphere
               predicates: true
 
     scope :with_appliance_type, ->(appliance_type) do
-      joins(virtual_machines: {appliances: :appliance_set})
-        .where(
+      joins(virtual_machines: { appliances: :appliance_set }).
+        where(
           atmosphere_appliances: {
             appliance_type_id: appliance_type
           },
@@ -100,8 +101,8 @@ module Atmosphere
     end
 
     scope :with_deployment, ->(deployment) do
-      joins(virtual_machines: :deployments)
-        .where(
+      joins(virtual_machines: :deployments).
+        where(
           deployments: {
             id: deployment.id
           }
@@ -109,8 +110,8 @@ module Atmosphere
     end
 
     scope :with_dev_property_set, ->(dev_mode_property_set) do
-      joins(virtual_machines: { appliances: :dev_mode_property_set })
-        .where(
+      joins(virtual_machines: { appliances: :dev_mode_property_set }).
+        where(
           atmosphere_dev_mode_property_sets: {
             id: dev_mode_property_set.id
           }
@@ -118,15 +119,15 @@ module Atmosphere
     end
 
     scope :with_appliance, ->(appliance) do
-      joins(virtual_machines: :appliances)
-        .where(atmosphere_appliances: {id: appliance.id})
+      joins(virtual_machines: :appliances).
+        where(atmosphere_appliances: { id: appliance.id })
     end
 
     scope :active, -> { where(active: true) }
 
     scope :funded_by, ->(fund) do
-      joins(:funds)
-        .where(atmosphere_funds: { id: fund.id })
+      joins(:funds).
+        where(atmosphere_funds: { id: fund.id })
     end
 
     after_update :update_cloud_client, if: :config_changed?
@@ -137,7 +138,7 @@ module Atmosphere
     end
 
     def cloud_client
-      Atmosphere.get_cloud_client(self.tenant_id) || register_cloud_client
+      Atmosphere.get_cloud_client(tenant_id) || register_cloud_client
     end
 
     def dnat_client
@@ -176,23 +177,24 @@ module Atmosphere
     end
 
     def get_all_vmts_for_cs
-      Atmosphere::VirtualMachineTemplate.joins(:tenants).where("atmosphere_tenants.site_id = '#{site_id}'").all
+      Atmosphere::VirtualMachineTemplate.joins(:tenants).
+        where("atmosphere_tenants.site_id = '#{site_id}'").all
     end
 
     private
 
     def update_cloud_client
-      unless config.blank?
-        register_cloud_client
-      else
+      if config.blank?
         unregister_cloud_client
+      else
+        register_cloud_client
       end
     end
 
     def register_cloud_client
-      cloud_site_conf = JSON.parse(self.config).symbolize_keys
+      cloud_site_conf = JSON.parse(config).symbolize_keys
       client = Fog::Compute.new(cloud_site_conf)
-      Atmosphere.register_cloud_client(self.tenant_id, client)
+      Atmosphere.register_cloud_client(tenant_id, client)
       client
     end
 

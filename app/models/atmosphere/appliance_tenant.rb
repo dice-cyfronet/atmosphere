@@ -11,9 +11,9 @@
 module Atmosphere
   class ApplianceTenant < ActiveRecord::Base
     belongs_to :appliance,
-      class_name: 'Atmosphere::Appliance'
+               class_name: 'Atmosphere::Appliance'
 
     belongs_to :tenant,
-    class_name: 'Atmosphere::Tenant'
+               class_name: 'Atmosphere::Tenant'
   end
 end

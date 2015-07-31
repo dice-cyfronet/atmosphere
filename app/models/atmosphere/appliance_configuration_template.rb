@@ -14,19 +14,19 @@ require 'atmosphere/params_regexpable'
 module Atmosphere
   class ApplianceConfigurationTemplate < ActiveRecord::Base
     belongs_to :appliance_type,
-      class_name: 'Atmosphere::ApplianceType'
+               class_name: 'Atmosphere::ApplianceType'
 
     has_many :appliance_configuration_instances,
-      class_name: 'Atmosphere::ApplianceConfigurationInstance',
-      dependent: :nullify
+             class_name: 'Atmosphere::ApplianceConfigurationInstance',
+             dependent: :nullify
 
     validates :name, presence: true
     validates :appliance_type, presence: true
     validates :name, uniqueness: { scope: :appliance_type }
 
     scope :with_config_instance, ->(config_instance) do
-      joins(:appliance_configuration_instances)
-        .where(
+      joins(:appliance_configuration_instances).
+        where(
           atmosphere_appliance_configuration_instances: {
             id: config_instance
           }

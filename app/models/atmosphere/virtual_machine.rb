@@ -29,31 +29,31 @@ module Atmosphere
     ]
 
     has_many :saved_templates,
-      dependent: :nullify,
-      class_name: 'Atmosphere::VirtualMachineTemplate'
+             dependent: :nullify,
+             class_name: 'Atmosphere::VirtualMachineTemplate'
 
     has_many :port_mappings,
-      dependent: :delete_all,
-      class_name: 'Atmosphere::PortMapping'
+             dependent: :delete_all,
+             class_name: 'Atmosphere::PortMapping'
 
     belongs_to :source_template,
-      class_name: 'Atmosphere::VirtualMachineTemplate',
-      foreign_key: 'virtual_machine_template_id'
+               class_name: 'Atmosphere::VirtualMachineTemplate',
+               foreign_key: 'virtual_machine_template_id'
 
     belongs_to :tenant,
-      class_name: 'Atmosphere::Tenant'
+               class_name: 'Atmosphere::Tenant'
 
     belongs_to :virtual_machine_flavor,
-      class_name: 'Atmosphere::VirtualMachineFlavor'
+               class_name: 'Atmosphere::VirtualMachineFlavor'
 
     has_many :appliances,
-      through: :deployments,
-      dependent: :destroy,
-      class_name: 'Atmosphere::Appliance'
+             through: :deployments,
+             dependent: :destroy,
+             class_name: 'Atmosphere::Appliance'
 
     has_many :deployments,
-      dependent: :destroy,
-      class_name: 'Atmosphere::Deployment'
+             dependent: :destroy,
+             class_name: 'Atmosphere::Deployment'
 
     validates :name,
               presence: true
@@ -120,16 +120,16 @@ module Atmosphere
 
     def appliance_type
       return appliances.first.appliance_type if appliances.first
-      return nil
     end
 
     def destroy(delete_in_cloud = true)
-      saved_templates.each {|t| return if t.state == 'saving'}
+      saved_templates.each { |t| return if t.state == 'saving' }
       perform_delete_in_cloud if delete_in_cloud && managed_by_atmosphere
       super()
     end
 
-    # Deletes all dnat redirections and then adds. Use it when IP of the vm has changed and existing redirection would not work any way.
+    # Deletes all dnat redirections and then adds. Use it when IP of the vm
+    # has changed and existing redirection would not work any way.
     def regenerate_dnat
       if ip_was
         if delete_dnat(ip_was)
@@ -142,15 +142,18 @@ module Atmosphere
     def add_dnat
       return unless ip?
       pmts = nil
-      if (appliances.first and appliances.first.development?)
+      if appliances.first && appliances.first.development?
         pmts = appliances.first.dev_mode_property_set.port_mapping_templates
       else
         pmts = appliance_type.port_mapping_templates if appliance_type
       end
       return unless pmts
-      already_added_mapping_tmpls = port_mappings ? port_mappings.collect {|m| m.port_mapping_template} : []
-      to_add = pmts.select {|pmt| pmt.application_protocol.none?} - already_added_mapping_tmpls
-      tenant.dnat_client.add_dnat_for_vm(self, to_add).each {|added_mapping_attrs| PortMapping.create(added_mapping_attrs)}
+      already_added_mapping_tmpls =
+        port_mappings ? port_mappings.map(&:port_mapping_template) : []
+      to_add = pmts.select { |pmt| pmt.application_protocol.none? } -
+               already_added_mapping_tmpls
+      tenant.dnat_client.add_dnat_for_vm(self, to_add).
+        each { |added_mapping_attrs| PortMapping.create(added_mapping_attrs) }
     end
 
     def delete_dnat(ip = self.ip)
@@ -173,7 +176,7 @@ module Atmosphere
 
     def unregister_from_monitoring
       logger.info "Unregistering vm #{uuid} with monitoring host id #{monitoring_id} from monitoring"
-      monitoring_client.unregister_host(self.monitoring_id)
+      monitoring_client.unregister_host(monitoring_id)
       self[:monitoring_id] = nil
     end
 
@@ -181,8 +184,6 @@ module Atmosphere
       if monitoring_id
         metrics = monitoring_client.host_metrics(monitoring_id)
         metrics.collect_last if metrics
-      else
-        nil
       end
     end
 
@@ -196,7 +197,7 @@ module Atmosphere
       available_mem = 'Available memory'
 
       metrics_hash = {}
-      metrics.each {|m| metrics_hash.merge!(m)}
+      metrics.each { |m| metrics_hash.merge!(m) }
 
       metrics_store = Atmosphere.metrics_store
       appliances.each do |appl|
@@ -218,16 +219,12 @@ module Atmosphere
 
     def perform_delete_in_cloud
       unless cloud_client.servers.destroy(id_at_site)
-        Raven.capture_message(
-          "Error destroying VM in cloud",
-          {
-            logger: 'error',
-            extra: {
-              id_at_site: id_at_site,
-              tenant_id: tenant_id
-            }
-          }
-        )
+        Raven.capture_message('Error destroying VM in cloud',
+                              logger: 'error',
+                              extra: {
+                                id_at_site: id_at_site,
+                                tenant_id: tenant_id
+                              })
       end
     rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
       logger.warn("VM with #{id_at_site} does not exist - continuing")

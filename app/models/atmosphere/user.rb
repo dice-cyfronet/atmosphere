@@ -37,50 +37,51 @@ module Atmosphere
     include Atmosphere::Nondeletable
 
     has_many :appliance_sets,
-      dependent: :destroy,
-      class_name: 'Atmosphere::ApplianceSet'
+             dependent: :destroy,
+             class_name: 'Atmosphere::ApplianceSet'
 
     has_many :user_keys,
-      dependent: :destroy,
-      class_name: 'Atmosphere::UserKey'
+             dependent: :destroy,
+             class_name: 'Atmosphere::UserKey'
 
     has_many :appliance_types,
-      class_name: 'Atmosphere::ApplianceType'
+             class_name: 'Atmosphere::ApplianceType'
 
     has_many :funds,
-      through: :user_funds,
-      class_name: 'Atmosphere::Fund'
+             through: :user_funds,
+             class_name: 'Atmosphere::Fund'
 
     has_many :user_funds,
-      dependent: :destroy,
-      class_name: 'Atmosphere::UserFund'
+             dependent: :destroy,
+             class_name: 'Atmosphere::UserFund'
 
     has_many :billing_logs,
-      dependent: :nullify,
-      class_name: 'Atmosphere::BillingLog'
+             dependent: :nullify,
+             class_name: 'Atmosphere::BillingLog'
 
     after_create :check_fund_assignment
 
     scope :with_vm, ->(vm) do
-      joins(appliance_sets: { appliances: :virtual_machines })
-        .where(atmosphere_virtual_machines: {id: vm.id})
+      joins(appliance_sets: { appliances: :virtual_machines }).
+        where(atmosphere_virtual_machines: { id: vm.id })
     end
 
     include Gravtastic
     gravtastic default: 'mm'
 
-    #roles
+    # roles
     include RoleModel
     roles :admin, :developer
 
     def default_fund
       # Return this user's default fund, if it exists.
-      dfs = self.user_funds.where(default: true)
+      dfs = user_funds.where(default: true)
       dfs.blank? ? nil : dfs.first.fund
     end
 
     def generate_password
-      self.password = self.password_confirmation = Devise.friendly_token.first(8)
+      self.password = self.password_confirmation =
+        Devise.friendly_token.first(8)
     end
 
     def to_s
@@ -103,9 +104,11 @@ module Atmosphere
       roles.map { |r| r == :admin ? 'cloudadmin' : r.to_s }
     end
 
-    # Returns a list of this user's tenants to which the user is linked via fund assignments
+    # Returns a list of this user's tenants to which the user is linked via
+    # fund assignments
     def tenants
-      Atmosphere::Tenant.joins(funds: :users).where("atmosphere_users.id = #{id}")
+      Atmosphere::Tenant.joins(funds: :users).
+        where("atmosphere_users.id = #{id}")
     end
 
     def tenant_ids
@@ -115,12 +118,18 @@ module Atmosphere
     private
 
     # Checks whether any fund has been assigned to this user.
-    # If not, assign the first available fund (if it exists) and make it this user's default fund
-    # This method is provided to ensure compatibility with old versions of Atmosphere which do not supply fund information when creating users.
-    # Once the platform APIs are updated, this method will be deprecated and should be removed.
+    # If not, assign the first available fund (if it exists) and make it this
+    # user's default fund.
+    # This method is provided to ensure compatibility with old versions of
+    # Atmosphere which do not supply fund information when creating users.
+    # Once the platform APIs are updated, this method will be deprecated and
+    # should be removed.
     def check_fund_assignment
-      if Atmosphere::UserFund.where(user: self).blank? and Atmosphere::Fund.all.count > 0
-        user_funds << Atmosphere::UserFund.new(user: self, fund: Atmosphere::Fund.first, default: true)
+      if Atmosphere::UserFund.where(user: self).blank? &&
+         Atmosphere::Fund.all.count > 0
+        user_funds << Atmosphere::UserFund.new(user: self,
+                                               fund: Atmosphere::Fund.first,
+                                               default: true)
       end
     end
   end

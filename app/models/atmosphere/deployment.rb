@@ -12,15 +12,16 @@ module Atmosphere
   class Deployment < ActiveRecord::Base
     extend Enumerize
     belongs_to :appliance,
-      class_name: 'Atmosphere::Appliance'
+               class_name: 'Atmosphere::Appliance'
 
     belongs_to :virtual_machine,
-      class_name: 'Atmosphere::VirtualMachine'
+               class_name: 'Atmosphere::VirtualMachine'
 
     validates :billing_state, presence: true
 
-    enumerize :billing_state, in: ['initial', 'prepaid', 'expired', 'error'],
-      predicates: true
+    enumerize :billing_state,
+              in: ['initial', 'prepaid', 'expired', 'error'],
+              predicates: true
 
     after_create :initial_billing
 
@@ -28,7 +29,7 @@ module Atmosphere
       # This method sets billing details for a newly created deployment
       self.prepaid_until = Time.now.utc
       self.billing_state = 'expired'
-      self.save
+      save
     end
 
     # Returns the OS family for this deployment's ApplType

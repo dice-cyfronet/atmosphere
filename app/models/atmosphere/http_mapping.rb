@@ -18,13 +18,13 @@ module Atmosphere
     include Slugable
 
     belongs_to :appliance,
-      class_name: 'Atmosphere::Appliance'
+               class_name: 'Atmosphere::Appliance'
 
     belongs_to :port_mapping_template,
-      class_name: 'Atmosphere::PortMappingTemplate'
+               class_name: 'Atmosphere::PortMappingTemplate'
 
     belongs_to :tenant,
-      class_name: 'Atmosphere::Tenant'
+               class_name: 'Atmosphere::Tenant'
 
     validates :url,
               presence: true
@@ -83,12 +83,15 @@ module Atmosphere
 
     private
 
-    def workers(ips=nil)
-      (ips || workers_ips).collect { |ip| "#{ip}:#{target_port}" }
+    def workers(ips = nil)
+      (ips || workers_ips).map { |ip| "#{ip}:#{target_port}" }
     end
 
-    delegate :service_name, :target_port, :properties, to: :port_mapping_template
-    delegate :active_vms, to: :appliance
+    delegate :service_name, :target_port, :properties,
+             to: :port_mapping_template
+
+    delegate :active_vms,
+             to: :appliance
 
     def rm_proxies(default_proxy_name = proxy_name)
       rm_proxy(default_proxy_name)
@@ -101,7 +104,7 @@ module Atmosphere
                            'args' => [name, application_protocol])
     end
 
-    def add_proxy(name, ips=nil)
+    def add_proxy(name, ips = nil)
       Sidekiq::Client.push('queue' => tenant.site_id,
                            'class' => Redirus::Worker::AddProxy,
                            'args' => [name, workers(ips),
@@ -134,7 +137,7 @@ module Atmosphere
     end
 
     def slug_custom_name
-      self.custom_name = to_slug(self.custom_name) if self.custom_name
+      self.custom_name = to_slug(custom_name) if custom_name
     end
   end
 end

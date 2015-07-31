@@ -1,6 +1,5 @@
 module Atmosphere
   class ClewApplianceTypesSerializer < ActiveModel::Serializer
-
     attribute :appliance_types
 
     attribute :tenants, key: :compute_sites
@@ -60,30 +59,33 @@ module Atmosphere
         technology: t.technology,
         http_proxy_url: t.http_proxy_url,
         https_proxy_url: t.https_proxy_url,
-        config: "SANITIZED",
+        config: 'SANITIZED',
         template_filters: t.template_filters,
         active: t.active
       }
     end
 
     # TODO: This method attempts to find an optimal flavor for a given AT
-    # However, flavor selection logic is predicated on the tenant(s) assigned to an appliance
+    # However, flavor selection logic is predicated on the tenant(s) assigned
+    # to an appliance.
+    #
     # No Appliance object exists at the time this method is invoked.
-    # Actual price charged for Appliance MAY be higher than what is reported here, depending
-    # on the user's Tenant selection. This should be fixed at a later date.
-    def  selected_flavor_for(at)
+    # Actual price charged for Appliance MAY be higher than what is reported
+    # here, depending on the user's Tenant selection. This should be fixed at a
+    # later date.
+    def selected_flavor_for(at)
       params = {}
       params[:cpu] &&= at.preference_cpu
       params[:memory] &&= at.preference_memory
       params[:hdd] &&= at.preference_disk
 
-      tmpls = VirtualMachineTemplate.active.on_active_tenant
-        .where(appliance_type_id: at.id)
+      tmpls = VirtualMachineTemplate.active.on_active_tenant.
+              where(appliance_type_id: at.id)
       flavor = nil
 
       unless tmpls.blank?
-          _, _, flavor, _ = Optimizer.instance
-          .select_tmpl_and_flavor_and_tenant(tmpls, nil, params)
+        _, _, flavor = Optimizer.instance.
+                       select_tmpl_and_flavor_and_tenant(tmpls, nil, params)
       end
 
       flavor

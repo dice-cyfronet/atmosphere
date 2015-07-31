@@ -3,29 +3,29 @@ module Atmosphere
     include ::CanCan::Ability
 
     @@ability_builder_classes = [
-        ::Atmosphere::UserAbilityBuilder,
-        ::Atmosphere::TenantAbilityBuilder,
-        ::Atmosphere::ApplianceAbilityBuilder,
-        ::Atmosphere::ApplianceTypeAbilityBuilder,
-        ::Atmosphere::ApplianceSetAbilityBuilder,
-        ::Atmosphere::EndpointAbilityBuilder,
-        ::Atmosphere::ApplianceConfigurationTemplateAbilityBuilder,
-        ::Atmosphere::ApplianceConfigurationInstanceAbilityBuilder,
-        ::Atmosphere::PortMappingTemplateAbilityBuilder,
-        ::Atmosphere::PortMappingPropertyAbilityBuilder,
-        ::Atmosphere::DevModePropertySetAbilityBuilder,
-        ::Atmosphere::VirtualMachineAbilityBuilder,
-        ::Atmosphere::VirtualMachineTemplateAbilityBuilder,
-        ::Atmosphere::HttpMappingAbilityBuilder,
-        ::Atmosphere::PortMappingAbilityBuilder,
-        ::Atmosphere::UserKeyAbilityBuilder,
-        ::Atmosphere::VirtualMachineFlavorAbilityBuilder,
-        ::Atmosphere::ClewAbilityBuilder,
-        ::Atmosphere::ActionAbilityBuilder
-      ]
+      ::Atmosphere::UserAbilityBuilder,
+      ::Atmosphere::TenantAbilityBuilder,
+      ::Atmosphere::ApplianceAbilityBuilder,
+      ::Atmosphere::ApplianceTypeAbilityBuilder,
+      ::Atmosphere::ApplianceSetAbilityBuilder,
+      ::Atmosphere::EndpointAbilityBuilder,
+      ::Atmosphere::ApplianceConfigurationTemplateAbilityBuilder,
+      ::Atmosphere::ApplianceConfigurationInstanceAbilityBuilder,
+      ::Atmosphere::PortMappingTemplateAbilityBuilder,
+      ::Atmosphere::PortMappingPropertyAbilityBuilder,
+      ::Atmosphere::DevModePropertySetAbilityBuilder,
+      ::Atmosphere::VirtualMachineAbilityBuilder,
+      ::Atmosphere::VirtualMachineTemplateAbilityBuilder,
+      ::Atmosphere::HttpMappingAbilityBuilder,
+      ::Atmosphere::PortMappingAbilityBuilder,
+      ::Atmosphere::UserKeyAbilityBuilder,
+      ::Atmosphere::VirtualMachineFlavorAbilityBuilder,
+      ::Atmosphere::ClewAbilityBuilder,
+      ::Atmosphere::ActionAbilityBuilder
+    ]
 
     def initialize(user, load_admin_abilities = true)
-      @ability_builders = ability_builder_classes.collect do |builder_class|
+      @ability_builders = ability_builder_classes.map do |builder_class|
         builder_class.new(self, user)
       end
 

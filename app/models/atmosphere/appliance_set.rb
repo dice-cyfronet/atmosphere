@@ -16,10 +16,10 @@ module Atmosphere
     extend Enumerize
 
     belongs_to :user,
-        class_name: 'Atmosphere::User'
+               class_name: 'Atmosphere::User'
 
     has_many :appliances,
-        class_name: 'Atmosphere::Appliance'
+             class_name: 'Atmosphere::Appliance'
 
     validates :user, presence: true
 

@@ -13,10 +13,10 @@
 module Atmosphere
   class PortMappingProperty < ActiveRecord::Base
     belongs_to :port_mapping_template,
-      class_name: 'Atmosphere::PortMappingTemplate'
+               class_name: 'Atmosphere::PortMappingTemplate'
 
     belongs_to :tenant,
-      class_name: 'Atmosphere::Tenant'
+               class_name: 'Atmosphere::Tenant'
 
     validates :key,
               presence: true,

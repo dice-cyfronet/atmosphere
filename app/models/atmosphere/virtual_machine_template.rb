@@ -27,23 +27,23 @@ module Atmosphere
     ]
 
     belongs_to :source_vm,
-      class_name: 'Atmosphere::VirtualMachine',
-      foreign_key: 'virtual_machine_id'
+               class_name: 'Atmosphere::VirtualMachine',
+               foreign_key: 'virtual_machine_id'
 
     has_many :instances,
-      dependent: :nullify,
-      class_name: 'Atmosphere::VirtualMachine'
+             dependent: :nullify,
+             class_name: 'Atmosphere::VirtualMachine'
 
     has_many :migration_job,
-      dependent: :destroy,
-      class_name: 'Atmosphere::MigrationJob'
+             dependent: :destroy,
+             class_name: 'Atmosphere::MigrationJob'
 
     has_and_belongs_to_many :tenants,
       class_name: 'Atmosphere::Tenant',
       join_table: 'atmosphere_virtual_machine_template_tenants'
 
     belongs_to :appliance_type,
-      class_name: 'Atmosphere::ApplianceType'
+               class_name: 'Atmosphere::ApplianceType'
 
     validates :id_at_site,
               presence: true
@@ -72,18 +72,18 @@ module Atmosphere
     scope :active, -> { where(state: 'active') }
 
     scope :on_active_tenant, -> do
-      joins(:tenants)
-        .where('atmosphere_tenants.active = ?', true)
+      joins(:tenants).
+        where('atmosphere_tenants.active = ?', true)
     end
 
     scope :on_tenant, ->(t) do
-      joins(:tenants)
-        .where('atmosphere_tenants.id = ?', t)
+      joins(:tenants).
+        where('atmosphere_tenants.id = ?', t)
     end
 
     scope :on_tenant_with_src, ->(t_id, source_id) do
-      joins(:tenants)
-        .where("atmosphere_tenants.tenant_id = ? AND
+      joins(:tenants).
+        where("atmosphere_tenants.tenant_id = ? AND
         id_at_site = ?", t_id, source_id)
     end
 
@@ -101,12 +101,12 @@ module Atmosphere
       tmpl_name = VirtualMachineTemplate.sanitize_tmpl_name(name_with_timestamp)
       t = virtual_machine.tenant
 
-      id_at_site = t.cloud_client
-        .save_template(virtual_machine.id_at_site, tmpl_name)
+      id_at_site = t.cloud_client.
+                   save_template(virtual_machine.id_at_site, tmpl_name)
       logger.info "Created template #{id_at_site}"
 
-      vm_template = t.virtual_machine_templates
-        .find_or_initialize_by(id_at_site: id_at_site)
+      vm_template = t.virtual_machine_templates.
+                    find_or_initialize_by(id_at_site: id_at_site)
 
       vm_template.source_vm = virtual_machine
       vm_template.name = tmpl_name
@@ -133,7 +133,7 @@ module Atmosphere
       tmpl_name = name.dup
       l = tmpl_name.length
       if l < 3
-        (3 - l).times{tmpl_name << '_'}
+        (3 - l).times { tmpl_name << '_' }
       elsif l > 128
         tmpl_name = tmpl_name[0, 128]
       end
@@ -156,7 +156,8 @@ module Atmosphere
 
     # Returns the hourly cost for this template assuming a given VM flavor
     def get_hourly_cost_for(flavor)
-      incarnation = flavor.flavor_os_families.find_by(os_family: appliance_type.os_family)
+      incarnation = flavor.flavor_os_families.
+                    find_by(os_family: appliance_type.os_family)
       incarnation && incarnation.hourly_cost
     end
 
@@ -172,7 +173,7 @@ module Atmosphere
     private
 
     def self.generate_timestamp
-      t = Time.now;
+      t = Time.now
       t.strftime("%d-%m-%Y/%H-%M-%S/#{t.usec}")
     end
 
@@ -181,7 +182,7 @@ module Atmosphere
     end
 
     def destroy_source_vm
-      if  virtual_machine_id_was
+      if virtual_machine_id_was
         vm = VirtualMachine.find(virtual_machine_id_was)
         vm.destroy if vm.appliances.blank?
       end
@@ -205,7 +206,8 @@ module Atmosphere
 
     def cloud_client
       # WARNING! This will fail when the VMT is available on multiple tenants
-      # The method should be overridden in any subproject which makes use of tenants.
+      # The method should be overridden in any subproject which makes use of
+      # tenants.
       if tenants.present?
         tenants.first.cloud_client
       end

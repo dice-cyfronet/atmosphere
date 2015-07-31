@@ -20,15 +20,15 @@ module Atmosphere
     include Atmosphere::DevModePropertySetExt
 
     belongs_to :appliance,
-      class_name: 'Atmosphere::Appliance'
+               class_name: 'Atmosphere::Appliance'
 
     belongs_to :os_family,
-      class_name: 'Atmosphere::OSFamily'
+               class_name: 'Atmosphere::OSFamily'
 
-      has_many :port_mapping_templates,
-        dependent: :destroy,
-        autosave: true,
-        class_name: 'Atmosphere::PortMappingTemplate'
+    has_many :port_mapping_templates,
+             dependent: :destroy,
+             autosave: true,
+             class_name: 'Atmosphere::PortMappingTemplate'
 
     validates :appliance,
               presence: true
@@ -63,7 +63,8 @@ module Atmosphere
               }
 
     def self.create_from(appliance_type)
-      copy_params = ['name', 'description', 'shared',
+      copy_params = [
+        'name', 'description', 'shared',
         'scalable', 'preference_cpu', 'preference_memory',
         'preference_disk'] + copy_additional_params
 

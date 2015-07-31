@@ -12,37 +12,34 @@
 module Atmosphere
   class UserFund < ActiveRecord::Base
     belongs_to :user,
-      class_name: 'Atmosphere::User'
+               class_name: 'Atmosphere::User'
 
     belongs_to :fund,
-      class_name: 'Atmosphere::Fund'
+               class_name: 'Atmosphere::Fund'
 
     validates :user_id,
               uniqueness: {
-                  scope: :fund_id,
-                  message: I18n.t('funds.unique_user')
+                scope: :fund_id,
+                message: I18n.t('funds.unique_user')
               }
 
     around_save :ensure_single_default
     after_destroy :reallocate_default,
-                  if: Proc.new { |user_fund|
-                    user_fund.default
-                  }
-
+                  if: Proc.new { |user_fund| user_fund.default }
 
     private
 
     def ensure_single_default
-      unless self.default
+      unless default
         ufs = UserFund.where(user_id: user_id)
-        if ufs.count == 0 || (ufs.count == 1 && ufs[0].id == self.id)
+        if ufs.count == 0 || (ufs.count == 1 && ufs[0].id == id)
           self.default = true
         end
       end
 
       yield
 
-      if self.default
+      if default
         ufs = UserFund.where(user_id: user_id, default: true)
         (ufs - [self]).each do |uf|
           uf.update_attributes(default: false)

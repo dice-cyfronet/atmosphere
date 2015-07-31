@@ -14,10 +14,10 @@ require 'atmosphere/params_regexpable'
 module Atmosphere
   class ApplianceConfigurationInstance < ActiveRecord::Base
     belongs_to :appliance_configuration_template,
-      class_name: 'Atmosphere::ApplianceConfigurationTemplate'
+               class_name: 'Atmosphere::ApplianceConfigurationTemplate'
 
     has_many :appliances,
-      class_name: 'Atmosphere::Appliance'
+             class_name: 'Atmosphere::Appliance'
 
     def self.get(config_template, params)
       instance_payload = Atmosphere::ParamsRegexpable.
@@ -27,14 +27,14 @@ module Atmosphere
         new_instance(config_template, instance_payload)
     end
 
-    private
-
     def self.find_instance(config_template, payload)
-      config_template.appliance_configuration_instances.find_by(payload: payload)
+      config_template.appliance_configuration_instances.
+        find_by(payload: payload)
     end
 
     def self.new_instance(config_template, payload)
-      ApplianceConfigurationInstance.new(appliance_configuration_template: config_template, payload: payload)
+      ApplianceConfigurationInstance.
+        new(appliance_configuration_template: config_template, payload: payload)
     end
   end
 end

@@ -17,26 +17,27 @@
 
 # VirtualMachineFlavor
 # Added by PN on 2014-01-14
-# This class stores information on the VM flavors available at each tenant registered with AIR
+# This class stores information on the VM flavors available at each tenant
+# registered with Atmosphere.
 # For each flavor, the associated hourly cost is defined.
 module Atmosphere
   class VirtualMachineFlavor < ActiveRecord::Base
     belongs_to :tenant,
-      class_name: 'Atmosphere::Tenant'
+               class_name: 'Atmosphere::Tenant'
 
     has_many :virtual_machines,
-      class_name: 'Atmosphere::VirtualMachine',
-      dependent: :restrict_with_error
+             class_name: 'Atmosphere::VirtualMachine',
+             dependent: :restrict_with_error
 
     has_many :os_families,
-      through: :flavor_os_families,
-      class_name: 'Atmosphere::OSFamily'
+             through: :flavor_os_families,
+             class_name: 'Atmosphere::OSFamily'
 
     has_many :flavor_os_families,
-      inverse_of: :virtual_machine_flavor,
-      class_name: 'Atmosphere::FlavorOSFamily',
-      autosave: true,
-      dependent: :destroy
+             inverse_of: :virtual_machine_flavor,
+             class_name: 'Atmosphere::FlavorOSFamily',
+             autosave: true,
+             dependent: :destroy
 
     validates :flavor_name,
               presence: true
@@ -77,7 +78,7 @@ module Atmosphere
     # Upserts a binding between this VMF and an OS family, setting hourly cost
     def set_hourly_cost_for(os_family, cost)
       incarnation = flavor_os_families.
-          find_or_initialize_by(os_family: os_family)
+                    find_or_initialize_by(os_family: os_family)
       incarnation.hourly_cost = cost
       incarnation.save
     end
@@ -107,7 +108,7 @@ module Atmosphere
 
     def supports_architecture?(arch)
       supported_architectures == 'i386_and_x86_64' ||
-          supported_architectures == arch
+        supported_architectures == arch
     end
   end
 end

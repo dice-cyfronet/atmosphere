@@ -1,25 +1,3 @@
-# == Schema Information
-#
-# Table name: appliances
-#
-#  id                                  :integer          not null, primary key
-#  appliance_set_id                    :integer          not null
-#  appliance_type_id                   :integer          not null
-#  user_key_id                         :integer
-#  appliance_configuration_instance_id :integer          not null
-#  state                               :string(255)      default("new"), not null
-#  name                                :string(255)
-#  created_at                          :datetime
-#  updated_at                          :datetime
-#  fund_id                             :integer
-#  last_billing                        :datetime
-#  state_explanation                   :string(255)
-#  amount_billed                       :integer          default(0), not null
-#  billing_state                       :string(255)      default("prepaid"), not null
-#  prepaid_until                       :datetime         not null
-#  description                         :text
-#
-
 module Atmosphere
   class Appliance < ActiveRecord::Base
     include Atmosphere::ApplianceExt
@@ -27,49 +5,49 @@ module Atmosphere
     serialize :optimization_policy_params
 
     belongs_to :appliance_set,
-      class_name: 'Atmosphere::ApplianceSet'
+               class_name: 'Atmosphere::ApplianceSet'
 
     belongs_to :appliance_type,
-      class_name: 'Atmosphere::ApplianceType'
+               class_name: 'Atmosphere::ApplianceType'
 
     belongs_to :appliance_configuration_instance,
-      class_name: 'Atmosphere::ApplianceConfigurationInstance'
+               class_name: 'Atmosphere::ApplianceConfigurationInstance'
 
     belongs_to :user_key,
-      class_name: 'Atmosphere::UserKey'
+               class_name: 'Atmosphere::UserKey'
 
     belongs_to :fund,
-      class_name: 'Atmosphere::Fund'
+               class_name: 'Atmosphere::Fund'
 
     has_many :http_mappings,
-      dependent: :destroy,
-      autosave: true,
-      class_name: 'Atmosphere::HttpMapping'
+             dependent: :destroy,
+             autosave: true,
+             class_name: 'Atmosphere::HttpMapping'
 
     has_many :virtual_machines,
-      through: :deployments,
-      class_name: 'Atmosphere::VirtualMachine'
+             through: :deployments,
+             class_name: 'Atmosphere::VirtualMachine'
 
     has_many :deployments,
-      dependent: :destroy,
-      class_name: 'Atmosphere::Deployment'
+             dependent: :destroy,
+             class_name: 'Atmosphere::Deployment'
 
     has_many :tenants,
-      through: :appliance_tenants,
-      class_name: 'Atmosphere::Tenant'
+             through: :appliance_tenants,
+             class_name: 'Atmosphere::Tenant'
 
     has_many :appliance_tenants,
-      dependent: :destroy,
-      class_name: 'Atmosphere::ApplianceTenant'
-
-    has_one :dev_mode_property_set,
-      dependent: :destroy,
-      autosave: true,
-      class_name: 'Atmosphere::DevModePropertySet'
+             dependent: :destroy,
+             class_name: 'Atmosphere::ApplianceTenant'
 
     has_many :actions,
              dependent: :destroy,
              class_name: 'Atmosphere::Action'
+
+    has_one :dev_mode_property_set,
+            dependent: :destroy,
+            autosave: true,
+            class_name: 'Atmosphere::DevModePropertySet'
 
     validates :appliance_set, presence: true
     validates :appliance_type, presence: true
@@ -86,10 +64,14 @@ module Atmosphere
     after_destroy :remove_appliance_configuration_instance_if_needed
     after_create :optimize_saved_appliance
 
-    scope :started_on_site, ->(tenant) { joins(:virtual_machines).where(atmosphere_virtual_machines: {tenant: tenant}) }
+    scope :started_on_site, ->(tenant) do
+      joins(:virtual_machines).
+        where(atmosphere_virtual_machines: { tenant: tenant })
+    end
 
     def to_s
-      "#{id} #{appliance_type.name} with configuration #{appliance_configuration_instance_id}"
+      "#{id} #{appliance_type.name} with configuration \
+       #{appliance_configuration_instance_id}"
     end
 
     def development?
@@ -97,7 +79,7 @@ module Atmosphere
     end
 
     def create_dev_mode_property_set(options={})
-      unless self.dev_mode_property_set
+      unless dev_mode_property_set
         set = DevModePropertySet.create_from(appliance_type)
         set.preference_memory = options[:preference_memory] if options[:preference_memory]
         set.preference_cpu = options[:preference_cpu] if options[:preference_cpu]
@@ -118,15 +100,16 @@ module Atmosphere
     end
 
     def optimization_strategy
-        strategy_name =
+      strategy_name =
         begin
-          self.optimization_policy || self.appliance_set.optimization_policy || 'default'
+          optimization_policy || appliance_set.optimization_policy || 'default'
         rescue NameError
           'default'
         end
-        strategy_class = ('Atmosphere::OptimizationStrategy::' + strategy_name.to_s.capitalize!).constantize
-        strategy_class.new(self)
-      end
+      strategy_class = ('Atmosphere::OptimizationStrategy::' +
+                        strategy_name.to_s.capitalize!).constantize
+      strategy_class.new(self)
+    end
 
     def owned_by?(user)
       appliance_set.user_id == user.id
@@ -141,7 +124,7 @@ module Atmosphere
         # Returning fixed time is least likely to break the client.
         Time.parse('2000-01-01 12:00')
       else
-        deployments.max_by { |dep| dep.prepaid_until }.prepaid_until
+        deployments.max_by(&:prepaid_until).prepaid_until
       end
     end
 
@@ -187,7 +170,8 @@ module Atmosphere
     end
 
     def remove_appliance_configuration_instance_if_needed
-      if appliance_configuration_instance && appliance_configuration_instance.appliances.blank?
+      if appliance_configuration_instance &&
+         appliance_configuration_instance.appliances.blank?
         appliance_configuration_instance.destroy
       end
     end

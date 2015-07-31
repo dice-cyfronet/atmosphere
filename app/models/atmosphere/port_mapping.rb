@@ -13,10 +13,10 @@
 module Atmosphere
   class PortMapping < ActiveRecord::Base
     belongs_to :virtual_machine,
-      class_name: 'Atmosphere::VirtualMachine'
+               class_name: 'Atmosphere::VirtualMachine'
 
     belongs_to :port_mapping_template,
-      class_name: 'Atmosphere::PortMappingTemplate'
+               class_name: 'Atmosphere::PortMappingTemplate'
 
     validates :public_ip,
               presence: true
@@ -37,9 +37,9 @@ module Atmosphere
     before_destroy :delete_dnat
 
     private
+
     def delete_dnat
       virtual_machine.tenant.dnat_client.remove_port_mapping(self)
     end
-
   end
 end

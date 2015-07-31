@@ -19,7 +19,7 @@ module Atmosphere
     extend Enumerize
 
     belongs_to :port_mapping_template,
-      class_name: 'Atmosphere::PortMappingTemplate'
+               class_name: 'Atmosphere::PortMappingTemplate'
 
     validates :endpoint_type,
               inclusion: %w(ws rest webapp)
@@ -38,8 +38,8 @@ module Atmosphere
     scope :def_order, -> { order(:description) }
 
     scope :at_endpoint, ->(at, service_name, invocation_path) do
-      joins(:port_mapping_template)
-        .where(
+      joins(:port_mapping_template).
+        where(
           invocation_path: invocation_path,
           atmosphere_port_mapping_templates: {
             service_name: service_name,
@@ -49,8 +49,8 @@ module Atmosphere
     end
 
     scope :appl_endpoints, ->(appl) do
-      joins(port_mapping_template: :http_mappings)
-        .where(
+      joins(port_mapping_template: :http_mappings).
+        where(
           atmosphere_http_mappings: {
             appliance_id: appl.id
           }
@@ -64,7 +64,7 @@ module Atmosphere
     private
 
     def strip_invocation_path
-      self.invocation_path.strip! if self.invocation_path
+      invocation_path.strip! if invocation_path
     end
   end
 end

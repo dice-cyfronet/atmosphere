@@ -18,28 +18,28 @@ module Atmosphere
     include Slugable
 
     belongs_to :appliance_type,
-      class_name: 'Atmosphere::ApplianceType'
+               class_name: 'Atmosphere::ApplianceType'
 
     belongs_to :dev_mode_property_set,
-      class_name: 'Atmosphere::DevModePropertySet'
+               class_name: 'Atmosphere::DevModePropertySet'
 
     has_many :http_mappings,
-      dependent: :destroy,
-      class_name: 'Atmosphere::HttpMapping'
+             dependent: :destroy,
+             class_name: 'Atmosphere::HttpMapping'
 
     has_many :port_mappings,
-      dependent: :destroy,
-      class_name: 'Atmosphere::PortMapping'
+             dependent: :destroy,
+             class_name: 'Atmosphere::PortMapping'
 
     has_many :port_mapping_properties,
-      dependent: :destroy,
-      autosave: true,
-      class_name: 'Atmosphere::PortMappingProperty'
+             dependent: :destroy,
+             autosave: true,
+             class_name: 'Atmosphere::PortMappingProperty'
 
     has_many :endpoints,
-      dependent: :destroy,
-      autosave: true,
-      class_name: 'Atmosphere::Endpoint'
+             dependent: :destroy,
+             autosave: true,
+             class_name: 'Atmosphere::Endpoint'
 
     validates :appliance_type,
               presence: true,
@@ -92,7 +92,8 @@ module Atmosphere
     after_create :add_port_mappings_to_associated_vms
     after_update :update_port_mappings, if: :target_port_changed?
     after_update :remove_dnat_port_mappings, if: :type_changed_into_http?
-    after_update :add_port_mappings_to_associated_vms, if: :type_changed_into_dnat?
+    after_update :add_port_mappings_to_associated_vms,
+                 if: :type_changed_into_dnat?
 
     scope :def_order, -> { order(:service_name) }
 
@@ -105,13 +106,13 @@ module Atmosphere
     end
 
     def properties
-      port_mapping_properties.collect { |pmp| pmp.to_s }
+      port_mapping_properties.map(&:to_s)
     end
 
     private
 
     def check_only_one_belonging
-      unless appliance_type.blank? or dev_mode_property_set.blank?
+      unless appliance_type.blank? || dev_mode_property_set.blank?
         errors.add :base, 'Port Mapping template cannot belong to both Appliance Type and Dev Mode Property Set'
         false
       end
@@ -119,32 +120,36 @@ module Atmosphere
 
     def add_port_mappings_to_associated_vms
       if appliance_type
-        appliance_type.appliances.each {|appl| appl.virtual_machines.each {|vm| vm.add_dnat} }
+        appliance_type.appliances.
+          each { |appl| appl.virtual_machines.each(&:add_dnat) }
       elsif dev_mode_property_set
-        dev_mode_property_set.appliance.virtual_machines.each {|vm| vm.add_dnat}
+        dev_mode_property_set.appliance.virtual_machines.each(&:add_dnat)
       end
     end
 
     def update_port_mappings
-      port_mappings.each {|pm|
+      port_mappings.each do |pm|
         # TODO handle Wrangler errors
         dnat_client = pm.virtual_machine.tenant.dnat_client
         dnat_client.remove(pm.virtual_machine.ip, target_port_was)
-        added_mapping_attrs = dnat_client.add_dnat_for_vm(pm.virtual_machine, [self])
+        added_mapping_attrs = dnat_client.
+                              add_dnat_for_vm(pm.virtual_machine, [self])
         pm.update_attributes(added_mapping_attrs.first)
-      }
+      end
     end
 
     def slug_service_name
-      self.service_name = to_slug(self.service_name) if self.service_name
+      self.service_name = to_slug(service_name) if service_name
     end
 
     def type_changed_into_http?
-      application_protocol.to_sym != :none && application_protocol_was.to_sym == :none
+      application_protocol.to_sym != :none &&
+        application_protocol_was.to_sym == :none
     end
 
     def type_changed_into_dnat?
-      application_protocol.to_sym == :none && application_protocol_was.to_sym != :none
+      application_protocol.to_sym == :none &&
+        application_protocol_was.to_sym != :none
     end
 
     def remove_dnat_port_mappings

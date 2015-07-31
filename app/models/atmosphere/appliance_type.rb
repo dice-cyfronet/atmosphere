@@ -23,37 +23,37 @@ module Atmosphere
     extend Enumerize
 
     belongs_to :author,
-      class_name: 'Atmosphere::User',
-      foreign_key: 'user_id'
+               class_name: 'Atmosphere::User',
+               foreign_key: 'user_id'
 
     belongs_to :os_family,
-      class_name: 'Atmosphere::OSFamily'
+               class_name: 'Atmosphere::OSFamily'
 
     has_many :appliances,
-      dependent: :destroy,
-      class_name: 'Atmosphere::Appliance'
+             dependent: :destroy,
+             class_name: 'Atmosphere::Appliance'
 
     has_many :port_mapping_templates,
-      dependent: :destroy,
-      class_name: 'Atmosphere::PortMappingTemplate'
+             dependent: :destroy,
+             class_name: 'Atmosphere::PortMappingTemplate'
 
     has_many :appliance_configuration_templates,
-      dependent: :destroy,
-      class_name: 'Atmosphere::ApplianceConfigurationTemplate'
+             dependent: :destroy,
+             class_name: 'Atmosphere::ApplianceConfigurationTemplate'
 
     has_many :virtual_machine_templates,
-      dependent: :nullify,
-      class_name: 'Atmosphere::VirtualMachineTemplate'
+             dependent: :nullify,
+             class_name: 'Atmosphere::VirtualMachineTemplate'
 
     has_many :migration_job,
-      dependent: :nullify,
-      class_name: 'Atmosphere::MigrationJob'
+             dependent: :nullify,
+             class_name: 'Atmosphere::MigrationJob'
 
     # Required for API (returning all tenants on which a given
     # AT can be deployed). By allowed tenant we understan active tenant
     # with VMT installed.
     has_many :tenants,
-             -> { where(atmosphere_tenants: {active: true}).uniq },
+             -> { where(atmosphere_tenants: { active: true }).uniq },
              through: :virtual_machine_templates,
              class_name: 'Atmosphere::Tenant'
 
@@ -122,26 +122,27 @@ module Atmosphere
 
     scope :with_vmt, ->(t_tenant_id, vmt_id_at_site) do
       joins(virtual_machine_templates: :tenants).
-      where(
-        atmosphere_tenants: { tenant_id: t_tenant_id },
-        atmosphere_virtual_machine_templates: { id_at_site: vmt_id_at_site }
-      )
+        where(
+          atmosphere_tenants: { tenant_id: t_tenant_id },
+          atmosphere_virtual_machine_templates: { id_at_site: vmt_id_at_site }
+        )
     end
 
     around_destroy :delete_vmts, prepend: true
 
-
     def destroy(force = false)
-      if !force and has_dependencies?
+      if !force && has_dependencies?
         errors.add :base, "#{name} cannot be destroyed because other users have running instances of this application."
         return false
       end
-      super()  # Parentheses required NOT to pass 'force' as an argument (not needed in Base.destroy)
+      # Parentheses required NOT to pass 'force' as an argument (not needed in
+      # Base.destroy)
+      super()
     end
 
     def has_dependencies?
       # TODO temporary removing this check for PN request
-      #virtual_machine_templates.present? or
+      # virtual_machine_templates.present? or
       appliances.present?
     end
 
@@ -154,7 +155,7 @@ module Atmosphere
       PmtCopier.new(appliance.dev_mode_property_set).execute.each do |pmt|
         pmt.appliance_type = at
         at.port_mapping_templates << pmt
-      end if appliance and appliance.dev_mode_property_set
+      end if appliance && appliance.dev_mode_property_set
       ActCopier.new(appliance.appliance_type).execute.each do |act|
         act.appliance_type = at
         at.appliance_configuration_templates << act
@@ -164,7 +165,7 @@ module Atmosphere
     end
 
     def publishable?
-      visible_to.developer? or visible_to.all?
+      visible_to.developer? || visible_to.all?
     end
 
     def development?
@@ -186,9 +187,10 @@ module Atmosphere
     private
 
     def self.appliance_type_attributes(appliance, overwrite)
-      if appliance and appliance.dev_mode_property_set
+      if appliance && appliance.dev_mode_property_set
         params = appliance.dev_mode_property_set.attributes
-        %w(id created_at updated_at appliance_id).each { |el| params.delete(el) }
+        %w(id created_at updated_at appliance_id).
+          each { |el| params.delete(el) }
       end
       params ||= {}
 

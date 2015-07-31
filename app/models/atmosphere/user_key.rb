@@ -18,10 +18,10 @@ module Atmosphere
     FINGER_PRINT_RE = /([\d\h]{2}:)+[\d\h]{2}/
 
     has_many :appliances,
-      class_name: 'Atmosphere::Appliance'
+             class_name: 'Atmosphere::Appliance'
 
     belongs_to :user,
-      class_name: 'Atmosphere::User'
+               class_name: 'Atmosphere::User'
 
     validates :name,
               presence: true,
@@ -46,10 +46,10 @@ module Atmosphere
 
     def generate_fingerprint
       logger.info "Generating fingerprint for #{public_key}"
-      return unless self.public_key
+      return unless public_key
       fprint = nil
       Tempfile.open('ssh_public_key', '/tmp') do |file|
-        file.puts self.public_key
+        file.puts(public_key)
         file.rewind
         output = nil
         IO.popen("ssh-keygen -lf #{file.path}") {|out|
@@ -58,8 +58,7 @@ module Atmosphere
         }
         if output.include? 'is not a public key file'
           logger.error "Provided public key #{public_key} is invalid"
-          #raise Air::InvalidPublicKey
-          self.errors.add(:public_key, 'is invalid')
+          errors.add(:public_key, 'is invalid')
         elsif output
           logger.info output
           fprint = output.gsub(FINGER_PRINT_RE).first
@@ -67,18 +66,17 @@ module Atmosphere
           write_attribute(:fingerprint, fprint)
         end
       end
-
     end
 
     def check_key_type
-      if (!self.public_key.nil? && !self.public_key.starts_with?('ssh-rsa'))
+      if !public_key.nil? && !public_key.starts_with?('ssh-rsa')
         logger.error "invalid type of provided public key #{public_key}"
-        self.errors.add(:public_key, 'bad type of key (only ssh-rsa is allowed)')
+        errors.add(:public_key, 'bad type of key (only ssh-rsa is allowed)')
       end
     end
 
     def import_to_clouds
-      Tenant.all.each {|cs| import_to_cloud(cs)}
+      Tenant.all.each { |cs| import_to_cloud(cs) }
     end
 
     def import_to_cloud(t)
@@ -96,7 +94,8 @@ module Atmosphere
       Tenant.active.each do |t|
         cloud_client = t.cloud_client
         logger.debug "Deleting key #{id_at_site} from #{t.name}"
-        # ignore key not found errors because it is possible that key was never imported to tenant
+        # ignore key not found errors because it is possible that key was
+        # never imported to tenant
         begin
           cloud_client.delete_key_pair(id_at_site)
         rescue Fog::Compute::OpenStack::NotFound,
