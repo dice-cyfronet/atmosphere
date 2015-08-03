@@ -130,6 +130,11 @@ module Atmosphere
     @monitoring_logger ||= Logger.new(Rails.root.join('log', 'monitoring.log'))
   end
 
+  def self.complex_event_logger
+    @complex_event_logger ||=
+        Logger.new(Rails.root.join('log', 'complex_event_logger'))
+  end
+
   def self.optimizer_logger
     @optimizer_logger ||= Logger.new(Rails.root.join('log', 'optimizer.log'))
   end
