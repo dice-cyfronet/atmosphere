@@ -36,7 +36,7 @@ describe Atmosphere::ApplianceVmsManager do
   end
 
   context 'optimization policy uses CEP' do
-    let(:simple_ev) { {name: 'SIMPLE EVENT', properties: { } } }
+    let(:simple_ev) { { name: 'SIMPLE EVENT', properties: { } } }
     let(:complex_ev) { 'EPL QUERY' }
     let(:ev_defs) { { simple_event: simple_ev, complex_event: complex_ev } }
     let(:opt_strategy) do
