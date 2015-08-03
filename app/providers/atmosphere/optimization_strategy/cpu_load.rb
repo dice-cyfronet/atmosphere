@@ -15,7 +15,6 @@ module Atmosphere
           complex_event: ''
         }
       end
-
     end
   end
 end

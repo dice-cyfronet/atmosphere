@@ -25,7 +25,6 @@ describe Atmosphere::ApplianceVmsManager do
     )
   end
 
-
   before(:example) do
     allow(Atmosphere).to receive(:cep_client).and_return(cep)
     allow(subject).to receive(:start_vm_on_cloud).and_return(server_id)
@@ -37,7 +36,7 @@ describe Atmosphere::ApplianceVmsManager do
   end
 
   context 'optimization policy uses CEP' do
-    let(:simple_ev) { {name: 'SIMPLE EVENT', properties: {} }}
+    let(:simple_ev) { {name: 'SIMPLE EVENT', properties: { } } }
     let(:complex_ev) { 'EPL QUERY' }
     let(:ev_defs) { { simple_event: simple_ev, complex_event: complex_ev } }
     let(:opt_strategy) do
@@ -50,7 +49,6 @@ describe Atmosphere::ApplianceVmsManager do
       expect(cep).to receive(:subscribe).with(complex_ev)
       subject.spawn_vm!(tmpl, tmpl.tenants.first, nil, 'CEPFULL')
     end
-
   end
 
   context 'optimization policy does not use CEP' do
@@ -61,5 +59,4 @@ describe Atmosphere::ApplianceVmsManager do
       subject.spawn_vm!(tmpl, tmpl.tenants.first, nil, 'CEPLESS')
     end
   end
-
 end
