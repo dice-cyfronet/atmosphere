@@ -9,7 +9,7 @@ module Atmosphere
       include Atmosphere::Api::ApplicationControllerExt
       include Filterable
 
-      rescue_from CanCan::AccessDenied do |exception|
+      rescue_from CanCan::AccessDenied do
         if current_user.nil?
           render_json_error(I18n.t('errors.unauthorized'),
                             status: :unauthorized)
@@ -19,11 +19,12 @@ module Atmosphere
         end
       end
 
-      rescue_from ActiveRecord::RecordNotFound do |exception|
+      rescue_from ActiveRecord::RecordNotFound  do
         render_json_error('Record not found', status: :not_found)
       end
 
-      rescue_from ActionController::ParameterMissing, Atmosphere::InvalidParameterFormat do |exception|
+      rescue_from ActionController::ParameterMissing,
+                  Atmosphere::InvalidParameterFormat do |exception|
         render_json_error(exception.to_s, status: :unprocessable_entity)
       end
 
@@ -40,13 +41,12 @@ module Atmosphere
 
       def render_error(model_obj)
         render_json_error('Object is invalid',
-          status: :unprocessable_entity,
-          type: :record_invalid,
-          details: model_obj.errors
-        )
+                          status: :unprocessable_entity,
+                          type: :record_invalid,
+                          details: model_obj.errors)
       end
 
-      def render_json_error(msg, options={})
+      def render_json_error(msg, options = {})
         error_json = {
           message: msg,
           type: options[:type] || :general
@@ -60,30 +60,30 @@ module Atmosphere
       end
 
       def load_all?
-        is_admin? and params['all']
+        admin? && params['all']
       end
 
-      def is_admin?
-        current_user and current_user.has_role? :admin
+      def admin?
+        current_user && current_user.has_role?(:admin)
       end
 
       def to_boolean(s)
-        !!(s =~ /^(true|yes|1)$/i)
+        s =~ /^(true|yes|1)$/i
       end
 
       private
 
-      def log_user_action msg
+      def log_user_action(msg)
         Atmosphere.action_logger.info "[#{current_user.login}] #{msg}"
       end
 
       def current_ability
-        @current_ability ||= Atmosphere.ability_class
-                              .new(current_user, load_admin_abilities?)
+        @current_ability ||= Atmosphere.ability_class.
+                             new(current_user, load_admin_abilities?)
       end
 
       def load_admin_abilities?
-        params[:action] != 'index' or to_boolean(params[:all])
+        params[:action] != 'index' || to_boolean(params[:all])
       end
     end
   end

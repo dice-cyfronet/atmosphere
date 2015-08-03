@@ -38,16 +38,8 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def endpoints
     endpoints = Atmosphere::Endpoint.
-      appl_endpoints(@appliance).
-      order(:id).map do |endpoint|
-        {
-          id: endpoint.id,
-          type: endpoint.endpoint_type,
-          urls: @appliance.http_mappings.
-            where(port_mapping_template_id: endpoint.port_mapping_template_id).
-            map { |mapping| "#{mapping.url}/#{endpoint.invocation_path}" }
-        }
-      end
+                appl_endpoints(@appliance).order(:id).
+                map { |endpoint| endpoint_hsh(endpoint) }
 
     render json: { endpoints: endpoints }
   end
@@ -62,10 +54,24 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   private
 
+  def endpoint_hsh(endpoint)
+    {
+      id: endpoint.id,
+      type: endpoint.endpoint_type,
+      urls: endpoint_urls(endpoint)
+    }
+  end
+
+  def endpoint_urls(endpoint)
+    @appliance.http_mappings.
+      where(port_mapping_template_id: endpoint.port_mapping_template_id).
+      map { |mapping| "#{mapping.url}/#{endpoint.invocation_path}" }
+  end
+
   def reboot
     authorize!(:reboot, @appliance)
 
-    @appliance.virtual_machines.each { |vm| vm.reboot }
+    @appliance.virtual_machines.each(&:reboot)
     render json: {}, status: 200
   end
 
@@ -83,14 +89,14 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def scale_action?
-    params.has_key? :scale
+    params.key?(:scale)
   end
 
   def filter
     filter = super
     if vm_search?
       vm_ids = to_array(params[:virtual_machine_ids])
-      filter[:atmosphere_deployments] = { virtual_machine_id: vm_ids}
+      filter[:atmosphere_deployments] = { virtual_machine_id: vm_ids }
     end
     filter
   end
@@ -109,11 +115,12 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def build_appliance
     # The following rewrite is done to maintain compatibility with old clients
-    if params[:appliance].keys.include? 'compute_site_ids'
-      params[:appliance]['tenant_ids'] = params[:appliance].delete('compute_site_ids')
+    if params[:appliance].key?('compute_site_ids')
+      params[:appliance]['tenant_ids'] =
+        params[:appliance].delete('compute_site_ids')
     end
     @appliance = Atmosphere::ApplianceCreator.
-                  new(params.require(:appliance), delegate_auth).build
+                 new(params.require(:appliance), delegate_auth).build
   end
 
   def load_admin_abilities?
