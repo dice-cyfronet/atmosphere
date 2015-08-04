@@ -4,7 +4,8 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
   include ApiHelpers
 
   before do
-    allow(Atmosphere::Optimizer.instance).to receive(:run)
+    allow(Atmosphere::Cloud::SatisfyAppliance).
+      to receive(:new).and_return(double(execute: true))
   end
 
   let(:user) { create(:developer) }
@@ -178,8 +179,8 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
         end
 
         it 'calls optimizer for each appliance of created AS' do
-          expect(Atmosphere::Optimizer.instance).
-            to have_received(:run).
+          expect(Atmosphere::Cloud::SatisfyAppliance).
+            to have_received(:new).
             exactly(created_as.appliances.count).times
         end
 

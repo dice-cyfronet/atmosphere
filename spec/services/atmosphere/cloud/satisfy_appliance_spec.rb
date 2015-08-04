@@ -40,7 +40,6 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       end
 
       it 'does not reuse available vm if it is in dev mode' do
-        tmpl_of_shareable_at
         appl1 = create(:appliance, appliance_set: dev_appliance_set, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
         appl2 = create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all)
 
@@ -55,6 +54,75 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         expect(vm_2.appliances.size).to eql 1
         expect(vm_1.appliances).to eq [appl1]
         expect(vm_2.appliances).to eq [appl2]
+      end
+
+      context 'dev mode properties' do
+        let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
+
+        let!(:at) do
+          create(:appliance_type, preference_cpu: 2).tap do |at|
+            create(:virtual_machine_template,
+                   tenants: [amazon], appliance_type: at)
+          end
+        end
+
+        let(:appl_vm_manager) do
+          double('appliance_vms_manager',
+                 can_reuse_vm?: false,
+                 save: true)
+        end
+
+        let(:appliance) do
+          create(:appliance,
+                 appliance_type: at, appliance_set: dev_appliance_set,
+                 fund: fund, tenants: Atmosphere::Tenant.all)
+        end
+
+        let(:dev_mode_property_set) { appliance.dev_mode_property_set }
+
+        before do
+          allow(Atmosphere::ApplianceVmsManager).
+            to receive(:new).
+            and_return(appl_vm_manager)
+        end
+
+        it 'uses AT prefferences when not set in appliance' do
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
+            expect(flavor.cpu).to eq 2
+          end
+
+          described_class.new(appliance).execute
+        end
+
+        it 'takes dev mode preferences memory into account' do
+          dev_mode_property_set.preference_memory = 4000
+
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
+            expect(flavor.memory).to be >= 4000
+          end
+
+          described_class.new(appliance).execute
+        end
+
+        it 'takes dev mode preferences cpu into account' do
+          dev_mode_property_set.preference_cpu = 4
+
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
+            expect(flavor.cpu).to eq 4
+          end
+
+          described_class.new(appliance).execute
+        end
+
+        it 'takes dev mode preferences disk into account' do
+          dev_mode_property_set.preference_disk = 600
+
+          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
+            expect(flavor.hdd).to be >= 600
+          end
+
+          described_class.new(appliance).execute
+        end
       end
 
       context 'sets vm name' do

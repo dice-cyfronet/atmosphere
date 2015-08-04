@@ -8,7 +8,6 @@ describe Atmosphere::Cloud::ScaleAppliance do
   before do
     allow(Atmosphere::ApplianceVmsManager).
       to receive(:new).and_return(appl_vm_manager)
-    expect(appl_vm_manager).to receive(:save)
     allow(appliance).to receive(:optimization_strategy) { strategy }
   end
 

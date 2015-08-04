@@ -28,11 +28,6 @@ describe Atmosphere::Optimizer do
     let(:appl_type) do
       create(:appliance_type, preference_memory: 1024, preference_cpu: 2)
     end
-    let(:appl_vm_manager) do
-      double('appliance_vms_manager',
-             can_reuse_vm?: false,
-             save: true)
-    end
     let(:amazon) { create(:amazon_with_flavors, funds: [fund]) }
 
     context 'is selected with appropriate architecture' do
@@ -145,80 +140,6 @@ describe Atmosphere::Optimizer do
 
             expect(flavor).to be_nil
           end
-        end
-      end
-    end
-
-    context 'dev mode properties' do
-      let(:at) { create(:appliance_type, preference_memory: 1024, preference_cpu: 2) }
-      let!(:vmt) do
-        create(:virtual_machine_template,
-               tenants: [amazon], appliance_type: at)
-      end
-      let(:as) do
-        create(:appliance_set, appliance_set_type: :development, user: u)
-      end
-
-      let(:appl_vm_manager) do
-        double('appliance_vms_manager',
-               can_reuse_vm?: false,
-               save: true)
-      end
-
-      before do
-        allow(Atmosphere::ApplianceVmsManager).
-          to receive(:new).
-          and_return(appl_vm_manager)
-      end
-
-      context 'when preferences are not set in appliance' do
-        it 'uses preferences from AT' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
-            expect(flavor.cpu).to eq 2
-          end
-
-          create(:appliance,
-                 appliance_type: at, appliance_set: as,
-                 fund: fund, tenants: Atmosphere::Tenant.all)
-        end
-      end
-
-      context 'when preferences set in appliance' do
-        before do
-          @appl = build(:appliance,
-                        appliance_type: at, appliance_set: as,
-                        fund: fund, tenants: Atmosphere::Tenant.all)
-          Atmosphere::Fund.all.each { |f| f.tenants = Atmosphere::Tenant.all }
-          @appl.dev_mode_property_set = Atmosphere::DevModePropertySet.
-                                        new(name: 'pref_test')
-          @appl.dev_mode_property_set.appliance = @appl
-        end
-
-        it 'takes dev mode preferences memory into account' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
-            expect(flavor.memory).to eq 7680
-          end
-          @appl.dev_mode_property_set.preference_memory = 4000
-
-          @appl.save!
-        end
-
-        it 'takes dev mode preferences cpu into account' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
-            expect(flavor.cpu).to eq 4
-          end
-          @appl.dev_mode_property_set.preference_cpu = 4
-
-          @appl.save!
-        end
-
-        it 'takes dev mode preferences disk into account' do
-          expect(appl_vm_manager).to receive(:spawn_vm!) do |_, _, flavor, _|
-            expect(flavor.hdd).to eq 840
-          end
-          @appl.dev_mode_property_set.preference_disk = 600
-
-          @appl.save!
         end
       end
     end

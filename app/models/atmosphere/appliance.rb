@@ -62,7 +62,6 @@ module Atmosphere
     before_create :create_dev_mode_property_set, if: :development?
     before_save :assign_fund, if: 'fund.nil?'
     after_destroy :remove_appliance_configuration_instance_if_needed
-    after_create :optimize_saved_appliance
 
     scope :started_on_site, ->(tenant) do
       joins(:virtual_machines).
@@ -174,14 +173,6 @@ module Atmosphere
          appliance_configuration_instance.appliances.blank?
         appliance_configuration_instance.destroy
       end
-    end
-
-    def optimize_saved_appliance
-      optimizer.run(created_appliance: self)
-    end
-
-    def optimizer
-      Optimizer.instance
     end
   end
 end

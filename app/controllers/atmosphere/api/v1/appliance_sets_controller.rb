@@ -79,6 +79,7 @@ module Atmosphere
             appl_params[:appliance_set_id] = @appliance_set.id
             creator = ApplianceCreator.new(appl_params, delegate_auth)
             appl = creator.build
+            Atmosphere::CreateApplianceService.new(appl).execute
             @appliance_set.appliances << appl
           end
         end

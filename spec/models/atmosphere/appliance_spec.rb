@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 describe Atmosphere::Appliance do
-  let(:optimizer) { double }
-
   it { should belong_to :appliance_set }
   it { should validate_presence_of :appliance_set }
   it { should validate_presence_of :state }
@@ -50,10 +48,6 @@ describe Atmosphere::Appliance do
   end
 
   context 'appliance configuration instances management' do
-    before do
-      allow(Atmosphere::Optimizer).to receive(:instance).and_return(optimizer)
-      allow(optimizer).to receive(:run)
-    end
     let!(:appliance) { create(:appliance) }
 
     it 'removes configuration instance with the last Appliance using it' do

@@ -19,8 +19,11 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   end
 
   def create
-    @appliance.save!
-    render json: @appliance, status: :created
+    if Atmosphere::CreateApplianceService.new(@appliance).execute
+      render json: @appliance, status: :created
+    else
+      render_error @appliance
+    end
   end
 
   def update
