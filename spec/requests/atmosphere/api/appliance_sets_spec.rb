@@ -7,17 +7,27 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
     allow(Atmosphere::Optimizer.instance).to receive(:run)
   end
 
-  let(:user)           { create(:developer) }
+  let(:user) { create(:developer) }
   let(:different_user) { create(:user) }
-  let(:admin)          { create(:admin) }
+  let(:admin) { create(:admin) }
 
-  let!(:portal_set)    { create(:appliance_set, user: user, appliance_set_type: :portal)}
-  let!(:workflow1_set) { create(:appliance_set, user: user, appliance_set_type: :workflow)}
-  let!(:differnt_user_workflow) { create(:appliance_set, user: different_user) }
+  let!(:portal_set) do
+    create(:appliance_set, user: user, appliance_set_type: :portal)
+  end
+  let!(:workflow1_set) do
+    create(:appliance_set, user: user, appliance_set_type: :workflow)
+  end
+  let!(:differnt_user_workflow) do
+    create(:appliance_set, user: different_user)
+  end
 
   describe 'GET /appliance_sets' do
-    let!(:workflow2_set)   { create(:appliance_set, user: user, appliance_set_type: :workflow)}
-    let!(:development_set) { create(:appliance_set, user: user, appliance_set_type: :development)}
+    let!(:workflow2_set) do
+      create(:appliance_set, user: user, appliance_set_type: :workflow)
+    end
+    let!(:development_set) do
+      create(:appliance_set, user: user, appliance_set_type: :development)
+    end
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
@@ -82,57 +92,80 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
       end
 
       it 'creates second workflow appliance set' do
-        expect {
+        expect do
           post api('/appliance_sets', user), new_appliance_set
           expect(as_response['id']).to_not be_nil
-          expect(as_response['name']).to eq new_appliance_set[:appliance_set][:name]
-          expect(as_response['appliance_set_type']).to eq new_appliance_set[:appliance_set][:appliance_set_type].to_s
-        }.to change { Atmosphere::ApplianceSet.count }.by(1)
+          expect(as_response['name']).
+            to eq new_appliance_set[:appliance_set][:name]
+          expect(as_response['appliance_set_type']).
+            to eq new_appliance_set[:appliance_set][:appliance_set_type].to_s
+        end.to change { Atmosphere::ApplianceSet.count }.by(1)
       end
 
       it 'does not allow to create second portal appliance set' do
-        expect {
-          post api('/appliance_sets', user), {appliance_set: {name: 'second portal', appliance_set_type: :portal}}
+        expect do
+          post api('/appliance_sets', user),
+               appliance_set: { name: 'second portal',
+                                appliance_set_type: :portal }
+
           expect(response.status).to eq 409
-        }.to change { Atmosphere::ApplianceSet.count }.by(0)
+        end.to change { Atmosphere::ApplianceSet.count }.by(0)
       end
 
       it 'does not allow to create second development appliance set' do
         create(:appliance_set, user: user, appliance_set_type: :development)
-        expect {
-          post api('/appliance_sets', user), {appliance_set: {name: 'second portal', appliance_set_type: :development}}
+
+        expect do
+          post api('/appliance_sets', user),
+               appliance_set: { name: 'second portal',
+                                appliance_set_type: :development }
+
           expect(response.status).to eq 409
-        }.to change { Atmosphere::ApplianceSet.count }.by(0)
+        end.to change { Atmosphere::ApplianceSet.count }.by(0)
       end
 
       it 'does not allow create development appliance set for non developer' do
-        post api('/appliance_sets', non_developer), {appliance_set: {name: 'devel', appliance_set_type: :development}}
+        post api('/appliance_sets', non_developer),
+             appliance_set: { name: 'devel', appliance_set_type: :development }
+
         expect(response.status).to eq 403
       end
 
       context 'optimization policy and appliances are specified' do
-
-        let!(:at_1) { create(:appliance_type, visible_to: :all)}
-        let!(:conf_tmpl_1) { create(:appliance_configuration_template, appliance_type: at_1) }
-        let!(:at_2) { create(:appliance_type, visible_to: :all)}
-        let!(:conf_tmpl_2) { create(:appliance_configuration_template, appliance_type: at_2) }
+        let!(:at_1) { create(:appliance_type, visible_to: :all) }
+        let!(:conf_tmpl_1) do
+          create(:appliance_configuration_template, appliance_type: at_1)
+        end
+        let!(:at_2) { create(:appliance_type, visible_to: :all) }
+        let!(:conf_tmpl_2) do
+          create(:appliance_configuration_template, appliance_type: at_2)
+        end
         let(:t) { create(:tenant) }
-        let(:tmpl_1) { create(:virtual_machine_template, appliance_type: at_1, tenant: t) }
-        let(:tmpl_2) { create(:virtual_machine_template, appliance_type: at_2, tenant: t) }
+        let(:tmpl_1) do
+          create(:virtual_machine_template, appliance_type: at_1, tenant: t)
+        end
+        let(:tmpl_2) do
+          create(:virtual_machine_template, appliance_type: at_2, tenant: t)
+        end
 
-        AS_NAME = 'AS with appliances and optimization policy'
-
-        let!(:appliances_params) {
+        let!(:appliances_params) do
           [
-            {configuration_template_id: conf_tmpl_1.id, params: {a: 'A'}, vms: [{cpu: 1, mem: 512, tenant_ids: [1]}]},
-            {configuration_template_id: conf_tmpl_2.id, params: {b: 'B'}, vms: [{cpu: 1, mem: 512, tenant_ids: [1]}]}
+            { configuration_template_id: conf_tmpl_1.id,
+              params: { a: 'A' },
+              vms: [{ cpu: 1, mem: 512, tenant_ids: [1] }]
+            },
+            { configuration_template_id: conf_tmpl_2.id,
+              params: { b: 'B' },
+              vms: [{ cpu: 1, mem: 512, tenant_ids: [1] }]
+            }
           ]
-
-        }
-
+        end
 
         before(:each) do
-          params = {appliance_set: {name: AS_NAME, appliance_set_type: :workflow, optimization_policy: :manual, appliances: appliances_params}}
+          params = { appliance_set: { name: 'with appl and optimization policy',
+                                      appliance_set_type: :workflow,
+                                      optimization_policy: :manual,
+                                      appliances: appliances_params } }
           post api('/appliance_sets', non_developer), params
         end
 
@@ -145,15 +178,15 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
         end
 
         it 'calls optimizer for each appliance of created AS' do
-          expect(Atmosphere::Optimizer.instance).to have_received(:run).exactly(created_as.appliances.count).times
+          expect(Atmosphere::Optimizer.instance).
+            to have_received(:run).
+            exactly(created_as.appliances.count).times
         end
 
         def created_as
           Atmosphere::ApplianceSet.find(as_response['id'])
         end
-
       end
-
     end
   end
 
@@ -203,7 +236,8 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
       end
 
       it 'does not change appliance set type' do
-        put api("/appliance_sets/#{portal_set.id}", user), {appliance_set: {appliance_set_type: :workflow}}
+        put api("/appliance_sets/#{portal_set.id}", user),
+            appliance_set: { appliance_set_type: :workflow }
         set = Atmosphere::ApplianceSet.find(portal_set.id)
         expect(set.appliance_set_type).to eq 'portal'
       end
@@ -225,16 +259,16 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
       end
 
       it 'deletes appliance set' do
-        expect {
+        expect do
           delete api("/appliance_sets/#{portal_set.id}", user)
-        }.to change { Atmosphere::ApplianceSet.count }.by(-1)
+        end.to change { Atmosphere::ApplianceSet.count }.by(-1)
       end
 
       it 'returns 403 when deleting not owned appliance set' do
-        expect {
+        expect do
           delete api("/appliance_sets/#{portal_set.id}", different_user)
           expect(response.status).to eq 403
-        }.to change { Atmosphere::ApplianceSet.count }.by(0)
+        end.to change { Atmosphere::ApplianceSet.count }.by(0)
       end
     end
 

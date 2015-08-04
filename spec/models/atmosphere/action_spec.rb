@@ -1,53 +1,46 @@
 require 'rails_helper'
 
 describe Atmosphere::Action do
-  include ApiHelpers
-
   let(:optimizer) { double('optimizer') }
 
   before do
     expect(Atmosphere::Optimizer).
-        to receive(:instance).
-               at_least(:once) { optimizer }
+      to receive(:instance).at_least(:once) { optimizer }
 
     expect(optimizer).to receive(:run).at_least(:once).with(anything)
-
   end
 
   let(:appl) { create(:appliance) }
-  subject {  Atmosphere::Action.create(appliance: appl) }
+  subject { Atmosphere::Action.create(appliance: appl) }
 
-  it 'checks logging' do
-
+  it 'creates info log' do
     message = 'log message'
     subject.log(message)
 
     expect(Atmosphere::ActionLog.count).to eq 1
-    expect(Atmosphere::ActionLog.first.message).to eq message
-    expect(Atmosphere::ActionLog.first.action).to eq subject
-    expect(Atmosphere::ActionLog.first.log_level).to eq 'info'
-
+    first_log = Atmosphere::ActionLog.first
+    expect(first_log.message).to eq message
+    expect(first_log.action).to eq subject
+    expect(first_log.log_level).to eq 'info'
   end
 
-  it 'checks logging at error level' do
-
+  it 'creates error log' do
     message = 'error message'
+
     subject.error(message)
+    first_log = Atmosphere::ActionLog.first
 
-    expect(Atmosphere::ActionLog.first.message).to eq message
-    expect(Atmosphere::ActionLog.first.log_level).to eq 'error'
-
+    expect(first_log.message).to eq message
+    expect(first_log.log_level).to eq 'error'
   end
 
-  it 'checks logging at warn level' do
-
+  it 'creates warn log' do
     message = 'warn message'
+
     subject.warn(message)
+    first_log = Atmosphere::ActionLog.first
 
-    expect(Atmosphere::ActionLog.first.message).to eq message
-    expect(Atmosphere::ActionLog.first.log_level).to eq 'warn'
-
+    expect(first_log.message).to eq message
+    expect(first_log.log_level).to eq 'warn'
   end
-
-
 end

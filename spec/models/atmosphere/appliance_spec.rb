@@ -1,35 +1,15 @@
-# == Schema Information
-#
-# Table name: appliances
-#
-#  id                                  :integer          not null, primary key
-#  appliance_set_id                    :integer          not null
-#  appliance_type_id                   :integer          not null
-#  user_key_id                         :integer
-#  appliance_configuration_instance_id :integer          not null
-#  state                               :string(255)      default("new"), not null
-#  name                                :string(255)
-#  created_at                          :datetime
-#  updated_at                          :datetime
-#  fund_id                             :integer
-#  last_billing                        :datetime
-#  state_explanation                   :string(255)
-#  amount_billed                       :integer          default(0), not null
-#  billing_state                       :string(255)      default("prepaid"), not null
-#  prepaid_until                       :datetime         not null
-#  description                         :text
-#
-
 require 'rails_helper'
 
 describe Atmosphere::Appliance do
-
-  let(:optimizer) {double}
+  let(:optimizer) { double }
 
   it { should belong_to :appliance_set }
   it { should validate_presence_of :appliance_set }
   it { should validate_presence_of :state }
-  it { should validate_inclusion_of(:state).in_array(%w(new satisfied unsatisfied))}
+  it do
+    should validate_inclusion_of(:state).
+      in_array(%w(new satisfied unsatisfied))
+  end
 
   it { should belong_to :appliance_type }
   it { should validate_presence_of :appliance_type }
@@ -43,21 +23,21 @@ describe Atmosphere::Appliance do
   it { should have_readonly_attribute :dev_mode_property_set }
 
   context 'optimization strategy' do
-    it 'returns default optimization strategy if optimization policy is not defined' do
-      expect(Atmosphere::Appliance.new.optimization_strategy.class).to eq Atmosphere::OptimizationStrategy::Default
+    it 'default is used when optimization policy is not set' do
+      expect(Atmosphere::Appliance.new.optimization_strategy.class).
+        to eq Atmosphere::OptimizationStrategy::Default
     end
 
     context 'optimization policy defined for appliance set' do
-      context 'policy not defined for appliance' do
-        it 'returns optimization strategy that is defined for appliance set' do
-          as = Atmosphere::ApplianceSet.new(optimization_policy: :manual)
-          appl = Atmosphere::Appliance.new(appliance_set: as)
-          expect(appl.optimization_strategy.class).to eq Atmosphere::OptimizationStrategy::Manual
-        end
+      it 'is used when appliance does not define optimization strategy' do
+        as = Atmosphere::ApplianceSet.new(optimization_policy: :manual)
+        appl = Atmosphere::Appliance.new(appliance_set: as)
+        expect(appl.optimization_strategy.class).
+          to eq Atmosphere::OptimizationStrategy::Manual
       end
 
       context 'policy defined for appliance' do
-        it 'returns optimization strategy that is defined for appliance set if strategy is not defined directly for appliance' do
+        it 'uses AS strategy when not defined in appliance' do
           pending 'someone left this spec empty - setting it as pending'
           fail
         end
@@ -65,7 +45,7 @@ describe Atmosphere::Appliance do
     end
 
     context 'policy defined only for appliance' do
-
+      pending
     end
   end
 
@@ -77,17 +57,16 @@ describe Atmosphere::Appliance do
     let!(:appliance) { create(:appliance) }
 
     it 'removes configuration instance with the last Appliance using it' do
-      expect {
-        appliance.destroy
-      }.to change { Atmosphere::ApplianceConfigurationInstance.count }.by(-1)
+      expect { appliance.destroy }.
+        to change { Atmosphere::ApplianceConfigurationInstance.count }.by(-1)
     end
 
-    it 'does not remove appliance configuration instance when other Appliance is using it' do
-      expect(optimizer).to receive(:run).once
-      create(:appliance, appliance_configuration_instance: appliance.appliance_configuration_instance)
-      expect {
-        appliance.destroy
-      }.to change { Atmosphere::ApplianceConfigurationInstance.count }.by(0)
+    it 'config instance is not removed when other Appliance is using it' do
+      config = appliance.appliance_configuration_instance
+      create(:appliance, appliance_configuration_instance: config)
+
+      expect { appliance.destroy }.
+        to change { Atmosphere::ApplianceConfigurationInstance.count }.by(0)
     end
   end
 
@@ -97,30 +76,39 @@ describe Atmosphere::Appliance do
     let(:workflow_appliance_set) { create(:workflow_appliance_set) }
     let(:portal_appliance_set) { create(:portal_appliance_set) }
 
-
-    before {
-      allow(Atmosphere::DevModePropertySet).to receive(:create_from)
-        .and_return(Atmosphere::DevModePropertySet.new(name: 'dev'))
-    }
+    before do
+      allow(Atmosphere::DevModePropertySet).
+        to receive(:create_from).
+        and_return(Atmosphere::DevModePropertySet.new(name: 'dev'))
+    end
 
     context 'when development appliance set' do
       it 'creates dev mode property set' do
-        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+        appliance = create(:appliance,
+                           appliance_type: appliance_type,
+                           appliance_set: dev_appliance_set)
 
-        expect(Atmosphere::DevModePropertySet).to have_received(:create_from).with(appliance_type).once
+        expect(Atmosphere::DevModePropertySet).
+          to have_received(:create_from).with(appliance_type).once
         expect(appliance.dev_mode_property_set).to_not be_nil
       end
 
       it 'saves dev mode property set' do
-        expect {
-          create(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
-        }.to change { Atmosphere::DevModePropertySet.count }.by(1)
+        expect do
+          create(:appliance,
+                 appliance_type: appliance_type,
+                 appliance_set: dev_appliance_set)
+        end.to change { Atmosphere::DevModePropertySet.count }.by(1)
       end
 
       it 'overwrite dev mode property set' do
-        appliance = build(:appliance, appliance_type: appliance_type, appliance_set: dev_appliance_set)
+        appliance = build(:appliance,
+                          appliance_type: appliance_type,
+                          appliance_set: dev_appliance_set)
 
-        appliance.create_dev_mode_property_set(preference_memory: 123, preference_cpu: 2, preference_disk: 321)
+        appliance.create_dev_mode_property_set(preference_memory: 123,
+                                               preference_cpu: 2,
+                                               preference_disk: 321)
 
         expect(appliance.dev_mode_property_set.preference_memory).to eq 123
         expect(appliance.dev_mode_property_set.preference_cpu).to eq 2
@@ -130,16 +118,22 @@ describe Atmosphere::Appliance do
 
     context 'does not create dev mode property set' do
       it 'when workflow appliance set' do
-        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: workflow_appliance_set)
+        appliance = create(:appliance,
+                           appliance_type: appliance_type,
+                           appliance_set: workflow_appliance_set)
 
-        expect(Atmosphere::DevModePropertySet).to_not have_received(:create_from)
+        expect(Atmosphere::DevModePropertySet).
+          to_not have_received(:create_from)
         expect(appliance.dev_mode_property_set).to be_nil
       end
 
       it 'when portal appliance set' do
-        appliance = create(:appliance, appliance_type: appliance_type, appliance_set: portal_appliance_set)
+        appliance = create(:appliance,
+                           appliance_type: appliance_type,
+                           appliance_set: portal_appliance_set)
 
-        expect(Atmosphere::DevModePropertySet).to_not have_received(:create_from)
+        expect(Atmosphere::DevModePropertySet).
+          to_not have_received(:create_from)
         expect(appliance.dev_mode_property_set).to be_nil
       end
     end
@@ -150,9 +144,9 @@ describe Atmosphere::Appliance do
     let!(:appliance_set) { create(:appliance_set) }
     let!(:appliance) do
       create(:appliance,
-              appliance_set: appliance_set,
-              appliance_type: appliance_type,
-              fund: nil)
+             appliance_set: appliance_set,
+             appliance_type: appliance_type,
+             fund: nil)
     end
 
     it 'does not change fund when externally assigned' do
@@ -166,7 +160,7 @@ describe Atmosphere::Appliance do
 
     it 'prefers default fund if it supports relevant tenant' do
       default_t = create(:openstack_with_flavors,
-                          funds: [appliance_set.user.default_fund])
+                         funds: [appliance_set.user.default_fund])
       funded_t = create(:openstack_with_flavors, funds: [create(:fund)])
       appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
@@ -218,7 +212,6 @@ describe Atmosphere::Appliance do
       expect(appliance.send(:default_fund)).to eq nil
     end
   end
-
 
   context '#assign_fund' do
     it 'does not assign a fund which is incompatible with selected tenants' do

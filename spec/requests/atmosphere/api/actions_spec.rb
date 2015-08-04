@@ -4,7 +4,6 @@ describe Atmosphere::Api::V1::ActionsController do
   include ApiHelpers
 
   describe 'GET /actions' do
-
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         get api('/actions')
@@ -17,8 +16,7 @@ describe Atmosphere::Api::V1::ActionsController do
 
       before do
         expect(Atmosphere::Optimizer).
-          to receive(:instance).
-          at_least(:once) { optimizer }
+          to receive(:instance).at_least(:once) { optimizer }
 
         expect(optimizer).to receive(:run).at_least(:once).with(anything)
       end
@@ -26,12 +24,12 @@ describe Atmosphere::Api::V1::ActionsController do
       let!(:message) { 'message123' }
 
       let!(:user) { create(:user) }
-      let!(:appliance_set)  { create(:appliance_set, user: user) }
-      let!(:appliance)  { create(:appliance, appliance_set: appliance_set) }
+      let!(:appliance_set) { create(:appliance_set, user: user) }
+      let!(:appliance) { create(:appliance, appliance_set: appliance_set) }
 
       let!(:user2) { create(:user) }
-      let!(:appliance_set2)  { create(:appliance_set, user: user2) }
-      let!(:appliance2)  { create(:appliance, appliance_set: appliance_set2) }
+      let!(:appliance_set2) { create(:appliance_set, user: user2) }
+      let!(:appliance2) { create(:appliance, appliance_set: appliance_set2) }
 
       let!(:action_log) { create(:action_log, message: message) }
       let!(:action) do
@@ -40,7 +38,7 @@ describe Atmosphere::Api::V1::ActionsController do
                action_logs: [action_log])
       end
 
-      let!(:other_action)  { create(:action, appliance: appliance2) }
+      let!(:other_action) { create(:action, appliance: appliance2) }
 
       it 'returns 200 Success' do
         get api('/actions', user)

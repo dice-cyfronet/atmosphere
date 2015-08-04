@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 describe Atmosphere::Cloud::ScaleAppliance do
   let(:strategy) { double }
   let(:appliance) { create(:appliance) }
