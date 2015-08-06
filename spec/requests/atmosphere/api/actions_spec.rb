@@ -12,15 +12,6 @@ describe Atmosphere::Api::V1::ActionsController do
     end
 
     context 'when authenticated' do
-      let(:optimizer) { double('optimizer') }
-
-      before do
-        expect(Atmosphere::Optimizer).
-          to receive(:instance).at_least(:once) { optimizer }
-
-        expect(optimizer).to receive(:run).at_least(:once).with(anything)
-      end
-
       let!(:message) { 'message123' }
 
       let!(:user) { create(:user) }

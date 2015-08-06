@@ -238,15 +238,19 @@ describe Atmosphere::Api::V1::AppliancesController do
     end
 
     context 'when authenticated as user' do
-      before do
-        allow(Atmosphere::Optimizer).
-          to receive(:instance).and_return(optimizer)
-        expect(optimizer).to receive(:run).once
-      end
-
       it 'returns 201 Created on success' do
         post api('/appliances', user), static_request_body
         expect(response.status).to eq 201
+      end
+
+      it 'triggers optimization process' do
+        optimization_action =
+          instance_double(Atmosphere::Cloud::SatisfyAppliance)
+        expect(Atmosphere::Cloud::SatisfyAppliance).
+          to receive(:new).and_return(optimization_action)
+        expect(optimization_action).to receive(:execute)
+
+        post api('/appliances', user), static_request_body
       end
 
       context 'with static config' do
@@ -359,20 +363,17 @@ describe Atmosphere::Api::V1::AppliancesController do
           end
 
           it 'returns 201 Created' do
-            expect(optimizer).to receive(:run).once
             post api('/appliances', user), static_request_body
             expect(response.status).to eq 201
           end
 
           it 'does not create new configuration instance' do
-            expect(optimizer).to receive(:run).once
             expect { post api('/appliances', user), static_request_body }.
               to change { Atmosphere::ApplianceConfigurationInstance.count }.
               by(0)
           end
 
           it 'creates new appliance' do
-            expect(optimizer).to receive(:run).once
             expect { post api('/appliances', user), static_request_body }.
               to change { Atmosphere::Appliance.count }.
               by(1)
@@ -386,14 +387,6 @@ describe Atmosphere::Api::V1::AppliancesController do
           end
 
           context 'new appl of the same AT with different config template' do
-            before do
-              # this is tricky, we expect optimizer to be run once in context
-              # 'with appliance type already added to appliance set' and the
-              # second time in context 'create new appl of the same AT with
-              # different configuration template'
-              expect(optimizer).to receive(:run).once
-            end
-
             let(:another_conf_tmpl_for_the_same_at) do
               create(:static_config_template, appliance_type: public_at)
             end
@@ -423,7 +416,6 @@ describe Atmosphere::Api::V1::AppliancesController do
           end
 
           it 'creates second appliance with the same configuration instance' do
-            expect(optimizer).to receive(:run).once
             post api('/appliances', developer), static_dev_request_body
             expect(response.status).to eq 201
           end
@@ -513,12 +505,6 @@ describe Atmosphere::Api::V1::AppliancesController do
             compute_site_ids: [tenant_2.id, tenant_4.id]
           }
         }
-      end
-
-      before do
-        allow(Atmosphere::Optimizer).
-          to receive(:instance).and_return(optimizer)
-        expect(optimizer).to receive(:run).once
       end
 
       it 'creates new appliance with default t binding' do

@@ -1,15 +1,6 @@
 require 'rails_helper'
 
 describe Atmosphere::Action do
-  let(:optimizer) { double('optimizer') }
-
-  before do
-    expect(Atmosphere::Optimizer).
-      to receive(:instance).at_least(:once) { optimizer }
-
-    expect(optimizer).to receive(:run).at_least(:once).with(anything)
-  end
-
   let(:appl) { create(:appliance) }
   subject { Atmosphere::Action.create(appliance: appl) }
 
