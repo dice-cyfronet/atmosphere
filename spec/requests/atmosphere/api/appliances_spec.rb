@@ -3,8 +3,6 @@ require 'rails_helper'
 describe Atmosphere::Api::V1::AppliancesController do
   include ApiHelpers
 
-  let(:optimizer) { double }
-
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
   let(:admin) { create(:admin) }
@@ -244,11 +242,8 @@ describe Atmosphere::Api::V1::AppliancesController do
       end
 
       it 'triggers optimization process' do
-        optimization_action =
-          instance_double(Atmosphere::Cloud::SatisfyAppliance)
-        expect(Atmosphere::Cloud::SatisfyAppliance).
-          to receive(:new).and_return(optimization_action)
-        expect(optimization_action).to receive(:execute)
+        expect(Atmosphere::Cloud::OptimizeApplianceWorker).
+          to receive(:perform_async)
 
         post api('/appliances', user), static_request_body
       end

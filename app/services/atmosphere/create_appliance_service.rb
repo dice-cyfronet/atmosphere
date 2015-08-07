@@ -9,7 +9,9 @@ module Atmosphere
 
     def execute
       appliance.save.tap do |success|
-        Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute if success
+        if success
+          Atmosphere::Cloud::OptimizeApplianceWorker.perform_async(appliance.id)
+        end
       end
     end
 
