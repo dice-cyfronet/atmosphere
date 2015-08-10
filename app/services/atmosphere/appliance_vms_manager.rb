@@ -7,9 +7,9 @@ module Atmosphere
     include Atmosphere::ApplianceVmsManagerExt
 
     def initialize(appliance,
-        updater_class = Proxy::ApplianceProxyUpdater,
-        vm_creator_class = Cloud::VmCreator,
-        tags_manager_class = Cloud::VmTagsManager)
+                   updater_class = Proxy::ApplianceProxyUpdater,
+                   vm_creator_class = Cloud::VmCreator,
+                   tags_manager_class = Cloud::VmTagsManager)
       @appliance = appliance
       @updater = updater_class.new(appliance)
       @vm_creator_class = vm_creator_class
@@ -33,7 +33,7 @@ module Atmosphere
     end
 
     def start_vms!(vms_descs)
-      if BillingService.can_afford_flavors?(appliance, vms_descs.map{ |desc| desc[:flavor]})
+      if BillingService.can_afford_flavors?(appliance, vms_descs.map { |desc| desc[:flavor] })
         vms_descs.each { |desc| instantiate_vm(desc[:template], desc[:tenant], desc[:flavor], desc[:name]) }
       else
         unsatisfied('Not enough funds to scale')
@@ -66,7 +66,7 @@ module Atmosphere
       vm = VirtualMachine.find_or_initialize_by(
           id_at_site: server_id,
           tenant: tenant
-        )
+      )
       vm.name = name
       vm.source_template = tmpl
       vm.state = :build
@@ -81,14 +81,14 @@ module Atmosphere
       else
         unsatisfied('Unable to assign VM to appliance - please contact administrator')
         Raven.capture_message('Unable to assign VM to appliance',
-            logger: 'error',
-            extra: {
-              is_at_site: server_id,
-              appliance_name: appliance.name,
-              appliance_id: appliance.id,
-              errors: vm.errors.to_json
-            }
-          )
+                              logger: 'error',
+                              extra: {
+                                  is_at_site: server_id,
+                                  appliance_name: appliance.name,
+                                  appliance_id: appliance.id,
+                                  errors: vm.errors.to_json
+                              }
+        )
       end
     end
 
@@ -108,7 +108,7 @@ module Atmosphere
           user_data: appliance.user_data,
           user_key: appliance.user_key,
           nic: nic
-        ).execute
+      ).execute
     end
 
     def add_vm(vm)
@@ -136,7 +136,7 @@ module Atmosphere
           Time.now.utc,
           'Optimization completed - performing billing action.',
           true
-        ) if appliance.state.satisfied?
+      ) if appliance.state.satisfied?
     end
   end
 end
