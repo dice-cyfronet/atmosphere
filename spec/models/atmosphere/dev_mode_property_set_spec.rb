@@ -31,6 +31,31 @@ describe Atmosphere::DevModePropertySet do
 
   it { should have_many(:port_mapping_templates).dependent(:destroy) }
 
+  context '#user_id' do
+    context 'is associated with appliance set' do
+      it 'returns user id of user owning associated appliance set' do
+        dev_appl_set = build(:dev_appliance_set)
+        dev_appl = build(:appliance, appliance_set: dev_appl_set)
+        dev_mode_prop_set = build(:dev_mode_property_set, appliance: dev_appl)
+        expect(dev_mode_prop_set.user_id).to eq(dev_appl_set.user_id)
+      end
+    end
+    context 'is not associated with appliance' do
+      it 'returns nil' do
+        dev_mode_property_set = Atmosphere::DevModePropertySet.new
+        expect(dev_mode_property_set.user_id).to be_nil
+      end
+    end
+    context 'is associated with appliance that is not associated with a set' do
+      it 'returns nil' do
+        appl = Atmosphere::Appliance.new
+        dev_mode_property_set = Atmosphere::DevModePropertySet.new(appliance: appl)
+        expect(dev_mode_property_set.user_id).to be_nil
+      end
+    end
+  end
+
+
   context '#create_from' do
     let(:endpoint1) { build(:endpoint) }
     let(:endpoint2) { build(:endpoint) }
