@@ -16,6 +16,20 @@ describe Atmosphere::DefaultPdp do
 
       expect(subject.can_manage?(at)).to be_falsy
     end
+
+    it 'allows to manage owned dev mode property set' do
+      appl_set = build(:dev_appliance_set, user: user)
+      dev_appl = build(:appliance, appliance_set: appl_set)
+      dev_mode_property_set = build(:dev_mode_property_set, appliance: dev_appl)
+      expect(subject.can_manage?(dev_mode_property_set)).to be_truthy
+    end
+
+    it 'does not allow to manage not owned dev mode property set' do
+      appl_set = build(:dev_appliance_set, user: build(:user, id: 2))
+      dev_appl = build(:appliance, appliance_set: appl_set)
+      dev_mode_property_set = build(:dev_mode_property_set, appliance: dev_appl)
+      expect(subject.can_manage?(dev_mode_property_set)).to be_falsey
+    end
   end
 
   context '#filter' do
