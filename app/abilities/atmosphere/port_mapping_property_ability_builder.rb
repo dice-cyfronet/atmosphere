@@ -12,7 +12,8 @@ module Atmosphere
 
       can [:create, :update, :destroy], PortMappingProperty do |pmp|
         pmt = pmp.port_mapping_template
-        pmt && pmt.appliance_type && pdp.can_manage?(pmt.appliance_type)
+        pmt_parent_obj = pmt.appliance_type || pmt.dev_mode_property_set
+        pmt && pmt_parent_obj && pdp.can_manage?(pmt_parent_obj)
       end
     end
   end
