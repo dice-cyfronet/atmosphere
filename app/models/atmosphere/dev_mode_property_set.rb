@@ -62,6 +62,10 @@ module Atmosphere
                 allow_nil: true
               }
 
+    def user_id
+      (appliance && appliance.appliance_set && appliance.appliance_set.user_id) || nil
+    end
+
     def self.create_from(appliance_type)
       copy_params = [
         'name', 'description', 'shared',
