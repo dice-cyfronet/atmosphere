@@ -14,7 +14,6 @@ class Atmosphere::Admin::UserKeysController < Atmosphere::Admin::ApplicationCont
   end
 
   def new
-    @users = Atmosphere::User.all
   end
 
   def create
