@@ -16,8 +16,8 @@ module Atmosphere
       true
     end
 
-    def can_manage?(at)
-      at.user_id == current_user.id
+    def can_manage?(obj)
+      obj.user_id == current_user.id
     end
 
     def filter(ats, filter = nil)

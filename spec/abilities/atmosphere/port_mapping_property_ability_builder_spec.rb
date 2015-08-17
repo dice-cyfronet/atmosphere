@@ -30,4 +30,33 @@ describe Atmosphere::PortMappingPropertyAbilityBuilder do
     expect(ability.can?(:update, pmp)).to be_falsy
     expect(ability.can?(:destroy, pmp)).to be_falsy
   end
+
+  context 'not in development mode' do
+    it 'check in pdp if appliance type can be managed' do
+      expect(pdp).to receive(:can_manage?).exactly(3).times.with(at)
+
+      ability.can?(:create, pmp)
+      ability.can?(:update, pmp)
+      ability.can?(:destroy, pmp)
+    end
+  end
+
+  context 'development mode' do
+    it 'check in pdp if dev mode property set can be managed' do
+      appl_set = build(:dev_appliance_set, user: user)
+      dev_appl = build(:appliance, appliance_set: appl_set)
+      dev_mode_property_set = build(:dev_mode_property_set, appliance: dev_appl)
+      dev_pmt = build(
+        :dev_port_mapping_template,
+        dev_mode_property_set: dev_mode_property_set
+      )
+      dev_pmp = build(:port_mapping_property, port_mapping_template: dev_pmt)
+
+      expect(pdp).to receive(:can_manage?).exactly(3).times.
+        with(dev_mode_property_set)
+      ability.can?(:create, dev_pmp)
+      ability.can?(:update, dev_pmp)
+      ability.can?(:destroy, dev_pmp)
+    end
+  end
 end
