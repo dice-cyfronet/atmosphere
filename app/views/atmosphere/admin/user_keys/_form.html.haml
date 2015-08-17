@@ -4,7 +4,7 @@
   .inputs
     = f.input :name
     = f.input :public_key, {readonly: !@user_key.id.nil?}
-    = f.input :user_id, collection: @users
+    = f.association :user
 
   .actions
     .btn-group
