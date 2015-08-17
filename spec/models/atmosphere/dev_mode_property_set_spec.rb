@@ -49,12 +49,12 @@ describe Atmosphere::DevModePropertySet do
     context 'is associated with appliance that is not associated with a set' do
       it 'returns nil' do
         appl = Atmosphere::Appliance.new
-        dev_mode_property_set = Atmosphere::DevModePropertySet.new(appliance: appl)
+        dev_mode_property_set =
+            Atmosphere::DevModePropertySet.new(appliance: appl)
         expect(dev_mode_property_set.user_id).to be_nil
       end
     end
   end
-
 
   context '#create_from' do
     let(:endpoint1) { build(:endpoint) }

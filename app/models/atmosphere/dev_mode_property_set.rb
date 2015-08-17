@@ -63,7 +63,7 @@ module Atmosphere
               }
 
     def user_id
-      (appliance && appliance.appliance_set && appliance.appliance_set.user_id) || nil
+      appliance.try(:appliance_set).try(:user_id)
     end
 
     def self.create_from(appliance_type)
