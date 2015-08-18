@@ -20,7 +20,6 @@ require 'rails_helper'
 require_relative "../../shared_examples/childhoodable.rb"
 
 describe Atmosphere::VirtualMachine do
-
   before {
     Fog.mock!
   }
@@ -66,9 +65,8 @@ describe Atmosphere::VirtualMachine do
       allow(external_vm.tenant).to receive(:cloud_client).and_return(cc_mock)
       expect(servers_mock).to_not receive(:destroy)
       expect(Raven).to_not receive(:capture_message)
-      external_vm.destroy(true)
 
-      expect(external_vm.errors).not_to be_empty
+      external_vm.destroy(true)
     end
 
     it 'does not report error to Raven if succeds to delete vm' do
@@ -312,24 +310,14 @@ describe Atmosphere::VirtualMachine do
   end
 
   context '::manageable' do
-    let!(:vm) { create(:virtual_machine, managed_by_atmosphere: true)  }
-
-    before do
-      @nonmanaged = create(:virtual_machine)
-    end
-
     it 'returns only VMs manageable by atmosphere' do
+      create(:virtual_machine)
+      vm = create(:virtual_machine, managed_by_atmosphere: true)
+
       vms = Atmosphere::VirtualMachine.manageable
 
       expect(vms.count).to eq 1
       expect(vms[0]).to eq vm
-    end
-
-    it 'allows destruction of managed machines only' do
-      expect { @nonmanaged.destroy }.
-        to change { Atmosphere::VirtualMachine.count }.by(0)
-      expect { vm.destroy }.
-        to change { Atmosphere::VirtualMachine.count }.by(-1)
     end
   end
 
