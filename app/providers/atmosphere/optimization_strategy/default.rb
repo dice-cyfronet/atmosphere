@@ -30,6 +30,18 @@ module Atmosphere
         false
       end
 
+      def monitor_vms?
+        false
+      end
+
+      def handle_event(_hash)
+        nil
+      end
+
+      def event_definitions
+        nil
+      end
+
       protected
 
       def vmt_candidates

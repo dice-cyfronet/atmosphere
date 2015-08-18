@@ -30,6 +30,8 @@ group :development do
   gem 'rails_best_practices'
 
   gem 'foreman'
+
+  gem 'rubocop'
 end
 
 group :development, :test do

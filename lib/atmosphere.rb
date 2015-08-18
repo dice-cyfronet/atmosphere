@@ -67,6 +67,8 @@ module Atmosphere
     Struct.new(:load, :vm, :vmt, :flavor).
       new(5.minutes, 30.seconds, 1.minute, 120.minutes))
 
+  mattr_reader :cep
+
   mattr_accessor :childhood_age #seconds
   @@childhood_age = 2
 
@@ -128,6 +130,11 @@ module Atmosphere
     @monitoring_logger ||= Logger.new(Rails.root.join('log', 'monitoring.log'))
   end
 
+  def self.complex_event_logger
+    @complex_event_logger ||=
+        Logger.new(Rails.root.join('log', 'complex_event_logger'))
+  end
+
   def self.optimizer_logger
     @optimizer_logger ||= Logger.new(Rails.root.join('log', 'optimizer.log'))
   end
@@ -153,6 +160,10 @@ module Atmosphere
 
   def self.clear_cache!
     @clients_cache = nil
+  end
+
+  def self.cep_client
+    Atmosphere::Cep::Esper.new(@@cep)
   end
 
   private
