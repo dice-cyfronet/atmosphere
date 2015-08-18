@@ -67,7 +67,6 @@ module Atmosphere
 
     before_update :update_in_monitoring, if: :ip_changed?
     before_destroy :unregister_from_monitoring, if: :in_monitoring?
-    before_destroy :cant_destroy_non_managed_vm
     after_update :regenerate_dnat, if: :ip_changed?
     after_destroy :delete_dnat, if: :ip?
 
@@ -231,13 +230,6 @@ module Atmosphere
       end
     rescue Fog::Compute::OpenStack::NotFound, Fog::Compute::AWS::NotFound
       logger.warn("VM with #{id_at_site} does not exist - continuing")
-    end
-
-    def cant_destroy_non_managed_vm
-      unless managed_by_atmosphere
-        errors.add :base, 'Virtual Machine is not managed by atmosphere'
-        false
-      end
     end
 
     def cloud_action(action_name, success_state)
