@@ -10,7 +10,7 @@ class Atmosphere::Admin::VirtualMachinesController < Atmosphere::Admin::Applicat
   end
 
   def save_as_template
-    if VirtualMachineTemplate.create_from_vm(@virtual_machine)
+    if Atmosphere::VirtualMachineTemplate.create_from_vm(@virtual_machine)
       redirect_to admin_virtual_machine_templates_url, notice: 'Template is being saved'
     else
       redirect_to admin_virtual_machines_url, notice: 'Error while saving template'
