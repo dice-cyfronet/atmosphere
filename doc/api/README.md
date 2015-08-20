@@ -1,6 +1,6 @@
 <!--- This section is copied from: https://raw.github.com/gitlabhq/gitlabhq/master/doc/api/README.md -->
 
-# AIR API
+# Atmosphere API
 
 All API requests require authentication (if not stated different). You need to pass a `private_token` or `mi_ticket` parameter by url or header.
 
@@ -25,7 +25,15 @@ Example for a valid API request using curl and authentication via header:
 
 ```
 curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://example.com/api/v1/appliance_sets
-curl --header "MI-TICKET: fd342hac4a=" http://example.com/api/v1/appliance_sets
+curl --header "MI-TICKET: fd342hac4a=" https://example.com/api/v1/appliance_sets
+```
+
+## Request content type
+
+When sending a JSON request body, a valid content type (`application/json`) must be specified, e.g.:
+
+```
+curl -X POST --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "Content-Type: application/json" http://example.com/api/v1/appliance_sets --data '{"name": 'as name', "appliance_set_type": "workflow"}'
 ```
 
 ## Status codes
@@ -94,7 +102,7 @@ duplicated user key
 
 ## Sudo
 
-If you are an admin of the system, than you are able to sudo as other user. To do so simply add `sudo=other_user_name` query params or `HTTP-SUDO` header into request. E.g.:
+If you are a system administrator, you can impersonate other users. To do so, simply add `sudo=other_user_name` query params or a `HTTP-SUDO` header to your request. Example:
 
 ```
 GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
@@ -104,4 +112,38 @@ GET http://example.com/api/v1/appliance_sets?mi_ticket=fd342hac4a=&sudo=other_us
 ```
 curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "HTTP-SUDO: other_user" http://example.com/api/v1/appliance_sets
 curl --header "MI-TICKET: fd342hac4a=" --header "HTTP-SUDO: other_user" http://example.com/api/v1/appliance_sets
+```
+
+## JSON structure
+
+All JSON messages (request - if needed - and responses for `GET`/`POST`/`PUT`/`DELETE`) should be encapsulated within the parent object. The name of the parent object is equal to the resource name. When a collection is returned, the resource name will be pluralized, e.g.:
+
+### Collection
+
+```JSON
+{
+  "appliances": [
+    {
+      "id": 1,
+      "name": "appliance name",
+      "description": "appliance description",
+      ...
+    }, {
+      ...
+    }
+  ]
+}
+``` 
+
+### Single resource
+
+```JSON
+{
+  "appliance": {
+    "id": 1,
+    "name": "appliance name",
+    "description": "appliance description",
+    ...
+  }
+}
 ```
