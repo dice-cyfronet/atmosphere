@@ -25,7 +25,15 @@ Example for a valid API request using curl and authentication via header:
 
 ```
 curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://example.com/api/v1/appliance_sets
-curl --header "MI-TICKET: fd342hac4a=" http://example.com/api/v1/appliance_sets
+curl --header "MI-TICKET: fd342hac4a=" https://example.com/api/v1/appliance_sets
+```
+
+## Request content type
+
+If JSON request body is send then valid content type (`application/json`) should be set e.g.:
+
+```
+curl -X POST --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "Content-Type: application/json" http://example.com/api/v1/appliance_sets --data '{"name": 'as name', "appliance_set_type": "workflow"}'
 ```
 
 ## Status codes
