@@ -30,7 +30,7 @@ curl --header "MI-TICKET: fd342hac4a=" https://example.com/api/v1/appliance_sets
 
 ## Request content type
 
-If JSON request body is send then valid content type (`application/json`) should be set e.g.:
+When sending a JSON request body, a valid content type (`application/json`) must be specified, e.g.:
 
 ```
 curl -X POST --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "Content-Type: application/json" http://example.com/api/v1/appliance_sets --data '{"name": 'as name', "appliance_set_type": "workflow"}'
@@ -102,7 +102,7 @@ duplicated user key
 
 ## Sudo
 
-If you are an admin of the system, than you are able to sudo as other user. To do so simply add `sudo=other_user_name` query params or `HTTP-SUDO` header into request. E.g.:
+If you are a system administrator, you can impersonate other users. To do so, simply add `sudo=other_user_name` query params or a `HTTP-SUDO` header to your request. Example:
 
 ```
 GET http://example.com/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
@@ -116,7 +116,7 @@ curl --header "MI-TICKET: fd342hac4a=" --header "HTTP-SUDO: other_user" http://e
 
 ## JSON structure
 
-All JSON messages (request - if needed - and responses for `GET`/`POST`/`PUT`/`DELETE`) should be encapsulated with parent object. Name of the parent object is equal to resource name. When collection is returned then resource name should in plural form, e.g.:
+All JSON messages (request - if needed - and responses for `GET`/`POST`/`PUT`/`DELETE`) should be encapsulated within the parent object. The name of the parent object is equal to the resource name. When a collection is returned, the resource name will be pluralized, e.g.:
 
 ### Collection
 
