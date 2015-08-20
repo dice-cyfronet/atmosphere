@@ -48,7 +48,10 @@ module Atmosphere
               presence: true
 
     validates :balance,
-              numericality: true
+              numericality: {
+                only_integer: true,
+                less_than_or_equal_to: 2147483647
+              }
 
     validates :overdraft_limit,
               numericality: { less_than_or_equal_to: 0 }
