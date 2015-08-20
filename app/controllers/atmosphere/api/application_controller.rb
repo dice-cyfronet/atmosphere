@@ -37,6 +37,11 @@ module Atmosphere
         render_error exception.record
       end
 
+      rescue_from Atmosphere::BillingException do |exception|
+        render_json_error(exception.to_s,
+                          status: :payment_required, type: :billing)
+      end
+
       protected
 
       def render_error(model_obj)
