@@ -4,7 +4,7 @@
 #
 #  id                       :integer          not null, primary key
 #  transport_protocol       :string(255)      default("tcp"), not null
-#  application_protocol     :string(255)      default("http_https"), not null
+#  application_protocol     :string(255)      default("http"), not null
 #  service_name             :string(255)      not null
 #  target_port              :integer          not null
 #  appliance_type_id        :integer
@@ -34,7 +34,10 @@ describe Atmosphere::PortMappingTemplate do
 
   context 'if transport_protocol is tcp' do
     before { allow(subject).to receive(:transport_protocol).and_return('tcp') }
-    it { should validate_inclusion_of(:application_protocol).in_array(%w(http https http_https)) }
+    it do
+      should validate_inclusion_of(:application_protocol).
+        in_array(%w(http https))
+    end
   end
 
   context 'if transport_protocol is udp' do
@@ -44,7 +47,7 @@ describe Atmosphere::PortMappingTemplate do
 
   it 'should set proper default values' do
     # It seems we should use strings, not symbols here - perhaps this makes some kind of round-trip to DB?
-    expect(subject.application_protocol).to eql 'http_https'
+    expect(subject.application_protocol).to eql 'http'
     expect(subject.transport_protocol).to eql 'tcp'
   end
 
@@ -142,18 +145,6 @@ describe Atmosphere::PortMappingTemplate do
 
       it 'is not http redirection' do
         expect(subject.http?).to be_falsy
-      end
-
-      it 'is https redirection' do
-        expect(subject.https?).to be_truthy
-      end
-    end
-
-    context 'when http_https application protocol' do
-      subject { create(:port_mapping_template, application_protocol: :http_https) }
-
-      it 'is http redirection' do
-        expect(subject.http?).to be_truthy
       end
 
       it 'is https redirection' do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150701173332) do
+ActiveRecord::Schema.define(version: 20150821055554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -203,10 +203,10 @@ ActiveRecord::Schema.define(version: 20150701173332) do
   end
 
   create_table "atmosphere_port_mapping_templates", force: :cascade do |t|
-    t.string   "transport_protocol",       default: "tcp",        null: false
-    t.string   "application_protocol",     default: "http_https", null: false
-    t.string   "service_name",                                    null: false
-    t.integer  "target_port",                                     null: false
+    t.string   "transport_protocol",       default: "tcp",  null: false
+    t.string   "application_protocol",     default: "http", null: false
+    t.string   "service_name",                              null: false
+    t.integer  "target_port",                               null: false
     t.integer  "appliance_type_id"
     t.integer  "dev_mode_property_set_id"
     t.datetime "created_at"

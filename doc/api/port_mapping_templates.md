@@ -18,7 +18,7 @@ Parameters (one of the following is required):
     {
       "id": 1,
       "transport_protocol": either "tcp" or "udp",
-      "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
+      "application_protocol": one of "http", "https" or "none" (when "transport_protocol" is "udp"),
       "service_name": "rdesktop",
       "target_port": 3389,
       "appliance_type_id": 5 or nil (should equal the :appliance_type_id parameter)
@@ -48,7 +48,7 @@ Parameters:
   "port_mapping_template": {
     "id": 1 (should equal the :id parameter),
     "transport_protocol": either "tcp" or "udp",
-    "application_protocol": one of "http", "https", "http_https" or "none" (when "transport_protocol" is "udp"),
+    "application_protocol": one of "http", "https" or "none" (when "transport_protocol" is "udp"),
     "service_name": "rdesktop",
     "target_port": 3389,
     "appliance_type_id": 5 or nil,
@@ -72,7 +72,7 @@ Parameters (one of the first two is required):
 + `appliance_type_id` - The ID of the Appliance Type which should acquire the new port mapping template
 + `dev_mode_property_set_id` - The ID of the Dev Mode Property Set which should acquire the new port mapping template
 + `transport_protocol` (required) - What transport protocol the port operates, the value should be either "tcp" or "udp"
-+ `application_protocol` (required) - If using TCP transport protocol, choose one of "http", "https", "http_https". Use "none" for UDP
++ `application_protocol` (required) - If using TCP transport protocol, choose one of "http", "https", "none". Use "none" for UDP
 + `service_name` (required) - Some kind of descriptive name for the service operating on that port
 + `target_port` (required) - The port number
 
