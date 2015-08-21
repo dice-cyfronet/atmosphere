@@ -265,4 +265,18 @@ describe Atmosphere::Tenant do
         to match_array [@t, t2]
     end
   end
+
+  describe '#site_id' do
+    it 'uses tenant_id value when site_id not set' do
+      t = build(:tenant, tenant_id: 'my_tenant', site_id: nil)
+
+      expect(t.site_id).to eq 'my_tenant'
+    end
+
+    it 'uses site_id if set' do
+      t = build(:tenant, tenant_id: 'my_tenant', site_id: 'my_site')
+
+      expect(t.site_id).to eq 'my_site'
+    end
+  end
 end

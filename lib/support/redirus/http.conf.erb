@@ -1,0 +1,21 @@
+upstream <%= @name %>_http {
+<% for worker in @workers -%>
+  server <%= worker %>;
+<% end -%>
+}
+
+server {
+  listen 149.156.10.135:80;
+  server_name <%= @name %>.FIXME;
+  server_tokens off;
+  proxy_set_header X-Server-Address $scheme://<%= name %>.FIXME;
+  proxy_set_header Host $http_host;
+
+  location / {
+    proxy_http_version 1.1;
+    proxy_pass http://<%= @name %>_http;
+<% for property in @location_properties -%>
+    <%= property %>;
+<% end -%>
+  }
+}

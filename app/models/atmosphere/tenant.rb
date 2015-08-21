@@ -181,6 +181,10 @@ module Atmosphere
         where("atmosphere_tenants.site_id = '#{site_id}'").all
     end
 
+    def site_id
+      self[:site_id] || tenant_id
+    end
+
     private
 
     def update_cloud_client

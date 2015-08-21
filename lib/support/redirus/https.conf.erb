@@ -1,0 +1,26 @@
+upstream <%= @name %>_https {
+<% for worker in @workers -%>
+  server <%= worker %>;
+<% end -%>
+}
+
+server {
+  listen *:443 ssl;
+  server_name <%= @name %>.FIXME;
+
+  ssl_certificate     /path/to/host.pem;
+  ssl_certificate_key /path/to/host.key;
+  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+
+  server_tokens off;
+  proxy_set_header X-Server-Address $scheme://<%= name %>.FIXME;
+  proxy_set_header Host $http_host;
+
+  location / {
+    proxy_http_version 1.1;
+    proxy_pass https://<%= @name %>_https;
+<% for property in @location_properties -%>
+    <%= property %>;
+<% end -%>
+  }
+}
