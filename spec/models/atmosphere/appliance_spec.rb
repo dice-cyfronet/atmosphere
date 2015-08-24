@@ -133,45 +133,6 @@ describe Atmosphere::Appliance do
     end
   end
 
-  context 'when instantiated' do
-    let!(:appliance_type) { create(:appliance_type) }
-    let!(:appliance_set) { create(:appliance_set) }
-    let!(:appliance) do
-      create(:appliance,
-             appliance_set: appliance_set,
-             appliance_type: appliance_type,
-             fund: nil)
-    end
-
-    it 'does not change fund when externally assigned' do
-      funded_appliance = create(:appliance)
-      expect(funded_appliance.fund).not_to eq appliance.send(:default_fund)
-    end
-
-    it 'gets default fund from its user if no fund is set' do
-      expect(appliance.fund).to eq appliance.send(:default_fund)
-    end
-
-    it 'prefers default fund if it supports relevant tenant' do
-      default_t = create(:openstack_with_flavors,
-                         funds: [appliance_set.user.default_fund])
-      funded_t = create(:openstack_with_flavors, funds: [create(:fund)])
-      appliance_set.user.funds << funded_t.funds.first
-      create(:virtual_machine_template,
-             appliance_type: appliance_type,
-             tenants: [default_t])
-      create(:virtual_machine_template,
-             appliance_type: appliance_type,
-             tenants: [funded_t])
-      supported_appliance_types = Atmosphere::Tenant.all.map do |t|
-        t.virtual_machine_templates.map(&:appliance_type)
-      end
-      expect(supported_appliance_types).to all(include(appliance_type))
-      expect(appliance.fund).not_to eq funded_t.funds.first
-      expect(appliance.fund).to eq appliance.send(:default_fund)
-    end
-  end
-
   context '#user_data' do
     let(:appl) do
       build(:appliance).tap do |appl|
@@ -204,27 +165,6 @@ describe Atmosphere::Appliance do
     it 'does not crash when no data is present' do
       appliance.appliance_set.user = nil
       expect(appliance.send(:default_fund)).to eq nil
-    end
-  end
-
-  context '#assign_fund' do
-    it 'does not assign a fund which is incompatible with selected tenants' do
-      f1 = create(:fund)
-      f2 = create(:fund)
-      t1 = create(:tenant, funds: [f1])
-      t2 = create(:tenant, funds: [f2])
-      u = create(:user, funds: [f1, f2])
-      vmt = create(:virtual_machine_template, tenants: [t1, t2])
-      at = create(:appliance_type, virtual_machine_templates: [vmt])
-      as = create(:appliance_set, user: u)
-
-      t1_a = create(:appliance, appliance_set: as, appliance_type: at,
-                                fund: nil, tenants: [t1])
-      t2_a = create(:appliance, appliance_set: as, appliance_type: at,
-                                fund: nil, tenants: [t2])
-
-      expect(t1_a.fund).to eq f1
-      expect(t2_a.fund).to eq f2
     end
   end
 

@@ -17,6 +17,73 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenants: [openstack])}
 
+  context '#assign fund' do
+    let!(:t) { create(:openstack_with_flavors, active: true, funds: [fund]) }
+    let!(:vmt) { create(:virtual_machine_template, tenants: [t]) }
+    let!(:appliance_type) { create(:appliance_type, preference_cpu: 0, \
+      preference_disk: 0, preference_memory: 0, virtual_machine_templates: [vmt]) }
+    let!(:appliance_set) { create(:appliance_set, user: u) }
+    let!(:appliance) do
+      create(:appliance,
+             appliance_set: appliance_set,
+             appliance_type: appliance_type,
+             fund: nil)
+    end
+
+    it 'does not change fund when externally assigned' do
+      funded_appliance = create(:appliance)
+      expect(funded_appliance.fund).not_to eq appliance.send(:default_fund)
+    end
+
+    it 'gets default fund from its user if no fund is set' do
+      appliance.reload
+      Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
+      expect(appliance.fund).to eq appliance.send(:default_fund)
+    end
+
+    it 'prefers default fund if it supports relevant tenant' do
+      appliance.reload
+      default_t = create(:openstack_with_flavors, active: true,
+                         funds: [appliance_set.user.default_fund])
+      funded_t = create(:openstack_with_flavors, active: true, funds: [create(:fund)])
+      appliance_set.user.funds << funded_t.funds.first
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             tenants: [default_t])
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             tenants: [funded_t])
+
+      Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
+
+      expect(appliance.fund).not_to eq funded_t.funds.first
+      expect(appliance.fund).to eq appliance.send(:default_fund)
+    end
+
+    it 'does not assign a fund which is incompatible with selected tenants' do
+      f1 = create(:fund)
+      f2 = create(:fund)
+      t1 = create(:openstack_with_flavors, funds: [f1])
+      t2 = create(:openstack_with_flavors, funds: [f2])
+      user = create(:user, funds: [f1, f2])
+      vmt = create(:virtual_machine_template, tenants: [t1, t2])
+      at = create(:appliance_type, virtual_machine_templates: [vmt])
+      as = create(:appliance_set, user: user)
+
+      t1_a = create(:appliance, appliance_set: as, appliance_type: at,
+                    fund: nil, tenants: [t1])
+      t2_a = create(:appliance, appliance_set: as, appliance_type: at,
+                    fund: nil, tenants: [t2])
+
+      Atmosphere::Cloud::SatisfyAppliance.new(t1_a).execute
+      Atmosphere::Cloud::SatisfyAppliance.new(t2_a).execute
+
+      expect(t1_a.fund).to eq f1
+      expect(t2_a.fund).to eq f2
+    end
+
+  end
+
   context 'new appliance created' do
     context 'development mode' do
       let(:dev_appliance_set) { create(:dev_appliance_set, user: u) }
