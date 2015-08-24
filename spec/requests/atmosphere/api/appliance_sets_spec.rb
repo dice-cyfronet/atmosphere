@@ -135,12 +135,13 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
       context 'when invalid appliance set type is provided' do
         let(:invalid_type) { 'invalid appliance set type' }
         let(:invalid_type_as) do
-          { appliance_set: {
+          { appliance_set:
+            {
               name: 'my name',
               priority: 50,
               appliance_set_type: invalid_type,
               optimization_policy: 'manual'
-          }
+            }
           }
         end
 
