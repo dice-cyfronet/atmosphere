@@ -132,6 +132,29 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
         expect(response.status).to eq 403
       end
 
+      context 'when invalid appliance set type is provided' do
+        let(:invalid_type) { 'invalid appliance set type' }
+        let(:invalid_type_as) do
+          { appliance_set: {
+              name: 'my name',
+              priority: 50,
+              appliance_set_type: invalid_type,
+              optimization_policy: 'manual'
+          }
+          }
+        end
+
+        it 'returns error' do
+          post api('/appliance_sets', admin), invalid_type_as
+
+
+          expect(response.status).to eq 422
+          exp_msg = "{\"message\":\"Unable to create appliance set with type "\
+            "invalid appliance set type\",\"type\":\"record_invalid\"}"
+          expect(response.body).to eq exp_msg
+        end
+      end
+
       context 'optimization policy and appliances are specified' do
         let!(:at_1) { create(:appliance_type, visible_to: :all) }
         let!(:conf_tmpl_1) do
