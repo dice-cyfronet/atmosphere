@@ -20,8 +20,20 @@ module Atmosphere
         end
 
         def create
-          if conflicted? @appliance_set.appliance_set_type
-            msg = "Unable to create two #{@appliance_set.appliance_set_type} appliance sets"
+          if !@appliance_set.appliance_set_type
+            render_json_error(
+              I18n.t(
+                'appliance_sets.invalid_type',
+                type: appliance_set_params[:appliance_set_type]
+              ),
+              status: :unprocessable_entity,
+              type: :record_invalid
+            )
+          elsif conflicted? @appliance_set.appliance_set_type
+            msg = I18n.t(
+              'appliance_sets.conflicted',
+              type: @appliance_set.appliance_set_type
+            )
             render_json_error(msg, status: :conflict)
             log_user_action msg
           else

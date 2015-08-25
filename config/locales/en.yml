@@ -109,6 +109,8 @@ en:
     edit: Edit this Appliance Set
     remove: Remove this Appliance Set
     cannot_remove_appliance: "Unable to remove %{appliance.name} (%{appliance.id})"
+    invalid_type: "Unable to create appliance set with type %{type}"
+    conflicted: "Unable to create two %{type} appliance sets"
   tenants:
     title: Tenants
     long_title: Cloud Tenants and Pricing
