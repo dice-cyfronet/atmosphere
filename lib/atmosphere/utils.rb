@@ -49,7 +49,6 @@ module Atmosphere
                          [first_el]
                        end
       [first_elements, arr]
-
     end
 
     def min_elements_by_without_block(arr)

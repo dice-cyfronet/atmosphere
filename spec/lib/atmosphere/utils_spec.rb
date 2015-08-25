@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'atmosphere/utils'
-# $: << '../../lib'
 
 describe Atmosphere::Utils do
   include Atmosphere::Utils
@@ -24,7 +23,6 @@ describe Atmosphere::Utils do
       it 'excludes nil elements' do
         expect(min_elements_by([2, nil, 3, 4, 1, 4])).to eq [1]
       end
-
     end
 
     context 'called with block' do
@@ -58,7 +56,6 @@ describe Atmosphere::Utils do
       it 'returns empty array if block returns nil for all elements' do
         expect(min_elements_by([1]) { nil }).to eq []
       end
-
     end
   end
 
@@ -91,7 +88,7 @@ describe Atmosphere::Utils do
       end
 
       it 'returns array with all max input values' do
-        expect(max_elements_by(['a', 'aa', 'b', 'bb']) { |e| e.length}).
+        expect(max_elements_by(['a', 'aa', 'b', 'bb']) { |e| e.length }).
           to eq ['aa', 'bb']
       end
 
@@ -110,7 +107,6 @@ describe Atmosphere::Utils do
       it 'returns empty array if block returns nil for all elements' do
         expect(max_elements_by([1]) { nil }).to eq []
       end
-
     end
   end
 end
