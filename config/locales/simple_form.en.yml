@@ -45,7 +45,6 @@ en:
     application_protocol:
       http: HTTP
       https: HTTPS
-      http_https: HTTP or HTTPS
       none: None
     endpoint_type:
       ws: Web Service

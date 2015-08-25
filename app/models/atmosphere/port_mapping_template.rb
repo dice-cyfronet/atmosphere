@@ -4,7 +4,7 @@
 #
 #  id                       :integer          not null, primary key
 #  transport_protocol       :string(255)      default("tcp"), not null
-#  application_protocol     :string(255)      default("http_https"), not null
+#  application_protocol     :string(255)      default("http"), not null
 #  service_name             :string(255)      not null
 #  target_port              :integer          not null
 #  appliance_type_id        :integer
@@ -63,7 +63,7 @@ module Atmosphere
 
     validates :application_protocol,
               presence: true,
-              inclusion: { in: %w(http https http_https none) },
+              inclusion: { in: %w(http https none) },
               if: 'transport_protocol == "tcp"'
 
     validates :application_protocol,
@@ -83,7 +83,7 @@ module Atmosphere
                 greater_than_or_equal_to: 0
               }
 
-    enumerize :application_protocol, in: [:http, :https, :http_https, :none]
+    enumerize :application_protocol, in: [:http, :https, :none]
     enumerize :transport_protocol, in: [:tcp, :udp]
 
     before_validation :check_only_one_belonging
@@ -98,11 +98,11 @@ module Atmosphere
     scope :def_order, -> { order(:service_name) }
 
     def http?
-      application_protocol.http? || application_protocol.http_https?
+      application_protocol.http?
     end
 
     def https?
-      application_protocol.https? || application_protocol.http_https?
+      application_protocol.https?
     end
 
     def properties

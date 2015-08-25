@@ -133,7 +133,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       let(:pmt1) do
         create(:port_mapping_template,
                appliance_type: at, transport_protocol: :tcp,
-               application_protocol: :http_https)
+               application_protocol: :http)
       end
       let(:pmt2) do
         create(:port_mapping_template,
