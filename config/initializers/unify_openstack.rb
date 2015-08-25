@@ -40,9 +40,7 @@ end
 
 class Fog::Compute::OpenStack::Servers
   def destroy(id_at_site)
-    vm = get(id_at_site)
-
-    !vm || vm.destroy
+    service.delete_server(id_at_site)
   end
 end
 
@@ -63,5 +61,11 @@ class Fog::Compute::OpenStack::Image
 
   def tags
     metadata.to_hash
+  end
+end
+
+class Fog::Compute::OpenStack::Images
+  def destroy(id_at_site)
+    service.delete_image(id_at_site)
   end
 end
