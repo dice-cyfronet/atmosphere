@@ -37,17 +37,9 @@ module Atmosphere
           appliance_type: appliance.appliance_type,
           state: 'active'
         )
-
-        puts "Got vmts: #{vmts.inspect}"
-
         if appliance.tenants.present?
-
-          puts "Appliance demands tenants: #{appliance.tenants.map(&:name)}"
-
           vmts = restrict_by_user_requirements(vmts)
         end
-        puts "Got vmts by user reqs: #{vmts.inspect}"
-
         vmts
         #restrict_by_tenant_availability(vmts)
       end
@@ -67,9 +59,6 @@ module Atmosphere
         if appliance.fund.present?
           appliance.tenants.active.funded_by(appliance.fund)
         else
-
-          puts "Appliance has tenants: #{appliance.tenants.map(&:name)}"
-          puts "Appliance has active tenants: #{appliance.tenants.active.map(&:name)}"
           appliance.tenants.active
         end
       end
@@ -119,13 +108,8 @@ module Atmosphere
           best_flavor = nil
           instantiation_cost = Float::INFINITY
 
-          puts "Selecting VFT"
-
           tmpls.each do |tmpl|
             candidate_tenants = get_candidate_tenants_for_template(tmpl)
-
-            puts "Candidate tenants for tmpl #{tmpl.id_at_site}: #{candidate_tenants.map(&:name)}"
-
             candidate_tenants.each do |t|
 
               # The next step is to restrict tenants by user funds.
@@ -135,20 +119,10 @@ module Atmosphere
               # in the instantiation requests, the selection must be honored.
               unless @appliance.blank?
                 candidate_tenants.select do |t|
-
-                  puts "Appliance funds: #{@appliance.appliance_set.user.funds.map(&:name)}"
-                  puts "Tenant funds: #{t.funds.map(&:name)}"
-
                   candidate_funds = @appliance.appliance_set.user.funds & t.funds
-
-                  puts "Candidate funds 1: #{candidate_funds.map(&:name)}"
-
                   unless @appliance.fund.blank?
                     candidate_funds = candidate_funds & [@appliance.fund]
                   end
-
-                  puts "Candidate funds 2: #{candidate_funds.map(&:name)}"
-
                   candidate_funds.present?
                 end
               end
@@ -162,8 +136,6 @@ module Atmosphere
               end
             end
           end
-
-          puts "Best template: #{best_template.inspect}"
 
           # It is possible that nothing has been found - this would indicate unsatisfiable hardware requirements
           # (i.e. no flavor with sufficient CPU/memory/HDD) or non-existence of flavors supporting the selected

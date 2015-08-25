@@ -418,7 +418,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         described_class.new(appl).execute
 
         expect(appl.state).to eql 'unsatisfied'
-        expect(appl.state_explanation).to start_with 'No matching template'
+        expect(appl.state_explanation).to start_with 'No matching flavor was found'
       end
 
       it 'chooses VMT from active tenant' do
