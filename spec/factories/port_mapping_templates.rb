@@ -1,7 +1,7 @@
 FactoryGirl.define do
-  factory :port_mapping_template, class: 'Atmosphere::PortMappingTemplate' do |f|
+  factory :port_mapping_template, class: 'Atmosphere::PortMappingTemplate' do
     service_name { SecureRandom.hex(4) }
-    target_port { Random.rand(9999) }
+    target_port { SecureRandom.random_number(9999) }
     appliance_type
 
     trait :devel do
@@ -9,6 +9,6 @@ FactoryGirl.define do
       dev_mode_property_set
     end
 
-    factory  :dev_port_mapping_template, traits: [:devel]
+    factory :dev_port_mapping_template, traits: [:devel]
   end
 end
