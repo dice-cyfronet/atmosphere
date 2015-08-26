@@ -23,7 +23,7 @@ module Devise
           user = sudo!(user, sudo_as) if sudo_as
 
           success!(user)
-        rescue Exception => e
+        rescue StandardException
           return fail(:authentication_token_error)
         end
       end

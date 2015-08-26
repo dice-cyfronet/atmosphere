@@ -16,8 +16,8 @@ module Devise
       end
 
       def sudo_fail!(status, msg)
-        body = {error: msg}
-        headers = {"Content-Type" => "application/json; charset=utf-8"}
+        body = { error: msg }
+        headers = { 'Content-Type' => 'application/json; charset=utf-8' }
 
         custom! [status, headers, [body.to_json]]
         throw :warden

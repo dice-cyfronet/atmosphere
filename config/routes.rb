@@ -7,12 +7,12 @@ end
 Atmosphere::Engine.routes.draw do
   root 'home#index'
 
-  devise_for  :users,
-              class_name: 'Atmosphere::User',
-              controllers: {
-                omniauth_callbacks: 'atmosphere/users/omniauth_callbacks'
-              },
-              module: :devise
+  devise_for :users,
+             class_name: 'Atmosphere::User',
+             controllers: {
+               omniauth_callbacks: 'atmosphere/users/omniauth_callbacks'
+             },
+             module: :devise
 
   get 'jobs/show'
   resource :profile, only: [:show, :update] do
@@ -109,5 +109,5 @@ Atmosphere::Engine.routes.draw do
 
   get 'help' => 'help#index'
   get 'help/api' => 'help#api'
-  get 'help/api/:category'  => 'help#api', as: 'help_api_file'
+  get 'help/api/:category' => 'help#api', as: 'help_api_file'
 end

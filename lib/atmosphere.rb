@@ -4,11 +4,10 @@ require 'atmosphere/engine'
 require 'atmosphere/cache_entry'
 
 module Atmosphere
-
   # Default way to setup Atmosphere.
   def self.setup
-      yield self
-    end
+    yield self
+  end
 
   # If user credentials should be delegated into spawned VM than delegated
   # auth value can be used. It will automatically inject into every initial
@@ -57,7 +56,7 @@ module Atmosphere
 
   mattr_reader :url_monitoring
   @@url_monitoring = Struct.new(:unavail_statuses, :pending, :ok, :lost).
-    new([502], 10, 120, 15)
+                     new([502], 10, 120, 15)
 
   mattr_reader :optimizer
   @@optimizer = Struct.new(:max_appl_no).new(5)
@@ -65,18 +64,18 @@ module Atmosphere
   mattr_reader :monitoring
   @@monitoring = Struct.new(:intervals).new(
     Struct.new(:load, :vm, :vmt, :flavor).
-      new(5.minutes, 30.seconds, 1.minute, 120.minutes))
+    new(5.minutes, 30.seconds, 1.minute, 120.minutes))
 
-  mattr_accessor :childhood_age #seconds
+  mattr_accessor :childhood_age # seconds
   @@childhood_age = 2
 
-  mattr_accessor :cloud_object_protection_time #seconds
+  mattr_accessor :cloud_object_protection_time # seconds
   @@cloud_object_protection_time = 300
 
-  mattr_accessor :cloud_client_cache_time #hours
+  mattr_accessor :cloud_client_cache_time # hours
   @@cloud_client_cache_time = 8
 
-  mattr_accessor :vmt_at_relation_update_period #hours
+  mattr_accessor :vmt_at_relation_update_period # hours
   @@vmt_at_relation_update_period = 2
 
   mattr_accessor :azure_vm_password
@@ -113,7 +112,7 @@ module Atmosphere
       if tenant.nic_provider_config.present?
         JSON.parse(tenant.nic_provider_config).symbolize_keys
       else
-        {tenant: tenant}
+        { tenant: tenant }
       end
     nic_provider_class.new(config)
   end

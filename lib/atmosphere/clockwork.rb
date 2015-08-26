@@ -5,12 +5,12 @@ module Atmopshere
     included do
       every(Atmosphere.monitoring.intervals.vmt, 'monitoring.templates') do
         action_on_active_tenants('templates monitoring',
-                              Atmosphere::VmTemplateMonitoringWorker)
+                                 Atmosphere::VmTemplateMonitoringWorker)
       end
 
       every(Atmosphere.monitoring.intervals.vm, 'monitoring.vms') do
         action_on_active_tenants('vms monitoring',
-                              Atmosphere::VmMonitoringWorker)
+                                 Atmosphere::VmMonitoringWorker)
       end
 
       every(Atmosphere.monitoring.intervals.load, 'monitoring.load') do

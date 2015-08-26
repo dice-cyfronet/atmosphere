@@ -7,7 +7,12 @@ module Atmosphere
     end
 
     def self.parameters(payload)
-      payload.blank? ? [] : payload.scan(Atmosphere.config_param.regexp).collect { |raw_param| raw_param[Atmosphere.config_param.range] }
+      if payload.blank?
+        []
+      else
+        payload.scan(Atmosphere.config_param.regexp).
+          map { |raw_param| raw_param[Atmosphere.config_param.range] }
+      end
     end
   end
 end
