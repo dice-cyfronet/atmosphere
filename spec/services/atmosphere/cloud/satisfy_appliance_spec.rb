@@ -20,8 +20,15 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   context '#assign fund' do
     let!(:t) { create(:openstack_with_flavors, active: true, funds: [fund]) }
     let!(:vmt) { create(:virtual_machine_template, tenants: [t]) }
-    let!(:appliance_type) { create(:appliance_type, preference_cpu: 0, \
-      preference_disk: 0, preference_memory: 0, virtual_machine_templates: [vmt]) }
+    let!(:appliance_type) do
+      create(
+        :appliance_type,
+        preference_cpu: 0,
+        preference_disk: 0,
+        preference_memory: 0,
+        virtual_machine_templates: [vmt]
+      )
+    end
     let!(:appliance_set) { create(:appliance_set, user: u) }
     let!(:appliance) do
       create(:appliance,
@@ -43,8 +50,11 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     it 'prefers default fund if it supports relevant tenant' do
       appliance.reload
-      default_t = create(:openstack_with_flavors, active: true,
-                         funds: [appliance_set.user.default_fund])
+      default_t = create(
+        :openstack_with_flavors,
+        active: true,
+        funds: [appliance_set.user.default_fund]
+      )
       funded_t = create(:openstack_with_flavors, active: true, funds: [create(:fund)])
       appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
@@ -69,11 +79,20 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       vmt = create(:virtual_machine_template, tenants: [t1, t2])
       at = create(:appliance_type, virtual_machine_templates: [vmt])
       as = create(:appliance_set, user: user)
-
-      t1_a = create(:appliance, appliance_set: as, appliance_type: at,
-                    fund: nil, tenants: [t1])
-      t2_a = create(:appliance, appliance_set: as, appliance_type: at,
-                    fund: nil, tenants: [t2])
+      t1_a = create(
+        :appliance,
+        appliance_set: as,
+        appliance_type: at,
+        fund: nil,
+        tenants: [t1]
+      )
+      t2_a = create(
+        :appliance,
+        appliance_set: as,
+        appliance_type: at,
+        fund: nil,
+        tenants: [t2]
+      )
 
       Atmosphere::Cloud::SatisfyAppliance.new(t1_a).execute
       Atmosphere::Cloud::SatisfyAppliance.new(t2_a).execute
@@ -81,7 +100,6 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       expect(t1_a.fund).to eq f1
       expect(t2_a.fund).to eq f2
     end
-
   end
 
   context 'new appliance created' do
@@ -418,7 +436,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         described_class.new(appl).execute
 
         expect(appl.state).to eql 'unsatisfied'
-        expect(appl.state_explanation).to start_with 'No matching flavor was found'
+        expect(appl.state_explanation).to start_with 'No matching flavor'
       end
 
       it 'chooses VMT from active tenant' do

@@ -41,7 +41,6 @@ module Atmosphere
           vmts = restrict_by_user_requirements(vmts)
         end
         vmts
-        #restrict_by_tenant_availability(vmts)
       end
 
       private
@@ -111,15 +110,15 @@ module Atmosphere
           tmpls.each do |tmpl|
             candidate_tenants = get_candidate_tenants_for_template(tmpl)
             candidate_tenants.each do |t|
-
               # The next step is to restrict tenants by user funds.
               # A tenant is only valid for use if it
               # shares a fund with the appliance's owner. Additionally,
               # if the appliance fund is explicitly specified
               # in the instantiation requests, the selection must be honored.
               unless @appliance.blank?
-                candidate_tenants.select do |t|
-                  candidate_funds = @appliance.appliance_set.user.funds & t.funds
+                candidate_tenants.select do |tenant|
+                  candidate_funds = @appliance.appliance_set.user.funds & \
+                    tenant.funds
                   unless @appliance.fund.blank?
                     candidate_funds = candidate_funds & [@appliance.fund]
                   end

@@ -41,8 +41,10 @@ module Atmosphere
               else
                 # Select fund to assign to appliance, if not yet assigned
                 unless appliance.fund.present?
-                  candidate_funds = tenant.funds & appliance.appliance_set.user.funds
-                  if candidate_funds.include? appliance.appliance_set.user.default_fund
+                  candidate_funds = tenant.funds & \
+                    appliance.appliance_set.user.funds
+                  if candidate_funds.include? \
+                    appliance.appliance_set.user.default_fund
                     appliance.fund = appliance.appliance_set.user.default_fund
                   else
                     appliance.fund = candidate_funds.first

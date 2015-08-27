@@ -60,7 +60,6 @@ module Atmosphere
     attr_readonly :dev_mode_property_set
 
     before_create :create_dev_mode_property_set, if: :development?
-    #before_save :assign_fund, if: 'fund.nil?'
     after_destroy :remove_appliance_configuration_instance_if_needed
 
     scope :started_on_site, ->(tenant) do
