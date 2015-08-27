@@ -55,7 +55,11 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         active: true,
         funds: [appliance_set.user.default_fund]
       )
-      funded_t = create(:openstack_with_flavors, active: true, funds: [create(:fund)])
+      funded_t = create(
+        :openstack_with_flavors,
+        active: true,
+        funds: [create(:fund)]
+      )
       appliance_set.user.funds << funded_t.funds.first
       create(:virtual_machine_template,
              appliance_type: appliance_type,
@@ -436,7 +440,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         described_class.new(appl).execute
 
         expect(appl.state).to eql 'unsatisfied'
-        expect(appl.state_explanation).to start_with 'No matching flavor'
+        expect(appl.state_explanation).to start_with 'No matching template'
       end
 
       it 'chooses VMT from active tenant' do

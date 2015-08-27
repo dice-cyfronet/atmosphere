@@ -102,14 +102,24 @@ module Atmosphere
         # !CAUTION! @appliance can be nil -- this will happen when the method is invoked prior to
         # creation of an appliance.
         def select
+
+          puts "Selecting template, flavor and tenant for appliance"
+
           best_template = nil
           best_tenant = nil
           best_flavor = nil
           instantiation_cost = Float::INFINITY
 
+          puts "Considering #{tmpls.count} templates"
+
           tmpls.each do |tmpl|
+            puts "Considering template #{tmpl.id_at_site}"
+
             candidate_tenants = get_candidate_tenants_for_template(tmpl)
+            puts "> Got #{candidate_tenants.length} candidate tenants"
+
             candidate_tenants.each do |t|
+              puts ">> Considering tenant #{t.tenant_id}"
               # The next step is to restrict tenants by user funds.
               # A tenant is only valid for use if it
               # shares a fund with the appliance's owner. Additionally,
@@ -117,17 +127,26 @@ module Atmosphere
               # in the instantiation requests, the selection must be honored.
               unless @appliance.blank?
                 candidate_tenants.select do |tenant|
-                  candidate_funds = @appliance.appliance_set.user.funds & \
-                    tenant.funds
+                  cfs = @appliance.appliance_set.user.funds & tenant.funds
                   unless @appliance.fund.blank?
-                    candidate_funds = candidate_funds & [@appliance.fund]
+                    cfs = cfs & [@appliance.fund]
                   end
-                  candidate_funds.present?
+
+                  if cfs.present?
+                    puts ">> There exists a suitable candidate fund."
+                  else
+                    puts ">> No suitable fund for this tenant."
+                  end
+
+                  cfs.present?
                 end
               end
 
               opt_flavor, cost = get_optimal_flavor_for_tenant(tmpl, t)
               if cost < instantiation_cost
+
+                puts ">> Superseding tenant #{t.tenant_id} as optimal."
+
                 best_template = tmpl
                 best_tenant = t
                 best_flavor = opt_flavor

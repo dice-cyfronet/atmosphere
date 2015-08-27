@@ -16,6 +16,9 @@ module Atmosphere
             appl_manager.reuse_vm!(vm)
             action.log(I18n.t('satisfy_appliance.reused', vm: vm.id_at_site))
           else
+
+            puts "Selecting tmpl and flavor"
+
             new_vms_tmpls_and_flavors_and_tenants.each do |tmpl_and_flavor_and_tenant|
               tmpl = tmpl_and_flavor_and_tenant[:template]
               flavor = tmpl_and_flavor_and_tenant[:flavor]
@@ -41,13 +44,12 @@ module Atmosphere
               else
                 # Select fund to assign to appliance, if not yet assigned
                 unless appliance.fund.present?
-                  candidate_funds = tenant.funds & \
-                    appliance.appliance_set.user.funds
-                  if candidate_funds.include? \
+                  cfs = tenant.funds & appliance.appliance_set.user.funds
+                  if cfs.include? \
                     appliance.appliance_set.user.default_fund
                     appliance.fund = appliance.appliance_set.user.default_fund
                   else
-                    appliance.fund = candidate_funds.first
+                    appliance.fund = cfs.first
                   end
                 end
 
