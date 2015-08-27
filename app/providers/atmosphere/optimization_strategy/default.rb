@@ -162,7 +162,7 @@ module Atmosphere
         def get_candidate_tenants_for_template(tmpl)
           # Determine which tenants can be used to spawn this specific template in the context
           # of the current @appliance.
-          # If @appliance is nil (which may happen) then return all of this tmpl's active tenants:
+          # If @appliance is nil (which may happen) return active tenants:
           if @appliance.blank?
             # This will happen in pre-instantiation queries (such as in the CLEW
             # "Start application" window) where no appliance is yet present.

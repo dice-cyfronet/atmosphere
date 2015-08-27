@@ -436,7 +436,12 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         tenant = create(:tenant, active: false, funds: [fund])
         inactive_vmt = create(:virtual_machine_template, tenants: [tenant])
         at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
-        appl = create(:appliance, appliance_set: wf, appliance_type: at, fund: nil)
+        appl = create(
+          :appliance,
+          appliance_set: wf,
+          appliance_type: at,
+          fund: nil
+        )
 
         described_class.new(appl).execute
 
