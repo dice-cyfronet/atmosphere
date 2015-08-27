@@ -9,9 +9,6 @@ FactoryGirl.define do
 
     tenants Atmosphere::Tenant.all
 
-    # Create a rich fund by default so there's no risk of interfering with non-billing tests.
-    fund { FactoryGirl.create(:fund, balance: 1000000) }
-
     after(:build) do |appliance|
       appliance.deployments.each do |dep|
         # Initialize deployment billing, if present

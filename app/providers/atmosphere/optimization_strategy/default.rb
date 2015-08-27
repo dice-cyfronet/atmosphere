@@ -33,9 +33,10 @@ module Atmosphere
       protected
 
       def vmt_candidates
-        vmts = VirtualMachineTemplate.where(
+        vmts = VirtualMachineTemplate.joins(:tenants).where(
           appliance_type: appliance.appliance_type,
-          state: 'active'
+          state: 'active',
+          atmosphere_tenants: { active: true }
         )
         if appliance.tenants.present?
           vmts = restrict_by_user_requirements(vmts)
@@ -102,24 +103,14 @@ module Atmosphere
         # !CAUTION! @appliance can be nil -- this will happen when the method is invoked prior to
         # creation of an appliance.
         def select
-
-          puts "Selecting template, flavor and tenant for appliance"
-
           best_template = nil
           best_tenant = nil
           best_flavor = nil
           instantiation_cost = Float::INFINITY
 
-          puts "Considering #{tmpls.count} templates"
-
           tmpls.each do |tmpl|
-            puts "Considering template #{tmpl.id_at_site}"
-
             candidate_tenants = get_candidate_tenants_for_template(tmpl)
-            puts "> Got #{candidate_tenants.length} candidate tenants"
-
             candidate_tenants.each do |t|
-              puts ">> Considering tenant #{t.tenant_id}"
               # The next step is to restrict tenants by user funds.
               # A tenant is only valid for use if it
               # shares a fund with the appliance's owner. Additionally,
@@ -131,22 +122,12 @@ module Atmosphere
                   unless @appliance.fund.blank?
                     cfs = cfs & [@appliance.fund]
                   end
-
-                  if cfs.present?
-                    puts ">> There exists a suitable candidate fund."
-                  else
-                    puts ">> No suitable fund for this tenant."
-                  end
-
                   cfs.present?
                 end
               end
 
               opt_flavor, cost = get_optimal_flavor_for_tenant(tmpl, t)
               if cost < instantiation_cost
-
-                puts ">> Superseding tenant #{t.tenant_id} as optimal."
-
                 best_template = tmpl
                 best_tenant = t
                 best_flavor = opt_flavor
@@ -181,15 +162,14 @@ module Atmosphere
         def get_candidate_tenants_for_template(tmpl)
           # Determine which tenants can be used to spawn this specific template in the context
           # of the current @appliance.
-          # If @appliance is nil (which may happen) then return all of this tmpl's tenants:
+          # If @appliance is nil (which may happen) then return all of this tmpl's active tenants:
           if @appliance.blank?
             # This will happen in pre-instantiation queries (such as in the CLEW
             # "Start application" window) where no appliance is yet present.
-            tmpl.tenants
+            tmpl.tenants.active
           else
-            eligible_tenants = tmpl.tenants &
+            eligible_tenants = tmpl.tenants.active &
               @appliance.appliance_set.user.tenants
-
             if @appliance.fund.present?
               eligible_tenants = eligible_tenants & @appliance.fund.tenants
             end

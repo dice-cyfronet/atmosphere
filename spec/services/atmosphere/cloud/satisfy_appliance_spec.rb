@@ -70,7 +70,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
 
-      expect(appliance.fund).not_to eq funded_t.funds.first
+      expect(appliance.fund.reload).not_to eq funded_t.funds.first.reload
       expect(appliance.fund).to eq appliance.send(:default_fund)
     end
 
@@ -433,9 +433,10 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     context 'when one of tenant with VMTs is turned off' do
       it 'failed when all VMTs are on inactive tenant' do
-        _, inactive_vmt = vmt_on_tenant(t_active: false)
+        tenant = create(:tenant, active: false, funds: [fund])
+        inactive_vmt = create(:virtual_machine_template, tenants: [tenant])
         at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
-        appl = create(:appliance, appliance_set: wf, appliance_type: at)
+        appl = create(:appliance, appliance_set: wf, appliance_type: at, fund: nil)
 
         described_class.new(appl).execute
 

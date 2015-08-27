@@ -13,12 +13,16 @@ module Atmosphere
             !(vm = optimization_strategy.vm_to_reuse).nil?
 
             action.log(I18n.t('satisfy_appliance.reusing', vm: vm.id_at_site))
+            # Assign correct fund for this VM to appliance
+            cfs = vm.tenant.funds & appliance.appliance_set.user.funds
+            if cfs.include? appliance.appliance_set.user.default_fund
+              appliance.fund == appliance.appliance_set.user.default_fund
+            elsif cfs.length > 0
+              appliance.fund = cfs.first
+            end
             appl_manager.reuse_vm!(vm)
             action.log(I18n.t('satisfy_appliance.reused', vm: vm.id_at_site))
           else
-
-            puts "Selecting tmpl and flavor"
-
             new_vms_tmpls_and_flavors_and_tenants.each do |tmpl_and_flavor_and_tenant|
               tmpl = tmpl_and_flavor_and_tenant[:template]
               flavor = tmpl_and_flavor_and_tenant[:flavor]

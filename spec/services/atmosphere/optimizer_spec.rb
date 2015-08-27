@@ -59,8 +59,8 @@ describe Atmosphere::Optimizer do
     context 'is selected optimally' do
       context 'appliance type preferences not specified' do
         it 'selects instance with at least 1.5GB RAM for public tenant' do
-          appl_type = build(:appliance_type)
-          tmpl = build(:virtual_machine_template,
+          appl_type = create(:appliance_type)
+          tmpl = create(:virtual_machine_template,
                        tenants: [amazon], appliance_type: appl_type)
           _, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl])
 
@@ -68,8 +68,8 @@ describe Atmosphere::Optimizer do
         end
 
         it 'selects instance with 512MB RAM for private tenant' do
-          appl_type = build(:appliance_type)
-          tmpl = build(:virtual_machine_template,
+          appl_type = create(:appliance_type)
+          tmpl = create(:virtual_machine_template,
                        tenants: [openstack], appliance_type: appl_type)
           _, _, flavor = subject.select_tmpl_and_flavor_and_tenant([tmpl])
 
