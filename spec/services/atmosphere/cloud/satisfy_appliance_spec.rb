@@ -341,8 +341,24 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       context 'vm can be reused' do
         let(:config_inst) { create(:appliance_configuration_instance) }
-        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, tenants: Atmosphere::Tenant.all) }
-        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, tenants: Atmosphere::Tenant.all) }
+        let!(:appl1) do
+          create(
+            :appliance,
+            appliance_set: wf,
+            appliance_type: shareable_appl_type,
+            appliance_configuration_instance: config_inst,
+            tenants: Atmosphere::Tenant.all
+          )
+        end
+        let(:appl2) do
+          create(
+            :appliance,
+            appliance_set: wf2,
+            appliance_type: shareable_appl_type,
+            appliance_configuration_instance: config_inst,
+            tenants: Atmosphere::Tenant.all
+          )
+        end
 
         before do
           described_class.new(appl1).execute
