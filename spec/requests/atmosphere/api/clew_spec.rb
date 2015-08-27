@@ -230,6 +230,21 @@ describe Atmosphere::Api::V1::ClewController do
       expect(clew_at_response['compute_sites'].size).to eq 0
     end
 
+    it 'skips AT if all of its VMTs reside on inactive tenants' do
+      fund = create(:fund)
+      user = create(:user, login: 'foobarbazquux', funds: [fund])
+      t1 = create(:tenant, active: false, funds: [fund])
+      t2 = create(:tenant, active: false, funds: [fund])
+      vmt = create(:virtual_machine_template, tenants: [t1, t2])
+      at = create(:appliance_type, visible_to: :all, virtual_machine_templates: [vmt])
+      create(:appliance_configuration_template, appliance_type: at)
+
+      get api('/clew/appliance_types', user)
+
+      expect(clew_at_response['appliance_types'].size).to eq 0
+      expect(clew_at_response['compute_sites'].size).to eq 0
+    end
+
     def clew_at_response
       json_response['clew_appliance_types']
     end
