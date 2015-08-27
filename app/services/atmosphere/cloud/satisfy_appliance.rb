@@ -11,14 +11,15 @@ module Atmosphere
         if appliance.virtual_machines.blank?
           if optimization_strategy.can_reuse_vm? &&
             !(vm = optimization_strategy.vm_to_reuse).nil?
-
             action.log(I18n.t('satisfy_appliance.reusing', vm: vm.id_at_site))
             # Assign correct fund for this VM to appliance
             cfs = vm.tenant.funds & appliance.appliance_set.user.funds
             if cfs.include? appliance.appliance_set.user.default_fund
-              appliance.fund == appliance.appliance_set.user.default_fund
+              appliance.fund = appliance.appliance_set.user.default_fund
+              appliance.save
             elsif cfs.length > 0
               appliance.fund = cfs.first
+              appliance.save
             end
             appl_manager.reuse_vm!(vm)
             action.log(I18n.t('satisfy_appliance.reused', vm: vm.id_at_site))

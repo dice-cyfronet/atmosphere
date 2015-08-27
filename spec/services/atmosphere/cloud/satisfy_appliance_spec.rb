@@ -341,8 +341,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       context 'vm can be reused' do
         let(:config_inst) { create(:appliance_configuration_instance) }
-        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
-        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
+        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, tenants: Atmosphere::Tenant.all) }
+        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, tenants: Atmosphere::Tenant.all) }
 
         before do
           described_class.new(appl1).execute
@@ -365,6 +365,10 @@ describe Atmosphere::Cloud::SatisfyAppliance do
             vm = vms.first
             expect(vm.appliances.size).to eql 2
             expect(vm.appliances).to include(appl1, appl2)
+          end
+
+          it 'sets correct fund for appl2 to satisfied if vm was reused' do
+            expect(appl2.fund).to eql fund
           end
 
           it 'sets appliance state to satisfied if vm was reused' do
