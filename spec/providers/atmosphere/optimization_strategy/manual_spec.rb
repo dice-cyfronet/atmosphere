@@ -27,16 +27,14 @@ describe Atmosphere::OptimizationStrategy::Manual do
     fl2.reload
 
     vms = [
-           { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [t.id] },
-           { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [t.id] }
-          ]
+      { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [t.id] },
+      { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [t.id] }
+    ]
     created_appl_params = ActionController::Parameters.new(
-        {
-          appliance_set_id: as.id,
-          configuration_template_id: cfg_tmpl.id,
-          vms: vms
-        }
-      )
+      appliance_set_id: as.id,
+      configuration_template_id: cfg_tmpl.id,
+      vms: vms
+    )
     creator = Atmosphere::ApplianceCreator.new(created_appl_params, 'dummy-token')
     appl = creator.build
     appl.fund = fund

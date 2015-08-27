@@ -164,17 +164,24 @@ module Atmosphere
         end
 
         def get_optimal_flavor_for_tenant(tmpl, t)
-          opt_fl = (
-          min_elements_by(
-              t.virtual_machine_flavors.active.select do |f|
-                f.supports_architecture?(tmpl.architecture) &&
-                    f.memory >= min_mem &&
-                    f.cpu >= min_cpu &&
-                    f.hdd >= min_hdd
-              end
-          ) {|f| tmpl.get_hourly_cost_for(f) || Float::INFINITY }
-          ).sort!{ |x,y| y.memory <=> x.memory }.last
-          return opt_fl, opt_fl.present? ? tmpl.get_hourly_cost_for(opt_fl) : Float::INFINITY
+          opt_fl = (min_elements_by(matching_flavors(tmpl, t)) do |f|
+            tmpl.get_hourly_cost_for(f) || Float::INFINITY
+          end).sort! { |x, y| y.memory <=> x.memory }.last
+          cost = if opt_fl.present?
+                   tmpl.get_hourly_cost_for(opt_fl)
+                 else
+                   Float::INFINITY
+                 end
+          [opt_fl, cost]
+        end
+
+        def matching_flavors(tmpl, t)
+          t.virtual_machine_flavors.active.select do |f|
+            f.supports_architecture?(tmpl.architecture) &&
+              f.memory >= min_mem &&
+              f.cpu >= min_cpu &&
+              f.hdd >= min_hdd
+          end
         end
 
         def min_mem
