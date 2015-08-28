@@ -88,4 +88,31 @@ describe Atmosphere::OptimizationStrategy::Manual do
     expect(vm_candidates.count).to eq 1
     expect(vm_candidates.first.tenants.first).to eq t
   end
+
+  context 'appliance optimization policy params is nil' do
+    it 'does not fail' do
+      appl = build(:appliance, optimization_policy_params: nil)
+      manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(appl)
+      manual_strategy.new_vms_tmpls_and_flavors_and_tenants
+    end
+
+    it 'returns empty array' do
+      appl = build(:appliance, optimization_policy_params: nil)
+      manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(appl)
+      expect(manual_strategy.new_vms_tmpls_and_flavors_and_tenants).to be_empty
+    end
+  end
+  context 'vms parameter is nil' do
+    it 'does not fail' do
+      appl = build(:appliance, optimization_policy_params: { vms: nil })
+      manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(appl)
+      manual_strategy.new_vms_tmpls_and_flavors_and_tenants
+    end
+
+    it 'returns empty array' do
+      appl = build(:appliance, optimization_policy_params: { vms: nil })
+      manual_strategy = Atmosphere::OptimizationStrategy::Manual.new(appl)
+      expect(manual_strategy.new_vms_tmpls_and_flavors_and_tenants).to be_empty
+    end
+  end
 end
