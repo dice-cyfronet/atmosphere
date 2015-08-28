@@ -30,6 +30,10 @@ module Atmosphere
         false
       end
 
+      def self.supports?(_as)
+        true
+      end
+
       protected
 
       def vmt_candidates

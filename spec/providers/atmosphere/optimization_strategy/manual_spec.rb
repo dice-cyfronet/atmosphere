@@ -115,4 +115,19 @@ describe Atmosphere::OptimizationStrategy::Manual do
       expect(manual_strategy.new_vms_tmpls_and_flavors_and_tenants).to be_empty
     end
   end
+
+  it 'does not support dev mode appliance set' do
+    as = build(:dev_appliance_set)
+    expect(Atmosphere::OptimizationStrategy::Manual.supports?(as)).to be_falsy
+  end
+
+  it 'supports portal appliance set' do
+    as = build(:portal_appliance_set)
+    expect(Atmosphere::OptimizationStrategy::Manual.supports?(as)).to be_truthy
+  end
+
+  it 'supports workflow appliance set' do
+    as = build(:workflow_appliance_set)
+    expect(Atmosphere::OptimizationStrategy::Manual.supports?(as)).to be_truthy
+  end
 end

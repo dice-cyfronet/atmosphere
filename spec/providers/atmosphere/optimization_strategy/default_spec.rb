@@ -6,6 +6,21 @@ describe Atmosphere::OptimizationStrategy::Default do
     Fog.mock!
   end
 
+  it 'supports dev mode appliance set' do
+    as = build(:dev_appliance_set)
+    expect(Atmosphere::OptimizationStrategy::Default.supports?(as)).to be_truthy
+  end
+
+  it 'supports portal appliance set' do
+    as = build(:portal_appliance_set)
+    expect(Atmosphere::OptimizationStrategy::Default.supports?(as)).to be_truthy
+  end
+
+  it 'supports workflow appliance set' do
+    as = build(:workflow_appliance_set)
+    expect(Atmosphere::OptimizationStrategy::Default.supports?(as)).to be_truthy
+  end
+
   context '#can_reuse_vm?' do
 
     it 'reuses shared VMs in prod mode' do

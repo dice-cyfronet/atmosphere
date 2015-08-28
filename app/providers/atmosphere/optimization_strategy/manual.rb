@@ -45,6 +45,10 @@ module Atmosphere
            flavor: source_vm.virtual_machine_flavor,
            name: source_vm.name }] * quantity
       end
+
+      def self.supports?(as)
+        as.production?
+      end
     end
   end
 end
