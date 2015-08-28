@@ -54,6 +54,7 @@ module Atmosphere
     validates :appliance_configuration_instance, presence: true
     validates :state, presence: true
     validates :amount_billed, numericality: true
+    validate :strategy_supports_appl_set_type
 
     enumerize :state, in: [:new, :satisfied, :unsatisfied], predicates: true
 
@@ -66,6 +67,16 @@ module Atmosphere
     scope :started_on_site, ->(tenant) do
       joins(:virtual_machines).
         where(atmosphere_virtual_machines: { tenant: tenant })
+    end
+
+    def strategy_supports_appl_set_type
+      unless optimization_strategy_class.supports?(appliance_set)
+        errors.add(
+          :optimization_policy,
+          "#{optimization_policy} does not support "\
+          "#{appliance_set.appliance_set_type} appliance set"
+        )
+      end
     end
 
     def to_s
@@ -99,15 +110,7 @@ module Atmosphere
     end
 
     def optimization_strategy
-      strategy_name =
-        begin
-          optimization_policy || appliance_set.optimization_policy || 'default'
-        rescue NameError
-          'default'
-        end
-      strategy_class = ('Atmosphere::OptimizationStrategy::' +
-                        strategy_name.to_s.capitalize!).constantize
-      strategy_class.new(self)
+      optimization_strategy_class.new(self)
     end
 
     def owned_by?(user)
@@ -137,6 +140,18 @@ module Atmosphere
     end
 
     private
+
+    def optimization_strategy_class
+      appl_set_policy = try(:appliance_set).try(:optimization_policy)
+      strategy_name =
+          optimization_policy || appl_set_policy || 'default'
+      begin
+        ('Atmosphere::OptimizationStrategy::' +
+          strategy_name.to_s.capitalize).constantize
+      rescue NameError
+        Atmosphere::OptimizationStrategy::Default
+      end
+    end
 
     # TODO: This could be buggy. Make sure to verify that Atmosphere uses
     # the correct fund to spawn VMs in the selected tenant.

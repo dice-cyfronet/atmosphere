@@ -20,30 +20,61 @@ describe Atmosphere::Appliance do
   it { should have_one(:dev_mode_property_set).dependent(:destroy) }
   it { should have_readonly_attribute :dev_mode_property_set }
 
+  context 'optimization strategy validation' do
+    it 'is valid if optimization strategy supports as of given type' do
+      allow(Atmosphere::OptimizationStrategy::Default).
+        to receive(:supports?).and_return true
+      create(:appliance)
+    end
+    it 'raise an error if strategy does not support as of given type' do
+      allow(Atmosphere::OptimizationStrategy::Default).
+        to receive(:supports?).and_return false
+      expect { create(:appliance) }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
   context 'optimization strategy' do
     it 'default is used when optimization policy is not set' do
       expect(Atmosphere::Appliance.new.optimization_strategy.class).
         to eq Atmosphere::OptimizationStrategy::Default
     end
 
+    it 'default is used when optimization policy specificies undefined class' do
+      appl = Atmosphere::Appliance.new(optimization_policy: 'undefined')
+      expect(appl.optimization_strategy.class).
+        to eq Atmosphere::OptimizationStrategy::Default
+    end
+
     context 'optimization policy defined for appliance set' do
+      let(:as) { Atmosphere::ApplianceSet.new(optimization_policy: :manual) }
       it 'is used when appliance does not define optimization strategy' do
-        as = Atmosphere::ApplianceSet.new(optimization_policy: :manual)
         appl = Atmosphere::Appliance.new(appliance_set: as)
         expect(appl.optimization_strategy.class).
           to eq Atmosphere::OptimizationStrategy::Manual
       end
 
       context 'policy defined for appliance' do
-        it 'uses AS strategy when not defined in appliance' do
-          pending 'someone left this spec empty - setting it as pending'
-          fail
+        it 'uses strategy defined in appl' do
+          appl = Atmosphere::Appliance.new(
+            appliance_set: as,
+            optimization_policy: :default
+          )
+          expect(appl.optimization_strategy.class).
+            to eq Atmosphere::OptimizationStrategy::Default
         end
       end
     end
 
     context 'policy defined only for appliance' do
-      pending
+      it 'uses policy defined in appl' do
+        as = Atmosphere::ApplianceSet.new(optimization_policy: nil)
+        appl = Atmosphere::Appliance.new(
+          appliance_set: as,
+          optimization_policy: :manual
+        )
+        expect(appl.optimization_strategy.class).
+          to eq Atmosphere::OptimizationStrategy::Manual
+      end
     end
   end
 
