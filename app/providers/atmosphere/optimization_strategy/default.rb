@@ -63,13 +63,6 @@ module Atmosphere
         end
       end
 
-      # In all cases the optimizer should only suggest those vmts which the user is able to access
-      # (i.e. vmts which reside on at least one tenant which shares a fund with the appliance).
-      def restrict_by_tenant_availability(vmts)
-        vmts.joins(:tenants).
-          where(atmosphere_tenants: { id: appliance.fund.tenants })
-      end
-
       def reuse?(vm)
         vm.appliances.count < Atmosphere.optimizer.max_appl_no &&
         !vm.appliances.first.development?

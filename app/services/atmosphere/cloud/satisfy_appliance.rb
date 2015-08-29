@@ -13,14 +13,7 @@ module Atmosphere
             !(vm = optimization_strategy.vm_to_reuse).nil?
             action.log(I18n.t('satisfy_appliance.reusing', vm: vm.id_at_site))
             # Assign correct fund for this VM to appliance
-            cfs = vm.tenant.funds & appliance.appliance_set.user.funds
-            if cfs.include? appliance.appliance_set.user.default_fund
-              appliance.fund = appliance.appliance_set.user.default_fund
-              appliance.save
-            elsif cfs.length > 0
-              appliance.fund = cfs.first
-              appliance.save
-            end
+            appliance.fund ||= select_fund(appliance, vm.tenant)
             appl_manager.reuse_vm!(vm)
             action.log(I18n.t('satisfy_appliance.reused', vm: vm.id_at_site))
           else
@@ -49,13 +42,7 @@ module Atmosphere
               else
                 # Select fund to assign to appliance, if not yet assigned
                 unless appliance.fund.present?
-                  cfs = tenant.funds & appliance.appliance_set.user.funds
-                  if cfs.include? \
-                    appliance.appliance_set.user.default_fund
-                    appliance.fund = appliance.appliance_set.user.default_fund
-                  else
-                    appliance.fund = cfs.first
-                  end
+                  appliance.fund ||= select_fund(appliance, tenant)
                 end
 
                 action.log(I18n.t('satisfy_appliance.starting_vm',
@@ -98,6 +85,17 @@ module Atmosphere
 
       def new_vms_tmpls_and_flavors_and_tenants
         optimization_strategy.new_vms_tmpls_and_flavors_and_tenants
+      end
+
+      def select_fund(appliance, tenant)
+        cfs = tenant.funds & appliance.appliance_set.user.funds
+        if cfs.include? appliance.appliance_set.user.default_fund
+          appliance.appliance_set.user.default_fund
+        elsif cfs.length > 0
+          cfs.first
+        else
+          nil
+        end
       end
 
       def optimization_strategy

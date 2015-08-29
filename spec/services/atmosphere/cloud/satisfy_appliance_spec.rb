@@ -37,15 +37,9 @@ describe Atmosphere::Cloud::SatisfyAppliance do
              fund: nil)
     end
 
-    it 'does not change fund when externally assigned' do
-      funded_appliance = create(:appliance)
-      expect(funded_appliance.fund).not_to eq appliance.send(:default_fund)
-    end
-
     it 'gets default fund from its user if no fund is set' do
-      appliance.reload
       Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
-      expect(appliance.fund).to eq appliance.send(:default_fund)
+      expect(appliance.fund).to eq u.default_fund
     end
 
     it 'prefers default fund if it supports relevant tenant' do
@@ -55,12 +49,13 @@ describe Atmosphere::Cloud::SatisfyAppliance do
         active: true,
         funds: [appliance_set.user.default_fund]
       )
+      funded_t_fund = create(:fund)
       funded_t = create(
         :openstack_with_flavors,
         active: true,
-        funds: [create(:fund)]
+        funds: [funded_t_fund]
       )
-      appliance_set.user.funds << funded_t.funds.first
+      appliance_set.user.funds << funded_t_fund
       create(:virtual_machine_template,
              appliance_type: appliance_type,
              tenants: [default_t])
@@ -70,8 +65,8 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
 
-      expect(appliance.fund.reload).not_to eq funded_t.funds.first.reload
-      expect(appliance.fund).to eq appliance.send(:default_fund)
+      expect(appliance.fund.reload).not_to eq funded_t_fund.reload
+      expect(appliance.fund).to eq u.default_fund
     end
 
     it 'does not assign a fund which is incompatible with selected tenants' do
