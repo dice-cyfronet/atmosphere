@@ -93,8 +93,6 @@ module Atmosphere
           appliance.appliance_set.user.default_fund
         elsif cfs.length > 0
           cfs.first
-        else
-          nil
         end
       end
 
