@@ -100,7 +100,6 @@ module Atmosphere
           best_tenant = nil
           best_flavor = nil
           instantiation_cost = Float::INFINITY
-
           tmpls.each do |tmpl|
             candidate_tenants = get_candidate_tenants_for_template(tmpl)
             candidate_tenants.each do |t|

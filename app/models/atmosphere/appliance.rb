@@ -137,12 +137,6 @@ module Atmosphere
 
     private
 
-    def default_fund
-      if appliance_set && appliance_set.user
-        appliance_set.user.default_fund
-      end
-    end
-
     def remove_appliance_configuration_instance_if_needed
       if appliance_configuration_instance &&
          appliance_configuration_instance.appliances.blank?

@@ -154,20 +154,6 @@ describe Atmosphere::Appliance do
     expect(appl.owned_by?(user)).to be_truthy
   end
 
-  context '#default_fund' do
-    let(:appliance) { create(:appliance) }
-
-    it 'provides appliance user default fund' do
-      expect(appliance.send(:default_fund)).
-        to eq appliance.appliance_set.user.default_fund
-    end
-
-    it 'does not crash when no data is present' do
-      appliance.appliance_set.user = nil
-      expect(appliance.send(:default_fund)).to eq nil
-    end
-  end
-
   it 'deletes linking table records but not tenants when destroyed' do
     t = create(:tenant)
     a = create(:appliance, tenants: [t])

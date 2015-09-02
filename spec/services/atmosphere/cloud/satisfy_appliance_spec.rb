@@ -34,6 +34,7 @@ describe Atmosphere::Cloud::SatisfyAppliance do
       create(:appliance,
              appliance_set: appliance_set,
              appliance_type: appliance_type,
+             tenants: [],
              fund: nil)
     end
 
