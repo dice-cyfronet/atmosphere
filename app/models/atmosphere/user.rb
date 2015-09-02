@@ -108,7 +108,7 @@ module Atmosphere
     # fund assignments
     def tenants
       Atmosphere::Tenant.joins(funds: :users).
-        where("atmosphere_users.id = #{id}")
+        where(atmosphere_users: { id: id })
     end
 
     def tenant_ids
