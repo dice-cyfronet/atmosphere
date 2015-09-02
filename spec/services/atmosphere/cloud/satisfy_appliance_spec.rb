@@ -17,6 +17,91 @@ describe Atmosphere::Cloud::SatisfyAppliance do
   let!(:openstack) { create(:openstack_with_flavors, funds: [fund]) }
   let!(:tmpl_of_shareable_at) { create(:virtual_machine_template, appliance_type: shareable_appl_type, tenants: [openstack])}
 
+  context '#assign fund' do
+    let!(:t) { create(:openstack_with_flavors, active: true, funds: [fund]) }
+    let!(:vmt) { create(:virtual_machine_template, tenants: [t]) }
+    let!(:appliance_type) do
+      create(
+        :appliance_type,
+        preference_cpu: 0,
+        preference_disk: 0,
+        preference_memory: 0,
+        virtual_machine_templates: [vmt]
+      )
+    end
+    let!(:appliance_set) { create(:appliance_set, user: u) }
+    let!(:appliance) do
+      create(:appliance,
+             appliance_set: appliance_set,
+             appliance_type: appliance_type,
+             tenants: [],
+             fund: nil)
+    end
+
+    it 'gets default fund from its user if no fund is set' do
+      Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
+      expect(appliance.fund).to eq u.default_fund
+    end
+
+    it 'prefers default fund if it supports relevant tenant' do
+      appliance.reload
+      default_t = create(
+        :openstack_with_flavors,
+        active: true,
+        funds: [appliance_set.user.default_fund]
+      )
+      funded_t_fund = create(:fund)
+      funded_t = create(
+        :openstack_with_flavors,
+        active: true,
+        funds: [funded_t_fund]
+      )
+      appliance_set.user.funds << funded_t_fund
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             tenants: [default_t])
+      create(:virtual_machine_template,
+             appliance_type: appliance_type,
+             tenants: [funded_t])
+
+      Atmosphere::Cloud::SatisfyAppliance.new(appliance).execute
+
+      expect(appliance.fund.reload).not_to eq funded_t_fund.reload
+      expect(appliance.fund).to eq u.default_fund
+    end
+
+    it 'does not assign a fund which is incompatible with selected tenants' do
+      f1 = create(:fund)
+      f2 = create(:fund)
+      t1 = create(:openstack_with_flavors, funds: [f1])
+      t2 = create(:openstack_with_flavors, funds: [f2])
+      user = create(:user, funds: [f1, f2])
+      vmt = create(:virtual_machine_template, tenants: [t1, t2])
+      at = create(:appliance_type, virtual_machine_templates: [vmt])
+      as = create(:appliance_set, user: user)
+      t1_a = create(
+        :appliance,
+        appliance_set: as,
+        appliance_type: at,
+        fund: nil,
+        tenants: [t1]
+      )
+      t2_a = create(
+        :appliance,
+        appliance_set: as,
+        appliance_type: at,
+        fund: nil,
+        tenants: [t2]
+      )
+
+      Atmosphere::Cloud::SatisfyAppliance.new(t1_a).execute
+      Atmosphere::Cloud::SatisfyAppliance.new(t2_a).execute
+
+      expect(t1_a.fund).to eq f1
+      expect(t2_a.fund).to eq f2
+    end
+  end
+
   context 'new appliance created' do
     context 'development mode' do
       let(:dev_appliance_set) { create(:dev_appliance_set, user: u) }
@@ -252,8 +337,24 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
       context 'vm can be reused' do
         let(:config_inst) { create(:appliance_configuration_instance) }
-        let!(:appl1) { create(:appliance, appliance_set: wf, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
-        let(:appl2) { create(:appliance, appliance_set: wf2, appliance_type: shareable_appl_type, appliance_configuration_instance: config_inst, fund: fund, tenants: Atmosphere::Tenant.all) }
+        let!(:appl1) do
+          create(
+            :appliance,
+            appliance_set: wf,
+            appliance_type: shareable_appl_type,
+            appliance_configuration_instance: config_inst,
+            tenants: Atmosphere::Tenant.all
+          )
+        end
+        let(:appl2) do
+          create(
+            :appliance,
+            appliance_set: wf2,
+            appliance_type: shareable_appl_type,
+            appliance_configuration_instance: config_inst,
+            tenants: Atmosphere::Tenant.all
+          )
+        end
 
         before do
           described_class.new(appl1).execute
@@ -276,6 +377,10 @@ describe Atmosphere::Cloud::SatisfyAppliance do
             vm = vms.first
             expect(vm.appliances.size).to eql 2
             expect(vm.appliances).to include(appl1, appl2)
+          end
+
+          it 'sets correct fund for appl2 to satisfied if vm was reused' do
+            expect(appl2.fund).to eql fund
           end
 
           it 'sets appliance state to satisfied if vm was reused' do
@@ -344,9 +449,15 @@ describe Atmosphere::Cloud::SatisfyAppliance do
 
     context 'when one of tenant with VMTs is turned off' do
       it 'failed when all VMTs are on inactive tenant' do
-        _, inactive_vmt = vmt_on_tenant(t_active: false)
+        tenant = create(:tenant, active: false, funds: [fund])
+        inactive_vmt = create(:virtual_machine_template, tenants: [tenant])
         at = create(:appliance_type, virtual_machine_templates: [inactive_vmt])
-        appl = create(:appliance, appliance_set: wf, appliance_type: at)
+        appl = create(
+          :appliance,
+          appliance_set: wf,
+          appliance_type: at,
+          fund: nil
+        )
 
         described_class.new(appl).execute
 

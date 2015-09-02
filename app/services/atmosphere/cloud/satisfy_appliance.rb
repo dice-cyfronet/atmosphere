@@ -11,8 +11,9 @@ module Atmosphere
         if appliance.virtual_machines.blank?
           if optimization_strategy.can_reuse_vm? &&
             !(vm = optimization_strategy.vm_to_reuse).nil?
-
             action.log(I18n.t('satisfy_appliance.reusing', vm: vm.id_at_site))
+            # Assign correct fund for this VM to appliance
+            appliance.fund ||= select_fund(appliance, vm.tenant)
             appl_manager.reuse_vm!(vm)
             action.log(I18n.t('satisfy_appliance.reused', vm: vm.id_at_site))
           else
@@ -39,6 +40,11 @@ module Atmosphere
 
                 action.warn(appliance.state_explanation)
               else
+                # Select fund to assign to appliance, if not yet assigned
+                unless appliance.fund.present?
+                  appliance.fund ||= select_fund(appliance, tenant)
+                end
+
                 action.log(I18n.t('satisfy_appliance.starting_vm',
                                   tmpl: tmpl.id_at_site,
                                   flavor: flavor.id_at_site))
@@ -79,6 +85,15 @@ module Atmosphere
 
       def new_vms_tmpls_and_flavors_and_tenants
         optimization_strategy.new_vms_tmpls_and_flavors_and_tenants
+      end
+
+      def select_fund(appliance, tenant)
+        cfs = tenant.funds & appliance.appliance_set.user.funds
+        if cfs.include? appliance.appliance_set.user.default_fund
+          appliance.appliance_set.user.default_fund
+        elsif cfs.length > 0
+          cfs.first
+        end
       end
 
       def optimization_strategy
