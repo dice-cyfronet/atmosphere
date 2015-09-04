@@ -28,8 +28,7 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
   end
 
   def update
-    update_params = port_mapping_template_params
-    @manager.update!(update_params)
+    @manager.update!(port_mapping_template_update_params)
     render json: @manager.object
   end
 
@@ -58,6 +57,12 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
   def port_mapping_template_params
     params.require(:port_mapping_template).permit(
         :service_name, :target_port, :transport_protocol, :application_protocol, :appliance_type_id, :dev_mode_property_set_id)
+  end
+
+  def port_mapping_template_update_params
+    params.require(:port_mapping_template).
+      permit(:service_name, :target_port,
+             :transport_protocol, :application_protocol)
   end
 
   def initialize_manager

@@ -320,6 +320,14 @@ describe Atmosphere::Api::V1::EndpointsController do
         expect(updated_e['port_mapping_template_id']).to eq old_port_mapping_template_id
       end
 
+      it 'is unable to change assigment to PMT' do
+        put api("/endpoints/#{e1.id}", user),
+            endpoint: { port_mapping_template_id: pmt2.id }
+        e1.reload
+
+        expect(e1.port_mapping_template).to eq pmt1
+      end
+
       it 'admin is able to update any endpoint' do
         put api("/endpoints/#{e1.id}", admin), update_json
         expect(response.status).to eq 200

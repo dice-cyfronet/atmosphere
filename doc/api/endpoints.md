@@ -63,9 +63,9 @@ Parameters:
 
 + `port_mapping_template_id` (required) - The ID of the Port Mapping Template which should acquire the new Endpoint
 + `name` (required) - Short name of the endpoint meaning and purpose
-+ `description` (optional) - Textual, human-readable description what is available on that port
-+ `descriptor` (optional) - Machine-readable document that describes the service available on that port. It supports one dynamic parameter: `#{descriptor_url}`. When it is included in descriptor payload than it will be changed into actual endpoint url.
-+ `endpoint_type` (required) - One of "rest", "ws" or "webapp"
++ `description` (optional) - Textual, human-readable description what is available on the given port
++ `descriptor` (optional) - Machine-readable document that describes the service available on the given port. It supports one dynamic parameter: `#{descriptor_url}`. When included in descriptor payload, this parameter will be automatically swapped for the actual endpoint URL.
++ `endpoint_type` (optional) - Choose "rest", "ws" or "webapp"
 + `invocation_path` (required) - Application invocation path
 + `secured` (optional) - True if endpoint is secured and require user token (default `false`)
 
@@ -84,7 +84,12 @@ PUT /endpoints/:id
 Parameters:
 
 + `id` (required) - The ID of the Endpoint to be updated
-+ All other parameters are optional and are the same as for the `POST` creation method
++ `name` (optional) - Short name of the endpoint meaning and purpose
++ `description` (optional) - Textual, human-readable description of what is available on the given port
++ `descriptor` (optional) - Machine-readable document that describes the service available on the given port. It supports one dynamic parameter: `#{descriptor_url}`. When included in descriptor payload, this parameter will be automatically swapped for the actual endpoint URL.
++ `endpoint_type` (optional) - Choose "rest", "ws" or "webapp"
++ `invocation_path` (optional) - Application invocation path
++ `secured` (optional) - True if endpoint is secured and requires user token (default `false`)
 
 When a parameter is omitted, the value would be retained from the older version of the entity.
 
