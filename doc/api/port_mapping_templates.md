@@ -91,7 +91,10 @@ PUT /port_mapping_templates/:id
 Parameters:
 
 + `id` (required) - The ID of the Port Mapping Template to be updated
-+ All other parameters are optional and are the same as for the `POST` creation method
++ `transport_protocol` (required) - What transport protocol the port operates, the value should be either "tcp" or "udp"
++ `application_protocol` (required) - If using TCP transport protocol, choose one of "http", "https", "none". Use "none" for UDP
++ `service_name` (required) - Some kind of descriptive name for the service operating on that port
++ `target_port` (required) - The port number
 
 When a parameter is omitted, the value would be retained from the older version of the entity. However, keep in mind
 the application and transport protocol constraints when updating these values.

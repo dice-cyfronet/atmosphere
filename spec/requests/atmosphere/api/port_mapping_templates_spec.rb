@@ -314,6 +314,25 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
         put api("port_mapping_templates/wrong_id", user), update_json
         expect(response.status).to eq 404
       end
+
+      it 'does not allow to change assigment into AT' do
+        put api("/port_mapping_templates/#{pmt1.id}", user),
+            port_mapping_template: { appliance_type_id: at2.id }
+        pmt1.reload
+
+        expect(pmt1.appliance_type).to eq at1
+      end
+
+      it 'does not allow to change assigment into DMPS' do
+        appl2 = create(:appliance, appliance_set: as)
+        put api("/port_mapping_templates/#{pmt3.id}", user),
+            port_mapping_template: {
+              dev_mode_property_set_id: appl2.dev_mode_property_set.id
+            }
+        pmt3.reload
+
+        expect(pmt3.dev_mode_property_set).to eq appl1.dev_mode_property_set
+      end
     end
 
     context 'when authenticated as admin' do

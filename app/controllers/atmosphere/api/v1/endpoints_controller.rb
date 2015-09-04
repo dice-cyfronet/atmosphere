@@ -22,7 +22,7 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
   end
 
   def update
-    @endpoint.update_attributes!(endpoint_params)
+    @endpoint.update_attributes!(endpoint_update_params)
     render json: @endpoint
   end
 
@@ -51,6 +51,12 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
 
   def endpoint_params
     params.require(:endpoint).permit(:name, :endpoint_type, :description, :descriptor, :invocation_path, :port_mapping_template_id, :secured)
+  end
+
+  def endpoint_update_params
+    params.require(:endpoint).
+      permit(:name, :endpoint_type, :description, :descriptor,
+             :invocation_path, :secured)
   end
 
   def model_class

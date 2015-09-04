@@ -84,7 +84,12 @@ PUT /endpoints/:id
 Parameters:
 
 + `id` (required) - The ID of the Endpoint to be updated
-+ All other parameters are optional and are the same as for the `POST` creation method
++ `name` (optional) - Short name of the endpoint meaning and purpose
++ `description` (optional) - Textual, human-readable description what is available on that port
++ `descriptor` (optional) - Machine-readable document that describes the service available on that port. It supports one dynamic parameter: `#{descriptor_url}`. When it is included in descriptor payload than it will be changed into actual endpoint url.
++ `endpoint_type` (optional) - One of "rest", "ws" or "webapp"
++ `invocation_path` (optional) - Application invocation path
++ `secured` (optional) - True if endpoint is secured and require user token (default `false`)
 
 When a parameter is omitted, the value would be retained from the older version of the entity.
 

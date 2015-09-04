@@ -240,6 +240,14 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
         expect(updated_e['port_mapping_template_id']).to eq old_port_mapping_template_id
       end
 
+      it 'is not able to update PMT' do
+        put api("/port_mapping_properties/#{pmp1.id}", user),
+            port_mapping_property: { port_mapping_template_id: pmt2.id }
+        pmp1.reload
+
+        expect(pmp1.port_mapping_template).to eq pmt1
+      end
+
       it 'admin is able to update any port mapping property' do
         put api("/port_mapping_properties/#{pmp1.id}", admin), update_json
         expect(response.status).to eq 200
