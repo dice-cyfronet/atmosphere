@@ -81,7 +81,7 @@ PUT /port_mapping_properties/:id
 Parameters:
 
 + `id` (required) - The ID of the Port Mapping Property to be updated
-+ `key` (required) - The exact key string, which will be recognized by property setting Atmosphere mechanism
++ `key` (required) - The exact key string which will be recognized by the property-setting Atmosphere mechanism
 + `value` (optional) - The exact value to which the property key should be set
 
 When a parameter is omitted, the value would be retained from the older version of the entity.
