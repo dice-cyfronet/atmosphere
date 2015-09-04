@@ -172,15 +172,6 @@ module Atmosphere
         )
     end
 
-    def get_all_tenants_for_cs
-      Atmosphere::Tenant.where("site_id = '#{site_id}'").all
-    end
-
-    def get_all_vmts_for_cs
-      Atmosphere::VirtualMachineTemplate.joins(:tenants).
-        where("atmosphere_tenants.site_id = '#{site_id}'").all
-    end
-
     def site_id
       self[:site_id] || tenant_id
     end
