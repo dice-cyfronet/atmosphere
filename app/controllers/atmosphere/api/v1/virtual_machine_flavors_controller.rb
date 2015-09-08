@@ -102,7 +102,7 @@ module Atmosphere
         end
 
         def invalid_number_param?(nr)
-          nr && !(nr =~ /^\d+$/)
+          nr && !(nr =~ /\A^\d+$\z/)
         end
 
         def model_class
