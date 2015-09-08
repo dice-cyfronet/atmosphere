@@ -52,10 +52,10 @@ module Atmosphere
         file.puts(public_key)
         file.rewind
         output = nil
-        IO.popen("ssh-keygen -lf #{file.path}") {|out|
+        IO.popen(['ssh-keygen', '-lf', file.path]) do |out|
           output = out.read
           logger.info "Output #{output}"
-        }
+        end
         if output.include? 'is not a public key file'
           logger.error "Provided public key #{public_key} is invalid"
           errors.add(:public_key, 'is invalid')
