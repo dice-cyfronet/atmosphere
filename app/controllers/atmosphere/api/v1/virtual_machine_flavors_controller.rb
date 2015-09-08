@@ -103,7 +103,7 @@ module Atmosphere
 
         def invalid_number_param?(nr)
           begin
-            nr && !(nr =~ /^\d+$/)
+            nr && !(nr =~ /\A^\d+$\z/)
           rescue ArgumentError => e
             logger.error("Unable to parse param value: #{e.message}")
             return true
