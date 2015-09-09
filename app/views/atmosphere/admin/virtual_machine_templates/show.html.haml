@@ -2,7 +2,7 @@
   %table.show-table
     %tr
       %td= t('virtual_machine_templates.tenant')
-      %td= @virtual_machine_template.tenant
+      %td= @virtual_machine_template.tenants.pluck(:name).join(', ')
     %tr
       %td= t('uuid')
       %td.monospace= @virtual_machine_template.id_at_site
