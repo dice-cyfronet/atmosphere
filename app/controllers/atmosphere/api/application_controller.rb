@@ -1,3 +1,5 @@
+require 'atmosphere/json_error_handler'
+
 module Atmosphere
   module Api
     class ApplicationController < ::ApplicationController
