@@ -56,19 +56,6 @@ module Atmosphere
                           details: model_obj.errors)
       end
 
-      # def render_json_error(msg, options = {})
-      #   error_json = {
-      #     message: msg,
-      #     type: options[:type] || :general
-      #   }
-      #   error_json[:details] = options[:details] if options[:details]
-      #
-      #   render(
-      #     json: error_json,
-      #     status: options[:status] || :bad_request
-      #   )
-      # end
-
       def load_all?
         admin? && params['all']
       end
