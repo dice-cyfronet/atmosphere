@@ -11,16 +11,16 @@ class HandleInvalidPercentEncoding
   end
 
   def call(env)
-    begin
-      # calling env.dup here prevents bad things from happening
-      request = Rack::Request.new(env.dup)
-      # calling request.params is sufficient to trigger the error
-      # see https://github.com/rack/rack/issues/337#issuecomment-46453404
-      request.params
-      @app.call(env)
-    rescue ArgumentError => e
-      raise unless e.message =~ /invalid %-encoding/
-      render_json_error('Wrong encoding', status: :bad_request, type: :bad_request)
-    end
+    # calling env.dup here prevents bad things from happening
+    request = Rack::Request.new(env.dup)
+    # calling request.params is sufficient to trigger the error
+    # see https://github.com/rack/rack/issues/337#issuecomment-46453404
+    request.params
+    @app.call(env)
+  rescue ArgumentError => e
+    raise unless e.message =~ /invalid %-encoding/
+    render_json_error('Wrong encoding',
+                      status: :bad_request,
+                      type: :bad_request)
   end
 end
