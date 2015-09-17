@@ -1,6 +1,10 @@
+require 'atmosphere/json_error_handler'
+
 module Atmosphere
   module Api
     class ApplicationController < ::ApplicationController
+      include Atmosphere::JsonErrorHandler
+
       protect_from_forgery with: :null_session, if: :token_request?
       protect_from_forgery with: :exception, unless: :token_request?
 
@@ -49,19 +53,6 @@ module Atmosphere
                           status: :unprocessable_entity,
                           type: :record_invalid,
                           details: model_obj.errors)
-      end
-
-      def render_json_error(msg, options = {})
-        error_json = {
-          message: msg,
-          type: options[:type] || :general
-        }
-        error_json[:details] = options[:details] if options[:details]
-
-        render(
-          json: error_json,
-          status: options[:status] || :bad_request
-        )
       end
 
       def load_all?
