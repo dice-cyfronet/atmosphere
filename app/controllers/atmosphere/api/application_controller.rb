@@ -3,7 +3,6 @@ require 'atmosphere/json_error_handler'
 module Atmosphere
   module Api
     class ApplicationController < ::ApplicationController
-
       include Atmosphere::JsonErrorHandler
 
       protect_from_forgery with: :null_session, if: :token_request?
