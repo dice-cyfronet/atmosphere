@@ -5,7 +5,7 @@ class RemoveHttpAndHttpsFromPmt < ActiveRecord::Migration
 
     Atmosphere::PortMappingTemplate.where(application_protocol: 'http_https').
       joins(:http_mappings).find_each do |pmt|
-        pmt.update_attribute(application_protocol: 'http')
+        pmt.update_attributes(application_protocol: 'http')
         pmt.http_mappings.
           select { |mapping| mapping.application_protocol.https? }.
           each(&:destroy)
