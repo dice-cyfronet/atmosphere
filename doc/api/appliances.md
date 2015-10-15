@@ -183,6 +183,18 @@ Request body:
 }
 ```
 
+### Start appliance
+
+For a regular user, their owned appliances which are in paused mode can be started. Administrator is able to start any paused appliance.
+
+Request body:
+
+```json
+{
+  "start": null
+}
+```
+
 ## Get appliance endpoints
 
 Get information about all endpoints registered for an appliance. HTTP mapping is performed asynchronously (once per 5s), thus information about endpoints will appear after HTTP redirections into running virtual machine(s) are established.
