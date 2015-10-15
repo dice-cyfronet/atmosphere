@@ -18,6 +18,7 @@ module Atmosphere
         id: appliance.id,
         name: appliance.name,
         appliance_set_id: appliance.appliance_set_id,
+        appliance_type_id: appliance.appliance_type_id,
         description: appliance.description,
         state: appliance.state,
         state_explanation: appliance.state_explanation,

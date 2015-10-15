@@ -48,6 +48,7 @@ describe Atmosphere::Api::V1::ClewController do
                       [{"id"=>appl.id,
                         "name"=>appl.name,
                         "appliance_set_id"=>appl.appliance_set_id,
+                        "appliance_type_id" => appl.appliance_type_id,
                         "description"=>appl.description,
                         "state"=>appl.state,
                         "state_explanation"=>appl.state_explanation,
