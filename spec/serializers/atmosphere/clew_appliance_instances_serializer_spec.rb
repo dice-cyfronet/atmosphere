@@ -37,4 +37,18 @@ describe Atmosphere::ClewApplianceInstancesSerializer do
     expect(port_mapping_templates.size).to eq 1
     expect(port_mapping_templates.first['id']).to eq pmt.id
   end
+
+  it 'returns information about appliance source appliance type' do
+    at = create(:appliance_type)
+    as = create(:appliance_set, appliance_set_type: :portal)
+    create(:appliance, appliance_type: at, appliance_set: as)
+
+    serializer = Atmosphere::ClewApplianceInstancesSerializer.
+                 new(appliance_sets: [as])
+
+    result = JSON.parse(serializer.to_json)
+    appl = result['clew_appliance_instances']['appliances'].first
+
+    expect(appl['appliance_type_id']).to eq at.id
+  end
 end

@@ -50,7 +50,9 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
   def action
     return reboot if reboot_action?
     return scale if scale_action?
-    # place for other optimizer...
+    return pause if pause_action?
+    return start if start_action?
+    # place for other actions...
 
     render_json_error('Action not found', status: :bad_request)
   end
@@ -87,12 +89,30 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     render json: {}, status: 200
   end
 
+  def pause
+    @appliance.virtual_machines.each(&:pause)
+    render json: {}, status: 200
+  end
+
+  def start
+    @appliance.virtual_machines.each(&:start)
+    render json: {}, status: 200
+  end
+
   def reboot_action?
     params.key? :reboot
   end
 
   def scale_action?
     params.key?(:scale)
+  end
+
+  def pause_action?
+    params.key?(:pause)
+  end
+
+  def start_action?
+    params.key?(:start)
   end
 
   def filter

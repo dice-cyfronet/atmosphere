@@ -731,6 +731,46 @@ describe Atmosphere::Api::V1::AppliancesController do
     end
   end
 
+  context 'POST /appliances/:id/action pause' do
+    let(:pause_action_body) { { pause: nil } }
+
+    it 'stops VM when user is an owner' do
+      appliance = appliance_for(user)
+      create(:virtual_machine, appliances: [appliance])
+
+      expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:pause)
+      post api("/appliances/#{appliance.id}/action", user), pause_action_body
+      expect(response.status).to eq 200
+    end
+
+    it 'does not allow to pause other user appliances' do
+      appliance = appliance_for(other_user)
+
+      post api("/appliances/#{appliance.id}/action", user), pause_action_body
+      expect(response.status).to eq 403
+    end
+  end
+
+  context 'POST /appliances/:id/action start' do
+    let(:start_action_body) { { start: nil } }
+
+    it 'stops VM when user is an owner' do
+      appliance = appliance_for(user)
+      create(:virtual_machine, appliances: [appliance])
+
+      expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:start)
+      post api("/appliances/#{appliance.id}/action", user), start_action_body
+      expect(response.status).to eq 200
+    end
+
+    it 'does not allow to pause other user appliances' do
+      appliance = appliance_for(other_user)
+
+      post api("/appliances/#{appliance.id}/action", user), start_action_body
+      expect(response.status).to eq 403
+    end
+  end
+
   def appliance_for(user, options = {})
     as_mode = options[:mode] || :workflow
     as = create(:appliance_set,
