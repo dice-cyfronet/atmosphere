@@ -170,6 +170,19 @@ Request body:
 }
 ```
 
+### Pause appliance
+
+For a regular user, their owned appliances can be paused. Administrator
+is able to pause any appliance.
+
+Request body:
+
+```json
+{
+  "pause": null
+}
+```
+
 ## Get appliance endpoints
 
 Get information about all endpoints registered for an appliance. HTTP mapping is performed asynchronously (once per 5s), thus information about endpoints will appear after HTTP redirections into running virtual machine(s) are established.
