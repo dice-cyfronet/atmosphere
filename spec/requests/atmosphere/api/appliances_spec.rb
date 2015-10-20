@@ -751,6 +751,26 @@ describe Atmosphere::Api::V1::AppliancesController do
     end
   end
 
+  context 'POST /appliances/:id/action stop' do
+    let(:stop_action_body) { { stop: nil } }
+
+    it 'stops VM when user is an owner' do
+      appliance = appliance_for(user)
+      create(:virtual_machine, appliances: [appliance])
+
+      expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:stop)
+      post api("/appliances/#{appliance.id}/action", user), stop_action_body
+      expect(response.status).to eq 200
+    end
+
+    it 'does not allow to stop other user appliances' do
+      appliance = appliance_for(other_user)
+
+      post api("/appliances/#{appliance.id}/action", user), stop_action_body
+      expect(response.status).to eq 403
+    end
+  end
+
   context 'POST /appliances/:id/action start' do
     let(:start_action_body) { { start: nil } }
 

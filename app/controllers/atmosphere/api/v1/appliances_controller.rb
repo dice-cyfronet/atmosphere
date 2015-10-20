@@ -51,6 +51,7 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     return reboot if reboot_action?
     return scale if scale_action?
     return pause if pause_action?
+    return stop if stop_action?
     return start if start_action?
     # place for other actions...
 
@@ -94,6 +95,11 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     render json: {}, status: 200
   end
 
+  def stop
+    @appliance.virtual_machines.each(&:stop)
+    render json: {}, status: 200
+  end
+
   def start
     @appliance.virtual_machines.each(&:start)
     render json: {}, status: 200
@@ -109,6 +115,10 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
 
   def pause_action?
     params.key?(:pause)
+  end
+
+  def stop_action?
+    params.key?(:stop)
   end
 
   def start_action?
