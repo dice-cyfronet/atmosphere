@@ -196,6 +196,19 @@ Request body:
 }
 ```
 
+### Suspend appliance
+
+For a regular user, their owned appliances can be suspended. Administrator
+is able to suspend any appliance.
+
+Request body:
+
+```json
+{
+  "suspend": null
+}
+```
+
 ### Start appliance
 
 For a regular user, their owned appliances which are in paused mode can be started. Administrator is able to start any paused appliance.
