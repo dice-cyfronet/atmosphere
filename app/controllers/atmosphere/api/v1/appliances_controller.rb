@@ -57,6 +57,19 @@ class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationCo
     # place for other actions...
 
     render_json_error('Action not found', status: :bad_request)
+  rescue Excon::Errors::Conflict => e
+    begin
+      body = JSON.parse(e.response.data[:body])
+    rescue JSON::ParserError
+      body = {}
+    end
+
+    conflicting = body.fetch('conflictingRequest',
+                             'message' => 'Conflict', 'code' => 409)
+
+    render_json_error(conflicting['message'],
+                      status: conflicting['code'],
+                      type: :conflict)
   end
 
   private
