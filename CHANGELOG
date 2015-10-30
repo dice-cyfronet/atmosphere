@@ -1,0 +1,10 @@
+v 1.0.0 (unreleased)
+  - VM (as Appliance), VMT (as Appliance Type) management
+  - Stop/pause/suspend/restart actions for Appliance
+  - User interface (clew) for end user
+  - Basic UI for atmosphere administrator
+  - Managing http/https redirections using redirus
+  - Managing tcp redirections using ipwrangler
+  - Connector to: OpenStack, Amazon, Rackspace, Azure, Google cloud providers
+  - Basic billing system
+  - Possiblity to migrate template from OpenStack to Amazon
