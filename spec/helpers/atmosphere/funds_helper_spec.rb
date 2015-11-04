@@ -35,9 +35,9 @@ describe Atmosphere::FundsHelper, type: :helper do
 
     it 'returns last 12 months' do
       expect(last_months_names.last).
-        to eq Date::MONTHNAMES[Time.now.month]
+        to eq Date::MONTHNAMES[Time.zone.now.month]
       expect(last_months_names.first).
-        to eq Date::MONTHNAMES[(Time.now.month + 1) % 12]
+        to eq Date::MONTHNAMES[(Time.zone.now + 1.month).month]
       expect(last_months_names.size).to eq 12
     end
 
