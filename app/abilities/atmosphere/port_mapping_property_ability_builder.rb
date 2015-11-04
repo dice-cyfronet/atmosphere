@@ -10,6 +10,13 @@ module Atmosphere
       can :read, PortMappingProperty,
           port_mapping_template: { appliance_type: { visible_to: 'all' } }
 
+      can :read, PortMappingProperty,
+          port_mapping_template: {
+            dev_mode_property_set: {
+              appliance: { appliance_set: { user_id: user.id } }
+            }
+          }
+
       can [:create, :update, :destroy], PortMappingProperty do |pmp|
         pmt = pmp.port_mapping_template
         pmt_parent_obj = pmt.appliance_type || pmt.dev_mode_property_set

@@ -11,7 +11,7 @@ describe Atmosphere::PortMappingPropertyAbilityBuilder do
     user.id = 1
   end
 
-  let(:at)  { build(:appliance_type) }
+  let(:at) { build(:appliance_type) }
   let(:pmt) { build(:port_mapping_template, appliance_type: at) }
   let(:pmp) { build(:port_mapping_property, port_mapping_template: pmt) }
 
@@ -42,21 +42,38 @@ describe Atmosphere::PortMappingPropertyAbilityBuilder do
   end
 
   context 'development mode' do
-    it 'check in pdp if dev mode property set can be managed' do
-      appl_set = build(:dev_appliance_set, user: user)
-      dev_appl = build(:appliance, appliance_set: appl_set)
-      dev_mode_property_set = build(:dev_mode_property_set, appliance: dev_appl)
-      dev_pmt = build(
+    before do
+      user.roles = [:developer]
+    end
+
+    let(:appl_set) { build(:dev_appliance_set, user: user) }
+    let(:at) { build(:appliance_type, visible_to: 'developer') }
+    let(:dev_appl) do
+      build(:appliance, appliance_set: appl_set, appliance_type: at)
+    end
+    let(:dev_mode_property_set) do
+      build(:dev_mode_property_set, appliance: dev_appl)
+    end
+    let(:dev_pmt) do
+      build(
         :dev_port_mapping_template,
         dev_mode_property_set: dev_mode_property_set
       )
-      dev_pmp = build(:port_mapping_property, port_mapping_template: dev_pmt)
+    end
+    let(:dev_pmp) do
+      build(:port_mapping_property, port_mapping_template: dev_pmt)
+    end
 
+    it 'check in pdp if dev mode property set can be managed' do
       expect(pdp).to receive(:can_manage?).exactly(3).times.
         with(dev_mode_property_set)
       ability.can?(:create, dev_pmp)
       ability.can?(:update, dev_pmp)
       ability.can?(:destroy, dev_pmp)
+    end
+
+    it 'developer can read his port mapping properties' do
+      expect(ability.can?(:read, dev_pmp)).to be_truthy
     end
   end
 end
