@@ -55,8 +55,9 @@ module Atmosphere
       # If the user requests that the appliance be bound to a specific set of tenants,
       # the optimizer should honor this selection. This method ensures that it happens.
       def restrict_by_user_requirements(vmts)
-        vmts.joins(:tenants).
-          where(atmosphere_tenants: { id:  user_selected_tenants })
+        vmts.joins(:tenants).where(
+          atmosphere_tenants: { id:  user_selected_tenants }
+        )
       end
 
       def user_selected_tenants
@@ -121,7 +122,6 @@ module Atmosphere
                   cfs.present?
                 end
               end
-
               opt_flavor, cost = get_optimal_flavor_for_tenant(tmpl, t)
               if cost < instantiation_cost
                 best_template = tmpl
@@ -182,11 +182,27 @@ module Atmosphere
         end
 
         def get_optimal_flavor_for_tenant(tmpl, t)
-          opt_fl = (min_elements_by(matching_flavors(tmpl, t)) do |f|
-            tmpl.get_hourly_cost_for(f) || Float::INFINITY
-          end).sort! { |x, y| y.memory <=> x.memory }.last
+          mfs = matching_flavors(tmpl, t)
+          best_cost = Float::INFINITY
+          best_mem = Float::INFINITY
+          opt_fl = nil
+          mfs.each do |f|
+            present_cost = tmpl.get_hourly_cost_for(f)
+            if present_cost < best_cost
+              opt_fl = f
+              best_cost = present_cost
+              best_mem = f.memory
+            elsif present_cost == best_cost
+              if f.memory > best_mem
+                opt_fl = f
+                best_cost = present_cost
+                best_mem = f.memory
+              end
+            end
+          end
+
           cost = if opt_fl.present?
-                   tmpl.get_hourly_cost_for(opt_fl)
+                   best_cost
                  else
                    Float::INFINITY
                  end
@@ -194,12 +210,13 @@ module Atmosphere
         end
 
         def matching_flavors(tmpl, t)
-          t.virtual_machine_flavors.active.select do |f|
-            f.supports_architecture?(tmpl.architecture) &&
-              f.memory >= min_mem &&
-              f.cpu >= min_cpu &&
-              f.hdd >= min_hdd
-          end
+          fl = Atmosphere::VirtualMachineFlavor.arel_table
+          Atmosphere::VirtualMachineFlavor.active.where(
+            fl[:tenant_id].eq(t.id).and(fl[:memory].gteq(min_mem))
+              .and(fl[:cpu].gteq(min_cpu)).and(fl[:hdd].gteq(min_hdd))
+          .and(fl[:supported_architectures]
+            .in([tmpl.architecture, 'i386_and_x86_64'])))
+          .includes(flavor_os_families: :os_family)
         end
 
         def min_mem
