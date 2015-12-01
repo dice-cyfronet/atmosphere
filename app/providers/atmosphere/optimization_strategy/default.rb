@@ -212,11 +212,11 @@ module Atmosphere
         def matching_flavors(tmpl, t)
           fl = Atmosphere::VirtualMachineFlavor.arel_table
           Atmosphere::VirtualMachineFlavor.active.where(
-            fl[:tenant_id].eq(t.id).and(fl[:memory].gteq(min_mem))
-              .and(fl[:cpu].gteq(min_cpu)).and(fl[:hdd].gteq(min_hdd))
-          .and(fl[:supported_architectures]
-            .in([tmpl.architecture, 'i386_and_x86_64'])))
-          .includes(flavor_os_families: :os_family)
+            fl[:tenant_id].eq(t.id).and(fl[:memory].gteq(min_mem)).
+              and(fl[:cpu].gteq(min_cpu)).and(fl[:hdd].gteq(min_hdd)).
+              and(fl[:supported_architectures].
+                in([tmpl.architecture, 'i386_and_x86_64']))).
+          includes(flavor_os_families: :os_family)
         end
 
         def min_mem
