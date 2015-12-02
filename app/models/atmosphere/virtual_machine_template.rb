@@ -157,7 +157,7 @@ module Atmosphere
     # Returns the hourly cost for this template assuming a given VM flavor
     def get_hourly_cost_for(flavor)
       incarnation = flavor.flavor_os_families.
-                    find_by(os_family: appliance_type.os_family)
+                    detect { |fof| fof.os_family == appliance_type.os_family }
       incarnation && incarnation.hourly_cost
     end
 
