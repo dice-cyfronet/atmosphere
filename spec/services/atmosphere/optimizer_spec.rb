@@ -115,8 +115,8 @@ describe Atmosphere::Optimizer do
                                   cpu: biggest_os_flavor.cpu,
                                   hdd: biggest_os_flavor.hdd,
                                   tenant: amazon)
-          biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
-          optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 100)
+          biggest_os_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 1)
+          optimal_flavor.set_hourly_cost_for(Atmosphere::OSFamily.first, 1)
           amazon.reload
           appl_type.preference_memory = biggest_os_flavor.memory
           appl_type.save
@@ -142,6 +142,26 @@ describe Atmosphere::Optimizer do
           end
         end
       end
+    end
+  end
+
+  context 'selection is quick' do
+    it 'selects template, flavor and tenant quickly' do
+      vmts = []
+      100.times do
+        atype = create(:appliance_type)
+        t = create(:openstack_with_flavors, funds: [fund])
+        vmts << create(
+          :virtual_machine_template,
+          appliance_type: atype,
+          tenants: [t]
+        )
+      end
+      t1 = Time.now.to_f
+      subject.select_tmpl_and_flavor_and_tenant(vmts)
+      t2 = Time.now.to_f
+      expect(t2 - t1).to be < 5,
+                         'Flavor selection process took longer than 5 seconds'
     end
   end
 

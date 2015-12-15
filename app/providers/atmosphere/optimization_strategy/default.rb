@@ -90,8 +90,23 @@ module Atmosphere
         include Atmosphere::Utils
 
         def initialize(tmpls, appliance, options={})
-          @tmpls = tmpls
-          @appliance = appliance
+          @tmpls = VirtualMachineTemplate.where(id: tmpls.map(&:id)).
+                   includes(
+                     tenants: {
+                       virtual_machine_flavors:
+                       [:os_families, { flavor_os_families: :os_family }]
+                     }
+                   ).
+                   includes(:appliance_type)
+          if appliance.blank?
+            @appliance = nil
+          else
+            @appliance = Appliance.where(id: appliance.id).
+                         includes(appliance_set: [user: :funds]).
+                         includes(fund: :tenants).
+                         includes(:tenants).
+                         first
+          end
           @options = options
         end
 
@@ -139,7 +154,7 @@ module Atmosphere
           # in Atmosphere::Cloud::SatisfyAppliance
           # TODO: This is quite hacky; a better way to communicate errors to the user is needed.
           if best_template.blank?
-            best_template = tmpls.first
+            best_template = @tmpls.first
           end
 
           [
@@ -162,14 +177,13 @@ module Atmosphere
           if @appliance.blank?
             # This will happen in pre-instantiation queries (such as in the CLEW
             # "Start application" window) where no appliance is yet present.
-            tmpl.tenants.active
+            tmpl.tenants.select(&:active)
           else
             eligible_tenants = tmpl.tenants.active &
               @appliance.appliance_set.user.tenants
             if @appliance.fund.present?
               eligible_tenants = eligible_tenants & @appliance.fund.tenants
             end
-
             if @appliance.tenants.present?
               # If appliance is manually restricted to a specific subset of tenants,
               # return intersection of eligible tenants and appliance tenants.
@@ -187,7 +201,14 @@ module Atmosphere
           best_mem = Float::INFINITY
           opt_fl = nil
           mfs.each do |f|
-            present_cost = tmpl.get_hourly_cost_for(f)
+            flavor_os_families = f.flavor_os_families
+            os_family = flavor_os_families.detect do |family|
+              family.os_family_id == tmpl.appliance_type.os_family_id
+            end
+            present_cost = Float::INFINITY
+            if os_family.present?
+              present_cost = os_family.hourly_cost
+            end
             if present_cost < best_cost
               opt_fl = f
               best_cost = present_cost
@@ -210,13 +231,14 @@ module Atmosphere
         end
 
         def matching_flavors(tmpl, t)
-          fl = Atmosphere::VirtualMachineFlavor.arel_table
-          Atmosphere::VirtualMachineFlavor.active.where(
-            fl[:tenant_id].eq(t.id).and(fl[:memory].gteq(min_mem)).
-              and(fl[:cpu].gteq(min_cpu)).and(fl[:hdd].gteq(min_hdd)).
-              and(fl[:supported_architectures].
-                in([tmpl.architecture, 'i386_and_x86_64']))).
-          includes(flavor_os_families: :os_family)
+          t.virtual_machine_flavors.select do |vmf|
+            vmf.active &&
+              vmf.memory >= min_mem &&
+              vmf.cpu >= min_cpu &&
+              vmf.hdd >= min_hdd &&
+              ([tmpl.architecture, 'i386_and_x86_64'].
+                include? vmf.supported_architectures)
+          end
         end
 
         def min_mem

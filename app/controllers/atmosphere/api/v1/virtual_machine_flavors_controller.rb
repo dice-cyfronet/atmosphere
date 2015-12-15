@@ -19,7 +19,16 @@ module Atmosphere
           cs_id = params[:compute_site_id]
 
           if optimizer_query?
-            tmpls = VirtualMachineTemplate.active.on_active_tenant
+            tmpls = VirtualMachineTemplate.
+              active.
+              on_active_tenant.
+              includes(
+                tenants: [
+                  virtual_machine_flavors: [
+                    :os_families, :flavor_os_families
+                  ]
+                ]
+              )
               .where(appliance_type_id: appl_type_id)
             tmpls = tmpls.on_tenant(cs_id) if cs_id
 
