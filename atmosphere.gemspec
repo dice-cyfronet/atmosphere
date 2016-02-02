@@ -79,6 +79,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'highcharts-rails', '~>4.0.4'
   s.add_dependency 'migratio'
   s.add_dependency 'draper', '~> 1.3'
+  s.add_dependency 'sshkey'
 
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'factory_girl_rails'
