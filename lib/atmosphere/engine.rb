@@ -26,6 +26,7 @@ require 'github-markup'
 require 'redcarpet'
 
 require 'draper'
+require 'sshkey'
 
 module Atmosphere
   class Engine < ::Rails::Engine
