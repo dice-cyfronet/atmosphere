@@ -18,7 +18,6 @@ gem 'azure',
     ref: 'e61400c9b8f184da74a1723495b503340218c637'
 
 group :development do
-  gem 'annotate'
   gem 'quiet_assets'
   gem 'letter_opener'
   # gem 'rack-mini-profiler'
@@ -26,10 +25,6 @@ group :development do
   # Better error page
   gem 'better_errors'
   gem 'binding_of_caller'
-
-  gem 'rails_best_practices'
-
-  gem 'foreman'
 
   gem 'rubocop'
 end
