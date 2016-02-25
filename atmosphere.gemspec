@@ -46,7 +46,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'turbolinks'
   s.add_dependency 'jquery-turbolinks'
   s.add_dependency 'nprogress-rails'
-  s.add_dependency 'settingslogic'
   s.add_dependency 'simple_form'
   s.add_dependency 'gravtastic'
 

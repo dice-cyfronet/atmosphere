@@ -46,7 +46,6 @@ PATH
       role_model
       sass-rails
       sentry-raven
-      settingslogic
       sidekiq
       simple_form
       sinatra
@@ -499,7 +498,6 @@ GEM
       tilt (>= 1.1, < 3)
     sentry-raven (0.15.2)
       faraday (>= 0.7.6)
-    settingslogic (2.0.9)
     sexp_processor (4.6.0)
     shellany (0.0.1)
     shoulda-matchers (2.8.0)

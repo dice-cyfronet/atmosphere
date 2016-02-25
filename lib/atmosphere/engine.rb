@@ -1,5 +1,3 @@
-require 'settingslogic'
-
 require 'cancan'
 require 'simple_form'
 require 'gravtastic'
