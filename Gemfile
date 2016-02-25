@@ -39,13 +39,13 @@ group :test do
   # gem 'rspec-rails'
   gem 'rspec-sidekiq'
   # gem 'shoulda-matchers'
-  gem "generator_spec"
+  gem 'generator_spec'
 
   # gem 'factory_girl'
   gem 'ffaker', '~>2.0.0'
   gem 'database_cleaner'
 
-  gem "codeclimate-test-reporter", require: nil
+  gem 'codeclimate-test-reporter', require: nil
 
   gem 'highcharts-rails'
 end
