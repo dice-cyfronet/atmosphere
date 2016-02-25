@@ -19,8 +19,6 @@ gem 'azure',
 
 group :development do
   gem 'quiet_assets'
-  gem 'letter_opener'
-  # gem 'rack-mini-profiler'
 
   # Better error page
   gem 'better_errors'
