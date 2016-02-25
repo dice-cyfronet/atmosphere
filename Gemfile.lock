@@ -572,7 +572,6 @@ DEPENDENCIES
   ffaker (~> 2.0.0)
   generator_spec
   guard-rspec
-  highcharts-rails
   pry-rails
   quiet_assets
   rspec-rails
