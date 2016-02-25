@@ -47,7 +47,6 @@ PATH
       sass-rails
       sentry-raven
       settingslogic
-      showdown-rails
       sidekiq
       simple_form
       sinatra
@@ -505,9 +504,6 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
-    showdown-rails (0.0.4)
-      actionpack (>= 3.1)
-      railties (>= 3.1)
     sidekiq (3.4.2)
       celluloid (~> 0.16.0)
       connection_pool (~> 2.2, >= 2.2.0)
