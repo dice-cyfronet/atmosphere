@@ -28,7 +28,6 @@ PATH
       fog
       fog-azure
       font-awesome-sass (~> 4.2.0)
-      github-markup
       google-api-client
       gravtastic
       haml-rails
@@ -41,7 +40,6 @@ PATH
       omniauth
       pg
       rails (~> 4.2.5.1)
-      redcarpet
       redirus (~> 0.1.1)
       role_model
       sass-rails
@@ -280,7 +278,6 @@ GEM
     generator_spec (0.9.3)
       activesupport (>= 3.0.0)
       railties (>= 3.0.0)
-    github-markup (1.4.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     google-api-client (0.8.6)
@@ -429,7 +426,6 @@ GEM
     rb-fsevent (0.9.5)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
-    redcarpet (3.3.3)
     redirus (0.1.2)
       sidekiq
     redis (3.2.1)

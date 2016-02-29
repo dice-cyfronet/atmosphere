@@ -61,8 +61,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'font-awesome-sass', '~> 4.2.0'
   s.add_dependency 'active_model_serializers', '~>0.8.0'
   s.add_dependency 'zabbixapi'
-  s.add_dependency 'redcarpet'
-  s.add_dependency 'github-markup'
   s.add_dependency 'fog'
   s.add_dependency 'azure', '0.7.0.pre'
   s.add_dependency 'fog-azure'

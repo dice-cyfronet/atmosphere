@@ -19,9 +19,6 @@ require 'turbolinks'
 require 'jquery-turbolinks'
 require 'highcharts-rails'
 
-require 'github-markup'
-require 'redcarpet'
-
 require 'draper'
 require 'sshkey'
 
