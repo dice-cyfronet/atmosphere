@@ -73,7 +73,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'clockwork'
   s.add_dependency 'influxdb'
   s.add_dependency 'sentry-raven'
-  s.add_dependency 'will_paginate', '~> 3.0.5'
   s.add_dependency 'highcharts-rails', '~>4.0.4'
   s.add_dependency 'migratio'
   s.add_dependency 'draper', '~> 1.3'

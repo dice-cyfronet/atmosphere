@@ -10,8 +10,7 @@ module Atmosphere
         respond_to :json
 
         def index
-          respond_with HttpMappingSerializer.
-                        page(params, @http_mappings).order(:id)
+          respond_with @http_mappings.where(filter).order(:id)
         end
 
         def show

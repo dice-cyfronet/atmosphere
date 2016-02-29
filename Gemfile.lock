@@ -52,7 +52,6 @@ PATH
       sshkey
       turbolinks
       unf
-      will_paginate (~> 3.0.5)
       zabbixapi
 
 GEM
@@ -539,7 +538,6 @@ GEM
       macaddr (~> 1.0)
     warden (1.2.6)
       rack (>= 1.0)
-    will_paginate (3.0.7)
     xml-simple (1.1.5)
     zabbixapi (2.4.5)
       json (~> 1.6, >= 1.6.0)
@@ -567,4 +565,4 @@ DEPENDENCIES
   spring-commands-rspec
 
 BUNDLED WITH
-   1.10.5
+   1.11.2
