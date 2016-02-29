@@ -10,6 +10,7 @@ require 'omniauth'
 require 'fog'
 require 'unf'
 require 'redirus'
+require 'sshkey'
 
 require 'bootstrap-sass'
 require 'font-awesome-sass'
@@ -18,9 +19,6 @@ require 'jquery-rails'
 require 'turbolinks'
 require 'jquery-turbolinks'
 require 'highcharts-rails'
-
-require 'draper'
-require 'sshkey'
 
 module Atmosphere
   class Engine < ::Rails::Engine

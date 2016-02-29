@@ -24,5 +24,30 @@ module Atmosphere
                foreign_key: 'tenant_destination_id'
 
     default_scope { order(updated_at: :desc) }
+
+
+    def appliance_type_name
+      appliance_type ? appliance_type.name : 'unknown'
+    end
+
+    def virtual_machine_template_name
+      virtual_machine_template ? virtual_machine_template.name : 'unknown'
+    end
+
+    def virtual_machine_template_id_at_site
+      virtual_machine_template ? virtual_machine_template.id_at_site : 'unknown'
+    end
+
+    def tenant_source_name
+      tenant_source ? tenant_source.name : 'unknown'
+    end
+
+    def tenant_destination_name
+      tenant_destination ? tenant_destination.name : 'unknown'
+    end
+
+    def status_last_line
+      status ? status.lines.last : 'unknown'
+    end
   end
 end
