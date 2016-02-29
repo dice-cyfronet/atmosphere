@@ -105,12 +105,6 @@ GEM
       execjs
       json
     bcrypt (3.1.10)
-    better_errors (2.1.1)
-      coderay (>= 1.0.0)
-      erubis (>= 2.6.6)
-      rack (>= 0.9.0)
-    binding_of_caller (0.7.2)
-      debug_inspector (>= 0.0.1)
     bootstrap-sass (3.3.6)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
@@ -538,6 +532,10 @@ GEM
       macaddr (~> 1.0)
     warden (1.2.6)
       rack (>= 1.0)
+    web-console (3.1.1)
+      activemodel (>= 4.2)
+      debug_inspector
+      railties (>= 4.2)
     xml-simple (1.1.5)
     zabbixapi (2.4.5)
       json (~> 1.6, >= 1.6.0)
@@ -548,8 +546,6 @@ PLATFORMS
 DEPENDENCIES
   atmosphere!
   azure!
-  better_errors
-  binding_of_caller
   codeclimate-test-reporter
   database_cleaner
   factory_girl_rails
@@ -563,6 +559,7 @@ DEPENDENCIES
   shoulda-matchers
   spring
   spring-commands-rspec
+  web-console (~> 3.0)
 
 BUNDLED WITH
    1.11.2

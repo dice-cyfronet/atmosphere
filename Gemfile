@@ -19,10 +19,7 @@ gem 'azure',
 
 group :development do
   gem 'quiet_assets'
-
-  # Better error page
-  gem 'better_errors'
-  gem 'binding_of_caller'
+  gem 'web-console', '~> 3.0'
 end
 
 group :development, :test do
