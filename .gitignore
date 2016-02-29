@@ -24,6 +24,10 @@
 
 /config/puma.rb
 
+# Ignore rbenv gemsets configuration
+/.gems
+/.rbenv-gemsets
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /spec/dummy/log/*
