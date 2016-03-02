@@ -2,9 +2,19 @@ require 'rails_helper'
 
 describe Atmosphere::VmLoadMonitoringWorker do
 
-  before {
+  let(:monitoring_client) { double("Monitoring client") }
+  let(:metrics_store) { double("Metric store") }
+
+  before do
     Fog.mock!
-  }
+    allow(Atmosphere).
+      to receive(:monitoring_client).
+      and_return(monitoring_client)
+
+    allow(Atmosphere).
+      to receive(:metrics_store).
+      and_return(metrics_store)
+  end
 
   context 'as a sidekiq worker' do
     it 'responds to #perform' do
@@ -15,43 +25,50 @@ describe Atmosphere::VmLoadMonitoringWorker do
     it { should be_processed_in :monitoring }
   end
 
-  context 'Zabbix' do
-    it 'queries Zabbix for each vm with zabbix id that are managed by atmosphere' do
-      vm1 = create(:virtual_machine, ip: '10.100.0.1', monitoring_id: 1, managed_by_atmosphere: true)
-      vm2 = create(:virtual_machine, ip: '10.100.0.2', monitoring_id: 2, managed_by_atmosphere: true)
-      vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
-      vm4 = create(:virtual_machine, ip: '10.100.0.4', monitoring_id: 3)
-      allow(Atmosphere::VirtualMachine)
-        .to receive(:all).and_return [vm1, vm2, vm3]
+  it 'queries monitoring for managed vm load' do
+    create(:virtual_machine, ip: '10.100.0.1',
+           monitoring_id: 1, managed_by_atmosphere: true)
+    create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
+    create(:virtual_machine, ip: '10.100.0.4', monitoring_id: 3)
 
-      expect(vm1).to receive(:current_load_metrics)
-      expect(vm2).to receive(:current_load_metrics)
-      expect(vm3).to_not receive(:current_load_metrics)
+    expect(monitoring_client).to receive(:host_metrics).with(1)
 
-      subject.perform
-    end
+    subject.perform
   end
 
-  context 'metrics db' do
-    it 'saves metrics for each vm  with zabbix id that is managed by atmo' do
-      vm1 = create(:virtual_machine, ip: '10.100.0.1', monitoring_id: 1, managed_by_atmosphere: true)
-      vm2 = create(:virtual_machine, ip: '10.100.0.2', monitoring_id: 2, managed_by_atmosphere: true)
-      vm3 = create(:virtual_machine, ip: '10.100.0.3', managed_by_atmosphere: true)
-      metrics_double_1 = double('metrics1')
-      metrics_double_2 = double('metrics2')
-      metrics_double_3 = double('metrics3')
-      allow(vm1).to receive(:current_load_metrics).and_return metrics_double_1
-      allow(vm2).to receive(:current_load_metrics).and_return metrics_double_2
-      allow(vm3).to receive(:current_load_metrics).and_return metrics_double_3
+  it 'saves metrics' do
+    vm = create(:virtual_machine, ip: '10.100.0.1',
+                 monitoring_id: 1, managed_by_atmosphere: true,
+                 appliances: [create(:appliance)])
+    metrics = double(collect_last: [{
+      'Processor load (1 min average per core)' => 1,
+      'Processor load (5 min average per core)' => 5,
+      'Processor load (15 min average per core)' => 15,
+      'Total memory' => 100.0,
+      'Available memory' => 20.0
+    }])
+    allow(monitoring_client).
+      to receive(:host_metrics).with(1).and_return(metrics)
+    expect(metrics_store).
+      to receive(:write_point).with('cpu_load_1', metric_point(vm, 1))
+    expect(metrics_store).
+      to receive(:write_point).with('cpu_load_5', metric_point(vm, 5))
+    expect(metrics_store).
+      to receive(:write_point).with('cpu_load_15', metric_point(vm, 15))
+    expect(metrics_store).
+      to receive(:write_point).with('memory_usage', metric_point(vm, 0.8))
 
-      allow(Atmosphere::VirtualMachine)
-        .to receive(:all).and_return [vm1, vm2, vm3]
+    subject.perform
+  end
 
-      expect(vm1).to receive(:save_load_metrics).with(metrics_double_1)
-      expect(vm2).to receive(:save_load_metrics).with(metrics_double_2)
-      expect(vm3).to_not receive(:save_load_metrics)
-
-      subject.perform
-    end
+  def metric_point(vm, value)
+    appl = vm.appliances.first
+    {
+      appliance_set_id: appl.appliance_set_id,
+      appliance_id: appl.id,
+      virtual_machine_id: vm.uuid,
+      value: value
+    }
   end
 end
+

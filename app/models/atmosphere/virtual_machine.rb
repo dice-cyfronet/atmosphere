@@ -179,37 +179,6 @@ module Atmosphere
       self[:monitoring_id] = nil
     end
 
-    def current_load_metrics
-      if monitoring_id
-        metrics = monitoring_client.host_metrics(monitoring_id)
-        metrics.collect_last if metrics
-      end
-    end
-
-    def save_load_metrics(metrics)
-      return unless metrics
-      cpu_load_1 = 'Processor load (1 min average per core)'
-      cpu_load_5 = 'Processor load (5 min average per core)'
-      cpu_load_15 = 'Processor load (15 min average per core)'
-
-      total_mem = 'Total memory'
-      available_mem = 'Available memory'
-
-      metrics_hash = {}
-      metrics.each { |m| metrics_hash.merge!(m) }
-
-      metrics_store = Atmosphere.metrics_store
-      appliances.each do |appl|
-        metrics_store.write_point('cpu_load_1', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_1]})
-        metrics_store.write_point('cpu_load_5', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_5]})
-        metrics_store.write_point('cpu_load_15', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: metrics_hash[cpu_load_15]})
-        if metrics_hash[total_mem] && metrics_hash[total_mem] > 0 && metrics_hash[available_mem] && metrics_hash[available_mem] > 0
-          mem_usage = (metrics_hash[total_mem] - metrics_hash[available_mem]) / metrics_hash[total_mem]
-          metrics_store.write_point('memory_usage', {appliance_set_id:appl.appliance_set_id, appliance_id: appl.id, virtual_machine_id: uuid, value: mem_usage})
-        end
-      end
-    end
-
     private
 
     def in_monitoring?
