@@ -40,6 +40,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '~> 4.2.5.1'
   s.add_dependency 'pg'
   s.add_dependency 'enumerize'
+  s.add_dependency 'redirus', '~>0.1.1'
+  s.add_dependency 'migratio'
+  s.add_dependency 'sshkey'
+  s.add_dependency 'active_model_serializers', '~>0.8.0'
+
+  # UI
   s.add_dependency 'sass-rails'
   s.add_dependency 'coffee-rails', '~> 4.1.0'
   s.add_dependency 'jquery-rails'
@@ -48,32 +54,33 @@ Gem::Specification.new do |s|
   s.add_dependency 'nprogress-rails'
   s.add_dependency 'simple_form'
   s.add_dependency 'gravtastic'
-
-  s.add_dependency 'devise', '~>3.4'
-  s.add_dependency 'omniauth'
-
-  s.add_dependency 'cancancan'
-  s.add_dependency 'role_model'
-  s.add_dependency 'redirus', '~>0.1.1'
-
   s.add_dependency 'haml-rails'
   s.add_dependency 'bootstrap-sass', '~>3.2'
   s.add_dependency 'font-awesome-sass', '~> 4.2.0'
-  s.add_dependency 'active_model_serializers', '~>0.8.0'
-  s.add_dependency 'zabbixapi'
+  s.add_dependency 'highcharts-rails', '~>4.0.4'
+
+  # authentication and authorization
+  s.add_dependency 'devise', '~>3.4'
+  s.add_dependency 'omniauth'
+  s.add_dependency 'cancancan'
+  s.add_dependency 'role_model'
+
+  # cloud clients
   s.add_dependency 'fog'
   s.add_dependency 'azure', '0.7.0.pre'
   s.add_dependency 'fog-azure'
   s.add_dependency 'google-api-client'
   s.add_dependency 'unf'
+
+  # delay jobs
   s.add_dependency 'sinatra'
   s.add_dependency 'sidekiq'
   s.add_dependency 'clockwork'
+
+  # minitoring
+  s.add_dependency 'zabbixapi'
   s.add_dependency 'influxdb'
   s.add_dependency 'sentry-raven'
-  s.add_dependency 'highcharts-rails', '~>4.0.4'
-  s.add_dependency 'migratio'
-  s.add_dependency 'sshkey'
 
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'factory_girl_rails'
