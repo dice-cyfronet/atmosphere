@@ -17,13 +17,13 @@ API requests should be prefixed with `api` and the API version. Current API vers
 Example of a valid API request:
 
 ```
-GET http://<your-api-provider>/api/v1/appliance_sets?private_token=FSGa2df2gSdfg
+GET https://<your-api-provider>/api/v1/appliance_sets?private_token=FSGa2df2gSdfg
 ```
 
 Example for a valid API request using curl and authentication via header:
 
 ```
-curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://<your-api-provider>/api/v1/appliance_sets
+curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" https://<your-api-provider>/api/v1/appliance_sets
 ```
 
 ## Request content type
@@ -31,7 +31,7 @@ curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" http://<your-api-provider>/a
 When sending a JSON request body, a valid content type (`application/json`) must be specified, e.g.:
 
 ```
-curl -X POST --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "Content-Type: application/json" http://<your-api-provider>/api/v1/appliance_sets --data '{"name": 'as name', "appliance_set_type": "workflow"}'
+curl -X POST --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "Content-Type: application/json" https://<your-api-provider>/api/v1/appliance_sets --data '{"name": 'as name', "appliance_set_type": "workflow"}'
 ```
 
 ## Status codes
@@ -103,11 +103,11 @@ duplicated user key
 If you are a system administrator, you can impersonate other users. To do so, simply add `sudo=other_user_name` query params or a `HTTP-SUDO` header to your request. Example:
 
 ```
-GET http://<your-api-provider>/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
+GET https://<your-api-provider>/api/v1/appliance_sets?private_token=FSGa2df2gSdfg&sudo=other_user
 ```
 
 ```
-curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "HTTP-SUDO: other_user" http://<your-api-provider>/api/v1/appliance_sets
+curl --header "PRIVATE-TOKEN: QVy1PB7sTxfy4pqfZM1U" --header "HTTP-SUDO: other_user" https://<your-api-provider>/api/v1/appliance_sets
 ```
 
 ## JSON structure
