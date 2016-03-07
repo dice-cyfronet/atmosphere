@@ -66,11 +66,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'role_model'
 
   # cloud clients
-  s.add_dependency 'fog'
+  s.add_dependency 'fog', '~> 1.35.0'
   s.add_dependency 'azure', '0.7.0.pre'
-  s.add_dependency 'fog-azure'
-  s.add_dependency 'google-api-client'
-  s.add_dependency 'unf'
+  s.add_dependency 'fog-azure', '~> 0.0.1'
+  s.add_dependency 'google-api-client', '~> 0.8.6'
+  s.add_dependency 'unf', '~> 0.1.4'
 
   # delay jobs
   s.add_dependency 'sinatra'
