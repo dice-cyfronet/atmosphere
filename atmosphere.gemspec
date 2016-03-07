@@ -75,7 +75,7 @@ Gem::Specification.new do |s|
   # delay jobs
   s.add_dependency 'sinatra'
   s.add_dependency 'sidekiq'
-  s.add_dependency 'clockwork'
+  s.add_dependency 'clockwork', '~> 1.2.0'
 
   # minitoring
   s.add_dependency 'zabbixapi'

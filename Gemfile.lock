@@ -20,7 +20,7 @@ PATH
       azure (= 0.7.0.pre)
       bootstrap-sass (~> 3.2)
       cancancan
-      clockwork
+      clockwork (~> 1.2.0)
       coffee-rails (~> 4.1.0)
       devise (~> 3.4)
       enumerize (~> 1.1.0)
