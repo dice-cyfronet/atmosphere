@@ -23,7 +23,7 @@ PATH
       clockwork
       coffee-rails (~> 4.1.0)
       devise (~> 3.4)
-      enumerize
+      enumerize (~> 1.1.0)
       fog (~> 1.35.0)
       fog-azure (~> 0.0.1)
       font-awesome-sass (~> 4.2.0)
@@ -34,11 +34,11 @@ PATH
       influxdb
       jquery-rails
       jquery-turbolinks
-      migratio
+      migratio (~> 0.0.3)
       nprogress-rails
       omniauth
-      pg
-      rails (~> 4.2.5.1)
+      pg (~> 0.18.3)
+      rails (~> 4.2.5)
       redirus (~> 0.1.1)
       role_model
       sass-rails
@@ -46,7 +46,7 @@ PATH
       sidekiq
       simple_form
       sinatra
-      sshkey
+      sshkey (~> 1.8.0)
       turbolinks
       unf (~> 0.1.4)
       zabbixapi

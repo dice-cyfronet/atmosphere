@@ -37,12 +37,12 @@ Gem::Specification.new do |s|
   ]
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.2.5.1'
-  s.add_dependency 'pg'
-  s.add_dependency 'enumerize'
+  s.add_dependency 'rails', '~> 4.2.5'
+  s.add_dependency 'pg', '~> 0.18.3'
+  s.add_dependency 'enumerize', '~> 1.1.0'
   s.add_dependency 'redirus', '~>0.1.1'
-  s.add_dependency 'migratio'
-  s.add_dependency 'sshkey'
+  s.add_dependency 'migratio', '~> 0.0.3'
+  s.add_dependency 'sshkey', '~> 1.8.0'
   s.add_dependency 'active_model_serializers', '~>0.8.0'
 
   # UI
