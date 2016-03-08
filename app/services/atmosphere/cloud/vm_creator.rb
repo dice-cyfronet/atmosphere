@@ -24,28 +24,15 @@ module Atmosphere
         server_params[:nics] = [{ net_id: @nic }]
       end
 
-      # TODO: Change to ComputeSite.technology once ComputeSite is reinstated.
-      case (@tenant.technology)
-      when 'azure'
-        server_params[:vm_name] = SecureRandom.hex(5)
-        server_params[:vm_user] = Atmosphere.azure_vm_user
-        server_params[:password] = Atmosphere.azure_vm_password
-        server_params[:image] = tmpl_id
-        server_params[:location] = 'North Europe'
-        server_params[:cs_id] = @tenant.site_id
-        server_params[:vm_size] = flavor_id
-        set_azure_endpoints(server_params)
-      else # TODO: Untangle AWS and OpenStack
-        server_params[:atmo_user_key] = @user_key
-        server_params[:flavor_ref] = flavor_id
-        server_params[:flavor_id] = flavor_id
-        server_params[:name] = @name
-        server_params[:image_ref] = tmpl_id
-        server_params[:image_id] = tmpl_id
-        server_params[:user_data] = user_data if user_data
-        server_params[:key_name] = key_name if key_name
-        set_security_groups!(server_params)
-      end
+      server_params[:atmo_user_key] = @user_key
+      server_params[:flavor_ref] = flavor_id
+      server_params[:flavor_id] = flavor_id
+      server_params[:name] = @name
+      server_params[:image_ref] = tmpl_id
+      server_params[:image_id] = tmpl_id
+      server_params[:user_data] = user_data if user_data
+      server_params[:key_name] = key_name if key_name
+      set_security_groups!(server_params)
 
       Rails.logger.debug "Params of instantiating server #{server_params}"
       server = servers_client.create(server_params)
@@ -56,29 +43,6 @@ module Atmosphere
     private
 
     attr_reader :user_data
-
-    def set_azure_endpoints(params)
-      tcp_endpoints_str = ''
-      udp_endpoints_str = ''
-      @appliance_type.port_mapping_templates.
-        each do |pmt|
-          if pmt.transport_protocol == :tcp
-            # 22 ssh is present by default on Azure for linux
-            # and if it is specified explicitly it causes error
-            unless pmt.target_port == 22
-              tcp_endpoints_str << "#{pmt.target_port}:#{pmt.target_port},"
-            end
-          else
-            udp_endpoints_str << "#{pmt.target_port}:#{pmt.target_port},"
-          end
-        end
-      if tcp_endpoints_str.present?
-        params[:tcp_endpoints] = tcp_endpoints_str.chomp!(',')
-      end
-      if udp_endpoints_str.present?
-        params[:udp_endpoints] = udp_endpoints_str.chomp!(',')
-      end
-    end
 
     def flavor_id
       @flavor.id_at_site
@@ -102,7 +66,6 @@ module Atmosphere
 
     def set_security_groups!(params)
       params[:groups] = ['mniec_permit_all'] if amazon?
-      params[:network] = 'permitall' if google?
     end
 
     def register_user_key!
@@ -111,10 +74,6 @@ module Atmosphere
 
     def amazon?
       @tenant.technology == 'aws'
-    end
-
-    def google?
-      @tenant.technology == 'google_compute'
     end
   end
 end

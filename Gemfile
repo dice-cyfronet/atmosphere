@@ -10,13 +10,6 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
-# this is a hack to force a specific revision of azure gem
-# against which Atmo was tested
-gem 'azure',
-    github: 'Azure/azure-sdk-for-ruby',
-    branch: 'master',
-    ref: 'e61400c9b8f184da74a1723495b503340218c637'
-
 group :development do
   gem 'quiet_assets'
   gem 'web-console', '~> 3.0'

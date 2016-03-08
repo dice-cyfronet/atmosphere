@@ -79,13 +79,13 @@ module Atmosphere
 
     validates :technology,
               presence: true,
-              inclusion: %w(openstack aws azure rackspace google_compute)
+              inclusion: %w(openstack aws rackspace)
 
     validate :nic_provider_class_defined, if: :nic_provider_class_name?
 
     enumerize :tenant_type, in: [:public, :private], predicates: true
     enumerize :technology,
-              in: [:openstack, :aws, :azure, :rackspace, :google_compute],
+              in: [:openstack, :aws, :rackspace],
               predicates: true
 
     scope :with_appliance_type, ->(appliance_type) do
