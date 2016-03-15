@@ -19,6 +19,8 @@ require 'jquery-rails'
 require 'turbolinks'
 require 'jquery-turbolinks'
 require 'highcharts-rails'
+require 'github-markup'
+require 'redcarpet'
 
 module Atmosphere
   class Engine < ::Rails::Engine

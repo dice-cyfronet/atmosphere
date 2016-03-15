@@ -58,6 +58,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'bootstrap-sass', '~>3.2'
   s.add_dependency 'font-awesome-sass', '~> 4.2.0'
   s.add_dependency 'highcharts-rails', '~>4.0.4'
+  s.add_dependency 'redcarpet'
+  s.add_dependency 'github-markup'
 
   # authentication and authorization
   s.add_dependency 'devise', '~>3.4'
