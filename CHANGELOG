@@ -5,6 +5,6 @@ v 1.0.0 (unreleased)
   - Basic UI for atmosphere administrator
   - Managing http/https redirections using redirus
   - Managing tcp redirections using ipwrangler
-  - Connector to: OpenStack, Amazon, Rackspace, Azure, Google cloud providers
+  - Connector to: OpenStack, Amazon, Rackspace cloud providers
   - Basic billing system
   - Possiblity to migrate template from OpenStack to Amazon
