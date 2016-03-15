@@ -55,8 +55,9 @@ module Atmosphere
   @@config_param = Struct.new(:regexp, :range).new(/\#{\w*}/, 2..-2)
 
   mattr_reader :url_monitoring
-  @@url_monitoring = Struct.new(:unavail_statuses, :pending, :ok, :lost).
-                     new([502], 10, 120, 15)
+  @@url_monitoring = Struct.new(:unavail_statuses, :timeout,
+                                :pending, :ok, :lost).
+                     new([502], 1, 10, 120, 15)
 
   mattr_reader :optimizer
   @@optimizer = Struct.new(:max_appl_no).new(5)
