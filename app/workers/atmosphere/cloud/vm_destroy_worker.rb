@@ -7,8 +7,8 @@ module Atmosphere
       sidekiq_options retry: 4
 
       def perform(vm_id)
-        vm = Atmosphere::VirtualMachine.find(vm_id)
-        vm.destroy!
+        vm = Atmosphere::VirtualMachine.find_by(id: vm_id)
+        vm.destroy! if vm
       end
     end
   end
