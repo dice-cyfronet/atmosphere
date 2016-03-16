@@ -7,10 +7,11 @@ describe Atmosphere::EndpointStatusCheckWorker do
   let(:url_check) { double() }
   let(:hm) { create(:http_mapping, monitoring_status: :pending); }
   let(:hm_ok) { create(:http_mapping, monitoring_status: :ok); }
+  let(:timeout) { Atmosphere.url_monitoring.timeout }
 
   it 'should set status from pending to ok' do
     allow(url_check).to receive(:is_available)
-      .with(hm.url).and_return(true)
+      .with(hm.url, timeout).and_return(true)
 
     hm_before = Atmosphere::HttpMapping.find_by id: hm.id
     expect(hm_before.monitoring_status.pending?).to be_truthy
@@ -23,7 +24,7 @@ describe Atmosphere::EndpointStatusCheckWorker do
 
   it 'should set status from ok to lost' do
     allow(url_check).to receive(:is_available)
-      .with(hm_ok.url).and_return(false)
+      .with(hm_ok.url, timeout).and_return(false)
 
     hm_before = Atmosphere::HttpMapping.find_by id: hm_ok.id
     expect(hm_before.monitoring_status.ok?).to be_truthy
@@ -36,7 +37,7 @@ describe Atmosphere::EndpointStatusCheckWorker do
 
   it 'should leave pending' do
     allow(url_check).to receive(:is_available)
-          .with(hm.url).and_return(false)
+          .with(hm.url, timeout).and_return(false)
 
     hm_before = Atmosphere::HttpMapping.find_by id: hm.id
     expect(hm_before.monitoring_status.pending?).to be_truthy
