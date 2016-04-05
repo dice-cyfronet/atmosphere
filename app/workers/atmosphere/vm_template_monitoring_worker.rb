@@ -4,6 +4,7 @@ module Atmosphere
 
     sidekiq_options queue: :monitoring
     sidekiq_options retry: false
+    sidekiq_options unique: :until_executing
 
     def perform(tenant_id)
       begin

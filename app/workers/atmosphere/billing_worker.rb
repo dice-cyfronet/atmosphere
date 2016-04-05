@@ -4,6 +4,7 @@ module Atmosphere
 
     sidekiq_options queue: :billing
     sidekiq_options retry: false
+    sidekiq_options unique: :until_executing
 
     def perform
       Rails.logger.debug "Performing mass billing operation for all appliances."

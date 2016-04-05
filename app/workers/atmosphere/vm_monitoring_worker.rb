@@ -4,6 +4,7 @@ module Atmosphere
 
     sidekiq_options queue: :monitoring
     sidekiq_options retry: false
+    sidekiq_options unique: :until_executing
 
     def initialize(vm_updater_class=VmUpdater, vm_destroyer_class=VmDestroyer)
       @vm_updater_class = vm_updater_class
