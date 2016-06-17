@@ -21,7 +21,12 @@ module Atmosphere
     def purge_non_existing_flavors
       tenant.virtual_machine_flavors.
         where.not(id_at_site: cloud_flavors.map(&:id)).each do |flavor|
-          flavor.destroy if flavor.virtual_machines.count == 0
+          if flavor.virtual_machines.count == 0
+            flavor.destroy
+          else
+            flavor.active = false
+            flavor.save!
+          end
         end
     end
 
