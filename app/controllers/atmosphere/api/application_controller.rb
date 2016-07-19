@@ -46,6 +46,32 @@ module Atmosphere
                           status: :payment_required, type: :billing)
       end
 
+      rescue_from Atmosphere::NotAdmin do
+        render_json_error('Must be admin to use sudo',
+                          status: 403, type: :sudo)
+      end
+
+      rescue_from Atmosphere::NoUser do
+        render_json_error('User you want to sudo does not exist',
+                          status: 404, type: :sudo)
+      end
+
+      def current_user
+        @current_user ||= begin
+          cu = super
+          sudo_as = params[:sudo] || request.headers['HTTP-SUDO']
+          if sudo_as
+            raise Atmosphere::NotAdmin unless cu.admin?
+            user = Atmosphere::User.find_by(login: sudo_as)
+            raise Atmosphere::NoUser unless user
+
+            user
+          else
+            cu
+          end
+        end
+      end
+
       protected
 
       def render_error(model_obj)

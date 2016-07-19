@@ -10,8 +10,6 @@ module Devise
     #   http://myapp.example.com/?private_token=TOKEN
     #   http://myapp.example.com Header: PRIVATE-TOKEN: TOKEN
     class TokenAuthenticatable < Authenticatable
-      include Sudoable
-
       def valid?
         super || token
       end
@@ -20,7 +18,6 @@ module Devise
         return fail(:invalid_ticket) unless token
         begin
           user = Atmosphere::User.find_by(authentication_token: token)
-          user = sudo!(user, sudo_as) if sudo_as
 
           success!(user)
         rescue StandardException
