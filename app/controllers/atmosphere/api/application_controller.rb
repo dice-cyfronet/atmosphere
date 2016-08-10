@@ -5,6 +5,8 @@ module Atmosphere
     class ApplicationController < ::ApplicationController
       include Atmosphere::JsonErrorHandler
 
+      before_action :set_raven_context, if: :sentry_enabled?
+
       protect_from_forgery with: :null_session, if: :token_request?
       protect_from_forgery with: :exception, unless: :token_request?
 
@@ -94,6 +96,19 @@ module Atmosphere
       end
 
       private
+
+      def set_raven_context
+        if current_user
+          Raven.user_context(id: current_user.id,
+                             email: current_user.email,
+                             username: current_user.name)
+        end
+        Raven.extra_context(params: params.to_h, url: request.url)
+      end
+
+      def sentry_enabled?
+        Rails.env.production?
+      end
 
       def log_user_action(msg)
         Atmosphere.action_logger.info "[#{current_user.login}] #{msg}"
