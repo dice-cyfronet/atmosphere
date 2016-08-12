@@ -101,7 +101,7 @@ module Atmosphere
         if current_user
           Raven.user_context(id: current_user.id,
                              email: current_user.email,
-                             username: current_user.name)
+                             username: current_user.full_name)
         end
         Raven.extra_context(params: params.to_h, url: request.url)
       end
