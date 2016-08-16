@@ -17,7 +17,7 @@ module Atmosphere
         preference_cpu: at.preference_cpu,
         preference_memory: at.preference_memory,
         preference_disk: at.preference_disk,
-        matched_flavor: map_flavor(flavor),
+        matched_flavor: flavor && map_flavor(flavor),
         compute_site_ids: at.tenant_ids & current_user.tenants.active.map(&:id),
         appliance_configuration_templates: at.appliance_configuration_templates
       }
