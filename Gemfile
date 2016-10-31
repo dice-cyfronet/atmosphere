@@ -12,7 +12,7 @@ gemspec
 
 group :development do
   gem 'quiet_assets'
-  gem 'web-console', '~> 3.0'
+  gem 'web-console', '3.3.0'
   gem 'rubocop'
 end
 
