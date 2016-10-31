@@ -28,7 +28,7 @@ group :test do
   gem 'rspec-rails'
   gem 'rspec-sidekiq'
   gem 'factory_girl_rails'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', require: false
   gem 'generator_spec'
   gem 'ffaker', '~>2.2.0'
   gem 'database_cleaner'
