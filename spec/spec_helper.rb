@@ -80,3 +80,13 @@ RSpec.configure do |config|
 
   config.alias_example_to :expect_it
 end
+
+module RSpec
+  module Sidekiq
+    module Matchers
+      warn "[DEPRECATION] `have_enqueued_job` is deprecated.  Please use `have_enqueued_sidekiq_job` instead."
+      alias have_enqueued_sidekiq_job have_enqueued_job
+    end
+  end
+end
+
