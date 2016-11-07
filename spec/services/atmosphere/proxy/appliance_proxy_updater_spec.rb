@@ -125,7 +125,7 @@ describe Atmosphere::Proxy::ApplianceProxyUpdater do
       end
 
       it 'creates new proxy in redirus' do
-        expect(Redirus::Worker::AddProxy).to have_enqueued_job(
+        expect(Redirus::Worker::AddProxy).to have_enqueued_sidekiq_job(
           proxy_name(appl, http),
           include(worker(vm1, http), worker(vm2, http)),
           'http',
@@ -143,7 +143,7 @@ describe Atmosphere::Proxy::ApplianceProxyUpdater do
       end
 
       it 'creates new proxy in redirus' do
-        expect(Redirus::Worker::AddProxy).to have_enqueued_job(
+        expect(Redirus::Worker::AddProxy).to have_enqueued_sidekiq_job(
           proxy_name(appl, https),
           include(worker(vm1, https), worker(vm2, https)),
           'https',
@@ -157,8 +157,8 @@ describe Atmosphere::Proxy::ApplianceProxyUpdater do
       before { subject.update(destroyed: https) }
 
       it 'does nothing' do
-        expect(Redirus::Worker::AddProxy).not_to have_enqueued_job
-        expect(Redirus::Worker::RmProxy).not_to have_enqueued_job
+        expect(Redirus::Worker::AddProxy).not_to have_enqueued_sidekiq_job
+        expect(Redirus::Worker::RmProxy).not_to have_enqueued_sidekiq_job
       end
     end
 
@@ -175,7 +175,7 @@ describe Atmosphere::Proxy::ApplianceProxyUpdater do
 
       it 'removes old redirection' do
         expect(Redirus::Worker::RmProxy).
-          to have_enqueued_job(proxy_name(appl, @old_http), 'http')
+          to have_enqueued_sidekiq_job(proxy_name(appl, @old_http), 'http')
       end
     end
   end
