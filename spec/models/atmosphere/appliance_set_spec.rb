@@ -31,12 +31,11 @@ describe Atmosphere::ApplianceSet do
 
   it {should validate_inclusion_of(:optimization_policy).in_array(%w(manual)) }
 
-  pending 'to be at most 1 development appliance set in the scope of specific User'
-  # TODO the below does not work as expected, something more is needed
-  #context 'if appliance_set_type is either development or portal' do
-  #  before { subject.stub(:appliance_set_type) { 'development' } }
-  #  it { should validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
-  #end
+  context 'if appliance_set_type is either development or portal' do
+    subject { build(:appliance_set, appliance_set_type: :development) }
+
+    it { should validate_uniqueness_of(:appliance_set_type).scoped_to(:user_id) }
+  end
 
   it { should have_db_index :user_id }
 
