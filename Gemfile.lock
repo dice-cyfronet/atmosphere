@@ -3,28 +3,28 @@ PATH
   specs:
     atmosphere (1.0.0)
       active_model_serializers (~> 0.8.0)
-      bootstrap-sass (~> 3.2)
+      bootstrap-sass (~> 3.3)
       cancancan
-      clockwork (~> 1.2.0)
-      coffee-rails (~> 4.1.0)
+      clockwork (~> 2.0)
+      coffee-rails (~> 4.2.0)
       devise (~> 3.4)
-      enumerize (~> 1.1.0)
+      enumerize (~> 2.0)
       fog (~> 1.37.0)
-      font-awesome-sass (~> 4.2.0)
+      font-awesome-sass (~> 4.7.0)
       github-markup
       gravtastic
       haml-rails
-      highcharts-rails (~> 4.0.4)
+      highcharts-rails (~> 4.2.5)
       influxdb
       jquery-rails
       jquery-turbolinks
       migratio (~> 0.0.3)
       nprogress-rails
       omniauth
-      pg (~> 0.18.3)
+      pg (~> 0.19.0)
       rails (~> 4.2.7)
       redcarpet
-      redirus (~> 0.1.1)
+      redirus (~> 0.2.1)
       role_model
       sass-rails
       sentry-raven
@@ -88,15 +88,32 @@ GEM
     builder (3.2.2)
     cancancan (1.15.0)
     cause (0.1)
-    clockwork (1.2.1)
+    celluloid (0.17.3)
+      celluloid-essentials
+      celluloid-extras
+      celluloid-fsm
+      celluloid-pool
+      celluloid-supervision
+      timers (>= 4.1.1)
+    celluloid-essentials (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-extras (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-fsm (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-pool (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-supervision (0.20.6)
+      timers (>= 4.1.1)
+    clockwork (2.0.0)
       activesupport
       tzinfo
     codeclimate-test-reporter (1.0.3)
       simplecov
     coderay (1.1.1)
-    coffee-rails (4.1.1)
+    coffee-rails (4.2.1)
       coffee-script (>= 2.2.0)
-      railties (>= 4.0.0, < 5.1.x)
+      railties (>= 4.0.0, < 5.2.x)
     coffee-script (2.4.1)
       coffee-script-source
       execjs
@@ -114,7 +131,7 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    enumerize (1.1.1)
+    enumerize (2.0.1)
       activesupport (>= 3.2)
     erubis (2.7.0)
     excon (0.54.0)
@@ -238,8 +255,8 @@ GEM
     fog-xml (0.1.2)
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
-    font-awesome-sass (4.2.2)
-      sass (~> 3.2)
+    font-awesome-sass (4.7.0)
+      sass (>= 3.2)
     formatador (0.2.5)
     generator_spec (0.9.3)
       activesupport (>= 3.0.0)
@@ -271,8 +288,9 @@ GEM
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
     hashie (3.4.6)
-    highcharts-rails (4.0.4.1)
+    highcharts-rails (4.2.5)
       railties (>= 3.1)
+    hitimes (1.2.4)
     html2haml (2.0.0)
       erubis (~> 2.7.0)
       haml (~> 4.0.0)
@@ -324,7 +342,7 @@ GEM
     orm_adapter (0.5.0)
     parser (2.3.1.4)
       ast (~> 2.2)
-    pg (0.18.4)
+    pg (0.19.0)
     powerpack (0.1.1)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -374,9 +392,11 @@ GEM
       nokogiri (~> 1.5)
       trollop (~> 2.1)
     redcarpet (3.3.4)
-    redirus (0.1.2)
-      sidekiq
+    redirus (0.2.1)
+      sidekiq (~> 3.2)
     redis (3.3.1)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
     role_model (0.8.2)
@@ -427,11 +447,12 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
-    sidekiq (4.2.5)
-      concurrent-ruby (~> 1.0)
+    sidekiq (3.5.4)
+      celluloid (~> 0.17.2)
       connection_pool (~> 2.2, >= 2.2.0)
-      rack-protection (>= 1.5.0)
+      json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
+      redis-namespace (~> 1.5, >= 1.5.2)
     simple_form (3.3.1)
       actionpack (> 4, < 5.1)
       activemodel (> 4, < 5.1)
@@ -460,6 +481,8 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.5)
+    timers (4.1.1)
+      hitimes
     trollop (2.1.2)
     turbolinks (5.0.1)
       turbolinks-source (~> 5)
