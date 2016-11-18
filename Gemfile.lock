@@ -7,7 +7,7 @@ PATH
       cancancan
       clockwork (~> 2.0)
       coffee-rails (~> 4.2.0)
-      devise (~> 3.4)
+      devise (~> 4.2)
       enumerize (~> 2.0)
       fog (~> 1.37.0)
       font-awesome-sass (~> 4.7.0)
@@ -122,12 +122,11 @@ GEM
     connection_pool (2.2.1)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
-    devise (3.5.10)
+    devise (4.2.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 3.2.6, < 5)
+      railties (>= 4.1.0, < 5.1)
       responders
-      thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     docile (1.1.5)

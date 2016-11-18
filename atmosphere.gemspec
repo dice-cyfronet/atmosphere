@@ -62,7 +62,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'github-markup'
 
   # authentication and authorization
-  s.add_dependency 'devise', '~>3.4'
+  s.add_dependency 'devise', '~>4.2'
   s.add_dependency 'omniauth'
   s.add_dependency 'cancancan'
   s.add_dependency 'role_model'
