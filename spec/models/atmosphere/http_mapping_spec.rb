@@ -42,14 +42,14 @@ describe Atmosphere::HttpMapping do
       it 'removes http redirection from redirus' do
         subject.run_callbacks(:destroy)
 
-        expect(Redirus::Worker::RmProxy).to have_enqueued_job(proxy_name, subject.application_protocol)
+        expect(Redirus::Worker::RmProxy).to have_enqueued_sidekiq_job(proxy_name, subject.application_protocol)
       end
 
       it 'removes custom redirectoin from redirus' do
         subject.custom_name = 'custom_name'
         subject.run_callbacks(:destroy)
 
-        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+        expect(Redirus::Worker::RmProxy).to have_enqueued_sidekiq_job(
           'custom_name', subject.application_protocol)
       end
     end
@@ -63,7 +63,7 @@ describe Atmosphere::HttpMapping do
         subject.custom_name = 'custom_name'
         subject.update_proxy
 
-        expect(Redirus::Worker::AddProxy).to_not have_enqueued_job
+        expect(Redirus::Worker::AddProxy).to_not have_enqueued_sidekiq_job
       end
 
       it 'adds http redirection into redirus' do
@@ -75,7 +75,7 @@ describe Atmosphere::HttpMapping do
 
         subject.update_proxy
 
-        expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, match_array(['10.100.2.3:80', '10.100.2.4:80']), subject.application_protocol, [])
+        expect(Redirus::Worker::AddProxy).to have_enqueued_sidekiq_job(proxy_name, match_array(['10.100.2.3:80', '10.100.2.4:80']), subject.application_protocol, [])
       end
 
       it 'adds custom redirection into redirus' do
@@ -85,7 +85,7 @@ describe Atmosphere::HttpMapping do
 
         subject.update_proxy
 
-        expect(Redirus::Worker::AddProxy).to have_enqueued_job(
+        expect(Redirus::Worker::AddProxy).to have_enqueued_sidekiq_job(
           'custom_name', match_array(['10.100.2.3:80']),
           subject.application_protocol, [])
       end
@@ -99,17 +99,17 @@ describe Atmosphere::HttpMapping do
 
         subject.update_proxy
 
-        expect(Redirus::Worker::AddProxy).to have_enqueued_job(proxy_name, ['10.100.2.3:80'], subject.application_protocol, match_array(['k1 v1', 'k2 v2']))
+        expect(Redirus::Worker::AddProxy).to have_enqueued_sidekiq_job(proxy_name, ['10.100.2.3:80'], subject.application_protocol, match_array(['k1 v1', 'k2 v2']))
       end
 
       it 'removes http redirection when no workers' do
         subject.custom_name = 'custom_name'
         subject.update_proxy
 
-        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+        expect(Redirus::Worker::RmProxy).to have_enqueued_sidekiq_job(
           proxy_name, subject.application_protocol)
 
-        expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+        expect(Redirus::Worker::RmProxy).to have_enqueued_sidekiq_job(
           'custom_name', subject.application_protocol)
       end
     end
@@ -123,9 +123,9 @@ describe Atmosphere::HttpMapping do
       mapping.custom_name = 'new-custom-name'
       mapping.save
 
-      expect(Redirus::Worker::RmProxy).to have_enqueued_job(
+      expect(Redirus::Worker::RmProxy).to have_enqueued_sidekiq_job(
         'old-custom-name', subject.application_protocol)
-      expect(Redirus::Worker::AddProxy).to have_enqueued_job(
+      expect(Redirus::Worker::AddProxy).to have_enqueued_sidekiq_job(
         'new-custom-name',
         match_array(["10.100.2.3:#{mapping.port_mapping_template.target_port}"]),
         subject.application_protocol, [])

@@ -374,7 +374,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         put api("/appliance_types/#{at.id}", user), update_body
 
         expect(Atmosphere::Cloud::SaveWorker).
-          to have_enqueued_job(appl.id.to_s, at.id)
+          to have_enqueued_sidekiq_job(appl.id.to_s, at.id)
       end
 
       it 'allow to save only devel appliance' do
@@ -386,7 +386,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         put api("/appliance_types/#{at.id}", user), update_body
 
         expect(Atmosphere::Cloud::SaveWorker).
-          to_not have_enqueued_job(appl.id.to_s, at.id)
+          to_not have_enqueued_sidekiq_job(appl.id.to_s, at.id)
         expect(response.status).to eq 403
       end
 

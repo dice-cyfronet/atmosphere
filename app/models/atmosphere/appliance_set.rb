@@ -37,7 +37,7 @@ module Atmosphere
               if: :optimization_policy
 
     validates :appliance_set_type,
-              uniqueness: { scope: :user },
+              uniqueness: { scope: :user_id },
               if: 'appliance_set_type == "development" or appliance_set_type == "portal"'
 
     enumerize :appliance_set_type, in: [:portal, :development, :workflow]

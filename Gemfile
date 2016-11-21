@@ -12,7 +12,7 @@ gemspec
 
 group :development do
   gem 'quiet_assets'
-  gem 'web-console', '~> 3.0'
+  gem 'web-console', '3.3.0'
   gem 'rubocop'
 end
 
@@ -30,7 +30,7 @@ group :test do
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
   gem 'generator_spec'
-  gem 'ffaker', '~>2.0.0'
+  gem 'ffaker', '~> 2.2.0'
   gem 'database_cleaner'
-  gem 'codeclimate-test-reporter', require: nil
+  gem 'codeclimate-test-reporter', require: false
 end

@@ -37,17 +37,17 @@ Gem::Specification.new do |s|
   ]
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.2.5'
-  s.add_dependency 'pg', '~> 0.18.3'
-  s.add_dependency 'enumerize', '~> 1.1.0'
-  s.add_dependency 'redirus', '~>0.1.1'
+  s.add_dependency 'rails', '~> 4.2.7'
+  s.add_dependency 'pg', '~> 0.19.0'
+  s.add_dependency 'enumerize', '~> 2.0'
+  s.add_dependency 'redirus', '~>0.2.1'
   s.add_dependency 'migratio', '~> 0.0.3'
   s.add_dependency 'sshkey', '~> 1.8.0'
-  s.add_dependency 'active_model_serializers', '~>0.8.0'
+  s.add_dependency 'active_model_serializers', '~> 0.8.0'
 
   # UI
   s.add_dependency 'sass-rails'
-  s.add_dependency 'coffee-rails', '~> 4.1.0'
+  s.add_dependency 'coffee-rails', '~> 4.2.0'
   s.add_dependency 'jquery-rails'
   s.add_dependency 'turbolinks'
   s.add_dependency 'jquery-turbolinks'
@@ -55,14 +55,14 @@ Gem::Specification.new do |s|
   s.add_dependency 'simple_form'
   s.add_dependency 'gravtastic'
   s.add_dependency 'haml-rails'
-  s.add_dependency 'bootstrap-sass', '~>3.2'
-  s.add_dependency 'font-awesome-sass', '~> 4.2.0'
-  s.add_dependency 'highcharts-rails', '~>4.0.4'
+  s.add_dependency 'bootstrap-sass', '~> 3.3'
+  s.add_dependency 'font-awesome-sass', '~> 4.7.0'
+  s.add_dependency 'highcharts-rails', '~> 4.2.5'
   s.add_dependency 'redcarpet'
   s.add_dependency 'github-markup'
 
   # authentication and authorization
-  s.add_dependency 'devise', '~>3.4'
+  s.add_dependency 'devise', '~> 4.2'
   s.add_dependency 'omniauth'
   s.add_dependency 'cancancan'
   s.add_dependency 'role_model'
@@ -74,7 +74,7 @@ Gem::Specification.new do |s|
   # delay jobs
   s.add_dependency 'sinatra'
   s.add_dependency 'sidekiq'
-  s.add_dependency 'clockwork', '~> 1.2.0'
+  s.add_dependency 'clockwork', '~> 2.0'
 
   # minitoring
   s.add_dependency 'zabbixapi'

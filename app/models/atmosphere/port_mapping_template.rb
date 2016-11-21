@@ -73,11 +73,11 @@ module Atmosphere
 
     validates :service_name,
               presence: true,
-              uniqueness: { scope: [:appliance_type, :dev_mode_property_set] }
+              uniqueness: { scope: [:appliance_type_id, :dev_mode_property_set_id] }
 
     validates :target_port,
               presence: true,
-              uniqueness: { scope: [:appliance_type, :dev_mode_property_set] },
+              uniqueness: { scope: [:appliance_type_id, :dev_mode_property_set_id] },
               numericality: {
                 only_integer: true,
                 greater_than_or_equal_to: 0

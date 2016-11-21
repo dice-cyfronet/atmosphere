@@ -9,6 +9,6 @@ describe Atmosphere::Cloud::DestroyUnusedVms do
     described_class.new.execute
 
     expect(Atmosphere::Cloud::VmDestroyWorker).
-      to have_enqueued_job(unused_vm.id)
+      to have_enqueued_sidekiq_job(unused_vm.id)
   end
 end
