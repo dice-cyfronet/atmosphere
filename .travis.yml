@@ -13,6 +13,7 @@ script:
   - bundle exec rake db:schema:load
   - bundle exec rake db:seed
   - bundle exec rspec spec/
+  - bundle exec codeclimate-test-reporter
 
 addons:
   code_climate:
