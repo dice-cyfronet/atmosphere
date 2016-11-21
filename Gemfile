@@ -28,9 +28,9 @@ group :test do
   gem 'rspec-rails'
   gem 'rspec-sidekiq'
   gem 'factory_girl_rails'
-  gem 'shoulda-matchers', require: false
+  gem 'shoulda-matchers'
   gem 'generator_spec'
-  gem 'ffaker', '~>2.2.0'
+  gem 'ffaker', '~> 2.2.0'
   gem 'database_cleaner'
-  gem 'codeclimate-test-reporter', require: nil
+  gem 'codeclimate-test-reporter', require: false
 end
