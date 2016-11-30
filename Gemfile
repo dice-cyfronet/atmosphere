@@ -11,8 +11,7 @@ gemspec
 # your gem to rubygems.org.
 
 group :development do
-  gem 'quiet_assets'
-  gem 'web-console', '3.3.0'
+  gem 'web-console', '3.4.0'
   gem 'rubocop'
 end
 
