@@ -30,7 +30,6 @@ PATH
       sentry-raven
       sidekiq
       simple_form
-      sinatra
       sshkey (~> 1.8.0)
       turbolinks
       unf (~> 0.1.4)
@@ -458,8 +457,6 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
-    sinatra (1.0)
-      rack (>= 1.0)
     slop (3.6.0)
     spring (2.0.0)
       activesupport (>= 4.2)

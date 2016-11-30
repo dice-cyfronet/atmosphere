@@ -72,7 +72,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'unf', '~> 0.1.4'
 
   # delay jobs
-  s.add_dependency 'sinatra'
   s.add_dependency 'sidekiq'
   s.add_dependency 'clockwork', '~> 2.0'
 
