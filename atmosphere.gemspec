@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '~> 5.0.0.1'
   s.add_dependency 'pg', '~> 0.19.0'
   s.add_dependency 'enumerize', '~> 2.0'
-  s.add_dependency 'redirus', '~>0.2.1'
+  s.add_dependency 'redirus', '~>0.3.1'
   s.add_dependency 'migratio', '~> 0.0.3'
   s.add_dependency 'sshkey', '~> 1.8.0'
   s.add_dependency 'active_model_serializers', '~> 0.8.0'

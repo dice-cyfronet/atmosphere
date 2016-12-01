@@ -24,7 +24,7 @@ PATH
       pg (~> 0.19.0)
       rails (~> 5.0.0.1)
       redcarpet
-      redirus (~> 0.2.1)
+      redirus (~> 0.3.1)
       role_model
       sass-rails
       sentry-raven
@@ -89,23 +89,6 @@ GEM
     builder (3.2.2)
     cancancan (1.15.0)
     cause (0.1)
-    celluloid (0.17.3)
-      celluloid-essentials
-      celluloid-extras
-      celluloid-fsm
-      celluloid-pool
-      celluloid-supervision
-      timers (>= 4.1.1)
-    celluloid-essentials (0.20.5)
-      timers (>= 4.1.1)
-    celluloid-extras (0.20.5)
-      timers (>= 4.1.1)
-    celluloid-fsm (0.20.5)
-      timers (>= 4.1.1)
-    celluloid-pool (0.20.5)
-      timers (>= 4.1.1)
-    celluloid-supervision (0.20.6)
-      timers (>= 4.1.1)
     clockwork (2.0.0)
       activesupport
       tzinfo
@@ -290,7 +273,6 @@ GEM
     hashie (3.4.6)
     highcharts-rails (4.2.5)
       railties (>= 3.1)
-    hitimes (1.2.4)
     html2haml (2.0.0)
       erubis (~> 2.7.0)
       haml (~> 4.0.0)
@@ -326,7 +308,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
-    minitest (5.9.1)
+    minitest (5.10.0)
     multi_json (1.12.1)
     multipart-post (2.0.0)
     nenv (0.3.0)
@@ -352,6 +334,8 @@ GEM
     pry-rails (0.3.4)
       pry (>= 0.9.10)
     rack (2.0.1)
+    rack-protection (1.5.3)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.0.1)
@@ -388,8 +372,9 @@ GEM
       nokogiri (~> 1.5)
       trollop (~> 2.1)
     redcarpet (3.3.4)
-    redirus (0.2.1)
-      sidekiq (~> 3.2)
+    redirus (0.3.1)
+      redis-namespace (~> 1.2)
+      sidekiq (~> 4.2)
     redis (3.3.2)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
@@ -443,12 +428,11 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
-    sidekiq (3.5.4)
-      celluloid (~> 0.17.2)
+    sidekiq (4.2.7)
+      concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
-      json (~> 1.0)
+      rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
-      redis-namespace (~> 1.5, >= 1.5.2)
     simple_form (3.3.1)
       actionpack (> 4, < 5.1)
       activemodel (> 4, < 5.1)
@@ -473,8 +457,6 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.5)
     tilt (2.0.5)
-    timers (4.1.2)
-      hitimes
     trollop (2.1.2)
     turbolinks (5.0.1)
       turbolinks-source (~> 5)
