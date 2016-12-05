@@ -230,14 +230,14 @@ describe Atmosphere::Api::V1::AppliancesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api('appliances'), static_request_body
+        post api('appliances'), params: static_request_body
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as user' do
       it 'returns 201 Created on success' do
-        post api('/appliances', user), static_request_body
+        post api('/appliances', user), params: static_request_body
         expect(response.status).to eq 201
       end
 
@@ -245,22 +245,22 @@ describe Atmosphere::Api::V1::AppliancesController do
         expect(Atmosphere::Cloud::OptimizeApplianceWorker).
           to receive(:perform_async)
 
-        post api('/appliances', user), static_request_body
+        post api('/appliances', user), params: static_request_body
       end
 
       context 'with static config' do
         it 'creates config instance' do
-          expect { post api('/appliances', user), static_request_body }.
+          expect { post api('/appliances', user), params: static_request_body }.
             to change { Atmosphere::ApplianceConfigurationInstance.count }.by(1)
         end
 
         it 'creates new appliance' do
-          expect { post api('/appliances', user), static_request_body }.
+          expect { post api('/appliances', user), params: static_request_body }.
             to change { Atmosphere::Appliance.count }.by(1)
         end
 
         it 'copies config payload from template' do
-          post api('/appliances', user), static_request_body
+          post api('/appliances', user), params: static_request_body
           config_instance =
             Atmosphere::ApplianceConfigurationInstance.
             find(appliance_response['appliance_configuration_instance_id'])
@@ -269,7 +269,7 @@ describe Atmosphere::Api::V1::AppliancesController do
         end
 
         it 'sets appliance name and description' do
-          post api('/appliances', user), static_request_body
+          post api('/appliances', user), params: static_request_body
           created_appliance = Atmosphere::Appliance.
                               find(appliance_response['id'])
 
@@ -282,7 +282,7 @@ describe Atmosphere::Api::V1::AppliancesController do
         it 'copies name and descriptions from AT when not set' do
           request_body = generic_start_request(static_config, portal_set)
 
-          post api('/appliances', user), request_body
+          post api('/appliances', user), params: request_body
           created_appliance = Atmosphere::Appliance.
                               find(appliance_response['id'])
 
@@ -300,7 +300,7 @@ describe Atmosphere::Api::V1::AppliancesController do
           end
 
           it 'reuses configuratoin instance' do
-            expect { post api('/appliances', user), static_request_body }.
+            expect { post api('/appliances', user), params: static_request_body }.
               to change { Atmosphere::ApplianceConfigurationInstance.count }.
               by(0)
           end
@@ -328,12 +328,12 @@ describe Atmosphere::Api::V1::AppliancesController do
         end
 
         it 'creates config instance with all required parameters' do
-          post api('/appliances', user), dynamic_request_body
+          post api('/appliances', user), params: dynamic_request_body
           expect(response.status).to eq 201
         end
 
         it 'creates dynamic configuration instance payload' do
-          post api('/appliances', user), dynamic_request_body
+          post api('/appliances', user), params: dynamic_request_body
           config_instance =
             Atmosphere::ApplianceConfigurationInstance.
             find(appliance_response['appliance_configuration_instance_id'])
@@ -358,26 +358,28 @@ describe Atmosphere::Api::V1::AppliancesController do
           end
 
           it 'returns 201 Created' do
-            post api('/appliances', user), static_request_body
+            post api('/appliances', user), params: static_request_body
             expect(response.status).to eq 201
           end
 
           it 'does not create new configuration instance' do
-            expect { post api('/appliances', user), static_request_body }.
+            expect { post api('/appliances', user), params: static_request_body }.
               to change { Atmosphere::ApplianceConfigurationInstance.count }.
               by(0)
           end
 
           it 'creates new appliance' do
-            expect { post api('/appliances', user), static_request_body }.
+            expect { post api('/appliances', user), params: static_request_body }.
               to change { Atmosphere::Appliance.count }.
               by(1)
           end
 
           it 'new appliance, config payload the same but different AT' do
             post api('/appliances', user),
-                 appliance: {
-                   configuration_template_id: second_static_config.id
+                 params: {
+                   appliance: {
+                     configuration_template_id: second_static_config.id
+                   }
                  }
           end
 
@@ -390,14 +392,14 @@ describe Atmosphere::Api::V1::AppliancesController do
             end
 
             it 'returns 201' do
-              post api('/appliances', user), req_for_second_appl_for_the_same_at
+              post api('/appliances', user), params: req_for_second_appl_for_the_same_at
               expect(response.status).to eq 201
             end
 
             it 'creates new appliance of the sam type when configuration template is different' do
               expect do
                 post api('/appliances', user),
-                     req_for_second_appl_for_the_same_at
+                     params: req_for_second_appl_for_the_same_at
               end.to change { Atmosphere::Appliance.count }.by(1)
             end
           end
@@ -411,7 +413,7 @@ describe Atmosphere::Api::V1::AppliancesController do
           end
 
           it 'creates second appliance with the same configuration instance' do
-            post api('/appliances', developer), static_dev_request_body
+            post api('/appliances', developer), params: static_dev_request_body
             expect(response.status).to eq 201
           end
         end
@@ -428,13 +430,13 @@ describe Atmosphere::Api::V1::AppliancesController do
 
       it 'allows to start appliance type by its author' do
         post api('/appliances', user),
-             start_request(private_at_config, portal_set)
+             params: start_request(private_at_config, portal_set)
         expect(response.status).to eq 201
       end
 
       it 'does not allow to start appliance by other user' do
         post api('/appliances', other_user),
-             start_request(private_at_config, other_user_as)
+             params: start_request(private_at_config, other_user_as)
         expect(response.status).to eq 403
       end
     end
@@ -448,7 +450,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       context 'when development mode' do
         it 'allows to start' do
           post api('/appliances', developer),
-               start_request(development_at_config, development_set)
+               params: start_request(development_at_config, development_set)
           expect(response.status).to eq 201
         end
 
@@ -457,7 +459,7 @@ describe Atmosphere::Api::V1::AppliancesController do
           request[:appliance][:dev_mode_property_set] =
             { preference_memory: 123, preference_cpu: 2, preference_disk: 321 }
 
-          post api('/appliances', developer), request
+          post api('/appliances', developer), params: request
           appl = Atmosphere::Appliance.find(appliance_response['id'])
           set = appl.dev_mode_property_set
 
@@ -469,7 +471,7 @@ describe Atmosphere::Api::V1::AppliancesController do
 
       it 'does not allow to start in production mode' do
         post api('/appliances', user),
-             start_request(development_at_config, portal_set)
+             params: start_request(development_at_config, portal_set)
         expect(response.status).to eq 403
       end
     end
@@ -503,13 +505,13 @@ describe Atmosphere::Api::V1::AppliancesController do
       end
 
       it 'creates new appliance with default t binding' do
-        expect { post api('/appliances', user), static_request_body }.
+        expect { post api('/appliances', user), params: static_request_body }.
           to change { Atmosphere::ApplianceTenant.count }.by(4)
       end
 
       it 'creates new appliance bound to one t' do
         post api('/appliances', developer),
-             static_dev_request_body_with_one_ts
+             params: static_dev_request_body_with_one_ts
         a = Atmosphere::Appliance.find(appliance_response['id'])
 
         expect(a.tenants.count).to eq 1
@@ -517,7 +519,7 @@ describe Atmosphere::Api::V1::AppliancesController do
 
       it 'creates new appliance bound to two ts' do
         post api('/appliances', developer),
-             static_dev_request_body_with_two_ts
+             params: static_dev_request_body_with_two_ts
         a = Atmosphere::Appliance.find(appliance_response['id'])
 
         expect(a.tenants.count).to eq 2
@@ -530,7 +532,7 @@ describe Atmosphere::Api::V1::AppliancesController do
 
         it 'skips user key for started appliance' do
           post api('/appliances', user),
-               user_key_request(static_request_body, user_key)
+              params:  user_key_request(static_request_body, user_key)
 
           created_appliance = Atmosphere::Appliance.
                               find(appliance_response['id'])
@@ -543,7 +545,7 @@ describe Atmosphere::Api::V1::AppliancesController do
 
         it 'injects user key for started appliance' do
           post api('/appliances', developer),
-               user_key_request(static_dev_request_body, developer_key)
+               params: user_key_request(static_dev_request_body, developer_key)
 
           created_appliance = Atmosphere::Appliance.
                               find(appliance_response['id'])
@@ -565,19 +567,19 @@ describe Atmosphere::Api::V1::AppliancesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        put api("/appliances/#{user_appliance1.id}"), update_request
+        put api("/appliances/#{user_appliance1.id}"), params: update_request
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as user' do
       it 'returns 200 Created on success' do
-        put api("/appliances/#{user_appliance1.id}", user), update_request
+        put api("/appliances/#{user_appliance1.id}", user), params: update_request
         expect(response.status).to eq 200
       end
 
       it 'updates appliance name' do
-        put api("/appliances/#{user_appliance1.id}", user), update_request
+        put api("/appliances/#{user_appliance1.id}", user), params: update_request
         user_appliance1.reload
         expect(user_appliance1.name).to eq update_request[:appliance][:name]
         expect(user_appliance1.description).
@@ -585,7 +587,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       end
 
       it 'returns information about updated appliance' do
-        put api("/appliances/#{user_appliance1.id}", user), update_request
+        put api("/appliances/#{user_appliance1.id}", user), params: update_request
         user_appliance1.reload
         expect(appliance_response).to appliance_eq user_appliance1
       end
@@ -638,7 +640,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       unknown_action_body = { not_found: nil }
 
       post api("/appliances/#{user_appliance1.id}/action", user),
-           unknown_action_body
+           params: unknown_action_body
 
       expect(response.status).to eq 400
     end
@@ -649,7 +651,7 @@ describe Atmosphere::Api::V1::AppliancesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/appliances/#{user_appliance1.id}/action"), reboot_action_body
+        post api("/appliances/#{user_appliance1.id}/action"), params: reboot_action_body
         expect(response.status).to eq 401
       end
     end
@@ -661,7 +663,7 @@ describe Atmosphere::Api::V1::AppliancesController do
 
         expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:reboot)
 
-        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
+        post api("/appliances/#{appliance.id}/action", user), params: reboot_action_body
 
         expect(response.status).to eq 200
       end
@@ -669,7 +671,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       it 'does not allow to reboot appliance started in production mode' do
         appliance = appliance_for(user, mode: :workflow)
 
-        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
+        post api("/appliances/#{appliance.id}/action", user), params: reboot_action_body
 
         expect(response.status).to eq 403
       end
@@ -677,7 +679,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       it 'does not allow to reboot not owned appliance' do
         appliance = appliance_for(other_user, mode: :development)
 
-        post api("/appliances/#{appliance.id}/action", user), reboot_action_body
+        post api("/appliances/#{appliance.id}/action", user), params: reboot_action_body
 
         expect(response.status).to eq 403
       end
@@ -688,7 +690,7 @@ describe Atmosphere::Api::V1::AppliancesController do
         appliance = appliance_for(user, mode: :development)
 
         post api("/appliances/#{appliance.id}/action", admin),
-             reboot_action_body
+             params: reboot_action_body
 
         expect(response.status).to eq 200
       end
@@ -697,7 +699,7 @@ describe Atmosphere::Api::V1::AppliancesController do
         appliance = appliance_for(user, mode: :workflow)
 
         post api("/appliances/#{appliance.id}/action", admin),
-             reboot_action_body
+             params: reboot_action_body
 
         expect(response.status).to eq 200
       end
@@ -709,7 +711,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       appliance = appliance_for(user, mode: :development)
 
       expect_scale_action(appliance, 1)
-      post api("/appliances/#{appliance.id}/action", user), scale: 1
+      post api("/appliances/#{appliance.id}/action", user), params: { scale: 1 }
       expect(response.status).to eq 200
     end
 
@@ -718,7 +720,7 @@ describe Atmosphere::Api::V1::AppliancesController do
       create(:virtual_machine, appliances: [appliance])
 
       expect_scale_action(appliance, -1)
-      post api("/appliances/#{appliance.id}/action", user), scale: -1
+      post api("/appliances/#{appliance.id}/action", user), params: { scale: -1 }
       expect(response.status).to eq 200
     end
 
@@ -739,14 +741,14 @@ describe Atmosphere::Api::V1::AppliancesController do
       create(:virtual_machine, appliances: [appliance])
 
       expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:pause)
-      post api("/appliances/#{appliance.id}/action", user), pause_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: pause_action_body
       expect(response.status).to eq 200
     end
 
     it 'does not allow to pause other user appliances' do
       appliance = appliance_for(other_user)
 
-      post api("/appliances/#{appliance.id}/action", user), pause_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: pause_action_body
       expect(response.status).to eq 403
     end
   end
@@ -759,14 +761,14 @@ describe Atmosphere::Api::V1::AppliancesController do
       create(:virtual_machine, appliances: [appliance])
 
       expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:stop)
-      post api("/appliances/#{appliance.id}/action", user), stop_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: stop_action_body
       expect(response.status).to eq 200
     end
 
     it 'does not allow to stop other user appliances' do
       appliance = appliance_for(other_user)
 
-      post api("/appliances/#{appliance.id}/action", user), stop_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: stop_action_body
       expect(response.status).to eq 403
     end
   end
@@ -779,14 +781,14 @@ describe Atmosphere::Api::V1::AppliancesController do
       create(:virtual_machine, appliances: [appliance])
 
       expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:suspend)
-      post api("/appliances/#{appliance.id}/action", user), suspend_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: suspend_action_body
       expect(response.status).to eq 200
     end
 
     it 'does not allow to suspend other user appliances' do
       appliance = appliance_for(other_user)
 
-      post api("/appliances/#{appliance.id}/action", user), suspend_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: suspend_action_body
       expect(response.status).to eq 403
     end
   end
@@ -799,14 +801,14 @@ describe Atmosphere::Api::V1::AppliancesController do
       create(:virtual_machine, appliances: [appliance])
 
       expect_any_instance_of(Atmosphere::VirtualMachine).to receive(:start)
-      post api("/appliances/#{appliance.id}/action", user), start_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: start_action_body
       expect(response.status).to eq 200
     end
 
     it 'does not allow to pause other user appliances' do
       appliance = appliance_for(other_user)
 
-      post api("/appliances/#{appliance.id}/action", user), start_action_body
+      post api("/appliances/#{appliance.id}/action", user), params: start_action_body
       expect(response.status).to eq 403
     end
   end

@@ -129,7 +129,7 @@ describe Atmosphere::Api::V1::HttpMappingsController do
         http_mapping: { custom_name: 'custom-name' }
       }
 
-      put api("/http_mappings/#{hm.id}", user), update_request
+      put api("/http_mappings/#{hm.id}", user), params: update_request
       hm.reload
 
       expect(response.status).to eq 200

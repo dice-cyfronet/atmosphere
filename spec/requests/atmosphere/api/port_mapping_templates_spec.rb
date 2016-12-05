@@ -173,51 +173,56 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/port_mapping_templates"), new_port_mapping_template_request
+        post api("/port_mapping_templates"), params: new_port_mapping_template_request
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as not owner and not admin' do
       it 'returns 403 Forbidden when creating port mapping template for not owned appliance type' do
-        post api("/port_mapping_templates", different_user), new_port_mapping_template_request
+        post api("/port_mapping_templates", different_user),
+             params: new_port_mapping_template_request
         expect(response.status).to eq 403
-        post api("/port_mapping_templates", different_user), new_dev_port_mapping_template_request
+        post api("/port_mapping_templates", different_user),
+             params: new_dev_port_mapping_template_request
         expect(response.status).to eq 403
       end
 
       it 'does not create new port mapping template for not owned appliance type' do
         expect {
-          post api("/port_mapping_templates", different_user), new_port_mapping_template_request
+          post api("/port_mapping_templates", different_user),
+               params: new_port_mapping_template_request
         }.to change { Atmosphere::PortMappingTemplate.count }.by(0)
       end
     end
 
     context 'when authenticated as owner' do
       it 'return 201 when PMT added to AT' do
-        post api("/port_mapping_templates", user), new_port_mapping_template_request
+        post api("/port_mapping_templates", user), params: new_port_mapping_template_request
         expect(response.status).to eq 201
       end
 
       it 'return 201 when PMT added to dev mode prop set' do
-        post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
+        post api("/port_mapping_templates", developer),
+             params: new_dev_port_mapping_template_request
         expect(response.status).to eq 201
       end
 
       it 'creates new port mapping template' do
         expect {
-          post api("/port_mapping_templates", user), new_port_mapping_template_request
+          post api("/port_mapping_templates", user), params: new_port_mapping_template_request
         }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
       end
 
       it 'creates new development mode port mapping template' do
         expect {
-          post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
+          post api("/port_mapping_templates", developer),
+               params: new_dev_port_mapping_template_request
         }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
       end
 
       it 'creates new port mapping template with correct attribute values' do
-        post api("/port_mapping_templates", user), new_port_mapping_template_request
+        post api("/port_mapping_templates", user), params: new_port_mapping_template_request
         expect(pmt_response['id']).to_not be_nil
         expect(pmt_response['transport_protocol']).to eq 'tcp'
         expect(pmt_response['application_protocol']).to eq 'http'
@@ -227,7 +232,8 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
       end
 
       it 'creates new development mode port mapping template with correct attribute values' do
-        post api("/port_mapping_templates", developer), new_dev_port_mapping_template_request
+        post api("/port_mapping_templates", developer),
+             params: new_dev_port_mapping_template_request
         expect(pmt_response['id']).to_not be_nil
         expect(pmt_response['transport_protocol']).to eq 'tcp'
         expect(pmt_response['application_protocol']).to eq 'http'
@@ -237,7 +243,7 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
       end
 
       it 'returns 422 when transport and application protocols are wrong' do
-        post api("/port_mapping_templates", user), wrong_port_mapping_template_request
+        post api("/port_mapping_templates", user), params: wrong_port_mapping_template_request
         expect(response.status).to eq 422
       end
     end
@@ -245,7 +251,7 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
     context 'when authenticated as admin' do
       it 'creates new port mapping template even for not owned appliance type' do
         expect {
-          post api("/port_mapping_templates", admin), new_port_mapping_template_request
+          post api("/port_mapping_templates", admin), params: new_port_mapping_template_request
           expect(response.status).to eq 201
         }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
       end
@@ -276,21 +282,21 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
 
     context 'when authenticated as not owner and not admin' do
       it 'returns 403 when user is not the parent appliance type owner' do
-        put api("/port_mapping_templates/#{pmt1.id}", different_user), update_json
+        put api("/port_mapping_templates/#{pmt1.id}", different_user), params: update_json
         expect(response.status).to eq 403
       end
     end
 
     context 'when authenticated as owner' do
       it 'returns 200 Success' do
-        put api("/port_mapping_templates/#{pmt1.id}", user), update_json
+        put api("/port_mapping_templates/#{pmt1.id}", user), params: update_json
         expect(response.status).to eq 200
       end
 
       it 'updates port mapping template' do
         old_target_port = pmt1.target_port
         old_appliance_type_id = pmt1.appliance_type.id
-        put api("/port_mapping_templates/#{pmt1.id}", user), update_json
+        put api("/port_mapping_templates/#{pmt1.id}", user),params:  update_json
         updated_pmt = Atmosphere::PortMappingTemplate.find(pmt1.id)
 
         expect(updated_pmt).to be_updated_by_port_mapping_template update_json[:port_mapping_template]
@@ -306,18 +312,18 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
       end
 
       it 'returns 422 when transport and application protocols are wrong' do
-        put api("/port_mapping_templates/#{pmt1.id}", user), wrong_update_json
+        put api("/port_mapping_templates/#{pmt1.id}", user), params: wrong_update_json
         expect(response.status).to eq 422
       end
 
       it 'return 404 Not Found when port mapping template is not found' do
-        put api("port_mapping_templates/wrong_id", user), update_json
+        put api("port_mapping_templates/wrong_id", user), params: update_json
         expect(response.status).to eq 404
       end
 
       it 'does not allow to change assigment into AT' do
         put api("/port_mapping_templates/#{pmt1.id}", user),
-            port_mapping_template: { appliance_type_id: at2.id }
+            params: { port_mapping_template: { appliance_type_id: at2.id } }
         pmt1.reload
 
         expect(pmt1.appliance_type).to eq at1
@@ -326,8 +332,10 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
       it 'does not allow to change assigment into DMPS' do
         appl2 = create(:appliance, appliance_set: as)
         put api("/port_mapping_templates/#{pmt3.id}", user),
-            port_mapping_template: {
-              dev_mode_property_set_id: appl2.dev_mode_property_set.id
+            params: {
+              port_mapping_template: {
+                dev_mode_property_set_id: appl2.dev_mode_property_set.id
+              }
             }
         pmt3.reload
 
@@ -337,7 +345,7 @@ describe Atmosphere::Api::V1::PortMappingTemplatesController do
 
     context 'when authenticated as admin' do
       it 'is able to update any port mapping template' do
-        put api("/port_mapping_templates/#{pmt1.id}", admin), update_json
+        put api("/port_mapping_templates/#{pmt1.id}", admin), params: update_json
         expect(response.status).to eq 200
       end
     end

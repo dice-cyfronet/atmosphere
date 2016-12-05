@@ -108,33 +108,37 @@ describe Atmosphere::Api::V1::DevModePropertySetsController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}"), update_params
+        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}"), params: update_params
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as developer' do
       it 'returns 200 Success' do
-        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}", developer), update_params
+        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}", developer),
+            params: update_params
         expect(response.status).to eq 200
       end
 
       it 'updates dev mode property set' do
-        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}", developer), update_params
+        put api("/dev_mode_property_sets/#{appl1.dev_mode_property_set.id}", developer),
+            params: update_params
         appl1.reload
         expect(appl1.dev_mode_property_set).to dev_props_be_updated_by update_params
         expect(dev_prop_response).to dev_props_eq appl1.dev_mode_property_set
       end
 
       it 'return 403 (Forbiden) when trying to update not owned dev mode props' do
-        put api("/dev_mode_property_sets/#{other_user_appl.dev_mode_property_set.id}", developer), update_params
+        put api("/dev_mode_property_sets/#{other_user_appl.dev_mode_property_set.id}", developer),
+            params: update_params
         expect(response.status).to eq 403
       end
     end
 
     context 'when authenticated as admin' do
       it 'updates not owned dev mode property set' do
-        put api("/dev_mode_property_sets/#{other_user_appl.dev_mode_property_set.id}", admin), update_params
+        put api("/dev_mode_property_sets/#{other_user_appl.dev_mode_property_set.id}", admin),
+            params: update_params
         expect(response.status).to eq 200
       end
     end

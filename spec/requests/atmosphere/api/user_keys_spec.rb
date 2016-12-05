@@ -105,7 +105,7 @@ describe Atmosphere::Api::V1::UserKeysController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/user_keys"), new_key_request
+        post api("/user_keys"), params: new_key_request
         expect(response.status).to eq 401
       end
     end
@@ -128,24 +128,24 @@ describe Atmosphere::Api::V1::UserKeysController do
       end
 
       it 'returns 201 Created on success' do
-        post api("/user_keys", user), new_key_request
+        post api("/user_keys", user), params: new_key_request
         expect(response.status).to eq 201
       end
 
       it 'adds new user key' do
         expect {
-          post api("/user_keys", user), new_key_request
+          post api("/user_keys", user), params: new_key_request
         }.to change { Atmosphere::UserKey.count }.by(1)
       end
 
       it 'uploades new user key from file' do
         expect {
-          post api("/user_keys", user), new_upload_key_request
+          post api("/user_keys", user), params: new_upload_key_request
         }.to change { Atmosphere::UserKey.count }.by(1)
       end
 
       it 'adds new user key and generate fingerprint' do
-        post api("/user_keys", user), new_key_request
+        post api("/user_keys", user), params: new_key_request
         added_user_key = Atmosphere::UserKey.find(user_key_response['id'])
         expect(added_user_key.fingerprint).to eq user_key1.fingerprint
         expect(added_user_key.name).to eq new_key_request[:user_key][:name]
@@ -153,7 +153,7 @@ describe Atmosphere::Api::V1::UserKeysController do
       end
 
       it 'uploads new user key and generate fingerprint' do
-        post api("/user_keys", user), new_upload_key_request
+        post api("/user_keys", user), params: new_upload_key_request
         added_user_key = Atmosphere::UserKey.find(user_key_response['id'])
         expect(added_user_key.fingerprint).to eq user_key1.fingerprint
         expect(added_user_key.name).to eq new_upload_key_request[:user_key][:name]
@@ -166,7 +166,7 @@ describe Atmosphere::Api::V1::UserKeysController do
             name: 'my invalid public key'
           }
         }
-        post api("/user_keys", user), invalid_user_key_req
+        post api("/user_keys", user), params: invalid_user_key_req
         expect(response.status).to eq 422
         expect(json_response['details']['public_key']).
           to include('can\'t be blank')
@@ -179,14 +179,14 @@ describe Atmosphere::Api::V1::UserKeysController do
             public_key: 'so invalid public key!!'
           }
         }
-        post api("/user_keys", user), invalid_user_key_req
+        post api("/user_keys", user), params: invalid_user_key_req
         expect(response.status).to eq 422
         expect(json_response['details']['public_key']).
           to include('bad type of key (only ssh-rsa is allowed)')
       end
 
       it 'returns 402 Unprocessable Entity status if the request is incorrect' do
-        post api("/user_keys", user), incorrect_request
+        post api("/user_keys", user), params: incorrect_request
         expect(response.status).to eq 422
         expect(response.body).to include 'empty: user_key'
       end

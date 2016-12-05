@@ -318,7 +318,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         user = create(:user)
         at = create(:appliance_type, author: user)
 
-        put api("/appliance_types/#{at.id}", user), update_msg
+        put api("/appliance_types/#{at.id}", user), params: update_msg
 
         expect(response.status).to eq 200
       end
@@ -331,7 +331,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
             author_id: different_user.id
           )
 
-        put api("/appliance_types/#{at.id}", user), msg
+        put api("/appliance_types/#{at.id}", user), params: msg
         at.reload
 
         expect(at).to at_be_updated_by msg[:appliance_type]
@@ -343,7 +343,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         at = create(:appliance_type, author: user)
         msg = { appliance_type: { preference_cpu: -2 } }
 
-        put api("/appliance_types/#{at.id}", user), msg
+        put api("/appliance_types/#{at.id}", user), params: msg
 
         expect(response.status).to eq 422
       end
@@ -352,7 +352,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         user = create(:user)
         at = create(:appliance_type)
 
-        put api("/appliance_types/#{at.id}", user), update_msg
+        put api("/appliance_types/#{at.id}", user), params: update_msg
 
         expect(response.status).to eq 403
       end
@@ -360,7 +360,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       it 'return 404 Not Found when appliance type is not found' do
         user = create(:user)
 
-        put api("/appliance_types/non_existing", user), update_msg
+        put api("/appliance_types/non_existing", user), params: update_msg
 
         expect(response.status).to eq 404
       end
@@ -371,7 +371,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         appl = user_appliance(user, :development)
 
         update_body = { appliance_type: { appliance_id: appl.id } }
-        put api("/appliance_types/#{at.id}", user), update_body
+        put api("/appliance_types/#{at.id}", user), params: update_body
 
         expect(Atmosphere::Cloud::SaveWorker).
           to have_enqueued_sidekiq_job(appl.id.to_s, at.id)
@@ -383,7 +383,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         appl = user_appliance(user, :workflow)
 
         update_body = { appliance_type: { appliance_id: appl.id } }
-        put api("/appliance_types/#{at.id}", user), update_body
+        put api("/appliance_types/#{at.id}", user), params: update_body
 
         expect(Atmosphere::Cloud::SaveWorker).
           to_not have_enqueued_sidekiq_job(appl.id.to_s, at.id)
@@ -404,7 +404,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         admin = create(:admin)
         at = create(:appliance_type)
 
-        put api("/appliance_types/#{at.id}", admin), update_msg
+        put api("/appliance_types/#{at.id}", admin), params: update_msg
 
         expect(response.status).to eq 200
       end
@@ -420,7 +420,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/appliance_types/"), create_msg
+        post api("/appliance_types/"), params: create_msg
 
         expect(response.status).to eq 401
       end
@@ -430,7 +430,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       it 'returns 403 Forbidden error' do
         user = create(:user)
 
-        post api("/appliance_types/", user), create_msg
+        post api("/appliance_types/", user), params: create_msg
 
         expect(response.status).to eq 403
       end
@@ -441,7 +441,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       it 'returns 422 error if appliance id is not provided' do
         developer = create(:developer)
 
-        post api("/appliance_types/", developer), create_msg
+        post api("/appliance_types/", developer), params: create_msg
         expect(response.status).to eq 422
       end
 
@@ -449,7 +449,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         developer, appl = developer_with_appl
         msg = create_msg(appliance_id: appl.id)
 
-        post api("/appliance_types/", developer), msg
+        post api("/appliance_types/", developer), params: msg
         expect(response.status).to eq 201
       end
 
@@ -458,7 +458,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         msg = create_msg(appliance_id: appl.id)
 
         expect {
-          post api("/appliance_types/", developer), msg
+          post api("/appliance_types/", developer), params: msg
         }.to change { Atmosphere::ApplianceType.count }.by(1)
       end
 
@@ -466,7 +466,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         developer, appl = developer_with_appl
         msg = create_msg(appliance_id: appl.id)
 
-        post api("/appliance_types/", developer), msg
+        post api("/appliance_types/", developer), params: msg
 
         expect(at_response['name']).to eq msg[:appliance_type][:name]
         expect(at_response['description']).to be_nil
@@ -483,7 +483,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
                   author_id: other_user.id
                 )
 
-        post api("/appliance_types/", developer), msg
+        post api("/appliance_types/", developer), params: msg
 
         expect(at_response['author_id']).to eq other_user.id
       end
@@ -492,7 +492,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         developer, appl = developer_with_appl
         msg = create_msg(appliance_id: appl.id)
 
-        post api("/appliance_types/", developer), msg
+        post api("/appliance_types/", developer), params: msg
         expect(at_response['author_id']).to eq developer.id
       end
 
@@ -506,7 +506,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           msg = create_msg(appliance_id: appl.id)
 
           expect {
-            post api("/appliance_types/", developer), msg
+            post api("/appliance_types/", developer), params: msg
           }.to change { Atmosphere::PortMappingTemplate.count }.by(1)
         end
 
@@ -520,7 +520,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           msg = create_msg(appliance_id: appl.id)
 
           expect {
-            post api("/appliance_types/", developer), msg
+            post api("/appliance_types/", developer), params: msg
           }.to change { Atmosphere::PortMappingProperty.count }.by(1)
         end
 
@@ -534,7 +534,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           msg = create_msg(appliance_id: appl.id)
 
           expect {
-            post api("/appliance_types/", developer), msg
+            post api("/appliance_types/", developer), params: msg
           }.to change { Atmosphere::Endpoint.count }.by(1)
         end
       end
@@ -546,7 +546,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           dev_name_and_desc!(appl, name, description)
           msg = create_msg(appliance_id: appl.id)
 
-          post api('/appliance_types/', developer), msg
+          post api('/appliance_types/', developer), params: msg
           created_at = Atmosphere::ApplianceType.find(at_response['id'])
 
           expect(created_at.name).to eq msg[:appliance_type][:name]
@@ -557,7 +557,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           developer = create(:developer)
           msg = create_msg(appliance_id: 1111111)
 
-          post api('/appliance_types/', developer), msg
+          post api('/appliance_types/', developer), params: msg
 
           expect(response.status).to eq 404
           expect(json_response)
@@ -569,7 +569,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           other_developer = create(:developer)
           msg = create_msg(appliance_id: appl.id)
 
-          post api('/appliance_types/', other_developer), msg
+          post api('/appliance_types/', other_developer), params: msg
 
           expect(response.status).to eq 403
           expect(json_response)
@@ -582,7 +582,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           appl = create(:appliance, appliance_set: wf_appl_set)
           msg = create_msg(appliance_id: appl.id)
 
-          post api('/appliance_types/', developer), msg
+          post api('/appliance_types/', developer), params: msg
 
           expect(response.status).to eq 403
           expect(json_response)
@@ -599,7 +599,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           appl.virtual_machines << vm
 
           expect {
-            post api('/appliance_types/', developer), msg
+            post api('/appliance_types/', developer), params: msg
             vm.reload
           }.to change { Atmosphere::VirtualMachineTemplate.count }.by(1)
 
@@ -614,7 +614,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
           create(:virtual_machine, appliances: [appl], state: :saving)
           msg = create_msg(appliance_id: appl.id)
 
-          post api("/appliance_types/", developer), msg
+          post api("/appliance_types/", developer), params: msg
 
           expect(response.status).to eq 409
         end
@@ -627,7 +627,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
         _, appl = developer_with_appl
         msg = create_msg(appliance_id: appl.id)
 
-        post api('/appliance_types/', admin), msg
+        post api('/appliance_types/', admin), params: msg
 
         expect(response.status).to eq 201
       end
@@ -635,7 +635,7 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       it 'prohibits creating appliance type without appliance_id' do
         admin = create(:admin)
 
-        post api('/appliance_types/', admin), create_msg
+        post api('/appliance_types/', admin), params: create_msg
 
         expect(response.status).to eq 422
       end
