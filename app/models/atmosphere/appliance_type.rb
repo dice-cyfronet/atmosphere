@@ -53,7 +53,7 @@ module Atmosphere
     # AT can be deployed). By allowed tenant we understan active tenant
     # with VMT installed.
     has_many :tenants,
-             -> { where(atmosphere_tenants: { active: true }).uniq },
+             -> { where(atmosphere_tenants: { active: true }).distinct },
              through: :virtual_machine_templates,
              class_name: 'Atmosphere::Tenant'
 
@@ -106,7 +106,7 @@ module Atmosphere
 
     scope :with_vmt_state, ->(state) do
       joins(:virtual_machine_templates).
-        where(atmosphere_virtual_machine_templates: { state: state }).uniq
+        where(atmosphere_virtual_machine_templates: { state: state }).distinct
     end
 
     scope :without_vmt_state, ->(state) do
