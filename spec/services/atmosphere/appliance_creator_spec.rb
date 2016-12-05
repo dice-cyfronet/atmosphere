@@ -47,13 +47,13 @@ describe Atmosphere::ApplianceCreator do
     vms = [
       { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [1] },
       { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [1] }
-          ]
+    ]
     created_appl_params = ActionController::Parameters.
-                            new(appliance_set_id: as.id,
-                                configuration_template_id: cfg_tmpl.id,
-                                vms: vms)
+                          new(appliance_set_id: as.id,
+                              configuration_template_id: cfg_tmpl.id,
+                              vms: vms)
     creator = Atmosphere::ApplianceCreator.
-                new(created_appl_params, 'dummy-token')
+              new(created_appl_params, 'dummy-token')
 
     appl = creator.build
 
