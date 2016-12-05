@@ -4,7 +4,7 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
 
   include Atmosphere::Api::Auditable
 
-  before_filter :find_endpoints, only: :index
+  before_action :find_endpoints, only: :index
 
   respond_to :json
 

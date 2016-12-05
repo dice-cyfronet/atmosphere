@@ -11,7 +11,7 @@ module Atmosphere
 
         include Atmosphere::Api::Auditable
 
-        before_filter :initialize_manager, only: [:create, :update, :destroy]
+        before_action :initialize_manager, only: [:create, :update, :destroy]
         respond_to :json
 
         def index

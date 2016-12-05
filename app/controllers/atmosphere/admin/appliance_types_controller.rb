@@ -2,7 +2,7 @@ class Atmosphere::Admin::ApplianceTypesController < Atmosphere::Admin::Applicati
   load_and_authorize_resource :appliance_type,
     class: 'Atmosphere::ApplianceType'
 
-  before_filter :set_appliance_types
+  before_action :set_appliance_types
 
   # GET /admin/appliance_types
   def index

@@ -1,5 +1,5 @@
 class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::ApplicationController
-  before_filter :find_port_mapping_templates, only: :index
+  before_action :find_port_mapping_templates, only: :index
 
   load_and_authorize_resource :port_mapping_template,
     except: :index,
@@ -11,7 +11,7 @@ class Atmosphere::Api::V1::PortMappingTemplatesController < Atmosphere::Api::App
 
   include Atmosphere::Api::Auditable
 
-  before_filter :initialize_manager, only: [:create, :update, :destroy]
+  before_action :initialize_manager, only: [:create, :update, :destroy]
   respond_to :json
 
   def index

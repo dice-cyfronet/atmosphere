@@ -9,7 +9,7 @@ module Atmosphere
 
         respond_to :json
 
-        before_filter :create_appliance_set, only: :create
+        before_action :create_appliance_set, only: :create
 
         def index
           respond_with @appliance_sets.where(filter).order(:id)
