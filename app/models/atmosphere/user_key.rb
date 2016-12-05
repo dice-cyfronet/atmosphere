@@ -100,7 +100,7 @@ module Atmosphere
     def disallow_if_used_in_running_vm
       if appliances.count > 0
         errors.add(:base, 'Unable to remove key used in running application')
-        return false
+        throw :abort
       end
     end
   end
