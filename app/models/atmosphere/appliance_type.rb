@@ -188,17 +188,18 @@ module Atmosphere
 
     def self.appliance_type_attributes(appliance, overwrite)
       if appliance && appliance.dev_mode_property_set
-        params = appliance.dev_mode_property_set.attributes
+        at_attribs = appliance.dev_mode_property_set.attributes
         %w(id created_at updated_at appliance_id).
-          each { |el| params.delete(el) }
+          each { |el| at_attribs.delete(el) }
       end
-      params ||= {}
+      at_attribs ||= {}
 
       overwrite_dup = overwrite.dup
       overwrite_dup.delete(:appliance_id)
-      params.merge! overwrite_dup
+      puts "\n\n\n\n\nParams class = #{at_attribs.class}"
+      at_attribs.merge! overwrite_dup
 
-      params
+      at_attribs
     end
 
     def delete_vmts
