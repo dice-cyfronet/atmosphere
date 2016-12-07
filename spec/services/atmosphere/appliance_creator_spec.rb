@@ -48,6 +48,8 @@ describe Atmosphere::ApplianceCreator do
       { 'cpu' => 1, 'mem' => 512, 'tenant_ids' => [1] },
       { 'cpu' => 2, 'mem' => 1024, 'tenant_ids' => [1] }
     ]
+
+    vms_params = ActionController::Parameters.new(vms: vms)
     created_appl_params = ActionController::Parameters.
                           new(appliance_set_id: as.id,
                               configuration_template_id: cfg_tmpl.id,
@@ -57,7 +59,7 @@ describe Atmosphere::ApplianceCreator do
 
     appl = creator.build
 
-    expect(appl.optimization_policy_params[:vms]).to eq vms
+    expect(appl.optimization_policy_params[:vms]).to eq vms_params[:vms]
   end
 
 end

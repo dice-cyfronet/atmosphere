@@ -196,8 +196,7 @@ module Atmosphere
 
       overwrite_dup = overwrite.dup
       overwrite_dup.delete(:appliance_id)
-      puts "\n\n\n\n\nParams class = #{at_attribs.class}"
-      at_attribs.merge! overwrite_dup
+      at_attribs.merge! overwrite_dup.to_h
 
       at_attribs
     end
