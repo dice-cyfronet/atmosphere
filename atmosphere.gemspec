@@ -79,4 +79,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'zabbixapi'
   s.add_dependency 'influxdb'
   s.add_dependency 'sentry-raven'
+
+  s.add_dependency 'puma'
 end
