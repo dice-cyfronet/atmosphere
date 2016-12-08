@@ -1,4 +1,4 @@
-class CreateComputeSites < ActiveRecord::Migration
+class CreateComputeSites < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_compute_sites do |t|
       t.string :site_id, unique: true, null: false

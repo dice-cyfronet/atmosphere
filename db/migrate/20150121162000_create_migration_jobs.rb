@@ -1,4 +1,4 @@
-class CreateMigrationJobs < ActiveRecord::Migration
+class CreateMigrationJobs < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_migration_jobs do |t|
       t.references :appliance_type

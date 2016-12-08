@@ -1,4 +1,4 @@
-class AddCustomNameToHttpMapping < ActiveRecord::Migration
+class AddCustomNameToHttpMapping < ActiveRecord::Migration[4.2]
   def change
     add_column :atmosphere_http_mappings, :custom_name, :string
     add_column :atmosphere_http_mappings, :base_url, :string

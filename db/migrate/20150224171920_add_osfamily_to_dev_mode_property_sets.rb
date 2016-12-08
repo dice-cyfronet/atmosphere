@@ -1,7 +1,7 @@
 # This migration adds a reference to OSFamily in DevModePropertySet
 # This is required in order to automatically assign OSFamilies to any new AT.
 
-class AddOsfamilyToDevModePropertySets < ActiveRecord::Migration
+class AddOsfamilyToDevModePropertySets < ActiveRecord::Migration[4.2]
   def up
     add_reference :atmosphere_dev_mode_property_sets, :os_family
 

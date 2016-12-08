@@ -1,4 +1,4 @@
-class CreateApplianceSets < ActiveRecord::Migration
+class CreateApplianceSets < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_appliance_sets do |t|
       t.string  :name,                   null: true

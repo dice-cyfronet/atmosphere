@@ -1,4 +1,4 @@
-class CreatePortMappingProperties < ActiveRecord::Migration
+class CreatePortMappingProperties < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_port_mapping_properties do |t|
       t.string :key,                 null: false

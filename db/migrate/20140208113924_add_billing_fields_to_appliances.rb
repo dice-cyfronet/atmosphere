@@ -1,4 +1,4 @@
-class AddBillingFieldsToAppliances < ActiveRecord::Migration
+class AddBillingFieldsToAppliances < ActiveRecord::Migration[4.2]
   def change
     change_table :atmosphere_appliances do |t|
       # The following line does not work because Rails does not support CURRENT_TIMESTAMP as default value in a migration script.

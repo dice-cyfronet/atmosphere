@@ -2,7 +2,7 @@
 # differentiation into OS families (typically Linux and Windows). This is necessary to facilitate
 # proper billing where the price of a flavor depends on the installed OS.
 
-class AddOsfamilies < ActiveRecord::Migration
+class AddOsfamilies < ActiveRecord::Migration[4.2]
   def up
     create_table :atmosphere_os_families do |t|
       t.string :name, null:false, default: "Windows"

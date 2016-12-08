@@ -1,4 +1,4 @@
-class ChangeZabbixHostIdToMonitoringIdInVirtualMachines < ActiveRecord::Migration
+class ChangeZabbixHostIdToMonitoringIdInVirtualMachines < ActiveRecord::Migration[4.2]
 
   def up
     change_table :atmosphere_virtual_machines do |t|

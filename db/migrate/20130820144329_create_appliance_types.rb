@@ -1,4 +1,4 @@
-class CreateApplianceTypes < ActiveRecord::Migration
+class CreateApplianceTypes < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_appliance_types do |t|
 

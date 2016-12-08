@@ -2,7 +2,7 @@
 # Each controller and service which performs billing operations should write to this log
 # This is a standalone table - it is not directly related to any other classes in the model; instead it preserves searchable data in the form of strings
 # Note: the 'actor' column should be used to specify which controller/service added the given log entry.
-class CreateBillingLog < ActiveRecord::Migration
+class CreateBillingLog < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_billing_logs do |t|
       t.datetime :timestamp,        null:false

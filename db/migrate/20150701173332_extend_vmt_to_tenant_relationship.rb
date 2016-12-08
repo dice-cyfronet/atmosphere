@@ -1,4 +1,4 @@
-class ExtendVmtToTenantRelationship < ActiveRecord::Migration
+class ExtendVmtToTenantRelationship < ActiveRecord::Migration[4.2]
   def up
     # Spawn linking table
     create_table :atmosphere_virtual_machine_template_tenants do |t|

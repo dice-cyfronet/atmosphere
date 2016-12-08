@@ -1,4 +1,4 @@
-class CreatePortMappingTemplates < ActiveRecord::Migration
+class CreatePortMappingTemplates < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_port_mapping_templates do |t|
       t.string :transport_protocol,             null: false, default: 'tcp'

@@ -1,4 +1,4 @@
-class CreateApplianceConfigurationTemplates < ActiveRecord::Migration
+class CreateApplianceConfigurationTemplates < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_appliance_configuration_templates do |t|
       t.string :name, null: false

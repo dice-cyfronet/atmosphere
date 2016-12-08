@@ -1,4 +1,4 @@
-class RenameComputeSitesToTenants < ActiveRecord::Migration
+class RenameComputeSitesToTenants < ActiveRecord::Migration[4.2]
   def change
     rename_table :atmosphere_compute_sites, :atmosphere_tenants
     rename_column :atmosphere_tenants, :site_id, :tenant_id

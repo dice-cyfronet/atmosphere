@@ -1,4 +1,4 @@
-class CreateFunds < ActiveRecord::Migration
+class CreateFunds < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_funds do |t|
       t.string :name,               null:false, default:"unnamed fund"

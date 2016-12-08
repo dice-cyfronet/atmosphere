@@ -1,4 +1,4 @@
-class CreateAtmosphereActionLogs < ActiveRecord::Migration
+class CreateAtmosphereActionLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_action_logs do |t|
       t.string :message

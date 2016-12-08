@@ -1,4 +1,4 @@
-class CreateVirtualMachineFlavors < ActiveRecord::Migration
+class CreateVirtualMachineFlavors < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_virtual_machine_flavors do |t|
       t.string :flavor_name,            null:false

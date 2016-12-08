@@ -1,4 +1,4 @@
-class CreateAppliances < ActiveRecord::Migration
+class CreateAppliances < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_appliances do |t|
       t.references :appliance_set,                null: false

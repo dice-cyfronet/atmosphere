@@ -1,4 +1,4 @@
-class CreateHttpMappings < ActiveRecord::Migration
+class CreateHttpMappings < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_http_mappings do |t|
       t.string :application_protocol, null: false, default: 'http'

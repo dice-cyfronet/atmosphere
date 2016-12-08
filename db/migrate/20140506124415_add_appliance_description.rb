@@ -1,4 +1,4 @@
-class AddApplianceDescription < ActiveRecord::Migration
+class AddApplianceDescription < ActiveRecord::Migration[4.2]
   def change
     add_column :atmosphere_appliances, :description, :text
 
