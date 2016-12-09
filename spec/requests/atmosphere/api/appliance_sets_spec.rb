@@ -79,7 +79,7 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api('/appliance_sets'), new_appliance_set
+        post api('/appliance_sets'), params: new_appliance_set
         expect(response.status).to eq 401
       end
     end
@@ -88,13 +88,13 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
       let(:non_developer) { create(:user) }
 
       it 'returns 201 Created on success' do
-        post api('/appliance_sets', user), new_appliance_set
+        post api('/appliance_sets', user), params: new_appliance_set
         expect(response.status).to eq 201
       end
 
       it 'creates second workflow appliance set' do
         expect do
-          post api('/appliance_sets', user), new_appliance_set
+          post api('/appliance_sets', user), params: new_appliance_set
           expect(as_response['id']).to_not be_nil
           expect(as_response['name']).
             to eq new_appliance_set[:appliance_set][:name]
@@ -106,8 +106,12 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
       it 'does not allow to create second portal appliance set' do
         expect do
           post api('/appliance_sets', user),
-               appliance_set: { name: 'second portal',
-                                appliance_set_type: :portal }
+               params: {
+                 appliance_set: {
+                   name: 'second portal',
+                   appliance_set_type: :portal
+                 }
+               }
 
           expect(response.status).to eq 409
         end.to change { Atmosphere::ApplianceSet.count }.by(0)
@@ -118,8 +122,12 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
 
         expect do
           post api('/appliance_sets', user),
-               appliance_set: { name: 'second portal',
-                                appliance_set_type: :development }
+               params: {
+                 appliance_set: {
+                   name: 'second portal',
+                   appliance_set_type: :development
+                 }
+               }
 
           expect(response.status).to eq 409
         end.to change { Atmosphere::ApplianceSet.count }.by(0)
@@ -127,7 +135,7 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
 
       it 'does not allow create development appliance set for non developer' do
         post api('/appliance_sets', non_developer),
-             appliance_set: { name: 'devel', appliance_set_type: :development }
+             params: { appliance_set: { name: 'devel', appliance_set_type: :development } }
 
         expect(response.status).to eq 403
       end
@@ -146,7 +154,7 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
         end
 
         it 'returns error' do
-          post api('/appliance_sets', admin), invalid_type_as
+          post api('/appliance_sets', admin), params: invalid_type_as
 
 
           expect(response.status).to eq 422
@@ -191,7 +199,7 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
                                       appliance_set_type: :workflow,
                                       optimization_policy: :manual,
                                       appliances: appliances_params } }
-          post api('/appliance_sets', non_developer), params
+          post api('/appliance_sets', non_developer), params: params
         end
 
         it 'creates AS with optimization policy' do
@@ -249,12 +257,12 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
         { appliance_set: { name: 'updated', priority: 99 } }
       end
       it 'returns 200 on success' do
-        put api("/appliance_sets/#{portal_set.id}", user), update_request
+        put api("/appliance_sets/#{portal_set.id}", user), params: update_request
         expect(response.status).to eq 200
       end
 
       it 'changes name and priority' do
-        put api("/appliance_sets/#{portal_set.id}", user), update_request
+        put api("/appliance_sets/#{portal_set.id}", user), params: update_request
         set = Atmosphere::ApplianceSet.find(portal_set.id)
         expect(set.name).to eq 'updated'
         expect(set.priority).to eq 99
@@ -262,7 +270,7 @@ describe Atmosphere::Api::V1::ApplianceSetsController do
 
       it 'does not change appliance set type' do
         put api("/appliance_sets/#{portal_set.id}", user),
-            appliance_set: { appliance_set_type: :workflow }
+            params: { appliance_set: { appliance_set_type: :workflow } }
         set = Atmosphere::ApplianceSet.find(portal_set.id)
         expect(set.appliance_set_type).to eq 'portal'
       end

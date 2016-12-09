@@ -3,7 +3,7 @@
 # while the Appliance is running - in such cases, it is no longer sufficient to store a global 'prepaid_until' timestamp
 # for the whole Appliance - rather, the billing system must iterate over the Appliance's deployments and bill each one
 # separately.
-class MovePrepaidUntilToDeployments < ActiveRecord::Migration
+class MovePrepaidUntilToDeployments < ActiveRecord::Migration[4.2]
   def up
     add_column :atmosphere_deployments, :billing_state, :string, null:false, default:"prepaid"
 

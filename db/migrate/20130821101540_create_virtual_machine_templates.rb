@@ -1,4 +1,4 @@
-class CreateVirtualMachineTemplates < ActiveRecord::Migration
+class CreateVirtualMachineTemplates < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_virtual_machine_templates do |t|
       t.string :id_at_site,               null: false

@@ -69,7 +69,7 @@ module Atmosphere
         end
 
         def endpoint_payload
-          render text: Atmosphere::Endpoint.at_endpoint(
+          render plain: Atmosphere::Endpoint.at_endpoint(
                                               @appliance_type,
                                               params[:service_name],
                                               params[:invocation_path]

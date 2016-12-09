@@ -53,7 +53,7 @@ module Atmosphere
     # AT can be deployed). By allowed tenant we understan active tenant
     # with VMT installed.
     has_many :tenants,
-             -> { where(atmosphere_tenants: { active: true }).uniq },
+             -> { where(atmosphere_tenants: { active: true }).distinct },
              through: :virtual_machine_templates,
              class_name: 'Atmosphere::Tenant'
 
@@ -106,7 +106,7 @@ module Atmosphere
 
     scope :with_vmt_state, ->(state) do
       joins(:virtual_machine_templates).
-        where(atmosphere_virtual_machine_templates: { state: state }).uniq
+        where(atmosphere_virtual_machine_templates: { state: state }).distinct
     end
 
     scope :without_vmt_state, ->(state) do
@@ -188,17 +188,17 @@ module Atmosphere
 
     def self.appliance_type_attributes(appliance, overwrite)
       if appliance && appliance.dev_mode_property_set
-        params = appliance.dev_mode_property_set.attributes
+        at_attribs = appliance.dev_mode_property_set.attributes
         %w(id created_at updated_at appliance_id).
-          each { |el| params.delete(el) }
+          each { |el| at_attribs.delete(el) }
       end
-      params ||= {}
+      at_attribs ||= {}
 
       overwrite_dup = overwrite.dup
       overwrite_dup.delete(:appliance_id)
-      params.merge! overwrite_dup
+      at_attribs.merge! overwrite_dup.to_h
 
-      params
+      at_attribs
     end
 
     def delete_vmts

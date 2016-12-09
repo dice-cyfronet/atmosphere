@@ -1,4 +1,4 @@
-class CreateDevModePropertySets < ActiveRecord::Migration
+class CreateDevModePropertySets < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_dev_mode_property_sets do |t|
       t.string  :name,                  null: false

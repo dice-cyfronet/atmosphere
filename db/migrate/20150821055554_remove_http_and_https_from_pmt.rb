@@ -1,4 +1,4 @@
-class RemoveHttpAndHttpsFromPmt < ActiveRecord::Migration
+class RemoveHttpAndHttpsFromPmt < ActiveRecord::Migration[4.2]
   def change
     change_column_default(:atmosphere_port_mapping_templates,
                           :application_protocol, 'http')

@@ -1,12 +1,12 @@
 class Atmosphere::Api::V1::AppliancesController < Atmosphere::Api::ApplicationController
-  before_filter :build_appliance, only: :create
+  before_action :build_appliance, only: :create
 
   load_and_authorize_resource :appliance,
                               class: 'Atmosphere::Appliance'
 
   include Atmosphere::Api::Auditable
 
-  before_filter :init_vm_search, only: :index
+  before_action :init_vm_search, only: :index
 
   respond_to :json
 

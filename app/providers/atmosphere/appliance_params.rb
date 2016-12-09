@@ -49,7 +49,7 @@ module Atmosphere
     end
 
     def prod_params
-      params.permit(basic_allowed_params + allowed_params_ext).tap do |p|
+      params.permit(basic_allowed_params + allowed_params_ext).to_h.tap do |p|
         p[:optimization_policy_params] = { vms: params[:vms] }
       end
     end

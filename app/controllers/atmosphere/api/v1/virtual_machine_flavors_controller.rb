@@ -6,7 +6,7 @@ module Atmosphere
           class: 'Atmosphere::VirtualMachineFlavor'
 
         respond_to :json
-        before_filter :validate_params!,
+        before_action :validate_params!,
                       :validate_filter_combination!, only: :index
 
         # Query params may include either:

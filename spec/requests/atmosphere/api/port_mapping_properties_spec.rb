@@ -148,25 +148,25 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/port_mapping_properties"), new_request
+        post api("/port_mapping_properties"), params: new_request
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as owner' do
       it 'returns 201 Created on success' do
-        post api("/port_mapping_properties", user), new_request
+        post api("/port_mapping_properties", user), params: new_request
         expect(response.status).to eq 201
       end
 
       it 'creates new port mapping property' do
         expect {
-          post api("/port_mapping_properties", user), new_request
+          post api("/port_mapping_properties", user), params: new_request
         }.to change { Atmosphere::PortMappingProperty.count }.by(1)
       end
 
       it 'creates new port mapping property with correct attribute values' do
-        post api("/port_mapping_properties", user), new_request
+        post api("/port_mapping_properties", user), params: new_request
         expect(pmp_response['id']).to_not be_nil
         expect(pmp_response['key']).to eq 'some:key'
         expect(pmp_response['value']).to eq 'DOING_THE_PROPER_THING'
@@ -174,18 +174,18 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
       end
 
       it 'returns 422 when port mapping property field is wrong' do
-        post api("/port_mapping_properties", user), wrong_request
+        post api("/port_mapping_properties", user), params: wrong_request
         expect(response.status).to eq 422
       end
 
       it 'returns 403 Forbidden when creating port mapping property for not owned port mapping template' do
-        post api("/port_mapping_properties", different_user), new_request
+        post api("/port_mapping_properties", different_user), params: new_request
         expect(response.status).to eq 403
       end
 
       it 'does not create new port mapping property for not owned port mapping template' do
         expect {
-          post api("/port_mapping_properties", different_user), new_request
+          post api("/port_mapping_properties", different_user), params: new_request
         }.to change { Atmosphere::PortMappingProperty.count }.by(0)
       end
     end
@@ -193,7 +193,7 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
     context 'when authenticated as admin' do
       it 'creates new port mapping property even for not owned port mapping template' do
         expect {
-          post api("/port_mapping_properties", admin), new_request
+          post api("/port_mapping_properties", admin), params: new_request
           expect(response.status).to eq 201
         }.to change { Atmosphere::PortMappingProperty.count }.by(1)
       end
@@ -221,14 +221,14 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
 
     context 'when authenticated as owner' do
       it 'returns 200 Success' do
-        put api("/port_mapping_properties/#{pmp1.id}", user), update_json
+        put api("/port_mapping_properties/#{pmp1.id}", user), params: update_json
         expect(response.status).to eq 200
       end
 
       it 'updates port mapping property' do
         old_key = pmp1.key
         old_port_mapping_template_id = pmp1.port_mapping_template_id
-        put api("/port_mapping_properties/#{pmp1.id}", user), update_json
+        put api("/port_mapping_properties/#{pmp1.id}", user), params: update_json
         updated_e = Atmosphere::PortMappingProperty.find(pmp1.id)
 
         expect(updated_e).to be_updated_by_port_mapping_property update_json[:port_mapping_property]
@@ -242,24 +242,24 @@ describe Atmosphere::Api::V1::PortMappingPropertiesController do
 
       it 'is not able to update PMT' do
         put api("/port_mapping_properties/#{pmp1.id}", user),
-            port_mapping_property: { port_mapping_template_id: pmt2.id }
+            params: { port_mapping_property: { port_mapping_template_id: pmt2.id } }
         pmp1.reload
 
         expect(pmp1.port_mapping_template).to eq pmt1
       end
 
       it 'admin is able to update any port mapping property' do
-        put api("/port_mapping_properties/#{pmp1.id}", admin), update_json
+        put api("/port_mapping_properties/#{pmp1.id}", admin), params: update_json
         expect(response.status).to eq 200
       end
 
       it 'returns 422 when port mapping property key is wrong' do
-        put api("/port_mapping_properties/#{pmp1.id}", user), wrong_update_json
+        put api("/port_mapping_properties/#{pmp1.id}", user), params: wrong_update_json
         expect(response.status).to eq 422
       end
 
       it 'returns 403 when user is not the parent appliance type owner' do
-        put api("/port_mapping_properties/#{pmp1.id}", different_user), update_json
+        put api("/port_mapping_properties/#{pmp1.id}", different_user), params: update_json
         expect(response.status).to eq 403
       end
     end

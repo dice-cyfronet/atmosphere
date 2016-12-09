@@ -1,4 +1,4 @@
-class AddVersionToVmt < ActiveRecord::Migration
+class AddVersionToVmt < ActiveRecord::Migration[4.2]
   def up
     add_column :atmosphere_virtual_machine_templates, :version, :integer
 

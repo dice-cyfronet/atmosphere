@@ -1,4 +1,4 @@
-class CreatePortMappings < ActiveRecord::Migration
+class CreatePortMappings < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_port_mappings do |t|
       t.string :public_ip,                    null: false

@@ -54,7 +54,7 @@ module Atmosphere
           atmosphere_http_mappings: {
             appliance_id: appl.id
           }
-        ).uniq
+        ).distinct
     end
 
     scope :visible_to, ->(user) { EndpointsVisibleToUser.new(self, user).find }

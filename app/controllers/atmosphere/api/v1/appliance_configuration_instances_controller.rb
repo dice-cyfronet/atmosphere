@@ -8,7 +8,7 @@ module Atmosphere
         respond_to :json
 
         def index
-          respond_with @appliance_configuration_instances.where(filter).order(:id).uniq
+          respond_with @appliance_configuration_instances.where(filter).order(:id).distinct
         end
 
         def show

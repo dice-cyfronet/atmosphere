@@ -21,7 +21,7 @@ module Atmosphere
       end
       if vms.present?
         errors.add :base, I18n.t('flavor_os_family.running_vms')
-        false
+        throw :abort
       end
     end
   end

@@ -1,4 +1,4 @@
-class AddComputeSiteToHttpMapping < ActiveRecord::Migration
+class AddComputeSiteToHttpMapping < ActiveRecord::Migration[4.2]
   def up
     puts "Deleting all old http mappings"
     Atmosphere::HttpMapping.delete_all

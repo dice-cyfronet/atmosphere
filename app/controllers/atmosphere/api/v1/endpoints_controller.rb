@@ -4,7 +4,7 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
 
   include Atmosphere::Api::Auditable
 
-  before_filter :find_endpoints, only: :index
+  before_action :find_endpoints, only: :index
 
   respond_to :json
 
@@ -39,7 +39,7 @@ class Atmosphere::Api::V1::EndpointsController < Atmosphere::Api::ApplicationCon
       'descriptor_url' => descriptor_api_v1_endpoint_url(@endpoint)
     }
 
-    render text: Atmosphere::ParamsRegexpable.filter(@endpoint.descriptor, filter_params)
+    render plain: Atmosphere::ParamsRegexpable.filter(@endpoint.descriptor, filter_params)
   end
 
   private

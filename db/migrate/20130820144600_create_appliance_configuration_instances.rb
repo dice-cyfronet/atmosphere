@@ -1,4 +1,4 @@
-class CreateApplianceConfigurationInstances < ActiveRecord::Migration
+class CreateApplianceConfigurationInstances < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_appliance_configuration_instances do |t|
       t.text :payload

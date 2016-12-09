@@ -5,7 +5,7 @@ module Atmosphere
         load_and_authorize_resource :virtual_machine,
           class: 'Atmosphere::VirtualMachine'
 
-        before_filter :add_required_query_relations, only: :index
+        before_action :add_required_query_relations, only: :index
 
         respond_to :json
 

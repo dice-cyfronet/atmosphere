@@ -2,7 +2,7 @@ class Atmosphere::Admin::UserKeysController < Atmosphere::Admin::ApplicationCont
   load_and_authorize_resource :user_key,
     class: 'Atmosphere::UserKey'
 
-  #before_filter :set_user_keys, only: :index
+  #before_action :set_user_keys, only: :index
 
   def index
     # it really does the job :-)

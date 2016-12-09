@@ -1,4 +1,4 @@
-class NullifyAtVmtFk < ActiveRecord::Migration
+class NullifyAtVmtFk < ActiveRecord::Migration[4.2]
   def change
     remove_foreign_key :atmosphere_virtual_machine_templates,
                        name: 'atmo_vmt_at_fk'

@@ -2,7 +2,7 @@ class Atmosphere::Admin::VirtualMachineTemplatesController < Atmosphere::Admin::
   load_and_authorize_resource :virtual_machine_template,
                               class: 'Atmosphere::VirtualMachineTemplate'
 
-  before_filter :set_tenants, except: [:index, :show, :destroy]
+  before_action :set_tenants, except: [:index, :show, :destroy]
 
   # GET /virtual_machine_templates
   def index

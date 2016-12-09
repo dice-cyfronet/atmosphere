@@ -1,4 +1,4 @@
-class CreateUserKeys < ActiveRecord::Migration
+class CreateUserKeys < ActiveRecord::Migration[4.2]
   def change
     create_table :atmosphere_user_keys do |t|
       t.string :name,             null:false

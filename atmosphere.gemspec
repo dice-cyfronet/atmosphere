@@ -37,10 +37,10 @@ Gem::Specification.new do |s|
   ]
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency 'rails', '~> 4.2.7'
+  s.add_dependency 'rails', '~> 5.0.0.1'
   s.add_dependency 'pg', '~> 0.19.0'
   s.add_dependency 'enumerize', '~> 2.0'
-  s.add_dependency 'redirus', '~>0.2.1'
+  s.add_dependency 'redirus', '~>0.3.1'
   s.add_dependency 'migratio', '~> 0.0.3'
   s.add_dependency 'sshkey', '~> 1.8.0'
   s.add_dependency 'active_model_serializers', '~> 0.8.0'
@@ -72,7 +72,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'unf', '~> 0.1.4'
 
   # delay jobs
-  s.add_dependency 'sinatra'
   s.add_dependency 'sidekiq'
   s.add_dependency 'clockwork', '~> 2.0'
 
@@ -80,4 +79,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'zabbixapi'
   s.add_dependency 'influxdb'
   s.add_dependency 'sentry-raven'
+
+  s.add_dependency 'puma'
 end

@@ -2,7 +2,7 @@ class Atmosphere::HelpController < Atmosphere::ApplicationController
   skip_authorization_check
   layout 'layouts/atmosphere/application'
 
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def index
   end

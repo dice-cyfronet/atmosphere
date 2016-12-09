@@ -210,25 +210,25 @@ describe Atmosphere::Api::V1::EndpointsController do
 
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
-        post api("/endpoints"), new_request
+        post api("/endpoints"), params: new_request
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as owner' do
       it 'returns 201 Created on success' do
-        post api("/endpoints", user), new_request
+        post api("/endpoints", user), params: new_request
         expect(response.status).to eq 201
       end
 
       it 'creates new endpoint' do
         expect {
-          post api("/endpoints", user), new_request
+          post api("/endpoints", user), params: new_request
         }.to change { Atmosphere::Endpoint.count }.by(1)
       end
 
       it 'creates new endpoint with correct attribute values' do
-        post api("/endpoints", user), new_request
+        post api("/endpoints", user), params: new_request
         expect(e_response['id']).to_not be_nil
         expect(e_response['name']).to eq 'Endpoint name'
         expect(e_response['description']).to eq 'some human description'
@@ -239,18 +239,18 @@ describe Atmosphere::Api::V1::EndpointsController do
       end
 
       it 'returns 422 when endpoint type is wrong' do
-        post api("/endpoints", user), wrong_request
+        post api("/endpoints", user), params: wrong_request
         expect(response.status).to eq 422
       end
 
       it 'returns 403 Forbidden when creating endpoint for not owned port mapping template' do
-        post api("/endpoints", different_user), new_request
+        post api("/endpoints", different_user), params: new_request
         expect(response.status).to eq 403
       end
 
       it 'does not create new endpoint for not owned port mapping template' do
         expect {
-          post api("/endpoints", different_user), new_request
+          post api("/endpoints", different_user), params: new_request
         }.to change { Atmosphere::Endpoint.count }.by(0)
       end
     end
@@ -258,7 +258,7 @@ describe Atmosphere::Api::V1::EndpointsController do
     context 'when authenticated as admin' do
       it 'creates new endpoint even for not owned port mapping template' do
         expect {
-          post api("/endpoints", admin), new_request
+          post api("/endpoints", admin), params: new_request
           expect(response.status).to eq 201
         }.to change { Atmosphere::Endpoint.count }.by(1)
       end
@@ -266,13 +266,13 @@ describe Atmosphere::Api::V1::EndpointsController do
 
     context 'when authenticated as developer' do
       it 'returns 201 Success' do
-        post api("/endpoints", developer), new_dev_request
+        post api("/endpoints", developer), params: new_dev_request
         expect(response.status).to eq 201
       end
 
       it 'creates new development endpoint' do
         expect {
-          post api("/endpoints", developer), new_dev_request
+          post api("/endpoints", developer), params: new_dev_request
           expect(response.status).to eq 201
         }.to change { Atmosphere::Endpoint.count }.by(1)
       end
@@ -300,14 +300,14 @@ describe Atmosphere::Api::V1::EndpointsController do
 
     context 'when authenticated as owner' do
       it 'returns 200 Success' do
-        put api("/endpoints/#{e1.id}", user), update_json
+        put api("/endpoints/#{e1.id}", user), params: update_json
         expect(response.status).to eq 200
       end
 
       it 'updates endpoint' do
         old_endpoint_type = e1.endpoint_type
         old_port_mapping_template_id = e1.port_mapping_template_id
-        put api("/endpoints/#{e1.id}", user), update_json
+        put api("/endpoints/#{e1.id}", user), params: update_json
         updated_e = Atmosphere::Endpoint.find(e1.id)
 
         expect(updated_e).to be_updated_by_endpoint update_json[:endpoint]
@@ -322,43 +322,43 @@ describe Atmosphere::Api::V1::EndpointsController do
 
       it 'is unable to change assigment to PMT' do
         put api("/endpoints/#{e1.id}", user),
-            endpoint: { port_mapping_template_id: pmt2.id }
+            params: {endpoint: { port_mapping_template_id: pmt2.id }}
         e1.reload
 
         expect(e1.port_mapping_template).to eq pmt1
       end
 
       it 'admin is able to update any endpoint' do
-        put api("/endpoints/#{e1.id}", admin), update_json
+        put api("/endpoints/#{e1.id}", admin), params: update_json
         expect(response.status).to eq 200
       end
 
       it 'returns 422 when endpoint type is wrong' do
-        put api("/endpoints/#{e1.id}", user), wrong_update_json
+        put api("/endpoints/#{e1.id}", user), params: wrong_update_json
         expect(response.status).to eq 422
       end
 
       it 'returns 403 when user is not the parent appliance type owner' do
-        put api("/endpoints/#{e1.id}", different_user), update_json
+        put api("/endpoints/#{e1.id}", different_user), params: update_json
         expect(response.status).to eq 403
       end
     end
 
     context 'when authenticated as developer' do
       it 'returns 200 Success' do
-        put api("/endpoints/#{e3.id}", developer), update_json
+        put api("/endpoints/#{e3.id}", developer), params: update_json
         expect(response.status).to eq 200
       end
 
       it 'returns 403 when updated by not the user who develops given endpoint' do
-        put api("/endpoints/#{e3.id}", user), update_json
+        put api("/endpoints/#{e3.id}", user), params: update_json
         expect(response.status).to eq 403
       end
 
       it 'updates development endpoint' do
         old_endpoint_type = e3.endpoint_type
         old_port_mapping_template_id = e3.port_mapping_template_id
-        put api("/endpoints/#{e3.id}", developer), update_json
+        put api("/endpoints/#{e3.id}", developer), params: update_json
         updated_e = Atmosphere::Endpoint.find(e3.id)
 
         expect(updated_e).to be_updated_by_endpoint update_json[:endpoint]

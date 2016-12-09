@@ -1,4 +1,4 @@
-class AddVirtualMachineTemplateRefToVirtualMachines < ActiveRecord::Migration
+class AddVirtualMachineTemplateRefToVirtualMachines < ActiveRecord::Migration[4.2]
   def change
     add_reference :atmosphere_virtual_machines,
                   :virtual_machine_template

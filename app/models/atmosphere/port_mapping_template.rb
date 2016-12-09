@@ -114,7 +114,7 @@ module Atmosphere
     def check_only_one_belonging
       unless appliance_type.blank? || dev_mode_property_set.blank?
         errors.add :base, 'Port Mapping template cannot belong to both Appliance Type and Dev Mode Property Set'
-        false
+        throw :abort
       end
     end
 

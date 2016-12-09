@@ -9,7 +9,7 @@ class Atmosphere::Admin::PortMappingTemplatesController < Atmosphere::Admin::App
     through: :appliance_type,
     class: 'Atmosphere::PortMappingTemplate'
 
-  before_filter :initialize_manager, only: [:create, :update, :destroy]
+  before_action :initialize_manager, only: [:create, :update, :destroy]
   layout false
 
 

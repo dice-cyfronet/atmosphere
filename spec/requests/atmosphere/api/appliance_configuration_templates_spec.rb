@@ -139,38 +139,40 @@ describe Atmosphere::Api::V1::ApplianceConfigurationTemplatesController do
     context 'when unauthenticated' do
       it 'returns 401 Unauthorized error' do
         post api("/appliance_configuration_templates"),
-             new_config_template_request
+             params: new_config_template_request
         expect(response.status).to eq 401
       end
     end
 
     context 'when authenticated as user' do
       it 'returns 201 Created on success' do
-        post api("/appliance_configuration_templates", user), new_config_template_request
+        post api("/appliance_configuration_templates", user), params: new_config_template_request
         expect(response.status).to eq 201
       end
 
       it 'creates new appliance configuration template' do
         expect {
-          post api("/appliance_configuration_templates", user), new_config_template_request
+          post api("/appliance_configuration_templates", user), params: new_config_template_request
         }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(1)
       end
 
       it 'creates new appliance configuration template with correct attrs values' do
-        post api("/appliance_configuration_templates", user), new_config_template_request
+        post api("/appliance_configuration_templates", user), params: new_config_template_request
         result = Atmosphere::ApplianceConfigurationTemplate.find(act_response['id'])
         expect(act_response).to config_template_eq result
       end
 
       it 'returns 403 Forbidden when creating configuration template for not owned appliance type' do
-        post api("/appliance_configuration_templates", user), new_not_owned_config_template_request
+        post api("/appliance_configuration_templates", user),
+             params: new_not_owned_config_template_request
 
         expect(response.status).to eq 403
       end
 
       it 'does not creates new configuration template when creating new one for not owned appliance type' do
         expect {
-          post api("/appliance_configuration_templates", user), new_not_owned_config_template_request
+          post api("/appliance_configuration_templates", user),
+               params: new_not_owned_config_template_request
         }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(0)
       end
     end
@@ -178,7 +180,8 @@ describe Atmosphere::Api::V1::ApplianceConfigurationTemplatesController do
     context 'when authenticated as admin' do
       it 'creates new configuration template even for not owned appliance type' do
         expect {
-          post api("/appliance_configuration_templates", admin), new_not_owned_config_template_request
+          post api("/appliance_configuration_templates", admin),
+               params: new_not_owned_config_template_request
           expect(response.status).to eq 201
         }.to change { Atmosphere::ApplianceConfigurationTemplate.count }.by(1)
       end
@@ -204,25 +207,29 @@ describe Atmosphere::Api::V1::ApplianceConfigurationTemplatesController do
 
     context 'when authenticated as user' do
       it 'returns 201 Created on success' do
-        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user), update_request
+        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user),
+            params: update_request
         expect(response.status).to eq 200
       end
 
       it 'updates appliance configuration template' do
-        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user), update_request
+        put api("/appliance_configuration_templates/#{at1_config_tpl1.id}", user),
+            params: update_request
         updated = Atmosphere::ApplianceConfigurationTemplate.find(at1_config_tpl1.id)
         expect(act_response).to config_template_eq updated
       end
 
       it 'returns 403 Forbidden when updating configuration template from not owned appliance type' do
-        put api("/appliance_configuration_templates/#{at2_config_tpl.id}", user), update_request
+        put api("/appliance_configuration_templates/#{at2_config_tpl.id}", user),
+            params: update_request
         expect(response.status).to eq 403
       end
     end
 
     context 'when authenticated as admin' do
       it 'updates configuration template even for not owned appliance type' do
-        put api("/appliance_configuration_templates/#{at2_config_tpl.id}", admin), update_request
+        put api("/appliance_configuration_templates/#{at2_config_tpl.id}", admin),
+            params: update_request
         expect(response.status).to eq 200
       end
     end

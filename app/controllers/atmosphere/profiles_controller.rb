@@ -1,6 +1,6 @@
 class Atmosphere::ProfilesController < Atmosphere::ApplicationController
   skip_authorization_check
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   layout 'layouts/atmosphere/profile'
 
