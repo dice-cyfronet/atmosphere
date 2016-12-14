@@ -13,10 +13,6 @@ module Atmopshere
                                  Atmosphere::VmMonitoringWorker)
       end
 
-      every(Atmosphere.monitoring.intervals.load, 'monitoring.load') do
-        Atmosphere::VmLoadMonitoringWorker.perform_async
-      end
-
       every(Atmosphere.monitoring.intervals.flavor, 'monitoring.flavors') do
         action_on_active_tenants('flavor monitoring',
                                  Atmosphere::FlavorWorker)

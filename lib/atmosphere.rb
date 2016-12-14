@@ -79,16 +79,6 @@ module Atmosphere
   mattr_accessor :vmt_at_relation_update_period # hours
   @@vmt_at_relation_update_period = 2
 
-  mattr_accessor :monitoring_client
-  def self.monitoring_client
-    @@monitoring_client || Atmosphere::Monitoring::NullClient.new
-  end
-
-  mattr_accessor :metrics_store
-  def self.metrics_store
-    @@metrics_store || Atmosphere::Monitoring::NullMetricsStore.new
-  end
-
   mattr_accessor :app_version
 
   mattr_accessor :ability_class

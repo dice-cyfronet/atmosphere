@@ -29,40 +29,6 @@ describe Atmosphere do
     end
   end
 
-  context 'monitoring client' do
-    it 'returns null client when no configuration' do
-      Atmosphere.monitoring_client = nil
-
-      expect(Atmosphere.monitoring_client)
-        .to be_an_instance_of Atmosphere::Monitoring::NullClient
-    end
-
-    it 'returns real client when configuration available' do
-      Atmosphere.monitoring_client = 'other_client'
-
-      expect(Atmosphere.monitoring_client).to eq 'other_client'
-      # we need to clean up
-      Atmosphere.monitoring_client = nil
-    end
-  end
-
-  context 'metrics store' do
-    it 'returns null client when no configuration' do
-      Atmosphere.metrics_store = nil
-
-      expect(Atmosphere.metrics_store)
-        .to be_an_instance_of Atmosphere::Monitoring::NullMetricsStore
-    end
-
-    it 'returns real client when configuration available' do
-      Atmosphere.metrics_store = 'other_client'
-
-      expect(Atmosphere.metrics_store).to eq 'other_client'
-      # we need to clean up
-      Atmosphere.metrics_store = nil
-    end
-  end
-
   context 'nic provider' do
     class DummyNicProvider
       def initialize(_config = nil); end

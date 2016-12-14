@@ -15,9 +15,6 @@ describe Atmosphere::VmUpdater do
       to receive(:find_by).
       with(tenant: t, id_at_site: 'vmt_id_at_site').
       and_return(vmt)
-    #Zabbix.stub(:register_host).and_return 1
-    #Zabbix.stub(:unregister_host)
-    #Zabbix.stub(:host_metrics)
   end
 
   subject { Atmosphere::VmUpdater.new(t, server, updater_class) }
