@@ -13,7 +13,6 @@
 #  updated_at                  :datetime
 #  virtual_machine_template_id :integer
 #  virtual_machine_flavor_id   :integer
-#  monitoring_id               :integer
 #
 
 require 'rails_helper'
