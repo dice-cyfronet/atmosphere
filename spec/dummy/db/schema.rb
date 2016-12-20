@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150821055554) do
+ActiveRecord::Schema.define(version: 20161214130933) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -319,7 +319,6 @@ ActiveRecord::Schema.define(version: 20150821055554) do
     t.datetime "updated_at"
     t.integer  "virtual_machine_template_id"
     t.integer  "virtual_machine_flavor_id"
-    t.integer  "monitoring_id"
     t.datetime "updated_at_site"
     t.index ["tenant_id", "id_at_site"], name: "atmo_vm_cs_id_id_at_site_ix", unique: true, using: :btree
     t.index ["virtual_machine_template_id"], name: "atmo_vm_vmt_ix", using: :btree

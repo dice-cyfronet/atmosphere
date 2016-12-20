@@ -13,7 +13,6 @@
 #  updated_at                  :datetime
 #  virtual_machine_template_id :integer
 #  virtual_machine_flavor_id   :integer
-#  monitoring_id               :integer
 #
 
 module Atmosphere
@@ -65,8 +64,6 @@ module Atmosphere
 
     enumerize :state, in: ALLOWED_STATES
 
-    before_update :update_in_monitoring, if: :ip_changed?
-    before_destroy :unregister_from_monitoring, if: :in_monitoring?
     after_update :regenerate_dnat, if: :ip_changed?
     after_destroy :delete_dnat, if: :ip?
 
@@ -159,31 +156,7 @@ module Atmosphere
       tenant.dnat_client.remove(ip)
     end
 
-    def update_in_monitoring
-      return unless managed_by_atmosphere?
-      logger.info "Updating vm #{uuid} in monitoring"
-      if ip_was && monitoring_id
-        unregister_from_monitoring
-      end
-      register_in_monitoring if ip
-    end
-
-    def register_in_monitoring
-      logger.info "Registering vm #{uuid} in monitoring"
-      self[:monitoring_id] = monitoring_client.register_host(uuid, ip)
-    end
-
-    def unregister_from_monitoring
-      logger.info "Unregistering vm #{uuid} with monitoring host id #{monitoring_id} from monitoring"
-      monitoring_client.unregister_host(monitoring_id)
-      self[:monitoring_id] = nil
-    end
-
     private
-
-    def in_monitoring?
-      ip? && monitoring_id?
-    end
 
     def perform_delete_in_cloud
       unless cloud_client.servers.destroy(id_at_site)
@@ -210,10 +183,6 @@ module Atmosphere
       else
         false
       end
-    end
-
-    def monitoring_client
-      Atmosphere.monitoring_client
     end
 
     def cloud_server
