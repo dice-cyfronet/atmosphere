@@ -1,7 +1,7 @@
 module Atmosphere
   class UrlAvailabilityCheck
-    def is_available(url, timeout = 3)
-      connection = Faraday.new url, ssl: {verify: false}
+    def available?(url, timeout = 3)
+      connection = Faraday.new url, ssl: { verify: false }
       response = connection.get do |req|
         req.url url
         req.options.timeout = timeout

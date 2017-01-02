@@ -8,7 +8,7 @@ module Atmosphere
 
       def perform(vm_id)
         vm = Atmosphere::VirtualMachine.find_by(id: vm_id)
-        vm.destroy! if vm
+        vm && vm.destroy!
       end
     end
   end

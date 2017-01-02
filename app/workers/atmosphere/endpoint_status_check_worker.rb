@@ -17,10 +17,10 @@ module Atmosphere
     private
 
     def check_mapping(mapping)
-      if @check.is_available(mapping.url, Atmosphere.url_monitoring.timeout)
+      if @check.available?(mapping.url, Atmosphere.url_monitoring.timeout)
         mapping.monitoring_status = :ok
       elsif mapping.monitoring_status.ok?
-          mapping.monitoring_status = :lost
+        mapping.monitoring_status = :lost
       end
       mapping.save
     end

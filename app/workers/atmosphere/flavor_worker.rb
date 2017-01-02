@@ -6,11 +6,9 @@ module Atmosphere
     sidekiq_options retry: false
 
     def perform(tenant_id)
-      begin
-        if tenant = Atmosphere::Tenant.find_by(id: tenant_id)
-          Rails.logger.debug "Updating flavor for #{tenant_id} tenant."
-          FlavorUpdater.new(tenant).execute
-        end
+      if tenant = Atmosphere::Tenant.find_by(id: tenant_id)
+        Rails.logger.debug "Updating flavor for #{tenant_id} tenant."
+        FlavorUpdater.new(tenant).execute
       end
     end
   end

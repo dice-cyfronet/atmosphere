@@ -73,18 +73,21 @@ describe Atmosphere::VirtualMachineTemplate do
 
     context 'active' do
       it 'sets source vm to nil' do
-        allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
+        allow(servers_mock).to receive(:destroy)
+          .with(vm.id_at_site).and_return(true)
         subject.update_attribute(:state, :active)
         expect(subject.source_vm).to be_nil
       end
 
       it 'destroys vm in DB if it does not have an appliance associated' do
-        allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
+        allow(servers_mock).to receive(:destroy)
+          .with(vm.id_at_site).and_return(true)
         expect { subject.update_attribute(:state, :active) }.to change { Atmosphere::VirtualMachine.count}.by(-1)
       end
 
       it 'destroys vm in cloud if it does not have an appliance associated' do
-        expect(servers_mock).to receive(:destroy).with(vm.id_at_site)
+        expect(servers_mock).to receive(:destroy)
+          .with(vm.id_at_site).and_return(true)
         subject.update_attribute(:state, :active)
       end
 
@@ -112,18 +115,21 @@ describe Atmosphere::VirtualMachineTemplate do
 
     context 'error' do
       it 'sets source vm to nil' do
-        allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
+        allow(servers_mock).to receive(:destroy)
+          .with(vm.id_at_site).and_return(true)
         subject.update_attribute(:state, :error)
         expect(subject.source_vm).to be_nil
       end
 
       it 'destroys vm in DB if it does not have an appliance associated' do
-        allow(servers_mock).to receive(:destroy).with(vm.id_at_site)
+        allow(servers_mock).to receive(:destroy)
+          .with(vm.id_at_site).and_return(true)
         expect { subject.update_attribute(:state, :error) }.to change { Atmosphere::VirtualMachine.count}.by(-1)
       end
 
       it 'destroys vm in cloud if it does not have an appliance associated' do
-        expect(servers_mock).to receive(:destroy).with(vm.id_at_site)
+        expect(servers_mock).to receive(:destroy)
+          .with(vm.id_at_site).and_return(true)
         subject.update_attribute(:state, :error)
       end
 
