@@ -23,7 +23,7 @@ Atmosphere.setup do |config|
   # development, production mode and which Appliance Types user is able to
   # manage.
   #
-  # config.at_pdp_class
+  # config.at_pdp_class = Atmosphere::LocalPdp
 
   # Regexp used to extract dynamic parameters from initial configuration
   # template payload. For example if default configuration is used

@@ -59,6 +59,16 @@ module Atmosphere
              dependent: :nullify,
              class_name: 'Atmosphere::BillingLog'
 
+    has_many :permitted_appliance_types,
+#             class_name: 'Atmosphere::ApplianceType',
+             through: :user_appliance_types,
+             source: :appliance_type
+
+    has_many :user_appliance_types,
+             dependent: :destroy,
+             class_name: 'Atmosphere::UserApplianceType'
+
+
     after_create :check_fund_assignment
 
     scope :with_vm, ->(vm) do

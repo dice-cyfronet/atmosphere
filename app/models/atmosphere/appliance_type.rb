@@ -49,6 +49,14 @@ module Atmosphere
              dependent: :nullify,
              class_name: 'Atmosphere::MigrationJob'
 
+    has_many :users,
+             class_name: 'Atmosphere::User',
+             through: :user_appliance_types
+
+    has_many :user_appliance_types,
+             dependent: :destroy,
+             class_name: 'Atmosphere::UserApplianceType'
+
     # Required for API (returning all tenants on which a given
     # AT can be deployed). By allowed tenant we understan active tenant
     # with VMT installed.

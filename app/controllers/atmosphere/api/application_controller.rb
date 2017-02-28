@@ -14,7 +14,6 @@ module Atmosphere
 
       include Atmosphere::Api::ApplicationControllerExt
       include Filterable
-
       rescue_from CanCan::AccessDenied do
         if current_user.nil?
           render_json_error(I18n.t('errors.unauthorized'),
