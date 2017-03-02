@@ -24,7 +24,11 @@ module Atmosphere
       ::Atmosphere::ActionAbilityBuilder
     ]
 
-    def initialize(user, load_admin_abilities = true)
+    def initialize(user, load_admin_abilities = true, pdp_class = nil)
+
+      Rails.logger.debug("Ability initialized with pdp_class: #{pdp_class}")
+
+      @pdp_class = pdp_class
       @ability_builders = ability_builder_classes.map do |builder_class|
         builder_class.new(self, user)
       end

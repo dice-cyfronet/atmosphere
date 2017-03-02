@@ -17,6 +17,7 @@ module Atmosphere
     end
 
     def can_start_in_development?(at)
+      Rails.logger.debug("can_start_in_development: using local PDP")
       uat = UserApplianceType.where(
           user: @current_user,
           appliance_type: at

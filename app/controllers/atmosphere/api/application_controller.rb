@@ -12,8 +12,8 @@ module Atmosphere
 
       check_authorization
 
-      include Atmosphere::Api::ApplicationControllerExt
       include Filterable
+
       rescue_from CanCan::AccessDenied do
         if current_user.nil?
           render_json_error(I18n.t('errors.unauthorized'),
@@ -73,6 +73,11 @@ module Atmosphere
         end
       end
 
+      def pdp
+        Rails.logger.debug("Using pdp() from CORE ApplicationController")
+        Atmosphere.at_pdp(current_user)
+      end
+
       protected
 
       def render_error(model_obj)
@@ -121,6 +126,8 @@ module Atmosphere
       def load_admin_abilities?
         params[:action] != 'index' || to_boolean(params[:all])
       end
+
+      include Atmosphere::Api::ApplicationControllerExt
     end
   end
 end

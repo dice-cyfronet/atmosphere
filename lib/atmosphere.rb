@@ -48,7 +48,8 @@ module Atmosphere
   # manage.
   mattr_accessor :at_pdp_class
   def self.at_pdp(user)
-    (at_pdp_class || Atmosphere::LocalPdp).new(user)
+    at_pdp_class.new(user)
+#    (at_pdp_class || Atmosphere::LocalPdp).new(user)
   end
 
   mattr_reader :config_param
