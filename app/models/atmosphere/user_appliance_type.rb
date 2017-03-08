@@ -11,5 +11,8 @@ module Atmosphere
               uniqueness: {
                 scope: :appliance_type_id,
               }
+
+    validates :role,
+              inclusion: %w(reader developer manager)
   end
 end

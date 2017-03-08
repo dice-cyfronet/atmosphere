@@ -26,6 +26,7 @@ end
 group :test do
   gem 'rspec-rails'
   gem 'rspec-sidekiq'
+  gem 'rspec-mocks'
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
   gem 'generator_spec'

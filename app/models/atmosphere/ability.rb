@@ -28,9 +28,12 @@ module Atmosphere
 
       Rails.logger.debug("Ability initialized with pdp_class: #{pdp_class}")
 
-      @pdp_class = pdp_class
+      if pdp_class.present?
+        @pdp_class = pdp_class
+      end
+
       @ability_builders = ability_builder_classes.map do |builder_class|
-        builder_class.new(self, user)
+        builder_class.new(self, user, pdp_class)
       end
 
       ### Logged in user abilities

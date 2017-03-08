@@ -9,6 +9,7 @@ module Atmosphere
     end
 
     def can_start_in_production?(at)
+      Rails.logger.debug("can_start_in_production: using local PDP")
       uat = UserApplianceType.where(
         user: @current_user,
         appliance_type: at
@@ -25,14 +26,14 @@ module Atmosphere
 
       Rails.logger.debug("UAT: #{uat.inspect}")
 
-      uat.present? and ['developer', 'owner'].include? uat.first.role
+      uat.present? and ['developer', 'manager'].include? uat.first.role
     end
 
     def can_manage?(obj)
       uat = UserApplianceType.where(
           user: @current_user,
           appliance_type: obj,
-          role: 'owner'
+          role: 'manager'
       )
 
       obj.user_id == current_user.id or uat.present?
