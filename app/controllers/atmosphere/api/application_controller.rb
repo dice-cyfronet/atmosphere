@@ -74,7 +74,6 @@ module Atmosphere
       end
 
       def pdp
-        Rails.logger.debug("Using pdp() from CORE ApplicationController")
         Atmosphere.at_pdp(current_user).class
       end
 
@@ -119,7 +118,6 @@ module Atmosphere
       end
 
       def current_ability
-        Rails.logger.debug("!!!Using CORE current_ability!!!")
         @current_ability ||= Atmosphere.ability_class.
                              new(current_user, load_admin_abilities?, pdp)
       end

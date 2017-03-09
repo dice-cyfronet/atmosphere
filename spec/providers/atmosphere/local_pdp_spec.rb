@@ -14,11 +14,6 @@ describe Atmosphere::LocalPdp do
     it 'allows to manage appliance types where management permissions have been granted' do
       at = build(:appliance_type)
       create(:user_appliance_type, user: user, appliance_type: at, role: 'manager')
-      # uat = Atmosphere::UserApplianceType.new(
-      #   user: user,
-      #   appliance_type: at,
-      #   role: 'manager'
-      # ).save
 
       expect(subject.can_manage?(at)).to be_truthy
     end

@@ -1,6 +1,6 @@
-# This migration creates all the necessary schema models to ensure flavor and appliance type
-# differentiation into OS families (typically Linux and Windows). This is necessary to facilitate
-# proper billing where the price of a flavor depends on the installed OS.
+# This migration creates a table which will link users to appliance_types.
+# The table is utilized by the local PDP and also stores the role of each
+# relation.
 
 class AddPdpTables < ActiveRecord::Migration[4.2]
   def change

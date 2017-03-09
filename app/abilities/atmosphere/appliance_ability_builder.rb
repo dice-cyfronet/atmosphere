@@ -10,21 +10,6 @@ module Atmosphere
           Appliance, appliance_set: { user_id: user.id }
 
       can :create, Appliance do |appl|
-
-        # Rails.logger.debug("CAN CREATE APPLIANCE?")
-        # if appl.owned_by?(user)
-        #   Rails.logger.debug("...appliance is owned by user.")
-        # end
-        # if appl.appliance_type.appropriate_for?(appl.appliance_set)
-        #   Rails.logger.debug("...appliance is appropriate for this appliance set.")
-        # end
-        # if can_start?(appl)
-        #   Rails.logger.debug("...user is allowed to start this appliance.")
-        # end
-        # if can_start_ext?(appl)
-        #   Rails.logger.debug("...user is allowed to start this appliance (ext conditions verified).")
-        # end
-
         appl.owned_by?(user) &&
           appl.appliance_type.appropriate_for?(appl.appliance_set) &&
             can_start?(appl) &&

@@ -487,6 +487,7 @@ DEPENDENCIES
   generator_spec
   guard-rspec
   pry-rails
+  rspec-mocks
   rspec-rails
   rspec-sidekiq
   rubocop

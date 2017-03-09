@@ -25,9 +25,6 @@ module Atmosphere
     ]
 
     def initialize(user, load_admin_abilities = true, pdp_class = nil)
-
-      Rails.logger.debug("Ability initialized with pdp_class: #{pdp_class}")
-
       if pdp_class.present?
         @pdp_class = pdp_class
       end

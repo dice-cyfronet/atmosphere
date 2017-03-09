@@ -23,9 +23,6 @@ module Atmosphere
           user: @current_user,
           appliance_type: at
       )
-
-      Rails.logger.debug("UAT: #{uat.inspect}")
-
       uat.present? and ['developer', 'manager'].include? uat.first.role
     end
 
@@ -35,7 +32,6 @@ module Atmosphere
           appliance_type: obj,
           role: 'manager'
       )
-
       obj.user_id == current_user.id or uat.present?
     end
 

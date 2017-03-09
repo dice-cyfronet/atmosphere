@@ -13,7 +13,6 @@ module Atmosphere
     end
 
     def can_start_in_development?(at)
-      Rails.logger.debug("can_start_in_development: using default PDP")
       true
     end
 
