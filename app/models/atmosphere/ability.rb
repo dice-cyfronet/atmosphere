@@ -25,9 +25,7 @@ module Atmosphere
     ]
 
     def initialize(user, load_admin_abilities = true, pdp_class = nil)
-      if pdp_class.present?
-        @pdp_class = pdp_class
-      end
+      @pdp_class = pdp_class
 
       @ability_builders = ability_builder_classes.map do |builder_class|
         builder_class.new(self, user, pdp_class)

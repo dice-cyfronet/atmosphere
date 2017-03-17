@@ -73,7 +73,7 @@ module Atmosphere
         end
       end
 
-      def pdp
+      def pdp_class
         Atmosphere.at_pdp(current_user).class
       end
 
@@ -119,7 +119,7 @@ module Atmosphere
 
       def current_ability
         @current_ability ||= Atmosphere.ability_class.
-                             new(current_user, load_admin_abilities?, pdp)
+                             new(current_user, load_admin_abilities?, pdp_class)
       end
 
       def load_admin_abilities?

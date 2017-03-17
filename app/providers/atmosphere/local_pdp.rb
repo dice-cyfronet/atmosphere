@@ -21,9 +21,10 @@ module Atmosphere
       Rails.logger.debug("can_start_in_development: using local PDP")
       uat = UserApplianceType.where(
           user: @current_user,
-          appliance_type: at
+          appliance_type: at,
+          role: ['developer', 'manager']
       )
-      uat.present? and ['developer', 'manager'].include? uat.first.role
+      uat.present?
     end
 
     def can_manage?(obj)
@@ -32,11 +33,11 @@ module Atmosphere
           appliance_type: obj,
           role: 'manager'
       )
-      obj.user_id == current_user.id or uat.present?
+      obj.user_id == current_user.id || uat.present?
     end
 
     def filter(ats, filter = nil)
-      ats.where(visibility_for_filter(filter.to_s))
+      ats.joins(:user_appliance_types).where(visibility_for_filter(filter.to_s))
     end
 
     private
@@ -45,9 +46,13 @@ module Atmosphere
 
     def visibility_for_filter(filter)
       case filter
-      when 'production'  then { visible_to: [:all, :owner] }
-      when 'manage'      then { user_id: current_user.id }
-      else {}
+        when 'production'
+          { atmosphere_user_appliance_types: { user_id: current_user.id,
+                                               role: ['reader', 'developer', 'manager'] } }
+        when 'manage'
+          { atmosphere_user_appliance_types: { user_id: current_user.id,
+                                               role: ['developer', 'manager'] } }
+        else {}
       end
     end
   end

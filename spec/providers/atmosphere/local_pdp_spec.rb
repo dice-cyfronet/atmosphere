@@ -85,4 +85,27 @@ describe Atmosphere::LocalPdp do
       expect(subject.can_start_in_production?(at)).to be_falsy
     end
   end
+
+  context 'filters' do
+    let(:u1) { create(:user) }
+    let(:at1) { create(:appliance_type) }
+    let(:at2) { create(:appliance_type) }
+    subject { Atmosphere::LocalPdp.new(u1) }
+
+    it 'returns services which the user can manage' do
+      create(:user_appliance_type, user: u1, appliance_type: at2, role: 'manager')
+      expect(subject.filter(Atmosphere::ApplianceType.all, 'manage')).to eq [at2]
+    end
+
+    it 'returns services which the user can start in production' do
+      create(:user_appliance_type, user: u1, appliance_type: at2, role: 'manager')
+      ats = subject.filter(Atmosphere::ApplianceType.all, 'production')
+      expect(ats.length).to eq 1
+      expect(ats).to include at2
+      create(:user_appliance_type, user: u1, appliance_type: at1, role: 'reader')
+      ats = subject.filter(Atmosphere::ApplianceType.all, 'production')
+      expect(ats.length).to eq 2
+      expect(ats).to include at1
+    end
+  end
 end
