@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Atmosphere::LocalPdp do
   context '#can_manage?' do
-    let(:user) { build(:user, id: 1) }
+    let(:user) { create(:user) }
     subject { Atmosphere::LocalPdp.new(user) }
 
     it 'allows to manage owned appliance types' do
@@ -26,7 +26,7 @@ describe Atmosphere::LocalPdp do
   end
 
   context '#can_start_in_development?' do
-    let(:user) { build(:user, id: 1) }
+    let(:user) { create(:user) }
     let(:at) { build(:appliance_type) }
 
     subject { Atmosphere::LocalPdp.new(user) }
@@ -51,7 +51,7 @@ describe Atmosphere::LocalPdp do
   end
 
   context '#can_start_in_production?' do
-    let(:user) { build(:user, id: 1) }
+    let(:user) { create(:user) }
     let(:at) { build(:appliance_type) }
     subject { Atmosphere::LocalPdp.new(user) }
 

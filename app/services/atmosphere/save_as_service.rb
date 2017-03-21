@@ -18,6 +18,13 @@ module Atmosphere
           at.author ||= author
 
           at.save!
+
+          # Create a new UAT object for local PDP
+          uat = Atmosphere::UserApplianceType.new
+          uat.user = author
+          uat.appliance_type = at
+          uat.role = 'manager'
+          uat.save!
         end
       end
     rescue StandardError => e

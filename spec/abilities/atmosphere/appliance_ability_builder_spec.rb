@@ -3,7 +3,12 @@ require 'rails_helper'
 describe Atmosphere::ApplianceAbilityBuilder do
   let(:user) { build(:user) }
   let(:pdp) { double('pdp') }
-  let(:ability) { Atmosphere::Ability.new(user, true, Atmosphere::DefaultPdp) }
+  let(:pdp_class) do
+    pdp_class = double('pdp_class')
+    allow(pdp_class).to receive(:new).and_return(pdp)
+    pdp_class
+  end
+  let(:ability) { Atmosphere::Ability.new(user, true, pdp_class) }
   let(:at) { build(:appliance_type, visible_to: :all) }
 
   before do
@@ -51,7 +56,7 @@ describe Atmosphere::ApplianceAbilityBuilder do
   def start_appl(type, at, pdp_method_sym = nil, pdp_response = nil)
     appl = build(:appliance, appliance_set: build_as(type), appliance_type: at)
     if pdp_method_sym
-      allow_any_instance_of(Atmosphere::DefaultPdp).to receive(pdp_method_sym).with(at).and_return(pdp_response)
+      allow(pdp).to receive(pdp_method_sym).with(at).and_return(pdp_response)
     end
     appl
   end
