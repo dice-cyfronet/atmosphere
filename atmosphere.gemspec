@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'migratio', '~> 0.0.3'
   s.add_dependency 'sshkey', '~> 1.8.0'
   s.add_dependency 'active_model_serializers', '~> 0.8.0'
+  s.add_dependency 'nokogiri', '~> 1.7.1'
 
   # UI
   s.add_dependency 'sass-rails'
