@@ -19,6 +19,13 @@ Atmosphere.setup do |config|
   #   main_app: [ AdditionalResourceViewsToShow ]
   # }
 
+  # PDP class for defining which Appliance Types user is able to start in
+  # development, production mode and which Appliance Types user is able to
+  # manage. Note that this default setting will be overridden if Atmosphere
+  # detects authentication headers which call for it to use a different PDP.
+  #
+  # config.at_pdp_class
+
   # Regexp used to extract dynamic parameters from initial configuration
   # template payload. For example if default configuration is used
   # (<tt>/\#{\w*}/</tt> regexp and <tt>2..-2</tt> range) than from following
