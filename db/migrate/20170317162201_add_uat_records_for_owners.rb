@@ -1,4 +1,4 @@
-class AddUatRecordsForOwners < ActiveRecord::Migration[4.2]
+class AddUatRecordsForOwners < ActiveRecord::Migration
   def up
     ats = execute('SELECT id, user_id FROM atmosphere_appliance_types')
     ats.each do |at|

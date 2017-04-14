@@ -2,7 +2,7 @@
 # The table is utilized by the local PDP and also stores the role of each
 # relation.
 
-class AddPdpTables < ActiveRecord::Migration[4.2]
+class AddPdpTables < ActiveRecord::Migration
   def change
     create_table :atmosphere_user_appliance_types do |t|
       t.belongs_to :user
