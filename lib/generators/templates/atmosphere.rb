@@ -21,7 +21,8 @@ Atmosphere.setup do |config|
 
   # PDP class for defining which Appliance Types user is able to start in
   # development, production mode and which Appliance Types user is able to
-  # manage.
+  # manage. Note that this default setting will be overridden if Atmosphere
+  # detects authentication headers which call for it to use a different PDP.
   #
   # config.at_pdp_class
 

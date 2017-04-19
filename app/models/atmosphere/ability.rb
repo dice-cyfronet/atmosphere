@@ -24,9 +24,11 @@ module Atmosphere
       ::Atmosphere::ActionAbilityBuilder
     ]
 
-    def initialize(user, load_admin_abilities = true)
+    def initialize(user, load_admin_abilities = true, pdp_class = nil)
+      @pdp_class = pdp_class
+
       @ability_builders = ability_builder_classes.map do |builder_class|
-        builder_class.new(self, user)
+        builder_class.new(self, user, pdp_class)
       end
 
       ### Logged in user abilities

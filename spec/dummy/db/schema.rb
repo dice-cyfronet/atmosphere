@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161214130933) do
+ActiveRecord::Schema.define(version: 20170317162201) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -239,6 +239,12 @@ ActiveRecord::Schema.define(version: 20161214130933) do
     t.text     "nic_provider_config"
     t.string   "network_id"
     t.string   "site_id"
+  end
+
+  create_table "atmosphere_user_appliance_types", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appliance_type_id"
+    t.string  "role"
   end
 
   create_table "atmosphere_user_funds", force: :cascade do |t|

@@ -35,9 +35,9 @@ module Atmosphere
     def can_start?(appliance)
       at = appliance.appliance_type
       if appliance.development?
-        pdp.can_start_in_development?(at)
+        @pdp_class.new(user).can_start_in_development?(at)
       else
-        pdp.can_start_in_production?(at)
+        @pdp_class.new(user).can_start_in_production?(at)
       end
     end
   end

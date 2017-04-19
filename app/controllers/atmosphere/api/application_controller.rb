@@ -12,7 +12,6 @@ module Atmosphere
 
       check_authorization
 
-      include Atmosphere::Api::ApplicationControllerExt
       include Filterable
 
       rescue_from CanCan::AccessDenied do
@@ -74,6 +73,10 @@ module Atmosphere
         end
       end
 
+      def pdp_class
+        Atmosphere.at_pdp(current_user).class
+      end
+
       protected
 
       def render_error(model_obj)
@@ -116,12 +119,14 @@ module Atmosphere
 
       def current_ability
         @current_ability ||= Atmosphere.ability_class.
-                             new(current_user, load_admin_abilities?)
+                             new(current_user, load_admin_abilities?, pdp_class)
       end
 
       def load_admin_abilities?
         params[:action] != 'index' || to_boolean(params[:all])
       end
+
+      include Atmosphere::Api::ApplicationControllerExt
     end
   end
 end

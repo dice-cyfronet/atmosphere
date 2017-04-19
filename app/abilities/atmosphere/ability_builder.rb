@@ -5,9 +5,10 @@
 #
 module Atmosphere
   class AbilityBuilder
-    def initialize(ability, user)
+    def initialize(ability, user, pdp_class)
       @ability = ability
       @user = user
+      @pdp_class = pdp_class
     end
 
     #
