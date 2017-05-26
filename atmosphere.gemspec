@@ -69,7 +69,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'role_model'
 
   # cloud clients
-  s.add_dependency 'fog', '~> 1.37.0'
+  s.add_dependency 'fog', '1.40.0'
   s.add_dependency 'unf', '~> 0.1.4'
 
   # delay jobs
