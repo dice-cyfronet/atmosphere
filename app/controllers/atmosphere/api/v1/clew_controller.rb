@@ -16,12 +16,14 @@ module Atmosphere
         respond_to :json
 
         def appliance_instances
+          Rails.logger.debug("Requesting instance list from clew controller.")
           appliance_set_type = params[:appliance_set_type] || :portal
           appl_sets = @appliance_sets.clew_appliances(appliance_set_type).where(user_id: current_user.id)
           render json: { appliance_sets: appl_sets }, serializer: ClewApplianceInstancesSerializer
         end
 
         def appliance_types
+          Rails.logger.debug("Requesting AT list from clew controller.")
           appliance_types = @appliance_types.active.
               includes(:tenants, :appliance_configuration_templates).
               references(:tenants, :appliance_configuration_templates).
