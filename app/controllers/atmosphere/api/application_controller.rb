@@ -3,6 +3,7 @@ require 'atmosphere/json_error_handler'
 module Atmosphere
   module Api
     class ApplicationController < ::ApplicationController
+      include Atmosphere::Api::ApplicationControllerExt
       include Atmosphere::JsonErrorHandler
 
       before_action :set_raven_context, if: :sentry_enabled?
@@ -126,7 +127,6 @@ module Atmosphere
         params[:action] != 'index' || to_boolean(params[:all])
       end
 
-      include Atmosphere::Api::ApplicationControllerExt
     end
   end
 end
