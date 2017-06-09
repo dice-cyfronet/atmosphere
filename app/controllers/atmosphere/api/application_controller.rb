@@ -74,7 +74,7 @@ module Atmosphere
       end
 
       def pdp
-        Atmosphere.at_pdp(current_user)
+        pdp_class
       end
 
       def pdp_class
