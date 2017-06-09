@@ -35,9 +35,9 @@ module Atmosphere
           render json: { appliance_types: appliance_types }, serializer: ClewApplianceTypesSerializer
         end
 
-        def pdp
-          Atmosphere.at_pdp(current_user)
-        end
+#        def pdp
+#          Atmosphere.at_pdp(current_user)
+#        end
 
         def load_admin_abilities?
           to_boolean(params[:all])
