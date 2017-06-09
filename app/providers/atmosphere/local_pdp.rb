@@ -37,6 +37,7 @@ module Atmosphere
     end
 
     def filter(ats, filter = nil)
+      Rails.logger.debug("LOCAL PDP: running filter op with the following filter: #{filter.inspect}")
       ats.joins(:user_appliance_types).where(visibility_for_filter(filter.to_s))
     end
 
