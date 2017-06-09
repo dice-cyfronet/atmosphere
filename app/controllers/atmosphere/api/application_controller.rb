@@ -7,8 +7,8 @@ module Atmosphere
 
       before_action :set_raven_context, if: :sentry_enabled?
 
-#      protect_from_forgery with: :null_session, if: :token_request?
-#      protect_from_forgery with: :exception, unless: :token_request?
+      protect_from_forgery with: :null_session, if: :token_request?
+      protect_from_forgery with: :exception, unless: :token_request?
 
       check_authorization
 
