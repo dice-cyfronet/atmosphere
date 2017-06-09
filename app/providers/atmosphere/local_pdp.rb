@@ -45,6 +45,7 @@ module Atmosphere
     attr_reader :current_user
 
     def visibility_for_filter(filter)
+      Rails.logger.debug("LOCAL PDP: Checking visibility for filter: #{filter.inspect}")
       case filter
         when 'production'
           { atmosphere_user_appliance_types: { user_id: current_user.id,
