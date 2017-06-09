@@ -24,6 +24,7 @@ module Atmosphere
 
         def appliance_types
           Rails.logger.debug("Requesting AT list from clew controller.")
+          Rails.logger.debug("My PDP is #{pdp.class.inspect}.")
           appliance_types = @appliance_types.active.
               includes(:tenants, :appliance_configuration_templates).
               references(:tenants, :appliance_configuration_templates).
