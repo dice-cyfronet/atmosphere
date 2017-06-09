@@ -29,6 +29,7 @@ module Atmosphere
     attr_reader :current_user
 
     def visibility_for_filter(filter)
+      Rails.logger.debug("Checking visibility for filter: #{filter.inspect}")
       case filter
       when 'production'  then { visible_to: [:all, :owner] }
       when 'manage'      then { user_id: current_user.id }
