@@ -30,7 +30,7 @@ module Atmosphere
               references(:tenants, :appliance_configuration_templates).
               where(atmosphere_tenants: { id: current_user.tenants.active }).order(:id)
           Rails.logger.debug("Retrieved #{appliance_types.length} ATs in preliminary search.")
-          appliance_types = pdp_class.new(current_user).filter(appliance_types, params[:mode])
+          appliance_types = pdp.new(current_user).filter(appliance_types, params[:mode])
           Rails.logger.debug("#{appliance_types.length} remaining after PDP filter.")
           render json: { appliance_types: appliance_types }, serializer: ClewApplianceTypesSerializer
         end
