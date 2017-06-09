@@ -28,6 +28,7 @@ module Atmosphere
 
     attr_reader :current_user
 
+
     def visibility_for_filter(filter)
       Rails.logger.debug("Checking visibility for filter: #{filter.inspect}")
       case filter
