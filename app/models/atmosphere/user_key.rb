@@ -44,7 +44,7 @@ module Atmosphere
     before_destroy :delete_in_clouds
 
     def id_at_site
-      "#{user.login.gsub('@','_')}-#{Digest::SHA1.hexdigest(fingerprint)}"
+      "#{user.login.gsub('@','_').gsub('.','_')}-#{Digest::SHA1.hexdigest(fingerprint)}"
     end
 
     def sanitize_public_key
