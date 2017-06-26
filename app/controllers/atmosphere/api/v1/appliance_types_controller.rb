@@ -22,7 +22,7 @@ module Atmosphere
           Rails.logger.debug("My PDP is #{pdp.class.inspect}.")
 
           ats = @appliance_types.where(filter).order(:id)
-          respond_with pdp.new(current_user).filter(ats, params[:mode]),
+          respond_with pdp.new(current_user).filter(ats, params[:mode]).uniq,
                        each_serializer: Atmosphere::ApplianceTypeSerializer,
                        load_all?: load_all?
         end
