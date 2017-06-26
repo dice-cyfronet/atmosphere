@@ -18,8 +18,11 @@ module Atmosphere
           process_active_query
           process_saving_query
 
+          Rails.logger.debug("Requesting AT list from AT controller.")
+          Rails.logger.debug("My PDP is #{pdp.class.inspect}.")
+
           ats = @appliance_types.where(filter).order(:id)
-          respond_with pdp.filter(ats, params[:mode]),
+          respond_with pdp.new(current_user).filter(ats, params[:mode]),
                        each_serializer: Atmosphere::ApplianceTypeSerializer,
                        load_all?: load_all?
         end
@@ -136,9 +139,9 @@ module Atmosphere
           params.require(:appliance_type).permit(allowed_params)
         end
 
-        def pdp
-          Atmosphere.at_pdp(current_user)
-        end
+        # def pdp
+        #   Atmosphere.at_pdp(current_user)
+        # end
 
         def model_class
           Atmosphere::ApplianceType

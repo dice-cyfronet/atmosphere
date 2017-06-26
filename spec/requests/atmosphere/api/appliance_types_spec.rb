@@ -44,17 +44,10 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
       end
 
       context 'pdp' do
-        let(:pdp) { double('pdp') }
-
-        before do
-          allow(Atmosphere).to receive(:at_pdp).and_return(pdp)
-        end
-
         it 'uses pdp to limit number of returned ATs' do
           user = create(:user)
-          create(:appliance_type, visible_to: :all)
           at = create(:appliance_type, visible_to: :all)
-          allow(pdp).to receive(:filter)
+          allow_any_instance_of(Atmosphere::LocalPdp).to receive(:filter)
             .with(anything, nil).and_return([at])
 
           get api('/appliance_types', user)
@@ -65,9 +58,8 @@ describe Atmosphere::Api::V1::ApplianceTypesController do
 
         it 'uses pdp to limit number of returned ATs in production mode' do
           user = create(:user)
-          create(:appliance_type, visible_to: :all)
           at = create(:appliance_type, visible_to: :all)
-          allow(pdp).to receive(:filter)
+          allow_any_instance_of(Atmosphere::LocalPdp).to receive(:filter)
             .with(anything, 'production').and_return([at])
 
           get api('/appliance_types?mode=production', user)
