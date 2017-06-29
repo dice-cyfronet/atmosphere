@@ -5,7 +5,7 @@
   var ClewOverrides = {
     cloudFacadeUrl: '/api/v1',
     username: '#{current_user.login}',
-    roles: #{current_user.clew_roles},
+    roles: #{current_user.clew_roles.to_s.html_safe},
     csrf_header_name: 'X-CSRF-Token',
     csrf_token: '#{form_authenticity_token}',
     csrf_form_field_name: 'authenticity_token'
